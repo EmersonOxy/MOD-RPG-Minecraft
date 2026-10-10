@@ -1,0 +1,17 @@
+{
+  "key.oxyrpg.menu": "Abrir menu Oxy RPG",
+  "key.oxyrpg.hud": "Mostrar/ocultar HUD Oxy RPG",
+  "key.oxyrpg.ability": "Habilidade RPG 1",
+  "key.oxyrpg.ability2": "Habilidade RPG 2",
+  "key.oxyrpg.ability3": "Habilidade RPG 3",
+  "key.oxyrpg.camera": "Opções da câmera Oxy RPG",
+  "key.oxyrpg.shoulder": "Trocar ombro da câmera Oxy RPG",
+  "key.oxyrpg.lock": "Travar/destravar mira",
+  "key.oxyrpg.camera_side_out": "Câmera: afastar lateralmente",
+  "key.oxyrpg.next_target": "Trocar alvo da mira",
+  "key.oxyrpg.camera_far": "Câmera: afastar",
+  "key.oxyrpg.camera_down": "Câmera: descer",
+  "key.oxyrpg.camera_near": "Câmera: aproximar",
+  "key.oxyrpg.camera_side_in": "Câmera: aproximar lateralmente",
+  "key.oxyrpg.camera_up": "Câmera: subir"
+}
