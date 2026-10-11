@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:glass_bottle",
+    "minecraft:lapis_lazuli",
+    "minecraft:sugar"
+  ],
+  "result": {
+    "id": "oxyrpg:mana_potion",
+    "count": 1
+  }
+}

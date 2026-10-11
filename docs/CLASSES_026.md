@@ -49,7 +49,7 @@ Arqueiro: bônus do Assassino e de ataques durante furtividade crescem com o ní
 
 Armas e armaduras do kit de classe retornam ao inventário após a morte. Se o inventário estiver cheio, ficam em uma fila persistente até haver espaço. A recuperação impõe **60 s** de espera para usar a arma e seu efeito exclusivo. Provisões e munição continuam consumíveis normais.
 
-O efeito exclusivo da arma/item é acionado por **C**, remapeável em Opções > Controles > Oxy RPG, com o item em uma das mãos. Custa 10 MP e recarrega em 35/30/25 s conforme a etapa. Essa recarga do efeito permite continuar usando normalmente a arma entre ativações; a espera após morrer bloqueia seu uso até recuperar.
+O efeito exclusivo da arma/item é acionado pelo **botão direito**, seguindo o controle nativo Usar Item, com o item em uma das mãos (atualizado na 0.27). Custa 10 MP e recarrega em 35/30/25 s conforme a etapa. Essa recarga do efeito permite continuar usando normalmente a arma entre ativações; a espera após morrer bloqueia seu uso até recuperar.
 
 | Classe | Efeito exclusivo |
 |---|---|

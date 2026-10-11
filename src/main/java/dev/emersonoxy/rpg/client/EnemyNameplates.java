@@ -30,6 +30,7 @@ public final class EnemyNameplates {
     private static final Map<Integer, Integer> LEVELS = new HashMap<>();
     private static final Map<Integer,Integer> VILLAGERS=new HashMap<>();
     private static final Map<Integer,String> TRAITS=new HashMap<>();
+    private static final java.util.Set<Integer> COSMETIC=new java.util.HashSet<>();
     private static final java.util.Set<Integer> ALLIES=new java.util.HashSet<>();
     private static final java.util.Set<Integer> ELITES=new java.util.HashSet<>();
     private static ClientLevel trackedWorld;
@@ -37,10 +38,10 @@ public final class EnemyNameplates {
     private static final ContextKey<Plate> PLATE = new ContextKey<>(ResourceLocation.fromNamespaceAndPath("oxyrpg", "plate"));
     private record Plate(Component name, float health, float max, int level, boolean hostile,boolean ally,boolean elite,int marker) {}
     private EnemyNameplates() {}
-    public static void world(ClientLevel level) { if(trackedWorld!=level){trackedWorld=level;LEVELS.clear();GHOSTS.clear();ALLIES.clear();ELITES.clear();VILLAGERS.clear();TRAITS.clear();} }
+    public static void world(ClientLevel level) { if(trackedWorld!=level){trackedWorld=level;LEVELS.clear();GHOSTS.clear();ALLIES.clear();COSMETIC.clear();ELITES.clear();VILLAGERS.clear();TRAITS.clear();} }
     public static void eliteTitle(int id,String title){world(Minecraft.getInstance().level);TRAITS.put(id,title);}
     public static void villagerMark(int id,int marker){world(Minecraft.getInstance().level);if(marker==0)VILLAGERS.remove(id);else VILLAGERS.put(id,marker);}
-    public static void mobLevel(int id,int level) { world(Minecraft.getInstance().level);if(level<0)ALLIES.add(id);else ALLIES.remove(id);if(level>=1000){ELITES.add(id);level-=1000;}else ELITES.remove(id);LEVELS.put(id, Math.clamp(Math.abs(level),1,100)); }
+    public static void mobLevel(int id,int level) { world(Minecraft.getInstance().level);if(level==-2)COSMETIC.add(id);else COSMETIC.remove(id);if(level<0)ALLIES.add(id);else ALLIES.remove(id);if(level>=1000){ELITES.add(id);level-=1000;}else ELITES.remove(id);LEVELS.put(id, Math.clamp(Math.abs(level),1,100)); }
     public static void ghost(int id, int ticks) {
         var mc = Minecraft.getInstance(); world(mc.level);
         if (mc.level == null) return;
@@ -53,7 +54,7 @@ public final class EnemyNameplates {
     }
     private static boolean visible(Mob mob) {
         var mc=Minecraft.getInstance();
-        if(mc.level==null||mc.player==null||mc.options.hideGui||DynamicHud.mode()==DynamicHud.Mode.HIDDEN||!mob.isAlive()||mob.isInvisible())return false;
+        if(mc.level==null||mc.player==null||mc.options.hideGui||DynamicHud.mode()==DynamicHud.Mode.HIDDEN||!mob.isAlive()||mob.isInvisible()||COSMETIC.contains(mob.getId()))return false;
         var camera=mc.gameRenderer.getMainCamera();
         var start=camera.getPosition();var end=mob.getEyePosition();
         var relative=end.subtract(start);

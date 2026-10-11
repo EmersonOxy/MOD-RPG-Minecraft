@@ -56,7 +56,7 @@ public final class MobLevels {
         if(old!=null&&old.amount()==amount)return;if(old!=null)attr.removeModifier(id);if(amount!=0)attr.addPermanentModifier(new AttributeModifier(id,amount,AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
     }
     public static void damage(net.neoforged.neoforge.event.entity.living.LivingDamageEvent.Pre event){
-        if(event.getSource().getEntity() instanceof Mob mob&&mob instanceof Enemy&&!RpgNecromancer.isSummon(mob)
+        if(event.getSource().getEntity() instanceof Mob mob&&mob instanceof Enemy&&!RpgNecromancer.isSummon(mob)&&!RpgSpecialists.temporary(mob)
             &&(event.getSource().is(net.minecraft.tags.DamageTypeTags.IS_PROJECTILE)||event.getSource().is(net.minecraft.tags.DamageTypeTags.IS_EXPLOSION)))event.setNewDamage(event.getNewDamage()*(float)(damageFactor(level(mob))*RpgDataMaps.mob(mob).damage()));
     }
     private static void equip(Mob mob,int level,ServerLevel world){
@@ -110,7 +110,7 @@ public final class MobLevels {
         return net.minecraft.world.item.enchantment.EnchantmentHelper.enchantItem(mob.getRandom(),item,Math.min(30,5+level/3),world.registryAccess(),java.util.Optional.of(allowed));
     }
     public static void tracking(PlayerEvent.StartTracking event) {
-        if (event.getEntity() instanceof ServerPlayer player && event.getTarget() instanceof Mob mob && mob instanceof Enemy&&!RpgNecromancer.isSummon(mob)){
+        if (event.getEntity() instanceof ServerPlayer player && event.getTarget() instanceof Mob mob && mob instanceof Enemy&&!RpgNecromancer.isSummon(mob)&&!RpgSpecialists.temporary(mob)){
             PacketDistributor.sendToPlayer(player, new RpgNetwork.MobLevel(mob.getId(), level(mob)+(EliteMobs.elite(mob)?1000:0)));
             if(EliteMobs.elite(mob))PacketDistributor.sendToPlayer(player,new RpgNetwork.EliteInfo(mob.getId(),EliteAbilities.title(mob)));
         }

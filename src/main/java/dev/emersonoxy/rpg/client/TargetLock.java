@@ -17,7 +17,7 @@ public final class TargetLock {
     private TargetLock(){}
     public static Mob target(){return target;}
     public static void clear(){target=null;firstPersonTarget=null;firstPersonFrame=0;}
-    public static boolean mouseLocked(){var mc=Minecraft.getInstance();return target!=null&&mc.screen==null&&valid(target);}
+    public static boolean mouseLocked(){var mc=Minecraft.getInstance();return !BarrelRollCompat.active()&&target!=null&&mc.screen==null&&valid(target);}
     private static boolean valid(Mob mob){
         var mc=Minecraft.getInstance();var p=mc.player;
         return p!=null&&mc.level!=null&&mob.level()==mc.level&&mob.isAlive()&&!mob.isRemoved()&&!mob.isInvisible()
@@ -62,7 +62,7 @@ public final class TargetLock {
     public static void tick(){
         var mc=Minecraft.getInstance();if(target==null)return;
         if(!valid(target)||mc.player.isSleeping()||mc.player.isPassenger()||mc.options.getCameraType().isMirrored()){clear();return;}
-        if(mc.screen!=null||mc.isPaused())return;var p=mc.player;var look=point(target,1).subtract(p.getEyePosition());
+        if(mc.screen!=null||mc.isPaused()||BarrelRollCompat.active())return;var p=mc.player;var look=point(target,1).subtract(p.getEyePosition());
         float yaw=(float)Math.toDegrees(Math.atan2(-look.x,look.z)),pitch=(float)-Math.toDegrees(Math.atan2(look.y,look.horizontalDistance()));
         p.setYRot(p.getYRot()+Mth.wrapDegrees(yaw-p.getYRot()));p.setXRot(Mth.clamp(pitch,-89,89));
     }

@@ -40,8 +40,10 @@ public final class AbilityAim {
     }
     public static Mob target(ServerPlayer p){
         var locked=TARGET.get();if(locked!=null)return locked;
-        var direction=direction(p);return p.level().getEntitiesOfClass(Mob.class,p.getBoundingBox().inflate(24),m->RpgAbilities.attackable(m)&&!(m instanceof Villager)&&!(m instanceof TamableAnimal pet&&pet.isTame())&&p.hasLineOfSight(m))
-            .stream().filter(m->{var delta=m.getBoundingBox().getCenter().subtract(p.getEyePosition());return delta.lengthSqr()<=24*24&&delta.normalize().dot(direction)>.985;}).min(java.util.Comparator.comparingDouble(p::distanceToSqr)).orElse(null);
+        var start=p.getEyePosition();var end=start.add(direction(p).scale(24));
+        end=p.level().clip(new ClipContext(start,end,ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,p)).getLocation();final var rayEnd=end;
+        return p.level().getEntitiesOfClass(Mob.class,new net.minecraft.world.phys.AABB(start,end).inflate(.3),m->RpgAbilities.attackable(m)&&!(m instanceof Villager)&&!(m instanceof TamableAnimal pet&&pet.isTame()))
+            .stream().filter(m->m.getBoundingBox().inflate(.2).contains(start)||m.getBoundingBox().inflate(.2).clip(start,rayEnd).isPresent()).min(java.util.Comparator.comparingDouble(m->m.getBoundingBox().inflate(.2).clip(start,rayEnd).map(start::distanceToSqr).orElse(0.0))).orElse(null);
     }
     public static void shoot(Projectile shot,ServerPlayer p,float speed){
         var mob=TARGET.get();

@@ -15,6 +15,11 @@ public final class SpecialistHud {
         if(state.waterwalk())tag.putLong("oxy_waterwalk",mc.level.getGameTime()+state.ticks());else tag.remove("oxy_waterwalk");
         if(state.heat()>0||state.overheated()>0)DynamicHud.signal(DynamicHud.Part.RPG);
     }
+    private static net.minecraft.world.entity.player.Player flying;
+    public static void tick(){var mc=Minecraft.getInstance();var p=mc.player;
+        if(flying!=null&&(p!=flying||!RpgSpecialists.intangible(flying))){flying.setNoGravity(false);flying=null;}
+        if(p!=null&&mc.level!=null&&RpgSpecialists.intangible(p)){flying=p;RpgSpecialists.ghostFlight(p,mc.screen==null&&mc.options.keyJump.isDown(),mc.screen==null&&mc.options.keyShift.isDown());}
+    }
     public static void render(GuiGraphics g){
         var mc=Minecraft.getInstance();if(world!=mc.level||mc.player==null||EquipmentAccess.clientSelected()!=RpgClass.PIROMANTE)return;
         float alpha=DynamicHud.alpha(DynamicHud.Part.RPG);if(alpha<=0)return;HudOpacity.begin(alpha);

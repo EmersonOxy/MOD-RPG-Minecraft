@@ -54,7 +54,7 @@ public final class ClassEquipment {
     private static CompoundTag receipt(ServerPlayer p){var root=p.getPersistentData();var persisted=root.getCompoundOrEmpty(Player.PERSISTED_NBT_TAG);var receipt=persisted.getCompoundOrEmpty(RECEIPT);persisted.put(RECEIPT,receipt);root.put(Player.PERSISTED_NBT_TAG,persisted);return receipt;}
     private static void enqueue(ListTag queue,RpgClass c,int stage,String part,int amount){var entry=new CompoundTag();entry.putInt("class",c.ordinal());entry.putInt("stage",stage);entry.putString("part",part);entry.putInt("amount",amount);queue.add(entry);}
     private static void progress(ServerPlayer p,RpgProfile real){
-        if(RpgDebug.equipmentOverride(p))return;
+        if(RpgDebug.equipmentOverride(p)){boolean changed=false;for(int i=0;i<p.getInventory().getContainerSize();i++){var old=p.getInventory().getItem(i);var id=tag(old);int cls=id.getIntOr("class",0);if(gear(old)&&id.getIntOr("schema",0)<3&&id.getStringOr("owner","").equals(p.getUUID().toString())&&cls>0&&cls<RpgClass.values().length){p.getInventory().setItem(i,build(p,RpgClass.values()[cls],id.getIntOr("stage",1),id.getStringOr("part","weapon"),old));changed=true;}}if(changed){p.getInventory().setChanged();p.inventoryMenu.broadcastFullState();}return;}
         RpgClass c=real.rpgClass();int stage=stage(p);var receipt=receipt(p);String key=c.name();int done=receipt.getIntOr(key,0);
         var queue=receipt.getListOrEmpty("pending");
         if((done&(1<<(stage-1)))==0){
@@ -70,7 +70,7 @@ public final class ClassEquipment {
         boolean changed=false;
         for(int i=0;i<p.getInventory().getContainerSize();i++){
             var old=p.getInventory().getItem(i);var data=tag(old);
-            if(old.isEmpty()||!data.getStringOr("owner","").equals(p.getUUID().toString())||data.getIntOr("class",0)!=c.ordinal()||data.getIntOr("stage",1)>=stage&&data.getIntOr("schema",0)>=2)continue;
+            if(old.isEmpty()||!data.getStringOr("owner","").equals(p.getUUID().toString())||data.getIntOr("class",0)!=c.ordinal()||data.getIntOr("stage",1)>=stage&&data.getIntOr("schema",0)>=3)continue;
             String part=data.getStringOr("part","");if(!Set.of("weapon","armor","food","ammo","travel_food","normal_arrow").contains(part))continue;
             p.getInventory().setItem(i,build(p,c,stage,part,old));changed=true;
         }
@@ -106,9 +106,11 @@ public final class ClassEquipment {
     public static String stageName(int stage){return stage==1?"Básico":stage==2?"Intermediário":"Avançado";}
     private static ItemStack build(ServerPlayer p,RpgClass c,int stage,String part,ItemStack old){
         double wear=old.getMaxDamage()>0?(double)old.getDamageValue()/old.getMaxDamage():0;
-        var stack=old.transmuteCopy(base(c,stage,part),old.getCount());
+        var nativeItem=base(c,stage,part);
+        var stack=old.transmuteCopy(part.equals("weapon")?RpgItems.relic(c):nativeItem,old.getCount());
+        if(part.equals("weapon")){var attributes=new ItemStack(nativeItem).get(DataComponents.ATTRIBUTE_MODIFIERS);if(attributes!=null)stack.set(DataComponents.ATTRIBUTE_MODIFIERS,attributes);stack.set(DataComponents.ITEM_MODEL,ResourceLocation.withDefaultNamespace(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(nativeItem).getPath()));}
         if(stack.getMaxDamage()>0)stack.setDamageValue(Math.min(stack.getMaxDamage()-1,(int)(stack.getMaxDamage()*wear)));
-        var data=stack.getOrDefault(DataComponents.CUSTOM_DATA,CustomData.EMPTY).copyTag();var identity=new CompoundTag();identity.putString("owner",p.getUUID().toString());identity.putInt("class",c.ordinal());identity.putInt("stage",stage);identity.putInt("schema",2);identity.putString("part",part);data.put(KEY,identity);stack.set(DataComponents.CUSTOM_DATA,CustomData.of(data));
+        var data=stack.getOrDefault(DataComponents.CUSTOM_DATA,CustomData.EMPTY).copyTag();var identity=new CompoundTag();identity.putString("owner",p.getUUID().toString());identity.putInt("class",c.ordinal());identity.putInt("stage",stage);identity.putInt("schema",3);identity.putString("part",part);data.put(KEY,identity);stack.set(DataComponents.CUSTOM_DATA,CustomData.of(data));
         String name=part.equals("weapon")?switch(c){case GUERREIRO->"Espada do Gladiador";case ARQUEIRO->"Arco do Caçador";case MAGO->"Cajado Glacial";case NECROMANTE->"Grimório dos Mortos";case AVIARIO->stage==1?"Pluma de Resgate":stage==2?"Bastão das Correntes":"Martelo dos Céus";case ILUSIONISTA->"Espelho de Bolso";case HIDROMANTE->"Gota do Abismo";case PIROMANTE->"Brasa da Caldeira";default->"Totem da Tempestade";}:part.equals("armor")?switch(c){case GUERREIRO->"Peitoral do Gladiador";case ARQUEIRO->"Botas do Vento";case MAGO->"Capuz Glacial";case NECROMANTE->"Coroa dos Mortos";case AVIARIO->"Manto das Alturas";default->"Manto da Tempestade";}:part.equals("ammo")?"Flechas do Caçador":part.equals("normal_arrow")?"Flecha de Infinidade":"Provisões de "+c.label();
         stack.set(DataComponents.CUSTOM_NAME,Component.literal(name+" • "+stageName(stage)).withStyle(stage==3?ChatFormatting.LIGHT_PURPLE:stage==2?ChatFormatting.AQUA:ChatFormatting.WHITE));
         var lore=new ArrayList<Component>();
@@ -119,7 +121,7 @@ public final class ClassEquipment {
             lore.add(Component.literal("Vinculado: retorna após a morte; efeito recupera em 60 s."));
             if(part.equals("weapon")){
                 lore.add(Component.literal(ClassRelics.effect(c)));
-                lore.add(Component.literal("Efeito do item: tecla configurável; 10 MP, recarga "+(40-stage*5)+" s."));
+                lore.add(Component.literal("Botão direito: 10 MP, recarga "+(40-stage*5)+" s."));
                 stack.set(DataComponents.USE_COOLDOWN,new UseCooldown(.05f,Optional.of(ResourceLocation.fromNamespaceAndPath("oxyrpg","class_item_"+c.name().toLowerCase(Locale.ROOT)))));stack.set(DataComponents.UNBREAKABLE,Unit.INSTANCE);stack.set(DataComponents.DAMAGE_RESISTANT,new DamageResistant(net.minecraft.tags.DamageTypeTags.IS_FIRE));
                 if(c==RpgClass.GUERREIRO){lore.add(Component.literal("Dano do kit +"+(stage*5)+"%; Corte Circular ganha alcance."));if(stage>=2)enchant(p,stack,Enchantments.SHARPNESS,stage==2?2:4);if(stage==3)enchant(p,stack,Enchantments.LOOTING,2);}
                 if(c==RpgClass.ARQUEIRO){if(stage>=2){enchant(p,stack,Enchantments.POWER,stage==2?2:4);enchant(p,stack,Enchantments.PUNCH,1);}if(stage==3)enchant(p,stack,Enchantments.INFINITY,1);lore.add(Component.literal("Flechas e Flecha Espectral: dano +"+(stage*5)+"%."));if(stage==3)lore.add(Component.literal("Infinidade funciona com flechas normais; especiais são consumidas."));}
@@ -147,7 +149,7 @@ public final class ClassEquipment {
         if(c==RpgClass.GUERREIRO||c==RpgClass.AVIARIO||c==RpgClass.ARQUEIRO&&event.getSource().getDirectEntity() instanceof net.minecraft.world.entity.projectile.AbstractArrow)event.setNewDamage(event.getNewDamage()*(1+grade*.05f));
     }
     public static void tick(EntityTickEvent.Post event){
-        if(!(event.getEntity() instanceof ServerPlayer p)||!p.isAlive()||p.tickCount%20!=0)return;var real=REAL.get(p.getUUID());if(real==null||real.rpgClass()==RpgClass.NONE)return;progress(p,real);
+        if(!(event.getEntity() instanceof ServerPlayer p)||!p.isAlive()||p.tickCount%20!=0)return;var real=REAL.get(p.getUUID());if(real==null)return;if(real.rpgClass()==RpgClass.NONE&&!RpgDebug.equipmentOverride(p))return;progress(p,real);
         var boots=p.getItemBySlot(EquipmentSlot.FEET);if(real.rpgClass()==RpgClass.ARQUEIRO&&gear(boots)&&allowed(p,boots)&&tag(boots).getStringOr("part","").equals("armor")&&!p.onGround()&&p.getDeltaMovement().y<-.05&&!p.isCreative())p.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING,40,0,false,false));
     }
     public static void request(ServerPlayer p){if(RpgDebug.testing(p)){var choice=RpgAbilities.profile(p).rpgClass();for(int i=0;i<36;i++){var item=p.getInventory().getItem(i);var id=tag(item);if(gear(item)&&id.getIntOr("class",0)==choice.ordinal()&&id.getStringOr("part","").equals("weapon")){p.sendSystemMessage(Component.literal("[Oxy RPG] Seu item de teste já está no inventário."));return;}}var stack=build(p,choice,3,"weapon",new ItemStack(base(choice,3,"weapon")));insert(p,stack);if(!stack.isEmpty())p.sendSystemMessage(Component.literal("[Oxy RPG] Abra um espaço e solicite o kit novamente."));else{p.getInventory().setChanged();p.inventoryMenu.broadcastFullState();p.sendSystemMessage(Component.literal("[Oxy RPG] Item de teste recebido. Continua exclusivo dessa classe."));}return;}var real=REAL.get(p.getUUID());if(real!=null&&real.rpgClass()!=RpgClass.NONE){progress(p,real);p.sendSystemMessage(Component.literal("[Oxy RPG] Kit "+stageName(stage(p))+". Etapas: nível 20/Arsenal 8; nível 50/Arsenal 16. Itens pendentes aguardam espaço. Provisões não são repetidas."));}}

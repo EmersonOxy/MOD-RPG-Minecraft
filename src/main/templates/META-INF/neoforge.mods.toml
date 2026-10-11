@@ -92,3 +92,17 @@ type="required"
 versionRange="[5.3-alpha-3,5.4)"
 ordering="AFTER"
 side="BOTH"
+
+[[dependencies.${mod_id}]]
+modId="curios"
+type="required"
+versionRange="[13.0.0,14)"
+ordering="AFTER"
+side="BOTH"
+
+[[dependencies.${mod_id}]]
+modId="owo"
+type="required"
+versionRange="[0.12.28,0.13)"
+ordering="AFTER"
+side="BOTH"

@@ -10,6 +10,11 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 public final class RpgNetwork {
     private RpgNetwork() {}
 
+    public record ImpactFx(double x,double y,double z,float radius,int kind) implements CustomPacketPayload {
+        public static final Type<ImpactFx> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath("oxyrpg","impact_fx"));
+        public static final StreamCodec<RegistryFriendlyByteBuf,ImpactFx> CODEC=StreamCodec.of((b,v)->{b.writeDouble(v.x);b.writeDouble(v.y);b.writeDouble(v.z);b.writeFloat(v.radius);b.writeVarInt(v.kind);},b->new ImpactFx(b.readDouble(),b.readDouble(),b.readDouble(),b.readFloat(),b.readVarInt()));
+        @Override public Type<ImpactFx> type(){return TYPE;}
+    }
     public record SpecialState(int phase,int ticks,float heat,int overheated,boolean waterwalk) implements CustomPacketPayload {
         public static final Type<SpecialState> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath("oxyrpg","special"));
         public static final StreamCodec<RegistryFriendlyByteBuf,SpecialState> CODEC=StreamCodec.of((b,v)->{b.writeVarInt(v.phase);b.writeVarInt(v.ticks);b.writeFloat(v.heat);b.writeVarInt(v.overheated);b.writeBoolean(v.waterwalk);},b->new SpecialState(b.readVarInt(),b.readVarInt(),b.readFloat(),b.readVarInt(),b.readBoolean()));
@@ -30,10 +35,11 @@ public final class RpgNetwork {
         public static final StreamCodec<RegistryFriendlyByteBuf,CombatText> CODEC=StreamCodec.of((b,v)->{b.writeVarInt(v.entity);b.writeDouble(v.x);b.writeDouble(v.y);b.writeDouble(v.z);b.writeUtf(v.text,32);b.writeInt(v.color);},b->new CombatText(b.readVarInt(),b.readDouble(),b.readDouble(),b.readDouble(),b.readUtf(32),b.readInt()));
         @Override public Type<CombatText> type(){return TYPE;}
     }
-    public record FlightState(int remaining,int boost,int meteor,boolean fast,float thrust) implements CustomPacketPayload {
+    public record FlightState(int remaining,int boost,int meteor,boolean fast,float thrust,boolean forward,float meteorX,float meteorY,float meteorZ) implements CustomPacketPayload {
         public FlightState(int remaining,int boost,int meteor,boolean fast){this(remaining,boost,meteor,fast,0);}
+        public FlightState(int remaining,int boost,int meteor,boolean fast,float thrust){this(remaining,boost,meteor,fast,thrust,false,0,0,0);}
         public static final Type<FlightState> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath("oxyrpg","flight"));
-        public static final StreamCodec<RegistryFriendlyByteBuf,FlightState> CODEC=StreamCodec.of((b,v)->{b.writeVarInt(v.remaining);b.writeVarInt(v.boost);b.writeVarInt(v.meteor);b.writeBoolean(v.fast);b.writeFloat(v.thrust);},b->new FlightState(b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readBoolean(),b.readFloat()));
+        public static final StreamCodec<RegistryFriendlyByteBuf,FlightState> CODEC=StreamCodec.of((b,v)->{b.writeVarInt(v.remaining);b.writeVarInt(v.boost);b.writeVarInt(v.meteor);b.writeBoolean(v.fast);b.writeFloat(v.thrust);b.writeBoolean(v.forward);b.writeFloat(v.meteorX);b.writeFloat(v.meteorY);b.writeFloat(v.meteorZ);},b->new FlightState(b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readBoolean(),b.readFloat(),b.readBoolean(),b.readFloat(),b.readFloat(),b.readFloat()));
         @Override public Type<FlightState> type(){return TYPE;}
     }
     public record EliteWarning(int entity,double x,double y,double z,float radius,int ticks,int kind) implements CustomPacketPayload {
@@ -141,7 +147,8 @@ public final class RpgNetwork {
         @Override public Type<EliteInfo> type(){return TYPE;}
     }
     public static void register(RegisterPayloadHandlersEvent event) {
-        var registrar = event.registrar("19");
+        var registrar = event.registrar("22");
+        registrar.playToClient(ImpactFx.TYPE,ImpactFx.CODEC);
         registrar.playToClient(SpecialState.TYPE,SpecialState.CODEC);
         registrar.playToClient(ContentState.TYPE,ContentState.CODEC);
         registrar.playToClient(EvasionState.TYPE,EvasionState.CODEC);

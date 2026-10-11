@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "oxyrpg:mana_potion",
+    "minecraft:amethyst_shard"
+  ],
+  "result": {
+    "id": "oxyrpg:greater_mana_potion",
+    "count": 1
+  }
+}

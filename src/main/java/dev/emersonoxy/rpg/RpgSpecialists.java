@@ -41,6 +41,14 @@ public final class RpgSpecialists {
     public static boolean handles(RpgClass c){return c==RpgClass.ILUSIONISTA||c==RpgClass.HIDROMANTE||c==RpgClass.PIROMANTE;}
     public static boolean temporary(Entity e){return e!=null&&e.getPersistentData().getBooleanOr(TEMP,false);}
     public static boolean intangible(Player p){return p.getPersistentData().getLongOr("oxy_eclipse",0)>p.level().getGameTime();}
+    public static boolean disguised(Player p){var c=CASTS.get(p.getUUID());return c!=null&&c.player==p&&c.world==p.level()&&c.profile.rpgClass()==RpgClass.ILUSIONISTA&&c.disguise!=null&&c.disguise.isAlive()&&c.until[0]>p.level().getGameTime();}
+    /** Shared prediction uses ordinary terrain collision, independent of ghost collision shapes. */
+    public static void ghostFlight(Player p,boolean up,boolean down){
+        p.setNoGravity(true);p.fallDistance=0;double height=phaseTier(p)>=3?8:5;
+        var at=p.position();var ground=p.level().clip(new ClipContext(at.add(0,.1,0),at.add(0,-height-.3,0),ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,net.minecraft.world.phys.shapes.CollisionContext.empty()));
+        double vertical=down?-.22:up?.22:0;if(ground.getType()==HitResult.Type.MISS)vertical=Math.min(vertical,-.16);else if(at.y-ground.getLocation().y>=height)vertical=Math.min(vertical,0);
+        var motion=p.getDeltaMovement();double cap=phaseTier(p)>=3?.55:.4,h=motion.horizontalDistance();p.setDeltaMovement(h>cap?new Vec3(motion.x*cap/h,vertical,motion.z*cap/h):new Vec3(motion.x,vertical,motion.z));
+    }
     public static boolean waterWalking(Player p){return !p.isShiftKeyDown()&&p.getPersistentData().getLongOr("oxy_waterwalk",0)>p.level().getGameTime();}
     public static int phaseTier(Player p){return p.getPersistentData().getIntOr("oxy_phase_tier",0);}
     public static boolean extra(ServerPlayer p,int slot){var c=CASTS.get(p.getUUID());if(c==null||c.profile.rpgClass()!=RpgClass.PIROMANTE)return false;return slot==0&&!c.fireworks.isEmpty()||slot==1&&!c.cores.isEmpty();}
@@ -64,15 +72,15 @@ public final class RpgSpecialists {
         switch(s.rpgClass()){
             case ILUSIONISTA -> {
                 if(slot==0){
-                    discard(c.copies);if(c.disguise!=null)c.disguise.discard();var target=AbilityAim.target(p);
+                    discard(c.copies);if(c.disguise!=null){OWNERS.remove(c.disguise.getUUID());c.disguise.discard();}var target=AbilityAim.target(p);
                     int count=2+(s.hasSkill(4)?1:0)+(s.hasSkill(6)?1:0);
                     for(int i=0;i<count;i++){var mob=spawn(c,target.getType(),p.position().add(Math.cos(i*6.28/count)*2,0,Math.sin(i*6.28/count)*2));if(mob!=null){mob.setHealth(Math.min(mob.getMaxHealth(),s.hasSkill(2)?6:3));c.copies.add(mob);}}
-                    c.disguise=spawn(c,target.getType(),p.position());if(c.disguise!=null){c.disguise.setInvulnerable(true);c.disguise.setNoGravity(true);c.disguise.noPhysics=true;}
+                    c.disguise=spawn(c,target.getType(),p.position(),true);if(c.disguise!=null){c.disguise.setInvulnerable(true);c.disguise.setNoGravity(true);c.disguise.noPhysics=true;}
                     if(s.hasSkill(5))c.until[0]+=60;
-                    ghost(p,(int)(c.until[0]-now));ClassJourney.advance(p,0,1);
+                    ghost(p,(int)(c.until[0]-now));for(var enemy:near(c,p.position(),32))if(enemy.getTarget()==p)enemy.setTarget(null);ClassJourney.advance(p,0,1);
                 }else if(slot==1){c.levitated=AbilityAim.target(p);effect(c.levitated,MobEffects.LEVITATION,s.abilityDuration(slot)+(s.hasSkill(12)?40:0),0);effect(c.levitated,MobEffects.WEAKNESS,s.abilityDuration(slot),s.mainUnlocked(slot)?1:0);ClassJourney.advance(p,1,1);}
                 else{p.closeContainer();c.safe=p.position();p.getPersistentData().putLong("oxy_eclipse",c.until[2]);p.getPersistentData().putInt("oxy_phase_tier",s.hasSkill(20)?3:s.hasSkill(19)?2:1);ghost(p,(int)(c.until[2]-now));
-                    for(int i=0;i<6;i++){var bat=spawn(c,EntityType.BAT,p.position().add(0,1,0));if(bat!=null){bat.setInvulnerable(true);bat.setNoGravity(true);if(bat instanceof net.minecraft.world.entity.ambient.Bat b)b.setResting(false);bat.noPhysics=true;c.bats.add(bat);}}ClassJourney.advance(p,2,1);
+                    for(int i=0;i<6;i++){var bat=spawn(c,EntityType.BAT,p.position().add(0,1,0),true);if(bat!=null){bat.setInvulnerable(true);bat.setNoGravity(true);if(bat instanceof net.minecraft.world.entity.ambient.Bat b)b.setResting(false);bat.noPhysics=true;c.bats.add(bat);}}ClassJourney.advance(p,2,1);
                 }
             }
             case HIDROMANTE -> {
@@ -93,12 +101,13 @@ public final class RpgSpecialists {
     private static void launchMagma(Cast c,long now){var p=c.player;var shot=new Snowball(c.world,p,new ItemStack(Items.MAGMA_CREAM));shot.setNoGravity(true);shot.getPersistentData().putBoolean("oxy_magma",true);SHOTS.put(shot.getUUID(),new Shot(p,c.profile,now+100));AbilityAim.shoot(shot,p,1.2f);c.world.addFreshEntity(shot);c.nextMagma=now+10;c.until[1]=now+240;heat(c,8);}
     private static List<Mob> near(Cast c,Vec3 at,double radius){return c.world.getEntitiesOfClass(Mob.class,new AABB(at,at).inflate(radius),m->RpgAbilities.attackable(m)&&m.distanceToSqr(at)<=radius*radius);}
     private static void effect(LivingEntity e,net.minecraft.core.Holder<MobEffect> type,int time,int level){e.addEffect(new MobEffectInstance(type,time,level,false,false,true));}
-    private static Mob spawn(Cast c,EntityType<?> type,Vec3 at){
+    private static Mob spawn(Cast c,EntityType<?> type,Vec3 at){return spawn(c,type,at,false);}
+    private static Mob spawn(Cast c,EntityType<?> type,Vec3 at,boolean cosmetic){
         if(type==EntityType.ENDER_DRAGON||type==EntityType.WITHER||type==EntityType.WARDEN||type==EntityType.PLAYER)return null;
         var entity=type.create(c.world,EntitySpawnReason.TRIGGERED);if(!(entity instanceof Mob mob))return null;
         if(mob.getBbWidth()>3||mob.getBbHeight()>4)return null;
         mob.setPos(at);if(!c.world.noCollision(mob))return null;
-        mob.setNoAi(true);mob.setPersistenceRequired();mob.getPersistentData().putBoolean(TEMP,true);OWNERS.put(mob.getUUID(),c.player);c.world.addFreshEntity(mob);return mob;
+        mob.setNoAi(true);mob.setPersistenceRequired();mob.getPersistentData().putBoolean(TEMP,true);mob.getPersistentData().putBoolean("oxy_cosmetic",cosmetic);OWNERS.put(mob.getUUID(),c.player);c.world.addFreshEntity(mob);return mob;
     }
     private static void ghost(ServerPlayer p,int ticks){PacketDistributor.sendToPlayersTrackingEntityAndSelf(p,new RpgNetwork.Ghost(p.getId(),ticks));}
     public static int remaining(ServerPlayer p,int slot){var c=CASTS.get(p.getUUID());return c==null?0:(int)Math.max(0,c.until[slot]-p.level().getGameTime());}
@@ -108,6 +117,7 @@ public final class RpgSpecialists {
     private static void hit(Cast c,Mob mob,float damage){String name=c.profile.rpgClass()==RpgClass.PIROMANTE?"ember":c.profile.rpgClass()==RpgClass.HIDROMANTE?"pressure":"illusion";var key=net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.DAMAGE_TYPE,net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("oxyrpg",name));var type=c.world.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.DAMAGE_TYPE).getOrThrow(key);mob.hurtServer(c.world,new net.minecraft.world.damagesource.DamageSource(type,null,c.player),power(c,damage));}
     private static void explosion(Cast c,Vec3 at,double radius,float damage,boolean launch){
         for(var mob:near(c,at,radius)){if(!c.world.clip(new ClipContext(at.add(0,.2,0),mob.getEyePosition(),ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,c.player)).getType().equals(HitResult.Type.MISS))continue;hit(c,mob,damage);if(launch)mob.push(0,c.profile.hasSkill(5)?.65:.3,0);mob.igniteForSeconds(3);}
+        SkillEffects.impact(c.world,at,radius,1);
         c.world.sendParticles(ParticleTypes.EXPLOSION,at.x,at.y+.5,at.z,3,.3,.3,.3,0);
         c.world.playSound(null,BlockPos.containing(at),net.minecraft.sounds.SoundEvents.GENERIC_EXPLODE.value(),net.minecraft.sounds.SoundSource.PLAYERS,.55f,1.3f);
     }
@@ -118,12 +128,12 @@ public final class RpgSpecialists {
     }
     public static void projectile(net.neoforged.neoforge.event.entity.ProjectileImpactEvent e){
         var shot=e.getEntity();var data=SHOTS.remove(shot.getUUID());if(data==null)return;
-        var c=CASTS.get(data.player().getUUID());if(c!=null&&c.world==shot.level()){int max=c.profile.hasSkill(11)?6:3;if(c.cores.size()>=max)c.cores.remove(0);UUID target=e.getRayTraceResult() instanceof EntityHitResult hit&&hit.getEntity() instanceof Mob mob&&RpgAbilities.attackable(mob)?mob.getUUID():null;var point=e.getRayTraceResult().getLocation();c.cores.add(new Core(point,target,c.world.getGameTime()+240));if(target!=null){var mob=(Mob)c.world.getEntity(target);hit(c,mob,2);mob.igniteForSeconds(c.profile.hasSkill(9)?5:3);}sync(c.player);}
+        var c=CASTS.get(data.player().getUUID());if(c!=null&&c.world==shot.level()){int max=c.profile.hasSkill(11)?6:3;if(c.cores.size()>=max)c.cores.remove(0);UUID target=e.getRayTraceResult() instanceof EntityHitResult hit&&hit.getEntity() instanceof Mob mob&&RpgAbilities.attackable(mob)?mob.getUUID():null;var point=e.getRayTraceResult().getLocation();c.cores.add(new Core(point,target,c.world.getGameTime()+240));if(target!=null){var mob=(Mob)c.world.getEntity(target);hit(c,mob,2);mob.igniteForSeconds(c.profile.hasSkill(9)?5:3);}SkillEffects.impact(c.world,point,1.2,1);sync(c.player);}
         shot.discard();e.setCanceled(true);
     }
     public static void tick(EntityTickEvent.Post e){RpgProfiler.run("specialists",()->tickBody(e));}
     private static void tickBody(EntityTickEvent.Post e){
-        if(e.getEntity() instanceof Snowball shot&&SHOTS.containsKey(shot.getUUID())){var data=SHOTS.get(shot.getUUID());if(shot.level().getGameTime()>=data.expires()){SHOTS.remove(shot.getUUID());shot.discard();}else if(shot.level() instanceof ServerLevel world)world.sendParticles(ParticleTypes.FLAME,shot.getX(),shot.getY(),shot.getZ(),2,.02,.02,.02,0);}
+        if(e.getEntity() instanceof Snowball shot&&SHOTS.containsKey(shot.getUUID())){var data=SHOTS.get(shot.getUUID());if(shot.level().getGameTime()>=data.expires()){SHOTS.remove(shot.getUUID());shot.discard();}else if(shot.level() instanceof ServerLevel world&&shot.tickCount%2==0){var v=shot.getDeltaMovement();for(int i=0;i<4;i++){var at=shot.position().subtract(v.scale(i*.2));world.sendParticles(i%2==0?ParticleTypes.FLAME:ParticleTypes.SMALL_FLAME,at.x,at.y,at.z,1,.015,.015,.015,0);}}}
         if(!(e.getEntity() instanceof ServerPlayer p))return;var s=RpgAbilities.profile(p);var c=CASTS.get(p.getUUID());
         if(c!=null&&(!p.isAlive()||c.player!=p||p.isSpectator()||c.world!=p.level()||s.rpgClass()!=c.profile.rpgClass())){clear(p);return;}
         if(s.rpgClass()==RpgClass.HIDROMANTE){
@@ -142,24 +152,24 @@ public final class RpgSpecialists {
         if(c.until[0]>now){
             if(c.disguise!=null){c.disguise.teleportTo(p.getX(),p.getY(),p.getZ());c.disguise.setYRot(p.getYRot());c.disguise.setYHeadRot(p.getYHeadRot());}
             c.copies.removeIf(m->{if(m.isAlive())return false;OWNERS.remove(m.getUUID());return true;});int index=0;for(var copy:c.copies){double angle=now*.025+index++*2;var point=p.position().add(Math.cos(angle)*2,0,Math.sin(angle)*2);var delta=point.subtract(copy.position());copy.move(MoverType.SELF,delta.normalize().scale(Math.min(.2,delta.length())));if(p.tickCount%20==0)for(var mob:near(c,copy.position(),2)){hit(c,mob,c.profile.hasSkill(6)?2:1);break;}}
-            if(p.tickCount%10==0)for(var mob:near(c,p.position(),16))if(mob.getTarget()==p&&!c.copies.isEmpty())mob.setTarget(c.copies.get(p.getRandom().nextInt(c.copies.size())));
-        }else{discard(c.copies);if(c.disguise!=null){c.disguise.discard();c.disguise=null;if(!intangible(p))ghost(p,0);}}
+            for(var mob:near(c,p.position(),32))if(mob.getTarget()==p)mob.setTarget(null);
+        }else{discard(c.copies);if(c.disguise!=null){OWNERS.remove(c.disguise.getUUID());c.disguise.discard();c.disguise=null;if(!intangible(p))ghost(p,0);}}
         if(c.until[1]>now&&c.levitated!=null&&c.levitated.isAlive()&&p.tickCount%20==0){hit(c,c.levitated,c.profile.hasSkill(9)?3:2);if(c.profile.mainUnlocked(1))for(var mob:near(c,c.levitated.position(),c.profile.hasSkill(11)?5:3)){effect(mob,MobEffects.SLOWNESS,30,1);effect(mob,MobEffects.WEAKNESS,30,0);}}
         if(c.until[2]>now){
             p.getPersistentData().putLong("oxy_eclipse",c.until[2]);
             p.getPersistentData().remove("oxy_eclipse");if(c.world.noCollision(p,p.getBoundingBox()))c.safe=p.position();p.getPersistentData().putLong("oxy_eclipse",c.until[2]);
             int i=0;for(var bat:c.bats){double angle=now*.25+i++;bat.teleportTo(p.getX()+Math.cos(angle)*.8,p.getY()+.8+Math.sin(angle*2)*.3,p.getZ()+Math.sin(angle)*.8);}
-            var motion=p.getDeltaMovement();double horizontal=Math.sqrt(motion.x*motion.x+motion.z*motion.z),cap=c.profile.hasSkill(20)?.65:.45;if(horizontal>cap)p.setDeltaMovement(motion.multiply(cap/horizontal,1,cap/horizontal));
+            ghostFlight(p,p.getLastClientInput().jump(),p.isShiftKeyDown());
             Professions.modifier(p,net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED,"eclipse_speed",c.profile.hasSkill(16)?.3:.15,net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-            if(p.tickCount%4==0)c.world.sendParticles(ParticleTypes.SMOKE,p.getX(),p.getY()+1,p.getZ(),4,.5,.6,.5,.01);
+            if(p.tickCount%4==0){for(int ribbon=0;ribbon<2;ribbon++){double angle=now*.16+ribbon*Math.PI;double y=.35+.6*(1+Math.sin(angle*.7));c.world.sendParticles(ParticleTypes.SOUL_FIRE_FLAME,p.getX()+Math.cos(angle)*.7,p.getY()+y,p.getZ()+Math.sin(angle)*.7,1,.02,.02,.02,0);}c.world.sendParticles(ParticleTypes.SMOKE,p.getX(),p.getY()+1,p.getZ(),2,.4,.5,.4,.005);}
             for(var mob:near(c,p.position(),20))if(mob.getTarget()==p)mob.setTarget(null);
         }else if(!c.bats.isEmpty()){finishEclipse(c);}
     }
-    private static void finishEclipse(Cast c){var p=c.player;Professions.modifier(p,net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED,"eclipse_speed",0,net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);p.getPersistentData().remove("oxy_eclipse");p.getPersistentData().remove("oxy_phase_tier");if(!c.world.noCollision(p,p.getBoundingBox()))p.teleportTo(c.safe.x,c.safe.y,c.safe.z);discard(c.bats);ghost(p,c.until[0]>c.world.getGameTime()?(int)(c.until[0]-c.world.getGameTime()):0);}
+    private static void finishEclipse(Cast c){var p=c.player;p.setNoGravity(false);p.fallDistance=0;Professions.modifier(p,net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED,"eclipse_speed",0,net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);p.getPersistentData().remove("oxy_eclipse");p.getPersistentData().remove("oxy_phase_tier");if(!c.world.noCollision(p,p.getBoundingBox()))p.teleportTo(c.safe.x,c.safe.y,c.safe.z);discard(c.bats);ghost(p,c.until[0]>c.world.getGameTime()?(int)(c.until[0]-c.world.getGameTime()):0);}
     private static void jet(Cast c){
         var start=c.player.getEyePosition();var direction=c.jet==null?c.player.getLookAngle():c.jet;double range=c.profile.hasSkill(11)?14:10;var end=c.world.clip(new ClipContext(start,start.add(direction.scale(range)),ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,c.player)).getLocation();
         for(double d=.3;d<start.distanceTo(end);d+=.5){var at=start.add(direction.scale(d));double angle=c.world.getGameTime()*.3+d*2;c.world.sendParticles(ParticleTypes.SPLASH,at.x+Math.cos(angle)*.3,at.y+Math.sin(angle)*.3,at.z,2,.04,.04,.04,0);}
-        boolean counted=false;for(var mob:near(c,start.lerp(end,.5),range/2+2))if(mob.getBoundingBox().inflate(.65).clip(start,end).isPresent()){hit(c,mob,c.profile.mainUnlocked(1)?2.5f:1.5f);mob.push(direction.x*(c.profile.hasSkill(12)?.55:.3),.06,direction.z*(c.profile.hasSkill(12)?.55:.3));counted=true;}if(counted)ClassJourney.advance(c.player,1,1);
+        boolean counted=false;for(var mob:near(c,start.lerp(end,.5),range/2+2))if(mob.getBoundingBox().inflate(.65).clip(start,end).isPresent()){hit(c,mob,c.profile.mainUnlocked(1)?2.5f:1.5f);if(c.player.tickCount%20==0)SkillEffects.impact(c.world,mob.position(),1.4,2);mob.push(direction.x*(c.profile.hasSkill(12)?.55:.3),.06,direction.z*(c.profile.hasSkill(12)?.55:.3));counted=true;}if(counted)ClassJourney.advance(c.player,1,1);
     }
     private static void fireTick(Cast c,long now){
         var p=c.player;
@@ -190,19 +200,19 @@ public final class RpgSpecialists {
         if(e.getSource().getEntity() instanceof ServerPlayer p){var s=RpgAbilities.profile(p);float factor=1;if(s.rpgClass()==RpgClass.ILUSIONISTA&&e.getSource().getDirectEntity()==p)factor=.8f;if(s.rpgClass()==RpgClass.HIDROMANTE)factor=p.level().isRainingAt(p.blockPosition())?(p.level().isThundering()&&s.hasSkill(6)?1.4f:1.2f):p.isInWater()?1:.9f;if(s.rpgClass()==RpgClass.PIROMANTE){var c=CASTS.get(p.getUUID());factor=p.isInWater()? .8f:1+(c==null?0:c.heat*.002f);if(e.getSource().getDirectEntity()==p&&s.hasSkill(9))e.getEntity().igniteForSeconds(3);}if(s.rpgClass()==RpgClass.XAMA&&!p.getMainHandItem().isEmpty()&&e.getSource().getDirectEntity()==p)factor=.9f;e.setNewDamage(e.getNewDamage()*factor);}
     }
     public static void damagePost(LivingDamageEvent.Post e){if(e.getNewDamage()>0&&e.getSource().getEntity() instanceof ServerPlayer p&&RpgAbilities.profile(p).rpgClass()==RpgClass.PIROMANTE&&RpgAbilities.attackable(e.getEntity()))heat(cast(p,RpgAbilities.profile(p)),2);}
-    public static void targeting(LivingChangeTargetEvent e){if(e.getNewAboutToBeSetTarget() instanceof ServerPlayer p&&intangible(p))e.setNewAboutToBeSetTarget(null);}
+    public static void targeting(LivingChangeTargetEvent e){if(e.getNewAboutToBeSetTarget() instanceof ServerPlayer p&&(intangible(p)||disguised(p)))e.setNewAboutToBeSetTarget(null);}
     public static void attack(AttackEntityEvent e){if(intangible(e.getEntity()))e.setCanceled(true);}
     public static void rightItem(PlayerInteractEvent.RightClickItem e){if(intangible(e.getEntity()))e.setCanceled(true);}
     public static void rightBlock(PlayerInteractEvent.RightClickBlock e){if(intangible(e.getEntity()))e.setCanceled(true);}
     public static void interactSpecific(PlayerInteractEvent.EntityInteractSpecific e){if(intangible(e.getEntity()))e.setCanceled(true);}
     public static void interact(PlayerInteractEvent.EntityInteract e){if(intangible(e.getEntity()))e.setCanceled(true);}
     public static void breakBlock(BlockEvent.BreakEvent e){if(intangible(e.getPlayer()))e.setCanceled(true);}
-    public static void join(EntityJoinLevelEvent e){if(!e.getLevel().isClientSide()&&temporary(e.getEntity())&&!OWNERS.containsKey(e.getEntity().getUUID()))e.setCanceled(true);}
+    public static void join(EntityJoinLevelEvent e){if(!e.getLevel().isClientSide()&&e.getEntity() instanceof ServerPlayer p&&!CASTS.containsKey(p.getUUID())&&p.getPersistentData().contains("oxy_eclipse")){p.setNoGravity(false);p.getPersistentData().remove("oxy_eclipse");p.getPersistentData().remove("oxy_phase_tier");}if(!e.getLevel().isClientSide()&&temporary(e.getEntity())&&!OWNERS.containsKey(e.getEntity().getUUID()))e.setCanceled(true);}
     public static void drops(LivingDropsEvent e){if(temporary(e.getEntity()))e.setCanceled(true);}
     public static void experience(LivingExperienceDropEvent e){if(temporary(e.getEntity()))e.setCanceled(true);}
     private static void discard(List<Mob> mobs){for(var m:mobs){OWNERS.remove(m.getUUID());m.discard();}mobs.clear();}
     public static void clear(ServerPlayer p){Professions.modifier(p,net.minecraft.world.entity.ai.attributes.Attributes.JUMP_STRENGTH,"phoenix_jump",0,net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_VALUE);var c=CASTS.remove(p.getUUID());p.getPersistentData().remove("oxy_waterwalk");if(c!=null){finishEclipse(c);discard(c.copies);discard(c.sea);if(c.disguise!=null){OWNERS.remove(c.disguise.getUUID());c.disguise.discard();}ghost(p,0);}p.getPersistentData().remove("oxy_eclipse");p.getPersistentData().remove("oxy_phase_tier");SHOTS.entrySet().removeIf(e->e.getValue().player()==p);}
-    public static void tracking(PlayerEvent.StartTracking e){if(e.getEntity() instanceof ServerPlayer viewer){if(e.getTarget() instanceof ServerPlayer p){var c=CASTS.get(p.getUUID());if(c!=null){int ticks=(int)Math.max(0,Math.max(c.until[0],c.until[2])-p.level().getGameTime());if(ticks>0&&c.profile.rpgClass()==RpgClass.ILUSIONISTA)PacketDistributor.sendToPlayer(viewer,new RpgNetwork.Ghost(p.getId(),ticks));}}else if(temporary(e.getTarget()))PacketDistributor.sendToPlayer(viewer,new RpgNetwork.MobLevel(e.getTarget().getId(),-1));}}
+    public static void tracking(PlayerEvent.StartTracking e){if(e.getEntity() instanceof ServerPlayer viewer){if(e.getTarget() instanceof ServerPlayer p){var c=CASTS.get(p.getUUID());if(c!=null){int ticks=(int)Math.max(0,Math.max(c.until[0],c.until[2])-p.level().getGameTime());if(ticks>0&&c.profile.rpgClass()==RpgClass.ILUSIONISTA)PacketDistributor.sendToPlayer(viewer,new RpgNetwork.Ghost(p.getId(),ticks));}}else if(temporary(e.getTarget()))PacketDistributor.sendToPlayer(viewer,new RpgNetwork.MobLevel(e.getTarget().getId(),e.getTarget().getPersistentData().getBooleanOr("oxy_cosmetic",false)?-2:-1));}}
     public static void logout(PlayerEvent.PlayerLoggedOutEvent e){if(e.getEntity() instanceof ServerPlayer p)clear(p);}
     public static void stop(ServerStoppedEvent e){for(var c:new ArrayList<>(CASTS.values()))clear(c.player);CASTS.clear();SHOTS.clear();OWNERS.clear();}
 }

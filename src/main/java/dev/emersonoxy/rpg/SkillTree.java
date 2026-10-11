@@ -146,9 +146,9 @@ public final class SkillTree {
                 {"Manto de penas","Redução de dano durante a descida +10%.","leather_chestplate"},
                 {"Corpo etéreo","Redução de dano durante a descida +10%.","totem_of_undying"},
                 {"Massa concentrada","Impactos causam +5% de dano.","stone"},
-                {"Queda ofensiva","No ar: prepara impacto menor ao pousar, sem destruir blocos.","anvil"},
+                {"Queda ofensiva","No ar: prepara impacto menor. Voando, avance até atingir um alvo; caindo, mergulhe. Não destrói blocos.","anvil"},
                 {"Peso crescente","Dano do impacto +15%.","iron_block"},
-                {"Impacto Meteoro","No ar: mergulha e explode ao pousar. Altura e velocidade ampliam dano e raio; destrói e arremessa blocos.","magma_block"},
+                {"Impacto Meteoro","No ar: explode ao atingir o solo. Voando, avança na mira e explode ao atingir mobs ou obstáculos. Altura e velocidade ampliam dano e destruição.","magma_block"},
                 {"Cratera ampla","Raio do impacto +1 bloco.","tnt"},
                 {"Núcleo denso","Dano do impacto +20%.","obsidian"},
                 {"Cataclismo","Raio +1 bloco e mais detritos arremessados.","netherite_block"}

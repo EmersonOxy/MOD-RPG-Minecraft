@@ -18,400 +18,400 @@
       "icon": "prismarine_shard",
       "id": 1,
       "title": "Impulso aquático",
-      "x": -15,
-      "y": -91
+      "x": 17,
+      "y": -129
     },
     {
       "description": "Nado mais veloz.",
       "icon": "dolphin_spawn_egg",
       "id": 2,
       "title": "Nado firme",
-      "x": -53,
-      "y": -133
+      "x": 30,
+      "y": -188
     },
     {
       "description": "Nado veloz, respiração e mineração normal na água; chuva fortalece ataques.",
       "icon": "heart_of_the_sea",
       "id": 3,
       "title": "Águaman",
-      "x": -285,
-      "y": -259
+      "x": 28,
+      "y": -369
     },
     {
       "description": "Impulso mais forte.",
       "icon": "prismarine_crystals",
       "id": 4,
       "title": "Correnteza",
-      "x": -484,
-      "y": -311
+      "x": -100,
+      "y": -434
     },
     {
       "description": "Impulso ascendente ampliado.",
       "icon": "breeze_rod",
       "id": 5,
       "title": "Salto das ondas",
-      "x": -290,
-      "y": -311
+      "x": 95,
+      "y": -435
     },
     {
       "description": "Tempestades ampliam o dano; nado ainda mais veloz.",
       "icon": "conduit",
       "id": 6,
       "title": "Senhor da tempestade",
-      "x": -456,
-      "y": -360
+      "x": -42,
+      "y": -513
     },
     {
       "description": "Prepara o canhão.",
       "icon": "water_bucket",
       "id": 7,
       "title": "Pressão crescente",
-      "x": 85,
-      "y": -49
+      "x": 54,
+      "y": 44
     },
     {
       "description": "Jato curto com dano e empurrão.",
       "icon": "blue_dye",
       "id": 8,
       "title": "Jato d’água",
-      "x": 70,
-      "y": -91
+      "x": 102,
+      "y": 81
     },
     {
       "description": "Jato causa mais dano.",
       "icon": "lapis_lazuli",
       "id": 9,
       "title": "Pressão concentrada",
-      "x": 34,
-      "y": -133
+      "x": 153,
+      "y": 113
     },
     {
       "description": "Jato giratório contínuo; submerso cria manifestações marinhas.",
       "icon": "tube_coral",
       "id": 10,
       "title": "Canhão d’água",
-      "x": -80,
-      "y": -259
+      "x": 334,
+      "y": 160
     },
     {
       "description": "Jato alcança mais longe.",
       "icon": "fishing_rod",
       "id": 11,
       "title": "Alcance da maré",
-      "x": -177,
-      "y": -311
+      "x": 439,
+      "y": 73
     },
     {
       "description": "Empurrão mais forte.",
       "icon": "trident",
       "id": 12,
       "title": "Mar revolto",
-      "x": 17,
-      "y": -311
+      "x": 366,
+      "y": 253
     },
     {
       "description": "Mais manifestações marinhas e duração de jato.",
       "icon": "guardian_spawn_egg",
       "id": 13,
       "title": "Abismo vivo",
-      "x": -48,
-      "y": -360
+      "x": 481,
+      "y": 183
     },
     {
       "description": "Prepara o controle da superfície.",
       "icon": "lily_pad",
       "id": 14,
       "title": "Equilíbrio da maré",
-      "x": 92,
-      "y": -49
+      "x": -64,
+      "y": 29
     },
     {
       "description": "Caminha sobre a água por 6 s; agache para mergulhar.",
       "icon": "leather_boots",
       "id": 15,
       "title": "Passo aquático",
-      "x": 90,
-      "y": -91
+      "x": -115,
+      "y": 61
     },
     {
       "description": "Ativação em contato com água cura mais.",
       "icon": "potion",
       "id": 16,
       "title": "Água restauradora",
-      "x": 90,
-      "y": -133
+      "x": -161,
+      "y": 101
     },
     {
       "description": "Caminha sobre a água por 15 s; drena um espaço ao ativar e recupera vida.",
       "icon": "blue_ice",
       "id": 17,
       "title": "Sobre-água",
-      "x": 199,
-      "y": -259
+      "x": -287,
+      "y": 234
     },
     {
       "description": "Espaço drenado maior.",
       "icon": "sponge",
       "id": 18,
       "title": "Bolha ampla",
-      "x": 203,
-      "y": -311
+      "x": -281,
+      "y": 345
     },
     {
       "description": "Caminhada sobre água dura mais.",
       "icon": "clock",
       "id": 19,
       "title": "Maré persistente",
-      "x": 397,
-      "y": -311
+      "x": -401,
+      "y": 192
     },
     {
       "description": "Cura ampliada e limpeza de efeitos negativos.",
       "icon": "sea_lantern",
       "id": 20,
       "title": "Renovação oceânica",
-      "x": 404,
-      "y": -360
+      "x": -421,
+      "y": 297
     },
     {
       "description": "Dano da classe +3%.",
       "icon": "iron_sword",
       "id": 21,
       "title": "Preparação: Águaman",
-      "x": -135,
-      "y": -175
+      "x": 19,
+      "y": -249
     },
     {
       "description": "Dano da classe +3%.",
       "icon": "iron_sword",
       "id": 22,
       "title": "Domínio: Águaman",
-      "x": -171,
-      "y": -217
+      "x": 64,
+      "y": -303
     },
     {
       "description": "Dano da classe +3%.",
       "icon": "iron_sword",
       "id": 23,
       "title": "Potência I",
-      "x": -692,
-      "y": -413
+      "x": -275,
+      "y": -522
     },
     {
       "description": "Duração das habilidades +5%.",
       "icon": "clock",
       "id": 24,
       "title": "Persistência I",
-      "x": -560,
-      "y": -413
+      "x": -149,
+      "y": -571
     },
     {
       "description": "Custo de mana das habilidades -3%.",
       "icon": "lapis_lazuli",
       "id": 25,
       "title": "Eficiência I",
-      "x": -425,
-      "y": -413
+      "x": -15,
+      "y": -590
     },
     {
       "description": "Recarga das habilidades -3%.",
       "icon": "amethyst_shard",
       "id": 26,
       "title": "Recuperação I",
-      "x": -293,
-      "y": -413
+      "x": 120,
+      "y": -578
     },
     {
       "description": "Dano da classe +3%.",
       "icon": "iron_sword",
       "id": 27,
       "title": "Potência II",
-      "x": -727,
-      "y": -472
+      "x": -326,
+      "y": -591
     },
     {
       "description": "Duração das habilidades +5%.",
       "icon": "clock",
       "id": 28,
       "title": "Persistência II",
-      "x": -576,
-      "y": -472
+      "x": -183,
+      "y": -650
     },
     {
       "description": "Custo de mana das habilidades -3%.",
       "icon": "lapis_lazuli",
       "id": 29,
       "title": "Eficiência II",
-      "x": -421,
-      "y": -472
+      "x": -30,
+      "y": -674
     },
     {
       "description": "Recarga das habilidades -3%.",
       "icon": "amethyst_shard",
       "id": 30,
       "title": "Recuperação II",
-      "x": -270,
-      "y": -472
+      "x": 125,
+      "y": -663
     },
     {
       "description": "Dano da classe +3%.",
       "icon": "iron_sword",
       "id": 31,
       "title": "Preparação: Canhão d’água",
-      "x": -31,
-      "y": -175
+      "x": 219,
+      "y": 120
     },
     {
       "description": "Dano da classe +3%.",
       "icon": "iron_sword",
       "id": 32,
       "title": "Domínio: Canhão d’água",
-      "x": -28,
-      "y": -217
+      "x": 257,
+      "y": 173
     },
     {
       "description": "Dano da classe +3%.",
       "icon": "iron_sword",
       "id": 33,
       "title": "Potência I",
-      "x": -193,
-      "y": -413
+      "x": 590,
+      "y": 23
     },
     {
       "description": "Duração das habilidades +5%.",
       "icon": "clock",
       "id": 34,
       "title": "Persistência I",
-      "x": -61,
-      "y": -413
+      "x": 569,
+      "y": 156
     },
     {
       "description": "Custo de mana das habilidades -3%.",
       "icon": "lapis_lazuli",
       "id": 35,
       "title": "Eficiência I",
-      "x": 75,
-      "y": -413
+      "x": 518,
+      "y": 282
     },
     {
       "description": "Recarga das habilidades -3%.",
       "icon": "amethyst_shard",
       "id": 36,
       "title": "Recuperação I",
-      "x": 206,
-      "y": -413
+      "x": 440,
+      "y": 393
     },
     {
       "description": "Dano da classe +3%.",
       "icon": "iron_sword",
       "id": 37,
       "title": "Potência II",
-      "x": -164,
-      "y": -472
+      "x": 671,
+      "y": 72
     },
     {
       "description": "Duração das habilidades +5%.",
       "icon": "clock",
       "id": 38,
       "title": "Persistência II",
-      "x": -13,
-      "y": -472
+      "x": 637,
+      "y": 223
     },
     {
       "description": "Custo de mana das habilidades -3%.",
       "icon": "lapis_lazuli",
       "id": 39,
       "title": "Eficiência II",
-      "x": 141,
-      "y": -472
+      "x": 569,
+      "y": 363
     },
     {
       "description": "Recarga das habilidades -3%.",
       "icon": "amethyst_shard",
       "id": 40,
       "title": "Recuperação II",
-      "x": 292,
-      "y": -472
+      "x": 472,
+      "y": 483
     },
     {
       "description": "Dano da classe +3%.",
       "icon": "iron_sword",
       "id": 41,
       "title": "Preparação: Sobre-água",
-      "x": 83,
-      "y": -175
+      "x": -191,
+      "y": 161
     },
     {
       "description": "Dano da classe +3%.",
       "icon": "iron_sword",
       "id": 42,
       "title": "Domínio: Sobre-água",
-      "x": 163,
-      "y": -217
+      "x": -259,
+      "y": 171
     },
     {
       "description": "Dano da classe +3%.",
       "icon": "iron_sword",
       "id": 43,
       "title": "Potência I",
-      "x": 300,
-      "y": -413
+      "x": -376,
+      "y": 455
     },
     {
       "description": "Duração das habilidades +5%.",
       "icon": "clock",
       "id": 44,
       "title": "Persistência I",
-      "x": 432,
-      "y": -413
+      "x": -470,
+      "y": 357
     },
     {
       "description": "Custo de mana das habilidades -3%.",
       "icon": "lapis_lazuli",
       "id": 45,
       "title": "Eficiência I",
-      "x": 567,
-      "y": -413
+      "x": -539,
+      "y": 240
     },
     {
       "description": "Recarga das habilidades -3%.",
       "icon": "amethyst_shard",
       "id": 46,
       "title": "Recuperação I",
-      "x": 699,
-      "y": -413
+      "x": -579,
+      "y": 111
     },
     {
       "description": "Dano da classe +3%.",
       "icon": "iron_sword",
       "id": 47,
       "title": "Potência II",
-      "x": 339,
-      "y": -472
+      "x": -477,
+      "y": 478
     },
     {
       "description": "Duração das habilidades +5%.",
       "icon": "clock",
       "id": 48,
       "title": "Persistência II",
-      "x": 490,
-      "y": -472
+      "x": -573,
+      "y": 357
     },
     {
       "description": "Custo de mana das habilidades -3%.",
       "icon": "lapis_lazuli",
       "id": 49,
       "title": "Eficiência II",
-      "x": 645,
-      "y": -472
+      "x": -639,
+      "y": 217
     },
     {
       "description": "Recarga das habilidades -3%.",
       "icon": "amethyst_shard",
       "id": 50,
       "title": "Recuperação II",
-      "x": 796,
-      "y": -472
+      "x": -672,
+      "y": 65
     }
   ]
 }

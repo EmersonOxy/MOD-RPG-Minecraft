@@ -114,6 +114,7 @@ public final class OxyRpg {
         NeoForge.EVENT_BUS.addListener(MobLevels::tracking);
         NeoForge.EVENT_BUS.addListener(RpgResources::damage);
         NeoForge.EVENT_BUS.addListener(RpgResources::clonePlayer);
+        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerRespawnEvent e)->{if(e.getEntity() instanceof ServerPlayer p&&!e.isEndConquered()){RpgResources.update(p,RpgAbilities.profile(p));p.setHealth(p.getMaxHealth());}});
         NeoForge.EVENT_BUS.addListener(RpgResources::logout);
         NeoForge.EVENT_BUS.addListener(RpgResources::stop);
         NeoForge.EVENT_BUS.addListener(RpgNecromancer::join);
@@ -161,7 +162,7 @@ public final class OxyRpg {
             case 13 -> action(player,"classe",RpgClass.ILUSIONISTA);
             case 14 -> action(player,"classe",RpgClass.HIDROMANTE);
             case 15 -> action(player,"classe",RpgClass.PIROMANTE);
-            case 16 -> ClassRelics.use(player);
+            case 16 -> {}
             case 1 -> castAbility(player, 0, direction);
             case 5 -> castAbility(player, 1, direction);
             case 6 -> castAbility(player, 2, direction);

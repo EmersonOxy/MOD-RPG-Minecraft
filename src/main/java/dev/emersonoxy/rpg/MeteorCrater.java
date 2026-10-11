@@ -13,13 +13,16 @@ public final class MeteorCrater {
     private static final ArrayDeque<Crater> QUEUE=new ArrayDeque<>();
     private static final class Crater {
         final ServerLevel world;final ServerPlayer owner;final Vec3 center;final List<BlockPos> blocks;final double force;final int limit,maxDebris;int cursor,broken,debris;
-        Crater(ServerPlayer p,List<BlockPos> positions,double force,boolean capstone){world=p.level();owner=p;center=p.position();blocks=positions;this.force=force;limit=Math.min(1800,100+(int)(force*140));maxDebris=Math.min(160,24+(int)(force*(capstone?14:10)));}
+        Crater(ServerPlayer p,Vec3 impactCenter,List<BlockPos> positions,double force,boolean capstone){world=p.level();owner=p;center=impactCenter;blocks=positions;this.force=force;limit=Math.min(1800,100+(int)(force*140));maxDebris=Math.min(160,24+(int)(force*(capstone?14:10)));}
     }
     private MeteorCrater(){}
-    public static void enqueue(ServerPlayer p,double radius,double force,boolean capstone){
-        int r=(int)Math.ceil(radius),depth=Math.min(7,2+(int)(force*.45));var origin=p.blockPosition().below();var positions=new ArrayList<BlockPos>();
-        for(int x=-r;x<=r;x++)for(int z=-r;z<=r;z++)for(int y=0;y>=-depth;y--){double edge=(x*x+z*z)/(radius*radius)+(y*y)/(double)(depth*depth);if(edge<=1)positions.add(origin.offset(x,y,z));}
-        positions.sort(Comparator.comparingDouble(pos->pos.distSqr(origin)));QUEUE.add(new Crater(p,positions,force,capstone));
+    public static void enqueue(ServerPlayer p,double radius,double force,boolean capstone){enqueue(p,p.position(),radius,force,capstone,false);}
+    public static void enqueue(ServerPlayer p,Vec3 center,double radius,double force,boolean capstone,boolean spherical){
+        int r=(int)Math.ceil(radius),depth=Math.min(7,2+(int)(force*.45));var origin=BlockPos.containing(center).offset(0,spherical?0:-1,0);var positions=new ArrayList<BlockPos>();
+        for(int x=-r;x<=r;x++)for(int z=-r;z<=r;z++)for(int y=spherical?r:0;y>=-(spherical?r:depth);y--){
+            double edge=(x*x+z*z)/(radius*radius)+(y*y)/(spherical?radius*radius:(double)(depth*depth));if(edge<=1)positions.add(origin.offset(x,y,z));
+        }
+        positions.sort(Comparator.comparingDouble(pos->pos.distSqr(origin)));QUEUE.add(new Crater(p,center,positions,force,capstone));
     }
     public static void tick(ServerTickEvent.Post event){RpgProfiler.run("crater",()->tickBody(event));}
     private static void tickBody(ServerTickEvent.Post event){

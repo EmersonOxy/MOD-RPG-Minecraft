@@ -23,6 +23,7 @@ public final class CombatFeedback {
     public static void damage(LivingDamageEvent.Post event){
         var target=event.getEntity();var source=event.getSource();var p=RpgNecromancer.owner(source);
         if(target instanceof ServerPlayer victim&&event.getBlockedDamage()>0&&RpgAbilities.profile(victim).rpgClass()==RpgClass.GUERREIRO)ClassJourney.advance(victim,2,1);
+        if(target instanceof ServerPlayer victim&&source.getEntity() instanceof net.minecraft.world.entity.Mob mob){if(CombatChances.take(source,target)&&event.getNewDamage()>0)CombatFeedback.text(victim,mob,"Crítico!",0xFF8B68);return;}
         if(p==null||target==p||RpgNecromancer.isSummon(target))return;
         boolean blocked=event.getNewDamage()<=0&&event.getBlockedDamage()>0;
         if(!blocked&&event.getNewDamage()<=0)return;

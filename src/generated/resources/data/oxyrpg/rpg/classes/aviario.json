@@ -126,7 +126,7 @@
       "y": 12
     },
     {
-      "description": "No ar: prepara impacto menor ao pousar, sem destruir blocos.",
+      "description": "No ar: prepara impacto menor. Voando, avance até atingir um alvo; caindo, mergulhe. Não destrói blocos.",
       "icon": "anvil",
       "id": 15,
       "title": "Queda ofensiva",
@@ -142,7 +142,7 @@
       "y": -36
     },
     {
-      "description": "No ar: mergulha e explode ao pousar. Altura e velocidade ampliam dano e raio; destrói e arremessa blocos.",
+      "description": "No ar: explode ao atingir o solo. Voando, avança na mira e explode ao atingir mobs ou obstáculos. Altura e velocidade ampliam dano e destruição.",
       "icon": "magma_block",
       "id": 17,
       "title": "Impacto Meteoro",

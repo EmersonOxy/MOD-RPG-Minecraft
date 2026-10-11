@@ -69,6 +69,11 @@ public final class RpgResources {
         };
     }
     public static float currentMana(ServerPlayer p){return pool(p).mana;}
+    public static boolean manaMissing(ServerPlayer p){var a=pool(p);return a.mana<maximum(p,a.profile);}
+    public static float restoreMana(ServerPlayer p,int amount){
+        var a=pool(p);float before=a.mana;a.mana=Math.min(maximum(p,a.profile),a.mana+Math.max(0,amount));
+        save(p);sync(p);return Math.max(0,a.mana-before);
+    }
     public static boolean affordable(ServerPlayer p,int cost){return RpgDebug.unlimited(p)||pool(p).mana>=cost;}
     public static void spend(ServerPlayer p,int cost){
         var a=pool(p);if(!RpgDebug.unlimited(p)){a.mana=Math.max(0,a.mana-cost);if(cost>0)a.cast=now(p);save(p);}sync(p);
@@ -108,7 +113,7 @@ public final class RpgResources {
     }
     public static void reset(ServerPlayer p){var a=pool(p);a.mana=100;a.cast=0;save(p);}
     private static int maximum(ServerPlayer p,RpgProfile profile){return RpgDebug.attributes(p,profile.attributes()).maxMana()+ClassEquipment.manaBonus(p);}
-    public static void clonePlayer(PlayerEvent.Clone event){if(event.getEntity() instanceof ServerPlayer p){var a=RpgDebug.testing(p)?TEST_POOLS.get(p.getUUID()):POOLS.get(p.getUUID());if(a!=null){update(p,a.profile);if(event.isWasDeath()){a.mana=maximum(p,a.profile);a.cast=0;}sync(p);}}}
+    public static void clonePlayer(PlayerEvent.Clone event){if(event.getEntity() instanceof ServerPlayer p){var a=RpgDebug.testing(p)?TEST_POOLS.get(p.getUUID()):POOLS.get(p.getUUID());if(a!=null){update(p,a.profile);if(event.isWasDeath()){a.mana=maximum(p,a.profile);a.cast=0;p.setHealth(p.getMaxHealth());}sync(p);}}}
     public static void logout(PlayerEvent.PlayerLoggedOutEvent event){if(event.getEntity() instanceof ServerPlayer p){save(p);POOLS.remove(p.getUUID());TEST_POOLS.remove(p.getUUID());}}
     public static void stop(ServerStoppedEvent event){POOLS.clear();TEST_POOLS.clear();}
 }

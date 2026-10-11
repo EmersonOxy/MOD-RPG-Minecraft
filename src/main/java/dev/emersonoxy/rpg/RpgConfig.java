@@ -7,12 +7,13 @@ import net.neoforged.fml.ModContainer;
 /** Authoritative settings are SERVER configs, synchronized by NeoForge. */
 public final class RpgConfig {
     public static final ModConfigSpec SPEC;
-    public static final ModConfigSpec.DoubleValue MISS,CRITICAL,CRITICAL_DAMAGE,PLAYER_DAMAGE,MOB_HEALTH,MOB_DAMAGE,ELITE_HEALTH,ELITE_DAMAGE,ELITE_CHANCE,MANA_COST,COOLDOWN,VILLAGE_LOOT;
+    public static final ModConfigSpec.DoubleValue MISS,CRITICAL,CRITICAL_DAMAGE,ENEMY_MISS,ENEMY_CRITICAL,ENEMY_CRITICAL_DAMAGE,PLAYER_DAMAGE,MOB_HEALTH,MOB_DAMAGE,ELITE_HEALTH,ELITE_DAMAGE,ELITE_CHANCE,MANA_COST,COOLDOWN,VILLAGE_LOOT;
     public static final ModConfigSpec.IntValue DODGE_RECHARGE,DODGE_SECOND,DODGE_THIRD,PARRY_WINDOW;
     public static final ModConfigSpec.BooleanValue PROFILING;
     static {
         var b=new ModConfigSpec.Builder();
         b.push("combat");
+        ENEMY_MISS=decimal(b,"enemyMissChance",.05,0,1);ENEMY_CRITICAL=decimal(b,"enemyCriticalChance",.10,0,1);ENEMY_CRITICAL_DAMAGE=decimal(b,"enemyCriticalDamage",1.5,1,10);
         MISS=decimal(b,"missChance",.05,0,1);CRITICAL=decimal(b,"criticalChance",.10,0,1);CRITICAL_DAMAGE=decimal(b,"criticalDamage",1.5,1,10);PLAYER_DAMAGE=decimal(b,"playerDamageMultiplier",1,.1,10);PARRY_WINDOW=integer(b,"parryWindowTicks",6,1,20);b.pop();
         b.push("evasion");DODGE_RECHARGE=integer(b,"rechargeSeconds",6,1,60);DODGE_SECOND=integer(b,"secondChargeLevel",25,1,100);DODGE_THIRD=integer(b,"thirdChargeLevel",50,1,100);b.pop();
         b.push("difficulty");MOB_HEALTH=decimal(b,"mobHealthMultiplier",1,.1,20);MOB_DAMAGE=decimal(b,"mobDamageMultiplier",1,.1,20);ELITE_HEALTH=decimal(b,"eliteHealthMultiplier",1,.1,20);ELITE_DAMAGE=decimal(b,"eliteDamageMultiplier",1,.1,20);ELITE_CHANCE=decimal(b,"eliteChance",.05,0,1);b.pop();

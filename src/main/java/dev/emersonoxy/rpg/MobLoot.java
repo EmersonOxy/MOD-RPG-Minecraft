@@ -25,6 +25,7 @@ public final class MobLoot {
             int count=item==Items.DIAMOND||item==Items.NETHERITE_SCRAP?1:1+level/35+(elite?1:0);
             drop(mob,new ItemStack(item,count));
         }
+        if(mob.getRandom().nextFloat()<(elite?.20f:.06f))drop(mob,new ItemStack(level>=60?RpgItems.SUPERIOR_MANA_POTION.get():level>=25?RpgItems.GREATER_MANA_POTION.get():RpgItems.MANA_POTION.get()));
         if(elite)drop(mob,new ItemStack(level<40?Items.IRON_INGOT:Items.EMERALD,2+level/25));
     }
     public static void drops(LivingDropsEvent event){

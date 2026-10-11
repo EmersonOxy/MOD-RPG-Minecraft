@@ -11,7 +11,7 @@ import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 /** Cosmetic focus. It never changes existing class weapons or their combat values. */
-public final class AnimatedSigilItem extends Item implements GeoItem {
+public final class AnimatedSigilItem extends Item implements GeoItem,top.theillusivec4.curios.api.type.capability.ICurioItem {
     private final AnimatableInstanceCache cache=GeckoLibUtil.createInstanceCache(this);
     private static final RawAnimation IDLE=RawAnimation.begin().thenLoop("animation.sigil.idle");
     public AnimatedSigilItem(Properties properties){super(properties);}

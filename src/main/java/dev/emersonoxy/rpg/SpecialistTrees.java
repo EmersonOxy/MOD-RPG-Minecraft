@@ -19,12 +19,12 @@ final class SpecialistTrees {
             {"Desorientação","Controle dura mais tempo.","spider_eye"},
             {"Gravidade falsa","Alvos controlados ficam mais vulneráveis.","anvil"},
             {"Fuga nas sombras","Prepara a forma de enxame.","black_wool"},
-            {"Enxame fugaz","Forma intangível por 3 s, sem ataques ou interação.","bat_spawn_egg"},
+            {"Enxame fugaz","Forma espectral por 3 s; voo baixo e passagem por blocos comuns.","bat_spawn_egg"},
             {"Asas noturnas","Enxame se move mais rapidamente.","feather"},
-            {"Corpo de Eclipse","Enxame intangível por 6 s; atravessa obstáculos leves.","crying_obsidian"},
+            {"Corpo de Eclipse","Forma espectral por 6 s; Espaço sobe, Shift desce.","crying_obsidian"},
             {"Noite prolongada","Enxame +2 s.","clock"},
             {"Entre frestas","Pode atravessar portas, cercas e grades.","iron_bars"},
-            {"Eclipse total","Atravessa vidro e ganha mais velocidade.","tinted_glass"}
+            {"Eclipse total","Voo até 8 blocos do terreno e movimento mais rápido.","tinted_glass"}
         };
         case HIDROMANTE -> new String[][]{
             {"Filho das marés","Respiração aquática e trabalho submerso; vulnerável ao fogo fora da água.","nautilus_shell"},

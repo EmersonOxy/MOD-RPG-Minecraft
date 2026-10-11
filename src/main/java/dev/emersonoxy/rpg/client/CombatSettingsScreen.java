@@ -17,7 +17,7 @@ public final class CombatSettingsScreen extends Screen {
         toggle(54,"Confirmação na mira",CombatOptions.marker,()->CombatOptions.marker=!CombatOptions.marker);
         toggle(78,"Som de acerto",CombatOptions.sound,()->CombatOptions.sound=!CombatOptions.sound);
         toggle(102,"Agrupar ataques rápidos",CombatOptions.group,()->CombatOptions.group=!CombatOptions.group);
-        addRenderableWidget(new AbstractSliderButton(left+12,top+126,w-24,20,Component.empty(),CombatOptions.size-.6){
+        addRenderableWidget(new RpgSlider(left+12,top+126,w-24,20,Component.empty(),CombatOptions.size-.6){
             {updateMessage();}
             @Override protected void updateMessage(){setMessage(Component.literal("Tamanho do dano: "+Math.round(CombatOptions.size*100)+"%"));}
             @Override protected void applyValue(){CombatOptions.size=.6+value;}

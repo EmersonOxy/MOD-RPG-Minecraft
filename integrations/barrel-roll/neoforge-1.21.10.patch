@@ -1,0 +1,490 @@
+diff --git a/PORT_1_21_10.md b/PORT_1_21_10.md
+new file mode 100644
+index 0000000..25598d7
+--- /dev/null
++++ b/PORT_1_21_10.md
+@@ -0,0 +1,15 @@
++# Port local para Minecraft 1.21.10 / NeoForge 21.10.64
++
++Base: https://github.com/aspctt/do-a-barrel-roll-neoforge (Do Another Barrel Roll), derivado de Do a Barrel Roll de enjarai. Esta adaptação não é uma versão oficial dos autores. Licença GPL-3.0-only preservada em LICENSE.
++
++Compilar no Windows: `build-windows.bat`. Gera o JAR e o sources JAR em `versions/1.21.10/build/libs`. Requer JDK 21; o script usa o runtime instalado pelo SKlauncher. A biblioteca opcional YACL 3.8.2+1.21.10-neoforge oferece a tela de configurações.
++
++Adapta APIs de entrada, categorias de teclas, GUI com matrizes 2D, estados de renderização do jogador, debug e envio de pacotes ao cliente 1.21.10. A configuração padrão ativa controles acrobáticos somente durante fall-flying e mantém propulsão extra desligada.
++
++Integração opcional com Oxy RPG: durante a habilidade de voo do Aviário, a propulsão própria deste port não aplica aceleração, mesmo se habilitada nas opções. O boost permanece sob controle do Oxy RPG (mana, recarga e progressão). O Oxy RPG 0.29.0 suspende a câmera de ombro e assistência de mira durante o voo acrobático.
++
++I liga/desliga o controlador. Mouse controla inclinação/rolagem; A/D controlam guinada. Teclas podem ser alteradas em Opções > Controles. Configurações adicionais estão em Mods > Do Another Barrel Roll > Configurar.
++
++Validação: compilação assemble; a validação interativa será feita pelo usuário. Não foram executados testes nem aberto o jogo.
++
++A cópia local do YACL tem apenas o intervalo de NeoForge no metadado corrigido para `[21.10.64,21.11)`, preservando código e recursos. Ajuste reproduzível documentado em `DoAnotherBarrelRoll-1.21.10/artifacts/YACL-METADATA-PATCH.md`.
+diff --git a/build-windows.bat b/build-windows.bat
+new file mode 100644
+index 0000000..0d7a0f9
+--- /dev/null
++++ b/build-windows.bat
+@@ -0,0 +1,11 @@
++@echo off
++setlocal
++set "JAVA_HOME=%APPDATA%\.sklauncher\runtime\java-runtime-delta\windows-x64\java-runtime-delta"
++set "PATH=%JAVA_HOME%\bin;%PATH%"
++set "TEMP=%ProgramData%\OxyRPG\temp"
++set "TMP=%TEMP%"
++set "GRADLE_USER_HOME=%ProgramData%\OxyRPG\gradle-home"
++if not exist "%TEMP%" mkdir "%TEMP%"
++set "JAVA_TOOL_OPTIONS=-Djdk.net.unixdomain.tmpdir=%TEMP% -Djava.io.tmpdir=%TEMP%"
++call "%~dp0gradlew.bat" -p "%~dp0." :1.21.10:assemble --no-daemon --no-configuration-cache --max-workers=2 %*
++exit /b %ERRORLEVEL%
+diff --git a/build.gradle.kts b/build.gradle.kts
+index ce1c494..140c31d 100644
+--- a/build.gradle.kts
++++ b/build.gradle.kts
+@@ -113,7 +113,7 @@ val iconField = if (versionAtLeast("26.2")) "iconFile" else "logoFile"
+ 
+ // The debug screen became a registry of entries in 1.21.11. Up to 1.21.10 the roll is appended to the
+ // vanilla facing line from a game bus event instead, and the entry class has no supertype to implement.
+-if (!versionAtLeast("1.21.11")) {
++if (!versionAtLeast("1.21.9")) {
+     sourceSets.main.get().java.exclude("**/render/RollDebugEntry.java")
+ }
+ 
+diff --git a/settings.gradle.kts b/settings.gradle.kts
+index 527f2e2..735c2b5 100644
+--- a/settings.gradle.kts
++++ b/settings.gradle.kts
+@@ -16,7 +16,7 @@ stonecutter {
+         // One target per API band. 26.1 covers the whole 26.1.x line, so 26.1, 26.1.1 and 26.1.2 all
+         // load the same jar; the Minecraft version a target actually builds against is declared in its
+         // own versions/<target>/gradle.properties.
+-        versions("1.21.1", "1.21.11", "26.1", "26.2", "26.3")
++        versions("1.21.10", "1.21.1", "1.21.11", "26.1", "26.2", "26.3")
+         vcsVersion = "1.21.1"
+     }
+ }
+diff --git a/src/main/java/nl/enjarai/doabarrelroll/DoABarrelRollNeoForge.java b/src/main/java/nl/enjarai/doabarrelroll/DoABarrelRollNeoForge.java
+index 400688d..f67595e 100644
+--- a/src/main/java/nl/enjarai/doabarrelroll/DoABarrelRollNeoForge.java
++++ b/src/main/java/nl/enjarai/doabarrelroll/DoABarrelRollNeoForge.java
+@@ -23,7 +23,7 @@ public class DoABarrelRollNeoForge {
+         // which NeoForge has deprecated for removal.
+         modEventBus.register(ModNetworking.class);
+ 
+-        //? if <1.21.11 {
++        //? if <1.21.9 {
+         if (FMLEnvironment.dist == Dist.CLIENT) {
+         //?} else
+         /*if (FMLEnvironment.getDist() == Dist.CLIENT) {*/
+diff --git a/src/main/java/nl/enjarai/doabarrelroll/ModBusEventsClient.java b/src/main/java/nl/enjarai/doabarrelroll/ModBusEventsClient.java
+index 4c5e38c..bf6acd5 100644
+--- a/src/main/java/nl/enjarai/doabarrelroll/ModBusEventsClient.java
++++ b/src/main/java/nl/enjarai/doabarrelroll/ModBusEventsClient.java
+@@ -2,7 +2,7 @@ package nl.enjarai.doabarrelroll;
+ 
+ import net.neoforged.bus.api.SubscribeEvent;
+ import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+-//? if >=1.21.11 {
++//? if >=1.21.9 {
+ /*import net.minecraft.client.gui.components.debug.DebugScreenEntryStatus;
+ import net.minecraft.client.gui.components.debug.DebugScreenProfile;
+ import net.neoforged.neoforge.client.event.RegisterDebugEntriesEvent;
+@@ -14,7 +14,7 @@ public class ModBusEventsClient {
+     public static void registerKeyMappings(RegisterKeyMappingsEvent event) {
+         // A modded category has to be declared from 1.21.11 on, where it is an id rather than a
+         // translation key. Earlier versions take the key straight off the binding.
+-        //? if >=1.21.11 {
++        //? if >=1.21.9 {
+         /*event.registerCategory(ModKeybindings.CATEGORY);
+         event.registerCategory(ModKeybindings.MOVEMENT_CATEGORY);
+         *///?}
+@@ -23,12 +23,12 @@ public class ModBusEventsClient {
+ 
+     // The roll readout on the debug screen. Up to 1.21.10 it is appended to the vanilla facing
+     // line from the game bus instead, in ModEventsClient.
+-    //? if >=1.21.11 {
++    //? if >=1.21.9 {
+     /*@SubscribeEvent
+     public static void registerDebugEntries(RegisterDebugEntriesEvent event) {
+         var id = DoABarrelRoll.id("roll");
+         event.register(id, new RollDebugEntry());
+-        event.includeInProfile(id, DebugScreenProfile.DEFAULT, DebugScreenEntryStatus.IN_OVERLAY);
++        event.includeInProfile(id, DebugScreenProfile.DEFAULT, DebugScreenEntryStatus.IN_F3);
+     }
+     *///?}
+ }
+diff --git a/src/main/java/nl/enjarai/doabarrelroll/ModEventsClient.java b/src/main/java/nl/enjarai/doabarrelroll/ModEventsClient.java
+index 502ff5b..4f199f5 100644
+--- a/src/main/java/nl/enjarai/doabarrelroll/ModEventsClient.java
++++ b/src/main/java/nl/enjarai/doabarrelroll/ModEventsClient.java
+@@ -8,7 +8,7 @@ import net.neoforged.bus.api.SubscribeEvent;
+ import net.neoforged.fml.common.EventBusSubscriber;
+ import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
+ import net.neoforged.neoforge.client.event.ClientTickEvent;
+-//? if <1.21.11
++//? if <1.21.9
+ import net.neoforged.neoforge.client.event.CustomizeGuiOverlayEvent;
+ import net.neoforged.neoforge.client.event.RenderGuiEvent;
+ import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
+@@ -18,7 +18,7 @@ import nl.enjarai.doabarrelroll.api.RollEntity;
+ import nl.enjarai.doabarrelroll.net.ClientNetworking;
+ import nl.enjarai.doabarrelroll.util.StarFoxUtil;
+ 
+-//? if <1.21.11
++//? if <1.21.9
+ import java.util.Locale;
+ 
+ /**
+@@ -105,7 +105,7 @@ public class ModEventsClient {
+         // Recovery for the remaining case: a listener at this same priority
+         // cancels after we have already pushed. The next layer undoes it.
+         if (crosshairPosePushed && !event.getName().equals(VanillaGuiLayers.CROSSHAIR)) {
+-            //? if <1.21.11 {
++            //? if <1.21.9 {
+             event.getGuiGraphics().pose().popPose();
+             //?} else
+             /*event.getGuiGraphics().pose().popMatrix();*/
+@@ -115,7 +115,7 @@ public class ModEventsClient {
+         if (!event.getName().equals(VanillaGuiLayers.CROSSHAIR) || event.isCanceled()) return;
+ 
+         var context = event.getGuiGraphics();
+-        //? if <1.21.11 {
++        //? if <1.21.9 {
+         context.pose().pushPose();
+         //?} else
+         /*context.pose().pushMatrix();*/
+@@ -128,7 +128,7 @@ public class ModEventsClient {
+     public static void afterGuiLayer(RenderGuiLayerEvent.Post event) {
+         if (!event.getName().equals(VanillaGuiLayers.CROSSHAIR) || !crosshairPosePushed) return;
+ 
+-        //? if <1.21.11 {
++        //? if <1.21.9 {
+         event.getGuiGraphics().pose().popPose();
+         //?} else
+         /*event.getGuiGraphics().pose().popMatrix();*/
+@@ -145,7 +145,7 @@ public class ModEventsClient {
+                 context.guiHeight());
+     }
+ 
+-    //? if <1.21.11 {
++    //? if <1.21.9 {
+     /**
+      * Adds roll to the debug screen's facing line, inside the same bracket as yaw
+      * and pitch: "Facing: south (Towards positive Z) (12.3 / -4.5 / 90.0)".
+diff --git a/src/main/java/nl/enjarai/doabarrelroll/ModKeybindings.java b/src/main/java/nl/enjarai/doabarrelroll/ModKeybindings.java
+index c02ff41..733f3bc 100644
+--- a/src/main/java/nl/enjarai/doabarrelroll/ModKeybindings.java
++++ b/src/main/java/nl/enjarai/doabarrelroll/ModKeybindings.java
+@@ -17,7 +17,7 @@ import java.util.List;
+ public class ModKeybindings {
+     // 1.21.11 turned the category from a bare translation key into a registered id, and derives the
+     // label from it as key.category.<namespace>.<path>. Both sets of keys are in the lang files.
+-    //? if <1.21.11 {
++    //? if <1.21.9 {
+     private static final String CATEGORY = "category.do_a_barrel_roll.do_a_barrel_roll";
+     private static final String MOVEMENT_CATEGORY = "category.do_a_barrel_roll.do_a_barrel_roll.movement";
+     //?} else {
+diff --git a/src/main/java/nl/enjarai/doabarrelroll/mixin/client/LivingEntityMixin.java b/src/main/java/nl/enjarai/doabarrelroll/mixin/client/LivingEntityMixin.java
+index c948fc5..136c61f 100644
+--- a/src/main/java/nl/enjarai/doabarrelroll/mixin/client/LivingEntityMixin.java
++++ b/src/main/java/nl/enjarai/doabarrelroll/mixin/client/LivingEntityMixin.java
+@@ -28,7 +28,7 @@ public abstract class LivingEntityMixin extends Entity {
+     // final setDeltaMovement of the fall flying branch, whose argument ends in multiply(0.99, 0.98,
+     // 0.99). It is the only Vec3 setDeltaMovement left in the smaller method, hence the ordinal.
+     @SuppressWarnings("ConstantConditions")
+-    //? if <1.21.11 {
++    //? if <1.21.9 {
+     @ModifyArg(
+             method = "travel",
+             at = @At(
+@@ -50,6 +50,8 @@ public abstract class LivingEntityMixin extends Entity {
+     private Vec3 doABarrelRoll$wrapElytraVelocity(Vec3 original) {
+         if (!((Object) this instanceof LocalPlayer) || !ModConfig.INSTANCE.getEnableThrust()) return original;
+ 
++        if (nl.enjarai.doabarrelroll.util.OxyRpgCompat.skillFlight((LivingEntity)(Object)this)) return original;
++
+         Vec3 rotation = getLookAngle();
+         Vec3 velocity = getDeltaMovement();
+ 
+diff --git a/src/main/java/nl/enjarai/doabarrelroll/mixin/client/LocalPlayerMixin.java b/src/main/java/nl/enjarai/doabarrelroll/mixin/client/LocalPlayerMixin.java
+index 2afd14b..94097eb 100644
+--- a/src/main/java/nl/enjarai/doabarrelroll/mixin/client/LocalPlayerMixin.java
++++ b/src/main/java/nl/enjarai/doabarrelroll/mixin/client/LocalPlayerMixin.java
+@@ -3,7 +3,7 @@ package nl.enjarai.doabarrelroll.mixin.client;
+ import com.mojang.authlib.GameProfile;
+ import net.minecraft.client.multiplayer.ClientLevel;
+ import net.minecraft.client.player.AbstractClientPlayer;
+-//? if <1.21.11 {
++//? if <1.21.9 {
+ import net.minecraft.client.player.Input;
+ //?} else
+ /*import net.minecraft.client.player.ClientInput;*/
+@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+ 
+ @Mixin(LocalPlayer.class)
+ public abstract class LocalPlayerMixin extends AbstractClientPlayer {
+-    //? if <1.21.11 {
++    //? if <1.21.9 {
+     @Shadow public Input input;
+     //?} else
+     /*@Shadow public ClientInput input;*/
+@@ -36,7 +36,7 @@ public abstract class LocalPlayerMixin extends AbstractClientPlayer {
+             MixinHooks.thirdJump = false;
+         }
+ 
+-        //? if <1.21.11 {
++        //? if <1.21.9 {
+         MixinHooks.wasJumping = input.jumping;
+         //?} else
+         /*MixinHooks.wasJumping = input.keyPresses.jump();*/
+diff --git a/src/main/java/nl/enjarai/doabarrelroll/mixin/client/roll/PlayerRendererMixin.java b/src/main/java/nl/enjarai/doabarrelroll/mixin/client/roll/PlayerRendererMixin.java
+index 75c4784..eac3cc1 100644
+--- a/src/main/java/nl/enjarai/doabarrelroll/mixin/client/roll/PlayerRendererMixin.java
++++ b/src/main/java/nl/enjarai/doabarrelroll/mixin/client/roll/PlayerRendererMixin.java
+@@ -1,6 +1,6 @@
+ package nl.enjarai.doabarrelroll.mixin.client.roll;
+ 
+-//? if <1.21.11 {
++//? if <1.21.9 {
+ import com.llamalad7.mixinextras.sugar.Local;
+ import com.mojang.blaze3d.vertex.PoseStack;
+ import com.mojang.math.Axis;
+@@ -19,12 +19,12 @@ import nl.enjarai.doabarrelroll.api.RollEntity;
+ import org.spongepowered.asm.mixin.Mixin;
+ import org.spongepowered.asm.mixin.injection.At;
+ 
+-//? if <1.21.11 {
++//? if <1.21.9 {
+ @Mixin(PlayerRenderer.class)
+ //?} else
+ /*@Mixin(AvatarRenderer.class)*/
+ public abstract class PlayerRendererMixin {
+-    //? if <1.21.11 {
++    //? if <1.21.9 {
+     /**
+      * Replaces the bank vanilla applies to a flying player model, which is derived
+      * from the angle between look and velocity, with the player's actual roll.
+diff --git a/src/main/java/nl/enjarai/doabarrelroll/net/ClientNetworking.java b/src/main/java/nl/enjarai/doabarrelroll/net/ClientNetworking.java
+index 3e06fe1..576d20b 100644
+--- a/src/main/java/nl/enjarai/doabarrelroll/net/ClientNetworking.java
++++ b/src/main/java/nl/enjarai/doabarrelroll/net/ClientNetworking.java
+@@ -1,6 +1,6 @@
+ package nl.enjarai.doabarrelroll.net;
+ 
+-//? if <1.21.11 {
++//? if <1.21.9 {
+ import net.neoforged.neoforge.network.PacketDistributor;
+ //?} else
+ /*import net.neoforged.neoforge.client.network.ClientPacketDistributor;*/
+@@ -25,7 +25,7 @@ public class ClientNetworking {
+             boolean rolling = entity.doABarrelRoll$isRolling();
+             float roll = entity.doABarrelRoll$getRoll();
+ 
+-            //? if <1.21.11 {
++            //? if <1.21.9 {
+             PacketDistributor.sendToServer(new RollSyncC2SPacket(rolling, roll));
+             //?} else
+             /*ClientPacketDistributor.sendToServer(new RollSyncC2SPacket(rolling, roll));*/
+@@ -33,7 +33,7 @@ public class ClientNetworking {
+     }
+ 
+     public static void sendConfigUpdatePacket(ModConfigServer config) {
+-        //? if <1.21.11 {
++        //? if <1.21.9 {
+         PacketDistributor.sendToServer(CONFIG_UPDATE_CLIENT.prepUpdatePacket(config));
+         //?} else
+         /*ClientPacketDistributor.sendToServer(CONFIG_UPDATE_CLIENT.prepUpdatePacket(config));*/
+diff --git a/src/main/java/nl/enjarai/doabarrelroll/render/HorizonLineWidget.java b/src/main/java/nl/enjarai/doabarrelroll/render/HorizonLineWidget.java
+index 5f4d9ee..5fd17eb 100644
+--- a/src/main/java/nl/enjarai/doabarrelroll/render/HorizonLineWidget.java
++++ b/src/main/java/nl/enjarai/doabarrelroll/render/HorizonLineWidget.java
+@@ -1,7 +1,7 @@
+ package nl.enjarai.doabarrelroll.render;
+ 
+ import net.minecraft.client.gui.GuiGraphics;
+-//? if <1.21.11 {
++//? if <1.21.9 {
+ import com.mojang.blaze3d.platform.GlStateManager;
+ import com.mojang.blaze3d.systems.RenderSystem;
+ import net.minecraft.client.renderer.GameRenderer;
+@@ -24,7 +24,7 @@ public class HorizonLineWidget extends RenderHelper {
+ 
+         // From 1.21.11 the inverting blend is carried by the pipeline the pixel is drawn with, so
+         // there is no global blend state to set up and put back here.
+-        //? if <1.21.11 {
++        //? if <1.21.9 {
+         RenderSystem.enableBlend();
+         RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ONE_MINUS_DST_COLOR, GlStateManager.DestFactor.ONE_MINUS_SRC_COLOR, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+         RenderSystem.setShader(GameRenderer::getPositionColorShader);
+@@ -41,7 +41,7 @@ public class HorizonLineWidget extends RenderHelper {
+                     blankPixel(graphics)
+             );
+         }
+-        //? if <1.21.11 {
++        //? if <1.21.9 {
+         RenderSystem.defaultBlendFunc();
+         //?}
+     }
+diff --git a/src/main/java/nl/enjarai/doabarrelroll/render/MomentumCrosshairWidget.java b/src/main/java/nl/enjarai/doabarrelroll/render/MomentumCrosshairWidget.java
+index be8ff23..c9b96a1 100644
+--- a/src/main/java/nl/enjarai/doabarrelroll/render/MomentumCrosshairWidget.java
++++ b/src/main/java/nl/enjarai/doabarrelroll/render/MomentumCrosshairWidget.java
+@@ -1,7 +1,7 @@
+ package nl.enjarai.doabarrelroll.render;
+ 
+ import net.minecraft.client.gui.GuiGraphics;
+-//? if <1.21.11 {
++//? if <1.21.9 {
+ import com.mojang.blaze3d.platform.GlStateManager;
+ import com.mojang.blaze3d.systems.RenderSystem;
+ import net.minecraft.client.renderer.GameRenderer;
+@@ -22,7 +22,7 @@ public class MomentumCrosshairWidget extends RenderHelper {
+ 
+             // From 1.21.11 the inverting blend is carried by the pipeline the pixel is drawn with, so
+             // there is no global blend state to set up and put back here.
+-            //? if <1.21.11 {
++            //? if <1.21.9 {
+             RenderSystem.enableBlend();
+             RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ONE_MINUS_DST_COLOR, GlStateManager.DestFactor.ONE_MINUS_SRC_COLOR, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+             RenderSystem.setShader(GameRenderer::getPositionColorShader);
+@@ -32,14 +32,14 @@ public class MomentumCrosshairWidget extends RenderHelper {
+                     centerX + (int) lineVec.x, centerY + (int) lineVec.y,
+                     blankPixel(graphics)
+             );
+-            //? if <1.21.11 {
++            //? if <1.21.9 {
+             RenderSystem.defaultBlendFunc();
+             //?}
+         }
+ 
+         // change the position of the crosshair, which is rendered up the stack. The GUI transform
+         // became a 2D matrix stack in 1.21.11, so there is no depth argument to pass any more.
+-        //? if <1.21.11 {
++        //? if <1.21.9 {
+         graphics.pose().translate((int) mouseTurnVec.x, (int) mouseTurnVec.y, 0);
+         //?} else
+         /*graphics.pose().translate((int) mouseTurnVec.x, (int) mouseTurnVec.y);*/
+diff --git a/src/main/java/nl/enjarai/doabarrelroll/render/RenderHelper.java b/src/main/java/nl/enjarai/doabarrelroll/render/RenderHelper.java
+index 529ee07..52b2e1c 100644
+--- a/src/main/java/nl/enjarai/doabarrelroll/render/RenderHelper.java
++++ b/src/main/java/nl/enjarai/doabarrelroll/render/RenderHelper.java
+@@ -1,7 +1,7 @@
+ package nl.enjarai.doabarrelroll.render;
+ 
+ import net.minecraft.client.gui.GuiGraphics;
+-//? if <1.21.11 {
++//? if <1.21.9 {
+ import com.mojang.blaze3d.vertex.BufferUploader;
+ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+ import com.mojang.blaze3d.vertex.Tesselator;
+@@ -21,7 +21,7 @@ public class RenderHelper {
+      * than to global state around it.
+      */
+     public static BiConsumer<Integer, Integer> blankPixel(GuiGraphics graphics) {
+-        //? if <1.21.11 {
++        //? if <1.21.9 {
+         return (x, y) -> {
+             int color = 0xffffffff;
+             var matrix = graphics.pose().last().pose();
+diff --git a/src/main/java/nl/enjarai/doabarrelroll/util/OxyRpgCompat.java b/src/main/java/nl/enjarai/doabarrelroll/util/OxyRpgCompat.java
+new file mode 100644
+index 0000000..167b6d1
+--- /dev/null
++++ b/src/main/java/nl/enjarai/doabarrelroll/util/OxyRpgCompat.java
+@@ -0,0 +1,33 @@
++package nl.enjarai.doabarrelroll.util;
++
++import java.lang.reflect.Method;
++import net.minecraft.world.entity.LivingEntity;
++import net.neoforged.fml.ModList;
++import nl.enjarai.doabarrelroll.DoABarrelRoll;
++
++/** The Aviary skill owns paid thrust and its progression speed limits. */
++public final class OxyRpgCompat {
++    private static boolean resolved;
++    private static Method canFly;
++    private OxyRpgCompat() {}
++    public static boolean skillFlight(LivingEntity player) {
++        if (!resolved) {
++            resolved = true;
++            if (ModList.get().isLoaded("oxyrpg")) {
++                try {
++                    canFly = Class.forName("dev.emersonoxy.rpg.RpgAviary")
++                        .getMethod("canFly", LivingEntity.class);
++                } catch (ReflectiveOperationException e) {
++                    DoABarrelRoll.LOGGER.warn("Oxy RPG flight integration unavailable", e);
++                }
++            }
++        }
++        if (canFly == null) return false;
++        try { return Boolean.TRUE.equals(canFly.invoke(null, player)); }
++        catch (ReflectiveOperationException e) {
++            canFly = null;
++            DoABarrelRoll.LOGGER.warn("Oxy RPG flight integration disabled", e);
++            return false;
++        }
++    }
++}
+diff --git a/src/main/java/nl/enjarai/doabarrelroll/util/StarFoxUtil.java b/src/main/java/nl/enjarai/doabarrelroll/util/StarFoxUtil.java
+index 8d2e776..c1c5342 100644
+--- a/src/main/java/nl/enjarai/doabarrelroll/util/StarFoxUtil.java
++++ b/src/main/java/nl/enjarai/doabarrelroll/util/StarFoxUtil.java
+@@ -2,7 +2,7 @@ package nl.enjarai.doabarrelroll.util;
+ 
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.client.gui.GuiGraphics;
+-//? if >=1.21.11
++//? if >=1.21.9
+ /*import net.minecraft.client.renderer.RenderPipelines;*/
+ import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.sounds.SoundEvent;
+@@ -50,7 +50,7 @@ public class StarFoxUtil {
+             int x = scaledWidth / 2 - 75;
+             int y = scaledHeight - 90;
+             int texture = barrelRollTimer % 2 == 0 ? 1 : 2;
+-            //? if <1.21.11 {
++            //? if <1.21.9 {
+             context.blit(texture == 1 ? barrelRollTexture1 : barrelRollTexture2,
+                     x, y, 0, 0, 160, 160, 160, 160);
+             //?} else {
+diff --git a/src/main/java/nl/enjarai/doabarrelroll/util/ToastUtil.java b/src/main/java/nl/enjarai/doabarrelroll/util/ToastUtil.java
+index 590886d..1bdfc38 100644
+--- a/src/main/java/nl/enjarai/doabarrelroll/util/ToastUtil.java
++++ b/src/main/java/nl/enjarai/doabarrelroll/util/ToastUtil.java
+@@ -6,7 +6,7 @@ import net.minecraft.network.chat.Component;
+ 
+ public class ToastUtil {
+     public static void toasty(String key) {
+-        //? if <1.21.11 {
++        //? if <1.21.9 {
+         Minecraft.getInstance().getToasts().addToast(SystemToast.multiline(
+                 Minecraft.getInstance(),
+                 SystemToast.SystemToastId.PERIODIC_NOTIFICATION,
+diff --git a/stonecutter.gradle.kts b/stonecutter.gradle.kts
+index e36bffe..df062b5 100644
+--- a/stonecutter.gradle.kts
++++ b/stonecutter.gradle.kts
+@@ -21,6 +21,7 @@ stonecutter parameters {
+     // `//? if` directive instead, so the difference is visible where it matters.
+     replacements {
+         string(current.parsed >= "1.21.11") {
++            replace("DebugScreenEntryStatus.IN_F3", "DebugScreenEntryStatus.IN_OVERLAY")
+             // ResourceLocation became Identifier. The mod has no type of its own whose name contains
+             // either word, so these patterns cannot collide in either direction.
+             replace("import net.minecraft.resources.ResourceLocation;", "import net.minecraft.resources.Identifier;")
+diff --git a/versions/1.21.10/gradle.properties b/versions/1.21.10/gradle.properties
+new file mode 100644
+index 0000000..fe93efe
+--- /dev/null
++++ b/versions/1.21.10/gradle.properties
+@@ -0,0 +1,11 @@
++minecraft_version=1.21.10
++minecraft_version_range=[1.21.10]
++neo_version=21.10.64
++neo_version_range=[21.10.64,)
++loader_version_range=[4,)
++
++resource_pack_format=69
++resource_pack_format_minor=0
++
++yacl_version=3.8.2+1.21.10-neoforge
++yacl_min_version=3.8.2

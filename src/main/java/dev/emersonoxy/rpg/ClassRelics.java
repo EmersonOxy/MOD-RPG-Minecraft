@@ -29,13 +29,13 @@ public final class ClassRelics {
         case PIROMANTE->"Fagulha Guardada: queima inimigos próximos por 3 s.";
         default->"Escolha uma classe.";
     };}
-    public static void use(ServerPlayer p){
+    public static void use(ServerPlayer p){var stack=p.getMainHandItem();if(!weapon(p,stack))stack=p.getOffhandItem();use(p,stack);}
+    public static void use(ServerPlayer p,ItemStack stack){
         var s=RpgAbilities.profile(p);if(s.rpgClass()==RpgClass.NONE||!p.isAlive()||p.isSpectator())return;
         if(RpgSpecialists.intangible(p)){p.sendSystemMessage(Component.literal("[Oxy RPG] O enxame não pode usar itens."));return;}
-        var stack=p.getMainHandItem();if(!weapon(p,stack))stack=p.getOffhandItem();
-        if(!weapon(p,stack)){p.sendSystemMessage(Component.literal("[Oxy RPG] Segure seu item de classe em uma das mãos."));return;}
+        if(!weapon(p,stack)||recovering(p,stack)){p.sendSystemMessage(Component.literal("[Oxy RPG] Segure seu item de classe em uma das mãos."));return;}
         var d=data(p);long now=p.level().getGameTime(),ready=d.getLongOr(s.rpgClass().name(),0);
-        if(!RpgDebug.unlimited(p)&&ready>now){p.sendSystemMessage(Component.literal("[Oxy RPG] Item em recuperação: "+((ready-now+19)/20)+" s."));return;}
+        if(!RpgDebug.unlimited(p)&&ready>now){Professions.notify(p,"Item em recuperação: "+((ready-now+19)/20)+" s.");return;}
         if(!RpgResources.affordable(p,10)){p.sendSystemMessage(Component.literal("[Oxy RPG] O efeito precisa de 10 MP."));return;}
         RpgResources.spend(p,10);int rank=ClassEquipment.identity(stack).getIntOr("stage",1);int cooldown=(40-rank*5)*20;
         if(!RpgDebug.unlimited(p)){d.putLong(s.rpgClass().name(),now+cooldown);}

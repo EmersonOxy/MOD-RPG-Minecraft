@@ -11,7 +11,7 @@ public final class CameraSettingsScreen extends Screen {
     private final Screen parent;private int left,top,panelWidth,panelHeight;
     public CameraSettingsScreen(Screen parent){super(Component.literal("Câmera Oxy RPG"));this.parent=parent;}
     @Override public void removed(){ShoulderCamera.savePositions();}
-    private static final class PositionSlider extends AbstractSliderButton {
+    private static final class PositionSlider extends RpgSlider {
         private final int axis;
         private final double limit;
         PositionSlider(int x,int y,int width,int axis){

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "oxyrpg:greater_mana_potion",
+    "minecraft:blaze_powder",
+    "minecraft:glowstone_dust"
+  ],
+  "result": {
+    "id": "oxyrpg:superior_mana_potion",
+    "count": 1
+  }
+}

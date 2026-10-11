@@ -9,7 +9,8 @@
     "CreativeEquipmentMixin",
     "CreeperRadiusAccessor",
     "AviaryFlightMixin",
-    "SpecialistCollisionMixin"
+    "SpecialistCollisionMixin",
+    "DisguiseTargetMixin"
   ],
   "client": [
     "ShoulderCameraMixin",
@@ -18,7 +19,11 @@
     "HudGraphicsMixin",
     "HudItemStateMixin",
     "HudItemRendererMixin",
-    "HudOversizedItemMixin"
+    "HudOversizedItemMixin",
+    "RpgButtonThemeMixin",
+    "RpgConfigThemeMixin",
+    "RpgConfigSectionThemeMixin",
+    "RpgSliderThemeMixin"
   ],
   "injectors": {
     "defaultRequire": 1

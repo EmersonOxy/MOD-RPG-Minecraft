@@ -69,6 +69,7 @@ public final class ShoulderCamera {
     public static void reset(){tracked=null;mode=null;lastFrame=0;depth=side=up=amplitude=orientation=0;rendered=bodyVisible=false;collision.reset();}
     public static Pose pose(Entity entity,boolean detached,boolean reverse,float partial){
         var mc=Minecraft.getInstance();load();
+        if(BarrelRollCompat.active()){reset();return null;}
         if(entity!=mc.player||mc.player==null||mc.level==null||mc.player.isSleeping()||mc.player.isPassenger()){reset();return null;}
         var next=mc.options.getCameraType();
         if(tracked!=entity){reset();tracked=entity;mode=next;if(next==CameraType.THIRD_PERSON_FRONT){depth=-4;orientation=180;}}

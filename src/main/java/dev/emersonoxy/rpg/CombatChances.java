@@ -15,7 +15,15 @@ public final class CombatChances {
     private CombatChances(){}
     public static void incoming(LivingIncomingDamageEvent event){
         if(event.isCanceled()||event.getAmount()<=0||RpgAbilities.secondaryHit())return;
-        var source=event.getSource();if(!(source.getEntity() instanceof ServerPlayer p)||event.getEntity()==p)return;
+        var source=event.getSource();
+        if(event.getEntity() instanceof ServerPlayer victim&&source.getEntity() instanceof net.minecraft.world.entity.Mob mob&&!RpgNecromancer.isSummon(mob)&&!RpgSpecialists.temporary(mob)&&(source.is(DamageTypes.MOB_ATTACK)||source.is(DamageTypes.MOB_ATTACK_NO_AGGRO)||source.is(DamageTypeTags.IS_PROJECTILE))){
+            long now=victim.level().getGameTime();HITS.values().removeIf(h->now-h.tick()>2);
+            if(mob.getRandom().nextFloat()<RpgConfig.value(RpgConfig.ENEMY_MISS,.05)){event.setCanceled(true);CombatFeedback.text(victim,mob,"Errou",0x75BFFF);return;}
+            boolean critical=mob.getRandom().nextFloat()<RpgConfig.value(RpgConfig.ENEMY_CRITICAL,.10);
+            if(critical)event.setAmount(event.getAmount()*(float)RpgConfig.value(RpgConfig.ENEMY_CRITICAL_DAMAGE,1.5));
+            HITS.put(source,new Hit(victim.getUUID(),now,critical));return;
+        }
+        if(!(source.getEntity() instanceof ServerPlayer p)||event.getEntity()==p)return;
         if(!source.is(DamageTypes.PLAYER_ATTACK)&&!source.is(DamageTypeTags.IS_PROJECTILE)&&!source.is(DamageTypes.MAGIC)&&!source.is(DamageTypes.INDIRECT_MAGIC)&&!source.is(DamageTypes.LIGHTNING_BOLT))return;
         if(RpgNecromancer.isSummon(event.getEntity()))return;
         long now=p.level().getGameTime();HITS.values().removeIf(h->now-h.tick()>2);

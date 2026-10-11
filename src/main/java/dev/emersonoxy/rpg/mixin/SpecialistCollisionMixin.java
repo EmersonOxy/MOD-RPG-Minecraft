@@ -21,7 +21,7 @@ abstract class SpecialistCollisionMixin {
         if(RpgSpecialists.intangible(p)){
             int tier=RpgSpecialists.phaseTier(p);
             var tag=TagKey.create(net.minecraft.core.registries.Registries.BLOCK,net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("oxyrpg",tier>=3?"phase_glass":tier>=2?"phase_barriers":"phase_light"));
-            if(state.is(tag)){ci.setReturnValue(Shapes.empty());return;}
+            if(state.is(tag)||state.getDestroySpeed(level,pos)>=0&&!state.hasBlockEntity()&&!state.is(net.minecraft.world.level.block.Blocks.NETHER_PORTAL)&&!state.is(net.minecraft.world.level.block.Blocks.END_PORTAL)&&!state.is(net.minecraft.world.level.block.Blocks.END_PORTAL_FRAME)){ci.setReturnValue(Shapes.empty());return;}
         }
         if(RpgSpecialists.waterWalking(p)&&state.getFluidState().is(FluidTags.WATER)&&p.getBoundingBox().minY>=pos.getY()+.85)ci.setReturnValue(Shapes.block());
     }

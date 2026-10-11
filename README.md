@@ -1,3 +1,31 @@
+# Atualização 0.31.0
+
+Minimapa com terreno mais detalhado, configuração com prévia, posição por arraste e espaço reservado para efeitos. [Detalhes](docs/MINIMAPA_031.md).
+
+# Atualização 0.30.0
+
+Confirmação da classe corrigida, três poções de mana consumíveis e Impacto Meteoro na direção do voo. [Detalhes](docs/CORRECOES_030.md).
+
+# Atualização 0.29.0
+
+Integração com voo acrobático do Do Another Barrel Roll adaptado à 1.21.10. [Detalhes](docs/VOO_ACROBATICO_029.md).
+
+# Correção 0.28.2
+
+Rodapé da escolha de classe recebe cliques antes do seletor owo. [Detalhes](docs/CORRECOES_0282.md).
+
+# Correção 0.28.1
+
+Cliques da escolha de classe corrigidos, consulta aos atributos sem classe e tema de botões/sliders em todas as telas do Oxy RPG. [Detalhes](docs/CORRECOES_0281.md).
+
+# Atualização 0.28
+
+owo-lib integrado na escolha de classe, transições suaves e novos efeitos cosméticos. [Detalhes](docs/INTERFACE_EFEITOS_028.md).
+
+# Atualização 0.27
+
+Itens próprios no botão direito, voo espectral, disfarce contra IA, erro/crítico dos mobs e integração Curios. Detalhes: [Correções 0.27](docs/CORRECOES_027.md).
+
 # Oxy RPG 0.26.0
 
 Minecraft **1.21.10**, NeoForge **21.10.64**, JDK **21**. Usa assets nativos do Minecraft e GeckoLib 5.3-alpha-3 para o selo animado.

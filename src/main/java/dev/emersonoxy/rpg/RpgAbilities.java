@@ -237,8 +237,7 @@ public final class RpgAbilities {
         if(event.getEntity() instanceof Projectile shot) {
             int type=shot.getPersistentData().getIntOr("oxy_type",0);if(type==0)return;
             if(shot.tickCount>=120){finishProjectile(shot,false);shot.discard();return;}
-            if(shot.tickCount%2==0)level.sendParticles(type==1?ParticleTypes.SNOWFLAKE:type==2?ParticleTypes.END_ROD:ParticleTypes.FLAME,
-                shot.getX(),shot.getY(),shot.getZ(),2,.04,.04,.04,.01);
+            if(shot.tickCount%2==0){var velocity=shot.getDeltaMovement();for(int i=0;i<4;i++){var at=shot.position().subtract(velocity.scale(i*.2));level.sendParticles(type==1?ParticleTypes.SNOWFLAKE:type==2?ParticleTypes.END_ROD:ParticleTypes.FLAME,at.x,at.y,at.z,1,.025,.025,.025,.005);}}
         }
         if(event.getEntity() instanceof LivingEntity e) {
             long time=level.getGameTime();var frost=FROST.get(e.getUUID());
@@ -391,7 +390,7 @@ public final class RpgAbilities {
             }
         }
         finishProjectile(shot,event.getRayTraceResult() instanceof EntityHitResult||tag.getBooleanOr("oxy_effect",false));
-        var pos=event.getRayTraceResult().getLocation();level.sendParticles(type==1?ParticleTypes.SNOWFLAKE:type==2?ParticleTypes.END_ROD:ParticleTypes.FLAME,pos.x,pos.y,pos.z,12,.2,.2,.2,.03);shot.discard();
+        var pos=event.getRayTraceResult().getLocation();SkillEffects.impact(level,pos,type==1?2:1,type==1?2:type==2?3:1);level.sendParticles(type==1?ParticleTypes.SNOWFLAKE:type==2?ParticleTypes.END_ROD:ParticleTypes.FLAME,pos.x,pos.y,pos.z,12,.2,.2,.2,.03);shot.discard();
     }
     private static void finishProjectile(Projectile shot,boolean hit) {
         if(!(shot.getOwner() instanceof ServerPlayer p))return;

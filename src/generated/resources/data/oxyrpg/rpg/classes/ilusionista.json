@@ -126,7 +126,7 @@
       "y": 22
     },
     {
-      "description": "Forma intangível por 3 s, sem ataques ou interação.",
+      "description": "Forma espectral por 3 s; voo baixo e passagem por blocos comuns.",
       "icon": "bat_spawn_egg",
       "id": 15,
       "title": "Enxame fugaz",
@@ -142,7 +142,7 @@
       "y": 50
     },
     {
-      "description": "Enxame intangível por 6 s; atravessa obstáculos leves.",
+      "description": "Forma espectral por 6 s; Espaço sobe, Shift desce.",
       "icon": "crying_obsidian",
       "id": 17,
       "title": "Corpo de Eclipse",
@@ -166,7 +166,7 @@
       "y": 250
     },
     {
-      "description": "Atravessa vidro e ganha mais velocidade.",
+      "description": "Voo até 8 blocos do terreno e movimento mais rápido.",
       "icon": "tinted_glass",
       "id": 20,
       "title": "Eclipse total",

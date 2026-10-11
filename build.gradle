@@ -27,6 +27,9 @@ sourceSets.main.resources {
 }
 
 repositories {
+    maven { url = "https://maven.su5ed.dev/releases/"; content { includeGroup("org.sinytra.forgified-fabric-api") } }
+    maven { url = "https://maven.wispforest.io/releases/"; content { includeGroupByRegex("io.wispforest.*") } }
+    maven { url = "https://maven.theillusivec4.top/"; content { includeGroup("top.theillusivec4.curios") } }
     maven { url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'; content { includeGroup('software.bernie.geckolib') } }
     // Add here additional repositories if required by some of the dependencies below.
 }
@@ -124,6 +127,10 @@ configurations {
 }
 
 dependencies {
+    implementation "io.wispforest:owo-lib-neoforge:0.12.28+1.21.10"
+    accessTransformers "io.wispforest:owo-lib-neoforge:0.12.28+1.21.10"
+    interfaceInjectionData "io.wispforest:owo-lib-neoforge:0.12.28+1.21.10"
+    implementation "top.theillusivec4.curios:curios-neoforge:13.0.0+1.21.10"
     implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:5.3-alpha-3"
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
