@@ -197,6 +197,7 @@ public final class RpgAbilities {
         var s=a.cast[2]; if(s==null||a.quakeLevel!=p.level())return;
         double radius=s.mainUnlocked(2)?4+(s.hasSkill(18)?1:0):1.5+(s.hasSkill(16)?.5:0);
         if(replica)radius*=.7;
+        if(replica||a.quakePulse==0)SkillEffects.impact(a.quakeLevel,a.quakeOrigin,radius,8);
         int hits=0;
         for(var e:near(a.quakeLevel,a.quakeOrigin,radius)) if(p.hasLineOfSight(e)) {
             if(e.hurtServer(a.quakeLevel,p.damageSources().indirectMagic(p,p),s.mainUnlocked(2)?replica?1.5f:2:1))hits++;

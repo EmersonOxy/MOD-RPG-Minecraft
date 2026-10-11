@@ -108,5 +108,12 @@
   "warning.oxyrpg.barrier": "Barreira",
   "warning.oxyrpg.volley": "Preparando salva",
   "warning.oxyrpg.empower": "Fortificação",
-  "warning.oxyrpg.strike": "Golpe forte"
+  "warning.oxyrpg.strike": "Golpe forte",
+  "option.oxyrpg.blood": "Sangue",
+  "option.oxyrpg.blood_marks": "Marcas de sangue",
+  "option.oxyrpg.smoke": "Fumaça",
+  "option.oxyrpg.impacts": "Impactos",
+  "option.oxyrpg.particle_intensity": "Intensidade das partículas",
+  "option.oxyrpg.blood_duration": "Duração das marcas",
+  "option.oxyrpg.particles_hint": "Partículas respeitam a opção do Minecraft."
 }

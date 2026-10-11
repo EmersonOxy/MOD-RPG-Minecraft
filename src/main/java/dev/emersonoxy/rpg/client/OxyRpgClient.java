@@ -80,7 +80,7 @@ public final class OxyRpgClient {
         if(Boolean.getBoolean("oxyrpg.cameraQA"))NeoForge.EVENT_BUS.addListener(CameraClientQA::tick);
         bus.addListener(OxyRpgClient::registerKeys);
         bus.addListener(OxyRpgClient::registerPayloads);
-        bus.addListener(OxyRpgClient::registerHud);
+        bus.addListener(OxyRpgClient::registerHud);bus.addListener(CombatParticle::register);
         NeoForge.EVENT_BUS.addListener(OxyRpgClient::tick);NeoForge.EVENT_BUS.addListener(VillagerClient::init);NeoForge.EVENT_BUS.addListener(InventoryMovement::opening); NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderHandEvent event)->{if(ShoulderCamera.hideHands())event.setCanceled(true);});
         NeoForge.EVENT_BUS.addListener(DynamicHud::beforeLayer);
         NeoForge.EVENT_BUS.addListener(DynamicHud::afterLayer);
@@ -159,6 +159,7 @@ public final class OxyRpgClient {
         });
         event.register(RpgNetwork.DebugState.TYPE,(value,context)->{debugState=value;var player=Minecraft.getInstance().player;if(player!=null)player.getPersistentData().putBoolean("oxy_debug_no_cooldown",value.mode()==1&&!value.cooldowns());});
         event.register(RpgNetwork.CastFx.TYPE,(value,context)->ClassCastEffects.receive(value));
+        event.register(RpgNetwork.BloodFx.TYPE,(value,context)->ParticleFx.blood(value));
         event.register(RpgNetwork.ImpactFx.TYPE,(value,context)->SkillEffectsRenderer.receive(value));
         event.register(RpgNetwork.SpecialState.TYPE,(value,context)->SpecialistHud.receive(value));
         event.register(RpgNetwork.Ghost.TYPE, (ghost, context) -> {EnemyNameplates.ghost(ghost.entityId(), ghost.ticks());if(ghost.ticks()<=0)ClassCastEffects.cancel(ghost.entityId());});
@@ -186,7 +187,7 @@ public final class OxyRpgClient {
     private static void tick(ClientTickEvent.Post event) {
         var mc = Minecraft.getInstance();
         if (mc.player != trackedPlayer || mc.level != trackedLevel) {
-            EvasionHud.clear();SimpleMinimap.clear();DamageNumbers.clear();SkillEffectsRenderer.clear();ClassCastEffects.clear();debugState=null;if(mc.player!=null)mc.player.getPersistentData().remove("oxy_debug_no_cooldown");EliteWarnings.clear();AbilityPreview.clear();journeyState=null;ShoulderCamera.reset();TargetLock.clear();MovementFacing.reset();DynamicHud.reset(); trackedPlayer = mc.player;
+            EvasionHud.clear();SimpleMinimap.clear();DamageNumbers.clear();SkillEffectsRenderer.clear();ParticleFx.clear();ClassCastEffects.clear();debugState=null;if(mc.player!=null)mc.player.getPersistentData().remove("oxy_debug_no_cooldown");EliteWarnings.clear();AbilityPreview.clear();journeyState=null;ShoulderCamera.reset();TargetLock.clear();MovementFacing.reset();DynamicHud.reset(); trackedPlayer = mc.player;
             trackedLevel = mc.level;
             hudState = null;resourceState=null;professionState=null;
             dev.emersonoxy.rpg.EquipmentAccess.resetClient();

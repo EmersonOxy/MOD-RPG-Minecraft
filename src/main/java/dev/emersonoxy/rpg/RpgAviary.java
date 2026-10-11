@@ -40,7 +40,7 @@ public final class RpgAviary {
         var f=FLIGHTS.computeIfAbsent(p.getUUID(),id->new Flight());long now=p.level().getGameTime();f.dimension=p.level().dimension();f.cast=profile;
         if(slot==0){
             if(f.until>now){f.lastBoost=now;f.thrust=Math.min(maximumSpeed(profile),Math.max(.75+.5*profile.level()/100.0,Math.max(p.getKnownMovement().length(),f.thrust)+.15+.45*profile.level()/100.0));p.setDeltaMovement(p.getLookAngle().scale(f.thrust));p.hurtMarked=true;f.boostUntil=Math.min(f.until,now+(profile.mainUnlocked(0)?40:20)+(profile.hasSkill(5)?20:0));}
-            else{f.thrust=0;f.total=profile.abilityDuration(0);f.until=now+f.total;f.launched=false;f.launchAt=now;p.stopFallFlying();p.setDeltaMovement(p.getDeltaMovement().x,1.25,p.getDeltaMovement().z);p.hurtMarked=true;ClassJourney.advance(p,0,1);}
+            else{SkillEffects.impact(p.level(),p.position(),2,7);f.thrust=0;f.total=profile.abilityDuration(0);f.until=now+f.total;f.launched=false;f.launchAt=now;p.stopFallFlying();p.setDeltaMovement(p.getDeltaMovement().x,1.25,p.getDeltaMovement().z);p.hurtMarked=true;ClassJourney.advance(p,0,1);}
             p.level().playSound(null,p.blockPosition(),SoundEvents.FIREWORK_ROCKET_LAUNCH,SoundSource.PLAYERS,.7f,1.2f);
         }else{
             f.forward=p.isFallFlying();f.until=f.boostUntil=0;f.meteorUntil=now+(f.forward?100:600);f.peak=p.getY();f.previous=p.position();f.speed=p.getKnownMovement().length();

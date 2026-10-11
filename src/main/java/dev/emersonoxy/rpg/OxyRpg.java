@@ -21,7 +21,7 @@ public final class OxyRpg {
     private static final Logger LOGGER = LoggerFactory.getLogger(OxyRpg.class);
 
     public OxyRpg(net.neoforged.bus.api.IEventBus bus,net.neoforged.fml.ModContainer container) {
-        RpgConfig.register(container);PlayerAttachments.register(bus);RpgDataMaps.register(bus);RpgItems.register(bus);RpgGameTests.functions(bus);
+        RpgConfig.register(container);PlayerAttachments.register(bus);RpgDataMaps.register(bus);RpgItems.register(bus);RpgParticles.register(bus);RpgGameTests.functions(bus);
         bus.addListener(RpgDataGenerator::gather);bus.addListener(RpgGameTests::register);
         NeoForge.EVENT_BUS.addListener(RpgContent::listeners);NeoForge.EVENT_BUS.addListener(RpgContent::sync);
         bus.addListener(RpgContent::configReloaded);
@@ -42,6 +42,10 @@ public final class OxyRpg {
         NeoForge.EVENT_BUS.addListener(CombatChances::stop);
         NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST,CombatFeedback::critical);
         NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST,CombatFeedback::damage);
+        NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST,CombatParticles::damage);
+        NeoForge.EVENT_BUS.addListener(CombatParticles::explosion);
+        NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST,CombatParticles::block);
+        NeoForge.EVENT_BUS.addListener(CombatParticles::stop);
         NeoForge.EVENT_BUS.addListener(CombatFeedback::logout);
         NeoForge.EVENT_BUS.addListener(CombatFeedback::stop);
         NeoForge.EVENT_BUS.addListener(OxyRpg::registerCommands);

@@ -108,5 +108,12 @@
   "warning.oxyrpg.barrier": "Barrier",
   "warning.oxyrpg.volley": "Preparing volley",
   "warning.oxyrpg.empower": "Empowerment",
-  "warning.oxyrpg.strike": "Heavy strike"
+  "warning.oxyrpg.strike": "Heavy strike",
+  "option.oxyrpg.blood": "Blood",
+  "option.oxyrpg.blood_marks": "Blood marks",
+  "option.oxyrpg.smoke": "Smoke",
+  "option.oxyrpg.impacts": "Impacts",
+  "option.oxyrpg.particle_intensity": "Particle intensity",
+  "option.oxyrpg.blood_duration": "Mark lifetime",
+  "option.oxyrpg.particles_hint": "Particles respect the Minecraft setting."
 }

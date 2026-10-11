@@ -15,6 +15,11 @@ public final class RpgNetwork {
         public static final StreamCodec<RegistryFriendlyByteBuf,DebugState> CODEC=StreamCodec.of((b,v)->{b.writeVarInt(v.mode);b.writeVarInt(v.level);b.writeVarInt(v.rpgClass);b.writeBoolean(v.allSkills);b.writeBoolean(v.cooldowns);b.writeBoolean(v.resources);b.writeBoolean(v.attributes);b.writeBoolean(v.arsenal);},b->new DebugState(b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readBoolean(),b.readBoolean(),b.readBoolean(),b.readBoolean(),b.readBoolean()));
         @Override public Type<DebugState> type(){return TYPE;}
     }
+    public record BloodFx(double x,double y,double z,float dx,float dy,float dz,float damage) implements CustomPacketPayload {
+        public static final Type<BloodFx> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath("oxyrpg","blood_fx"));
+        public static final StreamCodec<RegistryFriendlyByteBuf,BloodFx> CODEC=StreamCodec.of((b,v)->{b.writeDouble(v.x);b.writeDouble(v.y);b.writeDouble(v.z);b.writeFloat(v.dx);b.writeFloat(v.dy);b.writeFloat(v.dz);b.writeFloat(v.damage);},b->new BloodFx(b.readDouble(),b.readDouble(),b.readDouble(),b.readFloat(),b.readFloat(),b.readFloat(),b.readFloat()));
+        @Override public Type<BloodFx> type(){return TYPE;}
+    }
     public record CastFx(int entity,int kind,int slot,int duration) implements CustomPacketPayload {
         public static final Type<CastFx> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath("oxyrpg","cast_fx"));
         public static final StreamCodec<RegistryFriendlyByteBuf,CastFx> CODEC=StreamCodec.of((b,v)->{b.writeVarInt(v.entity);b.writeVarInt(v.kind);b.writeVarInt(v.slot);b.writeVarInt(v.duration);},b->new CastFx(b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readVarInt()));
@@ -157,7 +162,8 @@ public final class RpgNetwork {
         @Override public Type<EliteInfo> type(){return TYPE;}
     }
     public static void register(RegisterPayloadHandlersEvent event) {
-        var registrar = event.registrar("25");
+        var registrar = event.registrar("26");
+        registrar.playToClient(BloodFx.TYPE,BloodFx.CODEC);
         registrar.playToClient(ImpactFx.TYPE,ImpactFx.CODEC);
         registrar.playToClient(CastFx.TYPE,CastFx.CODEC);
         registrar.playToClient(DebugState.TYPE,DebugState.CODEC);
