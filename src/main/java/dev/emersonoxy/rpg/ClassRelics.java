@@ -32,11 +32,13 @@ public final class ClassRelics {
     public static void use(ServerPlayer p){var stack=p.getMainHandItem();if(!weapon(p,stack))stack=p.getOffhandItem();use(p,stack);}
     public static void use(ServerPlayer p,ItemStack stack){
         var s=RpgAbilities.profile(p);if(s.rpgClass()==RpgClass.NONE||!p.isAlive()||p.isSpectator())return;
-        if(RpgSpecialists.intangible(p)){p.sendSystemMessage(Component.literal("[Oxy RPG] O enxame não pode usar itens."));return;}
-        if(!weapon(p,stack)||recovering(p,stack)){p.sendSystemMessage(Component.literal("[Oxy RPG] Segure seu item de classe em uma das mãos."));return;}
+        if(RpgSpecialists.intangible(p)){p.displayClientMessage(Component.literal("[Oxy RPG] O enxame não pode usar itens."),true);return;}
+        if(!weapon(p,stack)||recovering(p,stack)){p.displayClientMessage(Component.literal("[Oxy RPG] Segure seu item de classe em uma das mãos."),true);return;}
+        if(stack.getItem() instanceof BowItem&&!p.hasInfiniteMaterials()&&p.getProjectile(stack).isEmpty()){Professions.notify(p,"Você precisa de flechas para usar o arco.");return;}
         var d=data(p);long now=p.level().getGameTime(),ready=RpgDebug.itemReady(p,s.rpgClass(),d.getLongOr(s.rpgClass().name(),0));
         if(!RpgDebug.cooldownsDisabled(p)&&ready>now){Professions.notify(p,"Item em recuperação: "+((ready-now+19)/20)+" s.");return;}
-        if(!RpgResources.affordable(p,10)){p.sendSystemMessage(Component.literal("[Oxy RPG] O efeito precisa de 10 MP."));return;}
+        if(s.rpgClass()==RpgClass.ARQUEIRO&&d.getLongOr("charged",0)>now&&d.getIntOr("charged_class",0)==s.rpgClass().ordinal())return;
+        if(!RpgResources.affordable(p,10)){p.displayClientMessage(Component.literal("[Oxy RPG] O efeito precisa de 10 MP."),true);return;}
         RpgResources.spend(p,10);int rank=ClassEquipment.identity(stack).getIntOr("stage",1);int cooldown=(40-rank*5)*20;
         if(!RpgDebug.cooldownsDisabled(p)){if(RpgDebug.enabled(p))RpgDebug.itemCooldown(p,s.rpgClass(),now+cooldown);else d.putLong(s.rpgClass().name(),now+cooldown);}
         switch(s.rpgClass()){
@@ -49,7 +51,7 @@ public final class ClassRelics {
             case PIROMANTE->{for(var m:p.level().getEntitiesOfClass(net.minecraft.world.entity.Mob.class,p.getBoundingBox().inflate(3),RpgAbilities::attackable))m.igniteForSeconds(3);}
             default->{}
         }
-        p.sendSystemMessage(Component.literal("[Oxy RPG] "+effect(s.rpgClass())));
+        p.displayClientMessage(Component.literal("[Oxy RPG] "+effect(s.rpgClass())),true);
     }
     private static boolean weapon(ServerPlayer p,ItemStack stack){return ClassEquipment.gear(stack)&&ClassEquipment.allowed(p,stack)&&ClassEquipment.identity(stack).getStringOr("part","").equals("weapon");}
     public static void damage(LivingDamageEvent.Post e){if(Bleeding.damage(e.getSource()))return;if(e.getNewDamage()<=0||!(e.getSource().getEntity() instanceof ServerPlayer p)||!RpgAbilities.attackable(e.getEntity()))return;
@@ -57,7 +59,7 @@ public final class ClassRelics {
         d.remove("charged");if(c==RpgClass.MAGO)e.getEntity().addEffect(new MobEffectInstance(MobEffects.SLOWNESS,60,1));else if(c==RpgClass.ARQUEIRO)e.getEntity().addEffect(new MobEffectInstance(MobEffects.GLOWING,100,0));else if(c==RpgClass.NECROMANTE)p.heal(2);
     }
     public static boolean recovering(ServerPlayer p,ItemStack stack){if(RpgDebug.cooldownsDisabled(p)||!ClassEquipment.gear(stack))return false;int id=ClassEquipment.identity(stack).getIntOr("class",0);return id>0&&id<RpgClass.values().length&&data(p).getLongOr("death_"+RpgClass.values()[id].name(),0)>p.level().getGameTime();}
-    public static void attack(net.neoforged.neoforge.event.entity.player.AttackEntityEvent e){if(e.getEntity() instanceof ServerPlayer p&&recovering(p,p.getMainHandItem())){e.setCanceled(true);p.sendSystemMessage(Component.literal("[Oxy RPG] O item ainda está se recuperando da morte."));}}
+    public static void attack(net.neoforged.neoforge.event.entity.player.AttackEntityEvent e){if(e.getEntity() instanceof ServerPlayer p&&recovering(p,p.getMainHandItem())){e.setCanceled(true);p.displayClientMessage(Component.literal("[Oxy RPG] O item ainda está se recuperando da morte."),true);}}
     public static void drops(LivingDropsEvent e){
         if(!(e.getEntity() instanceof ServerPlayer p))return;var d=data(p);var queue=d.getListOrEmpty(QUEUE);var ops=p.registryAccess().createSerializationContext(NbtOps.INSTANCE);
         var iterator=e.getDrops().iterator();while(iterator.hasNext()){var entity=iterator.next();var stack=entity.getItem();var identity=ClassEquipment.identity(stack);if(!ClassEquipment.gear(stack)||!identity.getStringOr("owner","").equals(p.getUUID().toString()))continue;
@@ -72,7 +74,7 @@ public final class ClassRelics {
     public static void tick(EntityTickEvent.Post e){
         if(!(e.getEntity() instanceof ServerPlayer p)||!p.isAlive()||p.tickCount%20!=0)return;var d=data(p);var queue=d.getListOrEmpty(QUEUE);var ops=p.registryAccess().createSerializationContext(NbtOps.INSTANCE);boolean changed=false;
         for(int i=0;i<queue.size();){var decoded=ItemStack.CODEC.parse(ops,queue.get(i)).result();if(decoded.isEmpty()){i++;continue;}var stack=decoded.get();int slot=-1;for(int j=0;j<36;j++)if(p.getInventory().getItem(j).isEmpty()){slot=j;break;}if(slot<0)break;p.getInventory().setItem(slot,stack);queue.remove(i);changed=true;}
-        d.put(QUEUE,queue);if(changed){p.getInventory().setChanged();p.inventoryMenu.broadcastFullState();p.sendSystemMessage(Component.literal("[Oxy RPG] Equipamento vinculado recuperado. Efeito especial em recarga após a morte."));}
+        d.put(QUEUE,queue);if(changed){p.getInventory().setChanged();p.inventoryMenu.broadcastFullState();p.displayClientMessage(Component.literal("[Oxy RPG] Equipamento vinculado recuperado. Efeito especial em recarga após a morte."),true);}
         for(var stack:List.of(p.getMainHandItem(),p.getOffhandItem()))if(weapon(p,stack)){long remaining=d.getLongOr("death_"+RpgAbilities.profile(p).rpgClass().name(),0)-p.level().getGameTime();if(RpgDebug.cooldownsDisabled(p))p.getCooldowns().removeCooldown(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("oxyrpg","class_item_"+RpgAbilities.profile(p).rpgClass().name().toLowerCase(java.util.Locale.ROOT)));else if(remaining>0&&!p.getCooldowns().isOnCooldown(stack))p.getCooldowns().addCooldown(stack,(int)Math.min(1200,remaining));}
     }
 }

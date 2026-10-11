@@ -1,8 +1,12 @@
-# Estado do Oxy RPG — revisão 0.41.0
+# Estado do Oxy RPG — revisão 0.41.1
 
 Revisão registrada em 11/10/2026. Minecraft 1.21.10, NeoForge 21.10.64, JDK 21, protocolo de rede 28. Este registro substitui descrições antigas do README. Os documentos numerados são históricos de cada entrega.
 
 A revisão inventariou fontes Java, registros, eventos, mixins, telas, recursos JSON, geração de dados, integração e persistência. Código das áreas alteradas foi inspecionado em detalhe. Inventário de arquivos e hashes: [INVENTARIO_CODIGO_040.json](INVENTARIO_CODIGO_040.json). Não equivale a validação integral dentro do jogo nem a auditoria de segurança.
+
+## Correções 0.41.1
+
+Arco do Caçador verifica munição antes de cobrar mana/ativar seu efeito, inclusive na entrada compartilhada. Nock cancelado não cobra; marca ainda pendente não é recobrada. Sangramento da passiva do Arqueiro exige flecha ou arma de corte, excluindo punhos, arcos usados como bastão e outros objetos. Avisos rotineiros de habilidades, itens, progressão e restrições usam a barra de ação em vez do chat. Dano periódico de sangramento não renova a agressão nativa, preservando o crédito do autor. [Prints, diagnóstico e limites](CORRECOES_0411.md).
 
 ## Entrega 0.41
 

@@ -1,4 +1,4 @@
-# Oxy RPG 0.41.0
+# Oxy RPG 0.41.1
 
 Mod RPG para Minecraft **1.21.10**, NeoForge **21.10.64**, JDK **21**.
 

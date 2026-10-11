@@ -27,7 +27,7 @@ public final class Professions {
     private static final Map<ServerLevel,Set<BlockPos>> PLACED=new HashMap<>();
     private static final Set<ServerLevel> FAILED=new HashSet<>();
     private Professions(){}
-    public static void notify(ServerPlayer p,String text){long now=p.level().getGameTime();if(now<NOTICES.getOrDefault(p.getUUID(),0L))return;NOTICES.put(p.getUUID(),now+40);p.sendSystemMessage(Component.literal("[Oxy RPG] "+text));}
+    public static void notify(ServerPlayer p,String text){long now=p.level().getGameTime();if(now<NOTICES.getOrDefault(p.getUUID(),0L))return;NOTICES.put(p.getUUID(),now+40);p.displayClientMessage(Component.literal("[Oxy RPG] "+text),true);}
     public static int level(ServerPlayer p,int profession){if(RpgDebug.professionOverride(p,profession))return 20;try{return ProfessionStore.level(ProfessionStore.get(p).xp[profession]);}catch(IOException e){notify(p,"Falha ao ler profissões; arquivo preservado.");return 1;}}
     public static int tier(ItemStack stack){
         String id=BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath();
@@ -63,7 +63,7 @@ public final class Professions {
         if(p.isCreative()||p.isSpectator()||amount<=0||RpgDebug.professionOverride(p,area))return;
         try{var d=ProfessionStore.get(p);int old=ProfessionStore.level(d.xp[area]);if(old==20)return;
             d.xp[area]=Math.min(ProfessionStore.MAX_XP,d.xp[area]+amount);ProfessionStore.save(p,d);
-            int next=ProfessionStore.level(d.xp[area]);if(next>old)p.sendSystemMessage(Component.literal("[Oxy RPG] "+NAMES[area]+" chegou ao nível "+next+(next==20?"! Bônus passivo desbloqueado.":"!")));
+            int next=ProfessionStore.level(d.xp[area]);if(next>old)p.displayClientMessage(Component.literal("[Oxy RPG] "+NAMES[area]+" chegou ao nível "+next+(next==20?"! Bônus passivo desbloqueado.":"!")),true);
             sync(p);
         }catch(IOException e){LoggerFactory.getLogger(Professions.class).error("Progresso de profissão não foi salvo",e);notify(p,"Não foi possível salvar XP de profissão.");}
     }

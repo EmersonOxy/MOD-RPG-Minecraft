@@ -158,7 +158,7 @@ public final class OxyRpg {
     }
 
     private static void tell(ServerPlayer player, String message) {
-        player.sendSystemMessage(Component.literal("[Oxy RPG] " + message));
+        player.displayClientMessage(Component.literal("[Oxy RPG] " + message),true);
         sync(player, message);
     }
 

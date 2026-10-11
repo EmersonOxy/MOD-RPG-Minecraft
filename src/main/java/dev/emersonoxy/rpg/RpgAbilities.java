@@ -331,7 +331,7 @@ public final class RpgAbilities {
                 if(source.getDirectEntity() instanceof AbstractArrow&&s.hasSkill(1))target.addEffect(new MobEffectInstance(MobEffects.GLOWING,s.hasSkill(2)?60:40,0));
                 boolean back=target.getLookAngle().dot(p.position().subtract(target.position()).normalize())<-.3;
                 boolean assassin=a.until[2]>time&&a.cast[2]!=null&&a.cast[2].mainUnlocked(2);
-                if((back&&s.hasSkill(15))||assassin){
+                if((source.getDirectEntity() instanceof AbstractArrow||source.getDirectEntity()==p&&(p.getMainHandItem().is(net.minecraft.tags.ItemTags.SWORDS)||p.getMainHandItem().is(net.minecraft.tags.ItemTags.AXES)))&&((back&&s.hasSkill(15))||assassin)){
                     Bleeding.apply(target,p,assassin&&s.hasSkill(20)?2:assassin||s.hasSkill(16)?1:0);if(assassin)target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS,60,0));}
                 if(a.ghost){ClassJourney.advance(p,1,1);stopGhost(p,a);}
             }

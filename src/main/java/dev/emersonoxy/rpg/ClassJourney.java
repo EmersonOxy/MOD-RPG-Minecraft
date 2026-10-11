@@ -40,7 +40,7 @@ public final class ClassJourney {
             boolean complete=d.lessonProgress[id]>=goal(c,lesson);int oldLevel=ProfessionStore.level(d.xp[2]);
             if(complete){d.lesson[id]++;d.lessonProgress[id]=0;d.xp[2]=Math.min(ProfessionStore.MAX_XP,d.xp[2]+reward(lesson));}
             ProfessionStore.save(p,d);
-            if(complete){p.sendSystemMessage(Component.literal("[Oxy RPG] Lição de "+c.label()+" concluída! +"+reward(lesson)+" XP de Arsenal."));if(ProfessionStore.level(d.xp[2])>oldLevel)p.sendSystemMessage(Component.literal("[Oxy RPG] Arsenal chegou ao nível "+ProfessionStore.level(d.xp[2])+"!"));}
+            if(complete){p.displayClientMessage(Component.literal("[Oxy RPG] Lição de "+c.label()+" concluída! +"+reward(lesson)+" XP de Arsenal."),true);if(ProfessionStore.level(d.xp[2])>oldLevel)p.displayClientMessage(Component.literal("[Oxy RPG] Arsenal chegou ao nível "+ProfessionStore.level(d.xp[2])+"!"),true);}
             Professions.sync(p);
         }catch(IOException e){LoggerFactory.getLogger(ClassJourney.class).error("Treinamento não salvo; dados preservados",e);}
     }

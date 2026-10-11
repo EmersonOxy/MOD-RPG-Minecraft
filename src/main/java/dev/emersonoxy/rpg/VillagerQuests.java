@@ -56,7 +56,7 @@ public final class VillagerQuests {
                 if(remaining>0&&held.is(targetItem(q))){
                     int amount=Math.min(remaining,held.getCount());d.progress+=amount;
                     ProfessionStore.save(p,d);held.shrink(amount);p.getInventory().setChanged();p.inventoryMenu.broadcastFullState();
-                    p.sendSystemMessage(Component.literal("[Oxy RPG] Entregue: "+amount+" "+targetName(q)+" • "+d.progress+"/"+q.amount()+"."));
+                    p.displayClientMessage(Component.literal("[Oxy RPG] Entregue: "+amount+" "+targetName(q)+" • "+d.progress+"/"+q.amount()+"."),true);
                 }
                 if(d.progress>=q.amount()){complete(p,v,d,q);return;}
                 Professions.sync(p);

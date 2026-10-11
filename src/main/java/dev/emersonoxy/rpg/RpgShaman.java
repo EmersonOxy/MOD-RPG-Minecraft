@@ -30,7 +30,7 @@ public final class RpgShaman {
         a.world=(ServerLevel)p.level();a.profile[slot]=s;a.until[slot]=p.level().getGameTime()+s.abilityDuration(slot);
         if(slot==0)a.lightning=0;
         if(slot==1){RpgNecromancer.animals(p,s,s.mainUnlocked(1)?3+(s.hasSkill(13)?1:0):1);pulse(p,s);}
-        if(slot==2){a.potion=0;p.sendSystemMessage(Component.literal("[Oxy RPG] Especialista: mãos vazias, esquerdo negativo / direito positivo."));}
+        if(slot==2){a.potion=0;p.displayClientMessage(Component.literal("[Oxy RPG] Especialista: mãos vazias, esquerdo negativo / direito positivo."),true);}
         ((ServerLevel)p.level()).sendParticles(slot==1?ParticleTypes.HEART:ParticleTypes.ENCHANT,p.getX(),p.getY()+1,p.getZ(),15,.5,.6,.5,.03);
     }
     public static boolean expertise(ServerPlayer p){var a=ACTIVE.get(p.getUUID());return a!=null&&a.until[2]>p.level().getGameTime();}
@@ -54,7 +54,7 @@ public final class RpgShaman {
         if(a==null||a.until[2]<=time||!p.getMainHandItem().isEmpty()||!p.getOffhandItem().isEmpty())return;
         if(time<a.potion)return;
         var s=a.profile[2];int cost=ClassEquipment.discount(p,RpgClass.XAMA,(s.mainUnlocked(2)?5:4)-(s.hasSkill(20)?1:0));
-        if(!RpgResources.affordable(p,cost)){p.sendSystemMessage(Component.literal("[Oxy RPG] Mana insuficiente: precisa de "+cost+" MP para a poção."));a.potion=time+10;return;}
+        if(!RpgResources.affordable(p,cost)){p.displayClientMessage(Component.literal("[Oxy RPG] Mana insuficiente: precisa de "+cost+" MP para a poção."),true);a.potion=time+10;return;}
         a.potion=time+(RpgDebug.cooldownsDisabled(p)?1:s.hasSkill(16)?15:20);
         List<Holder<MobEffect>> pool=positive?List.of(MobEffects.INSTANT_HEALTH,MobEffects.REGENERATION,MobEffects.SPEED,MobEffects.STRENGTH,MobEffects.FIRE_RESISTANCE,MobEffects.RESISTANCE)
             :List.of(MobEffects.INSTANT_DAMAGE,MobEffects.POISON,MobEffects.SLOWNESS,MobEffects.WEAKNESS);
