@@ -18,7 +18,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 public final class EliteAbilities {
     private EliteAbilities(){}
     public static void initialize(Mob mob){
-        var data=mob.getPersistentData();if(data.contains("oxy_elite_trait"))return;
+        EliteAffixes.initialize(mob);var data=mob.getPersistentData();if(data.contains("oxy_elite_trait"))return;
         String id=BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType()).getPath();
         String trait=switch(id){
             case "creeper"->"demolisher";
@@ -41,7 +41,8 @@ public final class EliteAbilities {
         };
         data.putString("oxy_elite_trait",trait);
     }
-    public static String title(Mob mob){return switch(mob.getPersistentData().getStringOr("oxy_elite_trait","")){
+    public static String title(Mob mob){return primaryTitle(mob)+" • "+EliteAffixes.title(mob);}
+    private static String primaryTitle(Mob mob){return switch(mob.getPersistentData().getStringOr("oxy_elite_trait","")){
         case "demolisher"->"Demolidor";case "crusher"->"Esmagador";case "frost_archer"->"Atirador Glacial";case "reaper"->"Ceifador";
         case "venom"->"Caçador Venenoso";case "distorter"->"Distorcedor";case "alchemist"->"Alquimista";case "inferno"->"Incendiário";
         case "unstable"->"Instável";case "terror"->"Grito Sombrio";case "marksman"->"Balestrista";case "summoner"->"Invocador";
@@ -54,7 +55,7 @@ public final class EliteAbilities {
             if(now>=data.getLongOr("oxy_elite_child_expiry",0))mob.discard();return;
         }
         if(!EliteMobs.elite(mob)||!mob.isAlive()||RpgNecromancer.isSummon(mob)||mob.tickCount%4!=0)return;
-        initialize(mob);String trait=data.getStringOr("oxy_elite_trait","");
+        initialize(mob);EliteAffixes.tick(world,mob,mob.getTarget());String trait=data.getStringOr("oxy_elite_trait","");
         if(trait.equals("demolisher"))return; // Creepers retain their real vanilla explosion, scaled by size.
         var target=mob.getTarget();if(!target(target)||mob.distanceToSqr(target)>144||!mob.hasLineOfSight(target)){data.putLong("oxy_elite_cast_until",0);return;}
         long cast=data.getLongOr("oxy_elite_cast_until",0);
@@ -64,7 +65,7 @@ public final class EliteAbilities {
         }
         if(now<data.getLongOr("oxy_elite_ready",0))return;
         if(!Set.of("frost_archer","marksman","summoner","storm","sentinel","berserker").contains(trait)&&mob.distanceToSqr(target)>64)return;
-        data.putLong("oxy_elite_cast_until",now+20);data.putLong("oxy_elite_ready",now+(trait.equals("summoner")?280:trait.equals("sentinel")?260:180));
+        data.putLong("oxy_elite_cast_until",now+20);data.putLong("oxy_elite_ready",now+(trait.equals("summoner")?220:trait.equals("sentinel")?200:130));
         world.sendParticles(ParticleTypes.ENCHANT,mob.getX(),mob.getY()+mob.getBbHeight(),mob.getZ(),20,.4,.4,.4,.04);
     }
     private static List<LivingEntity> near(ServerLevel w,Mob mob,LivingEntity target,double radius){
@@ -75,7 +76,7 @@ public final class EliteAbilities {
     }
     private static void hit(ServerLevel world,Mob mob,LivingEntity target,float base,net.minecraft.world.damagesource.DamageSource source){
         float scale=(float)mob.getPersistentData().getDoubleOr("oxy_elite_scale",2);
-        float damage=base*(1+(MobLevels.level(mob)-1)*.01f)*(1+scale*.25f);
+        float damage=base*(float)MobLevels.damageFactor(MobLevels.level(mob))*(1.5f+scale*.5f);
         target.hurtServer(world,source,damage);
     }
     private static void impulse(Mob mob,LivingEntity e,double force,boolean pull){

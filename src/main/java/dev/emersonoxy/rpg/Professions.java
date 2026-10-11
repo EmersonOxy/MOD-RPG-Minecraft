@@ -28,7 +28,7 @@ public final class Professions {
     private static final Set<ServerLevel> FAILED=new HashSet<>();
     private Professions(){}
     public static void notify(ServerPlayer p,String text){long now=p.level().getGameTime();if(now<NOTICES.getOrDefault(p.getUUID(),0L))return;NOTICES.put(p.getUUID(),now+40);p.sendSystemMessage(Component.literal("[Oxy RPG] "+text));}
-    public static int level(ServerPlayer p,int profession){try{return ProfessionStore.level(ProfessionStore.get(p).xp[profession]);}catch(IOException e){notify(p,"Falha ao ler profissões; arquivo preservado.");return 1;}}
+    public static int level(ServerPlayer p,int profession){if(RpgDebug.professionOverride(p,profession))return 20;try{return ProfessionStore.level(ProfessionStore.get(p).xp[profession]);}catch(IOException e){notify(p,"Falha ao ler profissões; arquivo preservado.");return 1;}}
     public static int tier(ItemStack stack){
         String id=BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath();
         if(id.startsWith("netherite_"))return 16;if(id.startsWith("diamond_"))return 12;
@@ -60,14 +60,14 @@ public final class Professions {
         return "";
     }
     public static void award(ServerPlayer p,int area,int amount){
-        if(p.isCreative()||p.isSpectator()||amount<=0)return;
+        if(p.isCreative()||p.isSpectator()||amount<=0||RpgDebug.professionOverride(p,area))return;
         try{var d=ProfessionStore.get(p);int old=ProfessionStore.level(d.xp[area]);if(old==20)return;
             d.xp[area]=Math.min(ProfessionStore.MAX_XP,d.xp[area]+amount);ProfessionStore.save(p,d);
             int next=ProfessionStore.level(d.xp[area]);if(next>old)p.sendSystemMessage(Component.literal("[Oxy RPG] "+NAMES[area]+" chegou ao nível "+next+(next==20?"! Bônus passivo desbloqueado.":"!")));
             sync(p);
         }catch(IOException e){LoggerFactory.getLogger(Professions.class).error("Progresso de profissão não foi salvo",e);notify(p,"Não foi possível salvar XP de profissão.");}
     }
-    public static void sync(ServerPlayer p){try{var d=ProfessionStore.get(p);PacketDistributor.sendToPlayer(p,new RpgNetwork.ProfessionState(d.xp[0],d.xp[1],d.xp[2],VillagerQuests.journal(p,d)));VillagerQuests.syncMarkers(p,d);}catch(IOException e){notify(p,"Não foi possível ler profissões.");}}
+    public static void sync(ServerPlayer p){try{var d=ProfessionStore.get(p);PacketDistributor.sendToPlayer(p,new RpgNetwork.ProfessionState(RpgDebug.professionXp(p,0,d.xp[0]),RpgDebug.professionXp(p,1,d.xp[1]),RpgDebug.professionXp(p,2,d.xp[2]),VillagerQuests.journal(p,d)));VillagerQuests.syncMarkers(p,d);ClassJourney.sync(p);}catch(IOException e){notify(p,"Não foi possível ler profissões.");}}
     private static Path placedFile(ServerLevel world){return world.getServer().getWorldPath(LevelResource.ROOT).resolve("oxyrpg/placed-"+world.dimension().location().toString().replace(':','_').replace('/','_')+".txt");}
     private static Set<BlockPos> placed(ServerLevel world){return PLACED.computeIfAbsent(world,w->{var set=new HashSet<BlockPos>();var file=placedFile(w);
         if(Files.exists(file))try{for(var line:Files.readAllLines(file)){String[] xyz=line.split(",");set.add(new BlockPos(Integer.parseInt(xyz[0]),Integer.parseInt(xyz[1]),Integer.parseInt(xyz[2])));}}
@@ -123,10 +123,7 @@ public final class Professions {
     }
     public static void tick(EntityTickEvent.Post event){
         if(!(event.getEntity() instanceof ServerPlayer p)||p.tickCount%20!=0)return;
-        ClassRules.tick(p);
-        modifier(p,Attributes.MAX_HEALTH,"profession_health",level(p,1)==20?2:0,AttributeModifier.Operation.ADD_VALUE);
-        modifier(p,Attributes.BLOCK_BREAK_SPEED,"profession_mining",level(p,0)==20?.1:0,AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-        modifier(p,Attributes.ATTACK_DAMAGE,"profession_arsenal",level(p,2)==20?.05:0,AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+        refreshModifiers(p);
         if(ClassRules.selected(p)==RpgClass.ARQUEIRO&&p.getMainHandItem().is(Items.SHIELD))returnEquipment(p,EquipmentSlot.MAINHAND,"Arqueiros não equipam escudos.");
         for(var slot:new EquipmentSlot[]{EquipmentSlot.HEAD,EquipmentSlot.CHEST,EquipmentSlot.LEGS,EquipmentSlot.FEET,EquipmentSlot.OFFHAND}){
             var stack=p.getItemBySlot(slot);String reason=ClassRules.denial(p,stack);if(reason.isEmpty())reason=denial(p,stack,true);
@@ -135,6 +132,13 @@ public final class Professions {
             }
         }
         if(p.tickCount%100==0)sync(p);
+    }
+    public static void refreshModifiers(ServerPlayer p){
+        ClassRules.tick(p);
+        modifier(p,Attributes.MAX_HEALTH,"profession_health",level(p,1)==20?2:0,AttributeModifier.Operation.ADD_VALUE);
+        modifier(p,Attributes.BLOCK_BREAK_SPEED,"profession_mining",level(p,0)==20?.1:0,AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+        modifier(p,Attributes.ATTACK_DAMAGE,"profession_arsenal",level(p,2)==20?.05:0,AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+        if(p.getHealth()>p.getMaxHealth())p.setHealth(p.getMaxHealth());
     }
     private static void returnEquipment(ServerPlayer p,EquipmentSlot slot,String reason){
         // Move the original stack exactly once into a specific empty main-inventory slot.

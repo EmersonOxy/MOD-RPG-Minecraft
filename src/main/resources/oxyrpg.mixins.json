@@ -3,6 +3,23 @@
   "minVersion": "0.8",
   "package": "dev.emersonoxy.rpg.mixin",
   "compatibilityLevel": "JAVA_21",
-  "mixins": ["ArmorSlotMixin", "EquipmentSlotMixin", "CreativeEquipmentMixin", "CreeperRadiusAccessor"],
-  "client": ["ShoulderCameraMixin", "ShoulderBobMixin", "TargetLockMouseMixin"], "injectors": {"defaultRequire": 1}
+  "mixins": [
+    "ArmorSlotMixin",
+    "EquipmentSlotMixin",
+    "CreativeEquipmentMixin",
+    "CreeperRadiusAccessor",
+    "AviaryFlightMixin"
+  ],
+  "client": [
+    "ShoulderCameraMixin",
+    "ShoulderBobMixin",
+    "TargetLockMouseMixin",
+    "HudGraphicsMixin",
+    "HudItemStateMixin",
+    "HudItemRendererMixin",
+    "HudOversizedItemMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }

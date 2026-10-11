@@ -10,8 +10,9 @@ import net.minecraft.world.level.storage.LevelResource;
 public final class ProfessionStore {
     public static final class Data {
         public final int[] xp=new int[3];
+        public final int[] lesson=new int[RpgClass.values().length],lessonProgress=new int[RpgClass.values().length];
         public UUID villager;public int quest=-1,progress,completed;
-        public Data copy(){var n=new Data();System.arraycopy(xp,0,n.xp,0,3);n.villager=villager;n.quest=quest;n.progress=progress;n.completed=completed;return n;}
+        public Data copy(){var n=new Data();System.arraycopy(xp,0,n.xp,0,3);System.arraycopy(lesson,0,n.lesson,0,lesson.length);System.arraycopy(lessonProgress,0,n.lessonProgress,0,lessonProgress.length);n.villager=villager;n.quest=quest;n.progress=progress;n.completed=completed;return n;}
     }
     private record Key(Path file){}
     private static final Map<Key,Data> CACHE=new HashMap<>();
@@ -23,6 +24,7 @@ public final class ProfessionStore {
         if(Files.exists(key.file()))try(var in=Files.newBufferedReader(key.file())){
             var props=new Properties();props.load(in);
             for(int i=0;i<3;i++)value.xp[i]=Math.clamp(Integer.parseInt(props.getProperty("xp"+i,"0")),0,19000);
+            for(int i=1;i<value.lesson.length;i++){value.lesson[i]=Integer.parseInt(props.getProperty("lesson"+i,"0"));value.lessonProgress[i]=Integer.parseInt(props.getProperty("lessonProgress"+i,"0"));if(value.lesson[i]<0||value.lesson[i]>3||value.lessonProgress[i]<0||value.lessonProgress[i]>ClassJourney.goal(RpgClass.values()[i],value.lesson[i]))throw new IOException("Treinamento inválido; registro preservado");}
             value.quest=Integer.parseInt(props.getProperty("quest","-1"));
             if(value.quest>=0){if(value.quest>=VillagerQuests.COUNT)throw new IOException("Missão inválida");value.villager=UUID.fromString(props.getProperty("villager"));}
             value.progress=Math.max(0,Integer.parseInt(props.getProperty("progress","0")));
@@ -33,6 +35,7 @@ public final class ProfessionStore {
     public static void save(ServerPlayer p,Data value)throws IOException{
         var key=key(p);Files.createDirectories(key.file().getParent());var props=new Properties();
         for(int i=0;i<3;i++)props.setProperty("xp"+i,Integer.toString(value.xp[i]));
+        for(int i=1;i<value.lesson.length;i++){props.setProperty("lesson"+i,""+value.lesson[i]);props.setProperty("lessonProgress"+i,""+value.lessonProgress[i]);}
         props.setProperty("quest",Integer.toString(value.quest));props.setProperty("progress",Integer.toString(value.progress));props.setProperty("completed",Integer.toString(value.completed));
         if(value.villager!=null)props.setProperty("villager",value.villager.toString());
         var temp=Files.createTempFile(key.file().getParent(),"profession-",".tmp");

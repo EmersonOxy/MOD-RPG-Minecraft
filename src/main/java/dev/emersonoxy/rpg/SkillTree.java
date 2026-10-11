@@ -5,27 +5,32 @@ import java.util.ArrayList;
 
 /** Versioned three-branch tree: preparation, minor effect, minor upgrade, main, two upgrades, capstone. */
 public final class SkillTree {
-    public static final int VERSION = 2, COUNT = 21, FREE_MASK = 3, PAID_MASK = ((1 << COUNT) - 1) & ~FREE_MASK;
+    public static final int VERSION = 3, COUNT = 51;
+    public static final long FREE_MASK = 3, PAID_MASK = ((1L << COUNT) - 1) & ~FREE_MASK;
     private static final int[] LEVELS = {1,1,5,10,15,20,25, 5,10,15,20,25,30,35, 10,15,20,30,35,40,45};
-    public record Node(int id, int level, int parents, String title, String description, String icon) {}
+    public record Node(int id, int level, long parents, String title, String description, String icon) {}
     private SkillTree() {}
-    public static int requiredLevel(int id) { check(id); return LEVELS[id]; }
+    public static int requiredLevel(int id) { check(id); return id<21?LEVELS[id]:((id-21)%10<2?LEVELS[((id-21)/10)*7+2]:30+((id-21)%10-2)*8); }
     private static void check(int id) { if (id < 0 || id >= COUNT) throw new IllegalArgumentException("Skill desconhecida."); }
-    public static int parents(int id) {
+    public static long parents(int id) {
         check(id);
+        if(id>=21){int branch=(id-21)/10,step=(id-21)%10;return 1L << (step==0?branch*7+2:step==1?id-1:step<6?branch*7+6:id-4);}
         int step = id % 7;
+        if(step==3)return 1L << (21+(id/7)*10+1);
         if (id == 0) return 0;
         if (step == 0) return 1;
-        if (step == 5) return 1 << (id - 2);
-        if (step == 6) return (1 << (id - 1)) | (1 << (id - 2));
-        return 1 << (id - 1);
+        if (step == 5) return 1L << (id - 2);
+        if (step == 6) return (1L << (id - 1)) | (1L << (id - 2));
+        return 1L << (id - 1);
     }
-    public static boolean validMask(int level, int mask) {
-        if ((mask & ~PAID_MASK) != 0 || Integer.bitCount(mask) > level / 5) return false;
-        for (int id = 2; id < COUNT; id++) if ((mask & (1 << id)) != 0
-            && (level < LEVELS[id] || ((mask | FREE_MASK) & parents(id)) != parents(id))) return false;
+    public static boolean validMask(int level, long mask) {
+        if ((mask & ~PAID_MASK) != 0 || Long.bitCount(mask) > level / 2) return false;
+        for (int id = 2; id < COUNT; id++) if ((mask & (1L << id)) != 0
+            && (level < requiredLevel(id) || ((mask | FREE_MASK) & parents(id)) != parents(id))) return false;
         return true;
     }
+    public static long migrate(long mask){for(int b=0;b<3;b++)if((mask&(1L<<(b*7+3)))!=0)mask|=3L<<(21+b*10);return mask;}
+    public static int bonus(long mask,int kind){int count=0;for(int id=21;id<COUNT;id++)if((mask&(1L<<id))!=0&&((id-21)%10<2?kind==0:((id-23)%10)%4==kind))count++;return count;}
     public static String abilityName(RpgClass type, int slot) { return nodes(type).get(slot * 7 + 3).title(); }
     private static final java.util.Map<RpgClass,List<Node>> TREES = new java.util.EnumMap<>(RpgClass.class);
     public static synchronized List<Node> nodes(RpgClass type) { return TREES.computeIfAbsent(type, SkillTree::createNodes); }
@@ -123,6 +128,29 @@ public final class SkillTree {
                 {"Mergulho cruel","Dano dos phantoms +15%.","iron_sword"},
                 {"Noite profunda","Cegueira de Céu Noturno +2 s.","echo_shard"}
             };
+            case AVIARIO -> new String[][] {
+                {"Instinto das alturas","Queda recebida -30%: 10 de dano vira 7.","feather"},
+                {"Salto alado","Decolagem inicial: voo por 10 s. Reative para impulso de 2 s.","firework_rocket"},
+                {"Asas firmes","Voo +3 s.","phantom_membrane"},
+                {"Decolagem","Voo livre de elytra por 25 s, sem equipamento. Reative para forte impulso de 4 s: 5 MP; reaplicações aceleram mais.","elytra"},
+                {"Fôlego aéreo","Voo +5 s.","clock"},
+                {"Corrente ascendente","Impulso +1 s.","wind_charge"},
+                {"Senhor dos céus","Voo +10 s e impulso mais veloz.","nether_star"},
+                {"Penas leves","Prepara a descida controlada; redução de queda permanece em 30%.","white_wool"},
+                {"Pluma protetora","Passiva: queda recebida -30%; agache ao cair para descer lentamente.","feather"},
+                {"Ar amortecido","Enquanto desce agachado, dano de inimigos -10%.","white_carpet"},
+                {"Peso pena","Passiva: queda recebida -30%. Agache ao cair: queda lenta e dano de inimigos -25%.","chicken_spawn_egg"},
+                {"Brisa gentil","Descida agachada mais lenta.","breeze_rod"},
+                {"Manto de penas","Redução de dano durante a descida +10%.","leather_chestplate"},
+                {"Corpo etéreo","Redução de dano durante a descida +10%.","totem_of_undying"},
+                {"Massa concentrada","Impactos causam +5% de dano.","stone"},
+                {"Queda ofensiva","No ar: prepara impacto menor ao pousar, sem destruir blocos.","anvil"},
+                {"Peso crescente","Dano do impacto +15%.","iron_block"},
+                {"Impacto Meteoro","No ar: mergulha e explode ao pousar. Altura e velocidade ampliam dano e raio; destrói e arremessa blocos.","magma_block"},
+                {"Cratera ampla","Raio do impacto +1 bloco.","tnt"},
+                {"Núcleo denso","Dano do impacto +20%.","obsidian"},
+                {"Cataclismo","Raio +1 bloco e mais detritos arremessados.","netherite_block"}
+            };
             case XAMA -> new String[][] {
                 {"Carga somática","Dano dos raios +5%.","copper_ingot"},
                 {"Estalos","G ativa raios fracos nos ataques de punho por 5 s, com intervalo de 1,5 s.","lightning_rod"},
@@ -150,6 +178,12 @@ public final class SkillTree {
         };
         var result = new ArrayList<Node>();
         for (int id = 0; id < data.length; id++) result.add(new Node(id, LEVELS[id], parents(id), data[id][0], data[id][1], data[id][2]));
+        for(int id=21;id<COUNT;id++){
+            int step=(id-21)%10,branch=(id-21)/10,kind=step<2?0:(step-2)%4;
+            String name=step<2?(step==0?"Preparação: ":"Domínio: ")+data[branch*7+3][0]:new String[]{"Potência","Persistência","Eficiência","Recuperação"}[kind]+" "+(step<6?"I":"II");
+            String description=step<2?"Dano da classe +3%. Prepara o desbloqueio de "+data[branch*7+3][0]+".":new String[]{"Dano da classe +3%.","Duração das habilidades +5%.","Custo de mana das habilidades -3%.","Recarga das habilidades -3%."}[kind];
+            result.add(new Node(id,requiredLevel(id),parents(id),name,description,new String[]{"iron_sword","clock","lapis_lazuli","amethyst_shard"}[kind]));
+        }
         return List.copyOf(result);
     }
 }

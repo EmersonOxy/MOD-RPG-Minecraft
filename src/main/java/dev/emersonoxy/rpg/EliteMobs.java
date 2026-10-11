@@ -22,15 +22,19 @@ public final class EliteMobs {
         scale=Math.clamp(scale,2,4);
         mob.getPersistentData().putBoolean(KEY,true);mob.getPersistentData().putDouble("oxy_elite_scale",scale);
         add(mob,Attributes.SCALE,"elite_scale",scale-1);
-        add(mob,Attributes.MAX_HEALTH,"elite_health",1+scale); // ×4 to ×6
-        add(mob,Attributes.ATTACK_DAMAGE,"elite_damage",scale*.5); // ×2 to ×3
+        add(mob,Attributes.MAX_HEALTH,"elite_health",4+scale*1.5); // ×8 to ×11
+        add(mob,Attributes.ATTACK_DAMAGE,"elite_damage",.5+scale*.5); // ×2.5 to ×3.5
         slow(mob);
         mob.setHealth(mob.getMaxHealth());
     }
     private static void add(Mob mob,net.minecraft.core.Holder<Attribute> key,String name,double amount){var value=mob.getAttribute(key);if(value!=null)value.addPermanentModifier(new AttributeModifier(ResourceLocation.fromNamespaceAndPath("oxyrpg",name),amount,AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));}
     public static void slow(Mob mob){
         if(!elite(mob))return;double scale=Math.clamp(mob.getPersistentData().getDoubleOr("oxy_elite_scale",2),2,4);
-        double amount=-(.2+(scale-2)*.15);
+        float ratio=mob.getHealth()/Math.max(1,mob.getMaxHealth());
+        MobLevels.modifier(mob,Attributes.MAX_HEALTH,"elite_health",4+scale*1.5);
+        MobLevels.modifier(mob,Attributes.ATTACK_DAMAGE,"elite_damage",.5+scale*.5);
+        mob.setHealth(Math.min(mob.getMaxHealth(),ratio*mob.getMaxHealth()));
+        double amount=-(.08+(scale-2)*.06);
         for(var attribute:java.util.List.of(Attributes.MOVEMENT_SPEED,Attributes.FLYING_SPEED)){
             var value=mob.getAttribute(attribute);if(value==null)continue;
             var id=ResourceLocation.fromNamespaceAndPath("oxyrpg","elite_speed");var old=value.getModifier(id);
@@ -47,7 +51,7 @@ public final class EliteMobs {
     public static void damage(LivingDamageEvent.Pre event){
         if(event.getSource().getEntity() instanceof LivingEntity mob&&elite(mob)
             &&(event.getSource().is(net.minecraft.tags.DamageTypeTags.IS_PROJECTILE)||event.getSource().is(net.minecraft.tags.DamageTypeTags.IS_EXPLOSION)))
-            event.setNewDamage(event.getNewDamage()*(float)(1+mob.getPersistentData().getDoubleOr("oxy_elite_scale",2)*.5));
+            event.setNewDamage(event.getNewDamage()*(float)(1.5+mob.getPersistentData().getDoubleOr("oxy_elite_scale",2)*.5));
     }
     public static void experience(LivingExperienceDropEvent event){if(elite(event.getEntity()))event.setDroppedExperience(event.getDroppedExperience()*3);}
     public static void reward(net.minecraft.server.level.ServerPlayer p,LivingEntity mob){

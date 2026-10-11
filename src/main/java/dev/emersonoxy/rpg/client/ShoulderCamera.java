@@ -6,7 +6,6 @@ import java.util.Properties;
 import net.minecraft.client.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.*;
 import net.minecraft.world.phys.*;
@@ -16,7 +15,7 @@ import org.slf4j.LoggerFactory;
 /** Stable player orientation, with a projected reticle instead of frame-dependent toe-in. */
 public final class ShoulderCamera {
     public record Pose(Vec3 position,float yaw,float pitch,float roll,boolean detached){}
-    private static boolean loaded,enabled=true,left,rendered,bodyVisible;
+    private static boolean loaded,enabled=true,left,rendered,bodyVisible,independentMovement;
     private static int intensity=1;
     private static double distance=2.8,height=.18,lateral=.65;
     private static Entity tracked;
@@ -33,12 +32,14 @@ public final class ShoulderCamera {
         if(loaded)return;loaded=true;if(!Files.exists(file()))return;
         try(var in=Files.newBufferedReader(file())){var p=new Properties();p.load(in);
             enabled=Boolean.parseBoolean(p.getProperty("enabled","true"));left=Boolean.parseBoolean(p.getProperty("leftShoulder","false"));
-            intensity=(int)number(p,"sway",1,0,2);distance=number(p,"distance",2.8,1.2,6);lateral=number(p,"lateral",.65,0,1.6);height=number(p,"height",.18,-.5,1.5);
+            independentMovement=Boolean.parseBoolean(p.getProperty("independentMovement","false"));
+            intensity=(int)number(p,"sway",1,0,2);distance=number(p,"distance",2.8,-6,6);lateral=number(p,"lateral",.65,-3,3);height=number(p,"height",.18,-3,3);
         }catch(IOException e){LoggerFactory.getLogger(ShoulderCamera.class).warn("Configuração de câmera preservada",e);}
     }
     private static void save(){
         try{Files.createDirectories(file().getParent());var p=new Properties();p.setProperty("enabled",""+enabled);p.setProperty("leftShoulder",""+left);
             p.setProperty("sway",""+intensity);p.setProperty("distance",""+distance);p.setProperty("lateral",""+lateral);p.setProperty("height",""+height);
+            p.setProperty("independentMovement",""+independentMovement);
             var tmp=Files.createTempFile(file().getParent(),"oxyrpg-camera-",".tmp");
             try{try(var out=Files.newBufferedWriter(tmp)){p.store(out,"Oxy RPG camera; distances in blocks; sway 0/1/2");}
                 Files.move(tmp,file(),StandardCopyOption.REPLACE_EXISTING,StandardCopyOption.ATOMIC_MOVE);
@@ -47,14 +48,19 @@ public final class ShoulderCamera {
     }
     private static void notice(String text){var p=Minecraft.getInstance().player;if(p!=null)p.displayClientMessage(Component.literal(text),true);}
     public static boolean enabled(){load();return enabled;}
+    public static boolean independentMovement(){load();return independentMovement;}
+    public static void toggleMovement(){load();independentMovement=!independentMovement;MovementFacing.reset();save();}
     public static String shoulder(){load();return left?"esquerdo":"direito";}
     public static String sway(){load();return intensity==0?"desligado":intensity==1?"leve":"moderado";}
     public static double value(int axis){load();return axis==0?distance:axis==1?lateral:height;}
     public static String position(int axis){return String.format(java.util.Locale.ROOT,"%.2f",value(axis));}
-    public static void adjust(int axis,double amount){load();if(axis==0)distance=Math.clamp(distance+amount,1.2,6);
-        else if(axis==1)lateral=Math.clamp(lateral+amount,0,1.6);else height=Math.clamp(height+amount,-.5,1.5);
+    public static void setPosition(int axis,double value){load();if(axis==0)distance=Math.clamp(value,-6,6);
+        else if(axis==1)lateral=Math.clamp(value,-3,3);else height=Math.clamp(value,-3,3);}
+    public static void savePositions(){load();save();}
+    public static void adjust(int axis,double amount){load();if(axis==0)distance=Math.clamp(distance+amount,-6,6);
+        else if(axis==1)lateral=Math.clamp(lateral+amount,-3,3);else height=Math.clamp(height+amount,-3,3);
         save();notice((axis==0?"Distância: ":axis==1?"Deslocamento lateral: ":"Altura: ")+position(axis));}
-    public static void defaults(){enabled=true;left=false;intensity=1;distance=2.8;lateral=.65;height=.18;save();}
+    public static void defaults(){enabled=true;left=false;independentMovement=false;MovementFacing.reset();intensity=1;distance=2.8;lateral=.65;height=.18;save();}
     public static void toggle(){load();enabled=!enabled;save();}
     public static void swap(){load();left=!left;save();}
     public static void cycle(){load();intensity=(intensity+1)%3;save();}
@@ -73,20 +79,35 @@ public final class ShoulderCamera {
         if(!enabled&&Math.abs(side)<.01&&!next.isFirstPerson()){rendered=false;return null;}
         var player=mc.player;var held=player.getUseItem();
         boolean aiming=player.isUsingItem()&&(held.getItem() instanceof BowItem||held.getItem() instanceof CrossbowItem||held.is(Items.TRIDENT)||held.is(Items.SPYGLASS));
-        double desiredDepth=shoulder?(aiming?Math.max(1.2,distance*.78):distance):next.isFirstPerson()?0:next.isMirrored()?-4:4;
+        double desiredDepth=shoulder?(aiming?distance*.78:distance):next.isFirstPerson()?0:next.isMirrored()?-4:4;
         depth=CameraMotion.smooth(depth,desiredDepth,10,dt);side=CameraMotion.smooth(side,shoulder?(left?-lateral:lateral):0,10,dt);
         up=CameraMotion.smooth(up,shoulder?height:0,10,dt);orientation=CameraMotion.angle(orientation,next.isMirrored()?180:0,12,dt);
         if(Math.abs(orientation)>359)orientation%=360;
         double bob=player.avatarState().getInterpolatedBob(partial);
-        double wanted=shoulder&&intensity>0&&mc.options.bobView().get()&&player.onGround()&&mc.screen==null?(aiming?.12:1)*intensity:0;
+        var lockedDirection=TargetLock.viewDirection(partial);
+        double wanted=shoulder&&lockedDirection==null&&intensity>0&&mc.options.bobView().get()&&player.onGround()&&mc.screen==null?(aiming?.12:1)*intensity:0;
         amplitude=CameraMotion.smooth(amplitude,wanted,10,dt);double step=player.avatarState().getBackwardsInterpolatedWalkDistance(partial)*Math.PI;
         // Phase follows distance walked. No free-running oscillation at rest.
         double swayX=Math.sin(step)*bob*.22*amplitude,swayY=-Math.abs(Math.cos(step)*bob)*.3*amplitude;
         float yaw=entity.getViewYRot(partial),pitch=entity.getViewXRot(partial);var forward=entity.getViewVector(partial).normalize();
+        if(lockedDirection!=null&&!next.isMirrored()){
+            forward=lockedDirection;
+            yaw=(float)Math.toDegrees(Math.atan2(-forward.x,forward.z));
+            pitch=(float)-Math.toDegrees(Math.atan2(forward.y,forward.horizontalDistance()));
+        }
         double yawRad=Math.toRadians(yaw);var right=new Vec3(-Math.cos(yawRad),0,-Math.sin(yawRad));
         var eye=entity.getEyePosition(partial);double scale=player.getScale();
         var delta=forward.scale(-depth*scale).add(right.scale((side+swayX)*scale)).add(0,(up+swayY)*scale,0);
         var position=eye.add(delta.scale(collision.update(clip(entity,eye,delta),dt)));
+        if(lockedDirection!=null&&!next.isMirrored()){
+            // Orbit from the interpolated player-to-target direction, then look from
+            // the displaced camera to the target. The target stays framed while strafing.
+            var cameraLook=TargetLock.point(TargetLock.target(),partial).subtract(position);
+            if(cameraLook.lengthSqr()>1e-8){
+                yaw=(float)Math.toDegrees(Math.atan2(-cameraLook.x,cameraLook.z));
+                pitch=(float)-Math.toDegrees(Math.atan2(cameraLook.y,cameraLook.horizontalDistance()));
+            }
+        }
         rendered=shoulder||Math.abs(side)>.01||Math.abs(up)>.01||next.isFirstPerson()&&Math.abs(depth)>.015;
         // Native damage reaction remains in GameRenderer.bobHurt.
         float roll=(float)(Math.sin(step)*bob*.8*amplitude),reverseBlend=Math.clamp((float)(Math.abs(orientation)/180),0,1);
@@ -105,9 +126,8 @@ public final class ShoulderCamera {
     }
     public static Vec3 aimPoint(float partial){
         var mc=Minecraft.getInstance();var p=mc.player;if(p==null)return Vec3.ZERO;
-        if(mc.hitResult!=null&&mc.hitResult.getType()!=HitResult.Type.MISS)return mc.hitResult.getLocation();
-        var eye=p.getEyePosition(partial);var forward=p.getViewVector(partial);var block=p.pick(64,partial,false);
-        var hit=ProjectileUtil.getEntityHitResult(p,eye,eye.add(forward.scale(64)),p.getBoundingBox().expandTowards(forward.scale(64)).inflate(1),EntitySelector.CAN_BE_PICKED,eye.distanceToSqr(block.getLocation()));
-        return hit==null?block.getLocation():hit.getLocation();
+        // Use the same result consumed by Minecraft's attack/use actions, including misses.
+        // The distant fallback made unreachable enemies appear to be attack targets.
+        return mc.hitResult!=null?mc.hitResult.getLocation():p.getEyePosition(partial).add(p.getViewVector(partial).scale(p.entityInteractionRange()));
     }
 }

@@ -1,4 +1,4 @@
-# Oxy RPG 0.11.0
+# Oxy RPG 0.22.0
 
 Minecraft **1.21.10**, NeoForge **21.10.64**, JDK **21**. Usa assets nativos do Minecraft; não exige outros mods.
 
@@ -9,17 +9,24 @@ Minecraft **1.21.10**, NeoForge **21.10.64**, JDK **21**. Usa assets nativos do 
 - **G**, **V** e **B** ativam os três ramos da classe, com recargas independentes.
 - No dash do arqueiro, segure uma direção de movimento (WASD) ao pressionar B. Sem direção, usa a mira.
 - Todas as teclas são remapeáveis em Opções > Controles.
-- A árvore usa ícones de itens, molduras de conquistas e conexões curvas. Use a roda do mouse quando a área não comportar todos os nós.
+- As árvores usam ícones e molduras de conquistas. Arraste o fundo com o botão esquerdo para mover e use a roda para zoom; Centralizar volta ao nó selecionado.
 
 ## Progressão das skills
 
-Cada classe tem **21 nós**, em três ramos de sete:
-preparação → efeito inicial fraco → melhoria simples → habilidade principal →
-duas melhorias em bifurcação → melhoria final que exige as duas anteriores.
+Cada classe tem **51 nós** em três ramos. Além dos efeitos iniciais, principais e
+melhorias específicas, há duas preparações antes de cada principal e oito especializações
+por ramo, em dano, duração, eficiência de mana e recarga. Os bônus das especializações
+são cumulativos para a classe. Os dois primeiros nós são gratuitos; os outros custam
+1 ponto. Receba **1 ponto a cada 2 níveis**; nível mínimo e conexões também são exigidos.
 
-Os dois primeiros nós do primeiro ramo são gratuitos. Os outros 19 custam um ponto cada.
-Receba um ponto a cada cinco níveis. Cada nó também exige nível mínimo e predecessores.
-Não é necessário esperar pela habilidade principal: o efeito inicial de cada ramo já libera G, V ou B numa versão fraca, com recarga de 10 s.
+A árvore de atributos tem **160 nós**: vida, dano, sorte, resistência e mana distribuídos
+por uma semente fixa do UUID. Há oito entradas e conexões alternativas entre caminhos;
+qualquer conexão anterior libera o próximo nó. Cada compra custa 1 ponto, recebido por
+nível a partir do 2. A distribuição não muda ao abrir a tela ou reiniciar.
+
+Perfis da árvore antiga mantêm skills e recebem as preparações necessárias. Atributos
+comprados anteriormente continuam como bônus permanentes e descontam do mesmo orçamento;
+novas compras passam pelo mapa. Profissões e contratos mantêm a progressão existente.
 
 | Classe | G | V | B |
 |---|---|---|---|
@@ -812,3 +819,296 @@ numéricas/colisões com o volume da câmera dentro de blocos; todos os marcos
 a interface de ajustes e alteração persistida pelo teclado numérico.
 O relatório entregue detalha a validação e seus limites; conforto visual em
 sessões longas e compatibilidade com outros mods de câmera não foram medidos.
+
+## Atualização 0.14.0 — trava de mira, câmera livre e HUD dinâmica
+
+A câmera sobre o ombro usa as posições interpoladas do jogador e do alvo em cada
+frame durante a trava. A órbita acompanha o movimento lateral, a orientação visual
+olha do ponto da câmera para o alvo e o balanço de caminhada é reduzido até zero.
+O marcador identifica a posição do alvo selecionado, mesmo se outra criatura
+interceptar a mira. A rotação do jogador continua sendo enviada pelos pacotes
+vanilla: não há ataque automático nem alteração de alcance ou dano.
+
+Os três eixos aceitam valores negativos: distância de **−6 a +6**, lateral e altura
+ de **−3 a +3** blocos. Distância negativa coloca a câmera à frente do jogador;
+lateral negativa inverte o lado relativo ao ombro selecionado. Zero é permitido.
+A colisão continua ativa em todo o deslocamento. Preferências anteriores são
+preservadas em `config/oxyrpg-camera.properties`.
+
+**H** alterna Sempre visível → Dinâmica → Oculta. **R → HUD** permite escolher o
+modo e habilitar/desabilitar cada parte. O padrão novo é Dinâmica. As opções ficam
+em `config/oxyrpg-hud.properties`, sem modificar mundos ou perfis RPG.
+
+No modo dinâmico, cada parte tem seu próprio temporizador: aparece por quatro
+segundos após atividade e esmaece durante 1,2 segundo. Ao entrar no mundo ou mudar
+o modo, os indicadores aparecem brevemente para orientação.
+
+- Vida: dano, cura ou mudança de absorção; permanece com vida a 25% ou menos.
+- Armadura: dano ou mudança da quantidade de armadura.
+- Fome: alteração de alimento; permanece com seis pontos de alimento ou menos.
+- Ar: falta de ar ou submersão; permanece enquanto necessário.
+- Hotbar, ícones e contagens: troca de slot, mudança nos nove slots/offhand,
+  ataque ou uso de item. Movimento sozinho não a mantém visível.
+- XP vanilla: mudança de XP/nível; também mostra a barra ao carregar salto montado.
+- Efeitos: permanecem enquanto houver efeitos ativos.
+- Vida da montaria: mudança da vida da montaria ou dano ao jogador montado.
+- Nível/XP RPG e atributos: mudanças de progressão ou pontos disponíveis.
+- Missões: avanço de caçadas, objetivos ou estágio de missão.
+- Mana: gasto e regeneração; cada habilidade: uso, efeito ativo ou recarga,
+  com temporizadores separados entre as três habilidades.
+
+Sempre visível respeita os indicadores desabilitados nas opções. Oculta também
+esconde os indicadores RPG, a mira e as etiquetas do mod; mensagens e menus
+continuam acessíveis. F1 mantém seu comportamento vanilla.
+
+Todos os **17 atalhos** estão em **Opções → Controles → Teclas → Oxy RPG**.
+As teclas antigas são preservadas. “Abrir opções de HUD” e “Mostrar HUD enquanto
+pressionada” começam sem tecla, para o jogador escolher sem criar conflitos.
+O segundo revela temporariamente as partes habilitadas no modo Dinâmico.
+Novos atalhos devem usar a fábrica `key()` para registro automático, com traduções
+nos dois idiomas; essa regra está em AGENTS.md.
+
+Os dois prints locais foram inspecionados. Eles mostram a composição da câmera,
+mas não comprovam o movimento entre frames. A correção de movimento foi baseada
+na revisão do código. A validação de conforto, enquadramento, transparência e
+remapeamento dentro do jogo permanece manual; não foram abertos clientes de
+validação nem executados testes automatizados nesta atualização.
+Compilação por build-windows.bat (assemble) concluída com sucesso. As assinaturas
+dos métodos de GUI usados pelos mixins foram conferidas no bytecode local de
+Minecraft/NeoForge. O JAR 0.14.0 foi instalado com Minecraft fechado e SHA-256
+confirmado; o JAR 0.13.0 foi preservado em mod-backups fora de mods.
+
+## Atualização 0.15.0 — primeira pessoa suave e movimento independente
+
+A terceira pessoa da 0.14.0 foi preservada. Em primeira pessoa, LocalPlayer retorna
+a rotação atual sem interpolar; a trava atualizava essa rotação somente nos ticks.
+A câmera agora calcula sua orientação pelos pontos interpolados a cada frame,
+com amortecimento angular por tempo decorrido. O balanço vanilla fica suspenso
+enquanto a mira estiver travada, evitando oscilações da projeção ao andar.
+Não há filtro de motion blur adicionado pelo mod. Os prints foram inspecionados,
+mas o relato do usuário foi necessário para localizar a diferença de perspectiva.
+
+A HUD tem entrada e saída graduais, inclusive ao voltar do modo Oculta. Os tempos
+de atividade continuam independentes por indicador. A hotbar aparece ao trocar
+o slot selecionado ou o tipo de item em uma das mãos, e na apresentação inicial
+do mundo/modo. Ataques, uso de habilidades, contagem de itens e desgaste da arma
+não acionam sua exibição. O atalho de exibição temporária continua disponível.
+
+A trava identifica o alvo também no pedido de habilidade. O servidor confere
+existência, alcance de 24 blocos, direção aproximada da mira, visibilidade,
+linha de visão e exclusão de villagers, pets domesticados e invocações aliadas.
+A teia das aranhas do necromante e os projéteis de habilidades do mago/arqueiro
+passam a lançar em direção à posição prevista do alvo, sem adicionar a velocidade
+lateral do jogador. Para os projéteis com gravidade há compensação aproximada
+inicial. Sem alvo válido, o lançamento anterior permanece. Não há perseguição
+em voo nem acerto garantido: obstáculos, mudanças de direção e esquivas ainda
+podem fazer o projétil errar. Dano, custo, recarga e colisões continuam os mesmos.
+O protocolo de rede passou de 11 para 12; servidor e clientes devem usar 0.15.0.
+
+**R → Câmera → Movimento: independente da mira** é uma opção nova, desligada por
+padrão. Funciona em terceira pessoa traseira, tanto com a câmera sobre o ombro
+quanto com a câmera traseira vanilla quando o ombro estiver desligado. WASD
+continua relativo à câmera; o corpo do personagem gira suavemente para onde anda
+e preserva sua orientação quando para, mesmo ao girar a câmera com o mouse.
+Ao atacar ou mirar um item, ele volta a se orientar para a mira. A direção de
+interação enviada ao servidor permanece a da mira; a mudança é na orientação
+visual local do personagem. Primeira pessoa, montarias, sono e voo com elytra
+mantêm a orientação vanilla. Configuração salva junto das opções da câmera.
+
+“Alternar movimento independente da mira” é o 18º atalho na categoria Oxy RPG,
+inicialmente sem tecla para o usuário escolher. Todos os atalhos antigos são
+preservados. Não foram abertos clientes de validação nem executados testes;
+conforto, animações, movimento e precisão continuam sujeitos à validação no jogo.
+Assemble concluído com sucesso. Instalada a versão 0.15.0 com Minecraft fechado,
+SHA-256 conferido e cópia anterior preservada em mod-backups. Validação no jogo
+ainda não executada nesta versão.
+
+## Atualização 0.16.0 — modo completo de testes e debug de Arsenal
+
+Com cheats/operador nível 2:
+
+- `/rpg debug arsenal`: Arsenal no nível 20 temporariamente, com liberação dos
+  requisitos de armas/armaduras e bônus passivo. Outras profissões e skills ficam
+  como estavam. `/rpg debug off` restaura os valores salvos.
+- `/rpg teste` ou `/rpg teste on`: nível RPG 100, todas as 21 skills da classe,
+  cada atributo no máximo de 99, Mineração/Agricultura/Arsenal no nível 20,
+  habilidades com gasto de mana e recargas normais (desde 0.18.0); vida e fome preenchidas ao entrar.
+- `/rpg teste guerreiro|mago|arqueiro|necromante|xama`: ativa o mesmo modo e troca
+  livremente a classe temporária. Cada classe entra completa, sem resetar o perfil.
+  Sem argumento, preserva a classe atual; sem classe escolhida, usa Guerreiro.
+- `/rpg classe <classe>` também troca a classe temporária enquanto Teste está ativo.
+- `/rpg teste off`: desliga os overrides e restaura classe, nível, skills,
+  atributos e XP das profissões que já estavam salvos. `/rpg debug off` também sai.
+
+Os overrides são exclusivamente de sessão e desaparecem ao sair do mundo/servidor.
+O nível e a classe efetivos aparecem na HUD e em `/rpg status`; a tela de profissões
+mostra os níveis de teste, e a de atributos mostra os valores máximos.
+Os 99 pontos de cada atributo são uma sobreposição de debug; o limite normal de
+99 pontos totais do perfil persistido não foi alterado. No modo Teste, XP RPG e
+XP das profissões não são acumulados nos registros reais. Desbloquear ou alocar
+pontos não grava alterações no perfil. Limpar a árvore exige voltar ao debug normal;
+resetar a classe real exige sair do modo Teste antes.
+
+Efeitos, invocações e buffs ativos são limpos ao mudar de classe, entrar ou sair.
+Restrições próprias de cada classe continuam em vigor. O modo desbloqueia o uso
+dos níveis de equipamento, sem conceder/evoluir kits automaticamente ou consumir
+seus recibos. Inventário, blocos, drops e ações normais no mundo não são revertidos
+quando o modo é desligado; apenas a progressão sobreposta é removida.
+
+Compilação por assemble; testes automatizados e validação no jogo não executados,
+conforme a preferência do usuário registrada em AGENTS.md.
+Assemble aprovado. Versão 0.16.0 instalada com Minecraft fechado, SHA-256
+confirmado e JAR 0.15.0 preservado fora de mods. Comandos ainda não executados
+no jogo nesta versão.
+
+### 0.17.0 — barras de câmera e mira em terceira pessoa
+
+Distância, lateral e altura usam barras nativas do Minecraft, com valores negativos, ajuste imediato e suporte às setas do teclado. As posições são salvas ao soltar a barra ou sair da tela.
+
+A mira usa o resultado de interação do próprio jogo, inclusive quando não há alvo no alcance. Removida a busca visual de inimigos a 64 blocos que não podiam ser atingidos. Mira e marcador de alvo usam a projeção do mundo, acompanhando FOV, inclinação da câmera, reação a dano e efeitos de portal. O alcance e as regras de ataque continuam sendo os do Minecraft, incluindo dano de varredura da espada.
+
+Validação desta versão: compilação e empacotamento; confirmação visual e de combate a cargo do usuário.
+
+### 0.18.0 — direção das habilidades, alvos e recursos de teste
+
+- Projéteis de habilidades seguem o ponto da mira enviado pelo cliente e validado pelo servidor, com ou sem alvo travado. Isso inclui as poções do xamã; retirado o desvio lateral causado pela velocidade do jogador. Colisões e gravidade continuam em vigor.
+- Efeitos ofensivos do mago, guerreiro, arqueiro e raio do xamã também atingem mobs pacíficos. Invocações próprias continuam excluídas. Animais invocados pelo xamã podem atacar o mob pacífico que o jogador marcar; a busca automática continua priorizando hostis.
+- Tremor desgasta até quatro blocos naturais em direções separadas ao redor do epicentro, respeitando o raio, a superfície e as permissões existentes.
+- `/rpg teste` libera a progressão completa, mas respeita mana, regeneração e recargas. Mana de teste e recargas por classe são temporárias, preservadas durante trocas de classe e separadas dos registros reais. Trocar de classe não preenche novamente vida/fome. `/rpg debug on` continua ilimitado em mana/recargas.
+- HUD distingue TESTE de DEBUG e mostra mana atual/máxima em números. O gasto é sincronizado imediatamente; mana insuficiente impede a habilidade no servidor.
+
+Compilação por assemble. Validação de mira, efeitos e recursos no jogo permanece a cargo do usuário, sem testes automatizados ou abertura do jogo nesta atualização.
+
+Assemble concluído e 0.18.0 instalado com Minecraft fechado. Hash SHA-256 conferido; JAR anterior preservado em mod-backups. Validação no jogo ainda não realizada.
+
+### 0.18.1 — nível dos inimigos no modo de testes
+
+O jogador em /rpg teste já possui nível RPG 100 temporário. Novos inimigos que usem esse jogador como referência agora consideram esse nível máximo, mantendo a variação normal de 98 a 100. Ao sair do modo teste, novos spawns voltam a usar o nível real salvo. Mobs existentes preservam o nível atribuído no nascimento. Mana e recargas continuam normais; nenhum nível real do jogador é sobrescrito.
+
+### 0.19.0 — feedback, previsão, comparação e treinamento
+
+**Feedback:** os acertos causados pelo jogador e por suas invocações recebem números flutuantes brancos; críticos reais de ataques vanilla/flechas aparecem em dourado, maiores, com confirmação na mira. O valor vem de LivingDamageEvent.Post no servidor, após as reduções. Bloqueios reportados pelo evento usam azul. Números sobem e esmaecem; ataques rápidos no mesmo alvo podem ser agrupados sem misturar normal/crítico. O limite de 96 rótulos evita acumulação sem limite. Números e contornos respeitam obstáculos, F1 e troca de mundo.
+
+**Configurações:** R → HUD → Combate. Pode desligar números, confirmação na mira e som separadamente; alternar agrupamento, ajustar tamanho de 60% a 160% e escolher segurar/soltar ou lançamento imediato. Opções persistem em config/oxyrpg-combat.properties. Todos os atalhos continuam na categoria Oxy RPG dos controles.
+
+**Previsão de habilidades:** por padrão, segure a tecla configurada da habilidade para ver o contorno e solte para lançar. Abrir um menu, morrer, trocar de classe ou de mundo cancela a previsão. Há círculos para áreas, cone para Lança-chamas e linhas para projéteis/dash, aderentes ao terreno; as linhas são desenhadas sem partículas. Verde indica disponibilidade, vermelho bloqueio/mana insuficiente e cinza recarga. A previsão não causa dano, não gasta mana nem altera os alcances do servidor. Linhas de projéteis indicam direção até 24 blocos e não garantem um impacto: gravidade, colisões, movimento do alvo e assistência do lock continuam em vigor.
+
+**Arsenal:** R → Profissões e contratos → Comparar armas. Escolha uma arma do inventário para comparar com a mão principal: dano corpo a corpo, ataques por segundo e alcance de interação, com diferenças verdes/vermelhas. Valores base são separados dos atributos/passivo de Arsenal e etapa do kit ativo. Os bônus próprios do item aparecem na descrição/tooltip; bloqueios identificam dono, classe, profissão e etapa. Para armas de distância, dano de projétil depende da carga e dos encantamentos; o número de dano melee não é uma estimativa do disparo. A tela apenas compara, sem equipar ou transferir itens.
+
+**Treinamento:** R → Diário de missões → Treinamento da classe. Três lições por classe, relacionadas aos três ramos. Cada lição oferece 50, 100 ou 150 XP de Arsenal; conclusão e recompensa são gravadas juntas, atomicamente, no registro de profissões do mundo/UUID. Classes têm progresso separado, preservado ao resetar a classe. Perfis antigos começam com zero lições sem perder profissões/contratos. Teste, debug, criativo e espectador não acumulam lições/recompensas. Caçadas e contratos existentes continuam disponíveis.
+
+Compilação por assemble; testes automatizados e abertura do jogo não executados, conforme AGENTS.md. Precisão visual dos contornos, conforto dos números e conclusão das lições devem ser validados pelo usuário no jogo.
+
+Assemble concluído. Versão 0.19.0 instalada com Minecraft fechado, hash conferido e versão 0.18.1 preservada fora de mods. Nenhum cliente de validação ou teste automatizado foi executado.
+
+### 0.19.1 — comparação ao segurar sobre o item
+
+No inventário, baú e demais telas com tooltip de item, passe o mouse sobre uma arma/ferramenta, armadura ou escudo e segure **Shift esquerdo**. Dois tooltips aparecem lado a lado: EQUIPADO e DESTACADO. Armas/ferramentas usam a mão principal, armaduras o slot correspondente e escudos a mão secundária. Slot vazio é identificado; diferenças de atributos usam verde/vermelho/cinza. Armaduras comparam armadura, resistência da armadura e resistência a empurrão; armas comparam dano corpo a corpo, ataques/s e alcance. A durabilidade e os requisitos também são apresentados. Dano de projétil e encantamentos situacionais continuam descritos separadamente, sem estimar um disparo.
+
+O atalho **Comparar equipamento (segurar no tooltip)** pode ser alterado em Opções → Controles → Teclas → Oxy RPG, inclusive para um botão do mouse. A implementação usa o código da tecla configurada e contexto GUI; todos os atalhos continuam registrados pela fábrica key(). O tooltip normal mostra a dica da tecla atual. Ao soltar, volta à descrição normal. Tooltips longos são ajustados à tela e podem ser abreviados; solte para consultar a descrição inteira. A tela Comparar armas do Arsenal continua disponível e compartilha os mesmos cálculos/requisitos. A comparação não transfere, equipa nem consome itens.
+
+Assemble concluído; testes e abertura do jogo não realizados, conforme AGENTS.md. Validação visual dos tooltips e do atalho permanece a cargo do usuário.
+
+Versão 0.19.1 instalada após o usuário fechar o Minecraft. Hash conferido e 0.19.0 preservada fora de mods. Validação visual ainda não realizada.
+
+## Aviário e comparação — 0.20.0
+
+- **G — Decolagem:** lança para cima e inicia voo usando a física da elytra, sem equipá-la.
+  Voo inicial: 10 s; principal: base de 25 s, ampliada pelas melhorias. Reativar G custa
+  base de 5 MP e impulsiona na direção do voo por 2 s (inicial) ou 4 s (principal),
+  limitado ao tempo restante de voo. Impulsos podem ser repetidos ao terminar o anterior.
+  Decolagem custa base de 20 MP. Pousar, entrar na água, morrer ou trocar de classe encerra.
+- **Peso pena — passiva:** redução de queda nas etapas iniciais; a principal elimina
+  dano de queda. Agachar durante a descida interrompe o planeio e dá queda lenta e
+  redução de dano de inimigos: 25% na principal, até 45% nas melhorias específicas.
+  Não precisa pressionar V e não gasta mana.
+- **B — Impacto Meteoro:** exige estar no ar e custa base de 30 MP. Arma um mergulho;
+  ao pousar, causa dano em mobs, inclusive pacíficos. Altura e velocidade aumentam dano
+  e raio, limitado a 7 blocos. A versão principal destrói até 96 blocos e arremessa parte
+  como blocos em queda; preserva blocos com inventário, líquidos e blocos resistentes,
+  e respeita permissões de construção e eventos de proteção. A versão inicial só causa dano.
+- **Teste:** `/rpg teste aviario` libera a classe completa no nível 100 temporário.
+  Mana e recargas continuam normais; `/rpg teste off` restaura o perfil real.
+- **Comparação:** no inventário, mantenha o mouse sobre um equipamento e segure
+  **Shift esquerdo** (remapeável em Controles > Oxy RPG). Mostra equipado e destacado
+  lado a lado, com diferenças verdes/vermelhas. Corrigida a rejeição do Shift pelo
+  contexto de modificadores da interface.
+- Números de dano aparecem mais altos e alternam os lados do alvo em relação à câmera,
+  com negrito, contorno e destaque inclinado para críticos.
+
+Validação desta versão: compilação/empacotamento via `build-windows.bat` (assemble).
+A validação no jogo fica com o usuário; não foram executados testes ou iniciado o Minecraft.
+
+## Balanceamento e interface — 0.21.0
+
+- Aviário recebe **70% do dano de queda normal** (10 vira 7); Peso pena continua
+  dando queda lenta ao agachar e proteção contra inimigos durante a descida.
+  O mergulho de Meteoro absorve a própria queda para executar o impacto.
+- G em voo pode reaplicar impulso a cada 0,5 s. A velocidade desejada começa em
+  3,3–3,8 blocos/tick e sobe nas reaplicações até 5,2, consumindo mana normalmente;
+  o impulso continua limitado ao tempo restante de Decolagem.
+- Meteoro usa altura e velocidade ao quadrado para dimensionar o impacto.
+  Raio máximo: 14 blocos; profundidade: até 7; até 1.780 blocos no impacto máximo,
+  com teto de 160 detritos. Trabalha em etapas com no máximo 120 alterações e
+  12 novos blocos em queda por tick no servidor. Inventários, líquidos, blocos
+  muito resistentes e proteção de área continuam respeitados.
+- Para nível L, com n=L−1: vida ×(1+0,07n+0,0007n²) e dano
+  ×(1+0,045n+0,00035n²). O multiplicador de dano também cobre projéteis e explosões.
+  No nível 50: vida ×6,11 e dano ×4,05; no 100: vida ×14,79 e dano ×8,89.
+  Mobs carregados recebem os modificadores novos preservando a proporção de vida.
+- Elites: vida adicional ×8–11, dano ×2,5–3,5, menos penalidade de movimento e
+  habilidades principais mais frequentes. Ganham uma identidade secundária fixa:
+  Erupção, Carcereiro, Vampírico, Baluarte, Tempestade ou Predador. Abaixo de
+  40% de vida: +25% de velocidade e dano, com menor recarga secundária.
+  Ataques secundários de área avisam a posição no chão antes de acertar;
+  sair do círculo evita a área. Esses ataques não destroem terreno.
+- Drops adicionais passam a respeitar nível: cobre abaixo de 20; ouro a partir
+  de 20; esmeralda a partir de 40; diamante a partir de 60; fragmento de netherita
+  a partir de 85, raro. Nível e Sorte aumentam a chance; elites têm duas rolagens
+  garantidas e uma recompensa adicional. Drops comuns ganham quantidade a cada
+  40 níveis; equipamentos personalizados não são duplicados. Invocações excluídas.
+- A árvore de classe agora forma uma constelação radial de três setores, com
+  bifurcações e especializações externas. IDs, compras e pré-requisitos preservados.
+  Tooltips das árvores têm largura limitada, quebras de linha e contraste maior.
+- Comparação: cabeçalhos fortes, nomes em uma linha, estatísticas principais sem
+  repetição e lista de encantamentos; solte Shift para o tooltip completo.
+- Menu R reorganizado com progressão e habilidades em colunas. A escolha de classe
+  fica em uma tela própria, com estilo, regras e descrição das três habilidades;
+  o painel de detalhes aceita rolagem. A abertura automática em mundos novos
+  permanece planejada para uma atualização futura.
+
+Validação: assemble apenas; testes e abertura do jogo dependem de solicitação do usuário.
+
+## Interface e referências — 0.22.0
+
+O menu R é um painel de navegação compacto, sem botões de ativação de skills.
+Há seis entradas: classe, árvore de habilidades, atributos, diário, trabalhos e arsenal.
+As habilidades continuam nos atalhos configurados em Controles e no HUD de combate.
+
+A seleção de classe usa seis ícones, identidade visual e cor por classe, ficha com
+ícone ampliado, estilo de jogo, limitações e resumos curtos das habilidades. A ficha
+aceita rolagem em janelas menores e oferece acesso à árvore antes de escolher.
+O modo de teste continua permitindo troca de classe; a escolha normal mantém a regra existente.
+
+As duas árvores usam medalhões circulares, com habilidades principais maiores,
+cores por estado e painel com moldura comum às novas telas. O diário tem página
+clara, objetivos e recompensa em blocos, abas de caçadas e contratos, e acesso ao
+ treinamento de classe. Compras, profissões, objetivos e dados persistentes preservados.
+
+Referências estudadas: RPG Origins, Skill Tree (RPG Series), Realm RPG: Quests & Rewards,
+Dynamic RPG Resource Bars e Mouse Tweaks. O desenho desta interface é implementação
+própria usando itens vanilla e primitivas de GUI; não incorpora código ou assets desses mods.
+
+- RPG Origins: https://www.curseforge.com/minecraft/mc-mods/rpg-origins
+- Skill Tree: https://www.curseforge.com/minecraft/mc-mods/skill-tree
+- Realm RPG: https://www.curseforge.com/minecraft/mc-mods/realm-rpg-quests-rewards
+- Dynamic Resource Bars: https://www.curseforge.com/minecraft/mc-mods/dynamic-rpg-resource-bars
+- Mouse Tweaks: https://www.curseforge.com/minecraft/mc-mods/mouse-tweaks
+
+HUD animado e gestos de inventário são referências para evolução futura; esta versão
+foca navegação, escolha de classe, árvores e diário. Validação desta versão: assemble;
+sem testes automatizados ou abertura do Minecraft, conforme preferência do usuário.
+
+## 0.23.0 — telas e árvores por classe
+
+Treinamento, profissões, arsenal e configurações usam a moldura escura e dourada do menu RPG. Treinamento e profissões apresentam cartões separados; o arsenal vazio explica como iniciar a comparação. Cada classe tem uma silhueta própria na árvore: lâmina e guardas, espiral arcana, leque do arco, cadeias do necromante, raízes do xamã e asas do aviário. IDs, dependências, custos e progresso existentes foram preservados.

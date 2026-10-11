@@ -53,7 +53,7 @@ public final class EnemyNameplates {
     }
     private static boolean visible(Mob mob) {
         var mc=Minecraft.getInstance();
-        if(mc.level==null||mc.player==null||mc.options.hideGui||!mob.isAlive()||mob.isInvisible())return false;
+        if(mc.level==null||mc.player==null||mc.options.hideGui||DynamicHud.mode()==DynamicHud.Mode.HIDDEN||!mob.isAlive()||mob.isInvisible())return false;
         var camera=mc.gameRenderer.getMainCamera();
         var start=camera.getPosition();var end=mob.getEyePosition();
         var relative=end.subtract(start);

@@ -27,9 +27,10 @@ public final class ClassEquipment {
     private static final Map<UUID,RpgProfile> REAL=new HashMap<>();
     private ClassEquipment(){}
     private static CompoundTag tag(ItemStack stack){return stack.getOrDefault(DataComponents.CUSTOM_DATA,CustomData.EMPTY).copyTag().getCompoundOrEmpty(KEY);}
+    public static CompoundTag identity(ItemStack stack){return tag(stack);}
     public static boolean gear(ItemStack stack){var data=tag(stack);String part=data.getStringOr("part","");return part.equals("weapon")||part.equals("armor");}
-    private static RpgClass selected(Player p){return p instanceof ServerPlayer s?REAL.getOrDefault(s.getUUID(),RpgAbilities.profile(s)).rpgClass():EquipmentAccess.clientSelected();}
-    private static int level(Player p){return p instanceof ServerPlayer s?REAL.getOrDefault(s.getUUID(),RpgAbilities.profile(s)).level():EquipmentAccess.clientLevel();}
+    private static RpgClass selected(Player p){return p instanceof ServerPlayer s?(RpgDebug.testing(s)?RpgDebug.effective(s,REAL.getOrDefault(s.getUUID(),RpgAbilities.profile(s))):REAL.getOrDefault(s.getUUID(),RpgAbilities.profile(s))).rpgClass():EquipmentAccess.clientSelected();}
+    private static int level(Player p){return p instanceof ServerPlayer s?(RpgDebug.testing(s)?100:REAL.getOrDefault(s.getUUID(),RpgAbilities.profile(s)).level()):EquipmentAccess.clientLevel();}
     public static int stage(Player p){int arsenal=p instanceof ServerPlayer s?Professions.level(s,2):EquipmentAccess.clientProfessionLevel(2);return level(p)>=50&&arsenal>=16?3:level(p)>=20&&arsenal>=8?2:1;}
     public static boolean allowed(Player p,ItemStack stack){
         if(!gear(stack))return true;var data=tag(stack);int rank=data.getIntOr("stage",1);
@@ -53,6 +54,7 @@ public final class ClassEquipment {
     private static CompoundTag receipt(ServerPlayer p){var root=p.getPersistentData();var persisted=root.getCompoundOrEmpty(Player.PERSISTED_NBT_TAG);var receipt=persisted.getCompoundOrEmpty(RECEIPT);persisted.put(RECEIPT,receipt);root.put(Player.PERSISTED_NBT_TAG,persisted);return receipt;}
     private static void enqueue(ListTag queue,RpgClass c,int stage,String part,int amount){var entry=new CompoundTag();entry.putInt("class",c.ordinal());entry.putInt("stage",stage);entry.putString("part",part);entry.putInt("amount",amount);queue.add(entry);}
     private static void progress(ServerPlayer p,RpgProfile real){
+        if(RpgDebug.equipmentOverride(p))return;
         RpgClass c=real.rpgClass();int stage=stage(p);var receipt=receipt(p);String key=c.name();int done=receipt.getIntOr(key,0);
         var queue=receipt.getListOrEmpty("pending");
         if((done&(1<<(stage-1)))==0){
@@ -98,7 +100,7 @@ public final class ClassEquipment {
             case "ammo"->stage==1?Items.ARROW:stage==2?Items.SPECTRAL_ARROW:Items.TIPPED_ARROW;
             case "normal_arrow"->Items.ARROW;
             case "armor"->switch(c){case GUERREIRO->Items.DIAMOND_CHESTPLATE;case ARQUEIRO->Items.DIAMOND_BOOTS;case MAGO,NECROMANTE->Items.LEATHER_HELMET;default->Items.LEATHER_CHESTPLATE;};
-            default->switch(c){case GUERREIRO->stage==1?Items.WOODEN_SWORD:stage==2?Items.IRON_SWORD:Items.DIAMOND_SWORD;case ARQUEIRO->Items.BOW;case MAGO->Items.BLAZE_ROD;case NECROMANTE->Items.BOOK;default->Items.AMETHYST_SHARD;};
+            default->switch(c){case GUERREIRO->stage==1?Items.WOODEN_SWORD:stage==2?Items.IRON_SWORD:Items.DIAMOND_SWORD;case ARQUEIRO->Items.BOW;case MAGO->Items.BLAZE_ROD;case NECROMANTE->Items.BOOK;case AVIARIO->Items.MACE;default->Items.AMETHYST_SHARD;};
         };
     }
     public static String stageName(int stage){return stage==1?"Básico":stage==2?"Intermediário":"Avançado";}
@@ -107,7 +109,7 @@ public final class ClassEquipment {
         var stack=old.transmuteCopy(base(c,stage,part),old.getCount());
         if(stack.getMaxDamage()>0)stack.setDamageValue(Math.min(stack.getMaxDamage()-1,(int)(stack.getMaxDamage()*wear)));
         var data=stack.getOrDefault(DataComponents.CUSTOM_DATA,CustomData.EMPTY).copyTag();var identity=new CompoundTag();identity.putString("owner",p.getUUID().toString());identity.putInt("class",c.ordinal());identity.putInt("stage",stage);identity.putString("part",part);data.put(KEY,identity);stack.set(DataComponents.CUSTOM_DATA,CustomData.of(data));
-        String name=part.equals("weapon")?switch(c){case GUERREIRO->"Espada do Gladiador";case ARQUEIRO->"Arco do Caçador";case MAGO->"Cajado Glacial";case NECROMANTE->"Grimório dos Mortos";default->"Totem da Tempestade";}:part.equals("armor")?switch(c){case GUERREIRO->"Peitoral do Gladiador";case ARQUEIRO->"Botas do Vento";case MAGO->"Capuz Glacial";case NECROMANTE->"Coroa dos Mortos";default->"Manto da Tempestade";}:part.equals("ammo")?"Flechas do Caçador":part.equals("normal_arrow")?"Flecha de Infinidade":"Provisões de "+c.label();
+        String name=part.equals("weapon")?switch(c){case GUERREIRO->"Espada do Gladiador";case ARQUEIRO->"Arco do Caçador";case MAGO->"Cajado Glacial";case NECROMANTE->"Grimório dos Mortos";case AVIARIO->"Martelo dos Céus";default->"Totem da Tempestade";}:part.equals("armor")?switch(c){case GUERREIRO->"Peitoral do Gladiador";case ARQUEIRO->"Botas do Vento";case MAGO->"Capuz Glacial";case NECROMANTE->"Coroa dos Mortos";case AVIARIO->"Manto das Alturas";default->"Manto da Tempestade";}:part.equals("ammo")?"Flechas do Caçador":part.equals("normal_arrow")?"Flecha de Infinidade":"Provisões de "+c.label();
         stack.set(DataComponents.CUSTOM_NAME,Component.literal(name+" • "+stageName(stage)).withStyle(stage==3?ChatFormatting.LIGHT_PURPLE:stage==2?ChatFormatting.AQUA:ChatFormatting.WHITE));
         var lore=new ArrayList<Component>();
         if(part.equals("weapon")||part.equals("armor")){
@@ -120,12 +122,14 @@ public final class ClassEquipment {
                 if(c==RpgClass.ARQUEIRO){if(stage>=2){enchant(p,stack,Enchantments.POWER,stage==2?2:4);enchant(p,stack,Enchantments.PUNCH,1);}if(stage==3)enchant(p,stack,Enchantments.INFINITY,1);lore.add(Component.literal("Flechas e Flecha Espectral: dano +"+(stage*5)+"%."));if(stage==3)lore.add(Component.literal("Infinidade funciona com flechas normais; especiais são consumidas."));}
                 if(c==RpgClass.MAGO){stack.set(DataComponents.ITEM_MODEL,ResourceLocation.withDefaultNamespace(stage==1?"blaze_rod":stage==2?"breeze_rod":"end_rod"));lore.add(Component.literal("Mana -"+(stage==3?20:stage*5)+"%; gelo +"+(Math.max(0,stage-1))+" s."));}
                 if(c==RpgClass.NECROMANTE){lore.add(Component.literal("Vida das invocações +"+(stage*10)+"%; dano +"+(Math.max(0,stage-1)*5)+"%."));stack.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE,stage>=2);}
+                if(c==RpgClass.AVIARIO){lore.add(Component.literal("Dano do kit +"+(stage*5)+"%."));}
                 if(c==RpgClass.XAMA){stack.set(DataComponents.ITEM_MODEL,ResourceLocation.withDefaultNamespace("totem_of_undying"));lore.add(Component.literal("Raios e cura +"+(stage*5)+"%. Use na mão secundária para atacar com punhos."));lore.add(Component.literal("Totem visual: não ressuscita nem substitui mãos livres do Especialista."));}
             }else{
                 lore.add(Component.literal("Mantém bônus do kit quando equipado."));
                 enchant(p,stack,Enchantments.UNBREAKING,3);enchant(p,stack,Enchantments.PROTECTION,2);
                 if(c==RpgClass.ARQUEIRO){enchant(p,stack,Enchantments.FEATHER_FALLING,4);lore.add(Component.literal("Queda lenta ao cair."));}
                 if(c==RpgClass.MAGO){stack.set(DataComponents.DYED_COLOR,new DyedItemColor(0x83D9ED));lore.add(Component.literal("+20 de mana máxima quando equipado."));}
+                if(c==RpgClass.AVIARIO)stack.set(DataComponents.DYED_COLOR,new DyedItemColor(0xC9DDE8));
                 if(c==RpgClass.NECROMANTE)stack.set(DataComponents.DYED_COLOR,new DyedItemColor(0x653399));
                 if(c==RpgClass.XAMA){stack.set(DataComponents.DYED_COLOR,new DyedItemColor(0x4F985B));lore.add(Component.literal("Bônus do kit mesmo com mãos vazias; mana -10%."));}
             }
@@ -137,7 +141,7 @@ public final class ClassEquipment {
     public static void damage(LivingDamageEvent.Pre event){
         var owner=RpgNecromancer.owner(event.getSource());if(owner==null||RpgNecromancer.summonKill(event.getSource(),event.getEntity(),owner))return;
         RpgClass c=selected(owner);int grade=active(owner,c);
-        if(c==RpgClass.GUERREIRO||c==RpgClass.ARQUEIRO&&event.getSource().getDirectEntity() instanceof net.minecraft.world.entity.projectile.AbstractArrow)event.setNewDamage(event.getNewDamage()*(1+grade*.05f));
+        if(c==RpgClass.GUERREIRO||c==RpgClass.AVIARIO||c==RpgClass.ARQUEIRO&&event.getSource().getDirectEntity() instanceof net.minecraft.world.entity.projectile.AbstractArrow)event.setNewDamage(event.getNewDamage()*(1+grade*.05f));
     }
     public static void tick(EntityTickEvent.Post event){
         if(!(event.getEntity() instanceof ServerPlayer p)||!p.isAlive()||p.tickCount%20!=0)return;var real=REAL.get(p.getUUID());if(real==null||real.rpgClass()==RpgClass.NONE)return;progress(p,real);

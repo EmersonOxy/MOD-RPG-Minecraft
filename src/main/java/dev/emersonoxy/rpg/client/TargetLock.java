@@ -11,9 +11,12 @@ import net.minecraft.world.phys.Vec3;
 /** Look assistance uses ordinary rotation packets, without bypassing server reach. */
 public final class TargetLock {
     private static Mob target;
+    private static Mob firstPersonTarget;
+    private static long firstPersonFrame;
+    private static double firstPersonYaw,firstPersonPitch;
     private TargetLock(){}
     public static Mob target(){return target;}
-    public static void clear(){target=null;}
+    public static void clear(){target=null;firstPersonTarget=null;firstPersonFrame=0;}
     public static boolean mouseLocked(){var mc=Minecraft.getInstance();return target!=null&&mc.screen==null&&valid(target);}
     private static boolean valid(Mob mob){
         var mc=Minecraft.getInstance();var p=mc.player;
@@ -33,11 +36,34 @@ public final class TargetLock {
     public static void cycle(){var list=candidates();if(list.isEmpty()){clear();return;}int index=list.indexOf(target);target=list.get((index+1)%list.size());message("Mira travada: "+target.getName().getString());}
     private static void message(String text){var p=Minecraft.getInstance().player;if(p!=null)p.displayClientMessage(Component.literal(text),true);}
     public static Vec3 point(Mob mob,float partial){return mob.getPosition(partial).add(0,mob.getBbHeight()*.6,0);}
+    /** Render from interpolated positions, rather than interpolating two tick-rate aim angles.
+     * This keeps strafing and close targets from pulling the camera behind the player. */
+    public static Vec3 viewDirection(float partial){
+        var mc=Minecraft.getInstance();
+        if(!mouseLocked()||mc.isPaused()||mc.player.isSleeping()||mc.player.isPassenger())return null;
+        var delta=point(target,partial).subtract(mc.player.getEyePosition(partial));
+        return delta.lengthSqr()<1e-8?null:delta.normalize();
+    }
+    /** LocalPlayer does not interpolate view rotation in first person. Render aim
+     * at frame rate here, while the server continues receiving tick-rate rotation. */
+    public static net.minecraft.world.phys.Vec2 firstPersonRotation(float partial){
+        var direction=viewDirection(partial);if(direction==null){firstPersonFrame=0;return null;}
+        var mc=Minecraft.getInstance();long now=System.nanoTime();
+        if(firstPersonTarget!=target){
+            firstPersonTarget=target;firstPersonYaw=mc.player.getYRot();firstPersonPitch=mc.player.getXRot();firstPersonFrame=now;
+        }
+        double dt=firstPersonFrame==0?0:Math.min(.1,(now-firstPersonFrame)/1e9);firstPersonFrame=now;
+        double yaw=Math.toDegrees(Math.atan2(-direction.x,direction.z));
+        double pitch=-Math.toDegrees(Math.atan2(direction.y,direction.horizontalDistance()));
+        firstPersonYaw=CameraMotion.angle(firstPersonYaw,yaw,24,dt);
+        firstPersonPitch=CameraMotion.smooth(firstPersonPitch,pitch,24,dt);
+        return new net.minecraft.world.phys.Vec2((float)firstPersonYaw,(float)firstPersonPitch);
+    }
     public static void tick(){
         var mc=Minecraft.getInstance();if(target==null)return;
         if(!valid(target)||mc.player.isSleeping()||mc.player.isPassenger()||mc.options.getCameraType().isMirrored()){clear();return;}
         if(mc.screen!=null||mc.isPaused())return;var p=mc.player;var look=point(target,1).subtract(p.getEyePosition());
         float yaw=(float)Math.toDegrees(Math.atan2(-look.x,look.z)),pitch=(float)-Math.toDegrees(Math.atan2(look.y,look.horizontalDistance()));
-        p.setYRot((float)CameraMotion.angle(p.getYRot(),yaw,18,.05));p.setXRot(Mth.clamp((float)CameraMotion.smooth(p.getXRot(),pitch,18,.05),-89,89));
+        p.setYRot(p.getYRot()+Mth.wrapDegrees(yaw-p.getYRot()));p.setXRot(Mth.clamp(pitch,-89,89));
     }
 }

@@ -73,7 +73,7 @@ public final class RpgNecromancer {
             var all=GROUPS.get(p.getUUID());if(all!=null){remove(all[0]);all[0]=null;}
             var shot=new Snowball(p.level(),p,new ItemStack(Items.COBWEB));shot.setNoGravity(true);
             shot.getPersistentData().putBoolean(WEB,true);WEBS.put(shot.getUUID(),new WebCast(p,s,p.level().getGameTime()+120));
-            shot.shootFromRotation(p,p.getXRot(),p.getYRot(),0,1.7f,0);p.level().addFreshEntity(shot);
+            AbilityAim.shoot(shot,p,1.7f);p.level().addFreshEntity(shot);
         }else if(slot==1){
             var g=begin(p,s,slot);
             int skeletons=s.mainUnlocked(1)?1+(s.hasSkill(11)?1:0)+(s.hasSkill(13)?1:0):0;
@@ -97,7 +97,7 @@ public final class RpgNecromancer {
         ((ServerLevel)p.level()).sendParticles(ParticleTypes.SOUL,p.getX(),p.getY()+1,p.getZ(),20,.6,.8,.6,.03);
     }
     private static LivingEntity aim(ServerPlayer p,double range){
-        Vec3 start=p.getEyePosition(),dir=p.getLookAngle();LivingEntity best=null;double distance=range;
+        Vec3 start=p.getEyePosition(),dir=AbilityAim.direction(p);LivingEntity best=null;double distance=range;
         for(var mob:p.level().getEntitiesOfClass(Mob.class,p.getBoundingBox().inflate(range),RpgNecromancer::valid)){
             double along=mob.getBoundingBox().getCenter().subtract(start).dot(dir);
             if(along<0||along>distance||!p.hasLineOfSight(mob))continue;
@@ -148,6 +148,7 @@ public final class RpgNecromancer {
         var shot=event.getProjectile();if(!(shot.level() instanceof ServerLevel world)||!shot.getPersistentData().getBooleanOr(WEB,false)||event.isCanceled())return;
         event.setCanceled(true);var web=WEBS.remove(shot.getUUID());var s=web==null?null:web.profile();
         if(s!=null&&shot.getOwner() instanceof ServerPlayer p&&event.getRayTraceResult() instanceof EntityHitResult hit&&hit.getEntity() instanceof LivingEntity mob&&valid(mob)&&p.isAlive()){
+            ClassJourney.advance(p,0,1);
             int duration=(s.mainUnlocked(0)?80:40)+(s.hasSkill(5)?40:0);
             mob.addEffect(new MobEffectInstance(MobEffects.SLOWNESS,duration,3));
             TemporaryBlocks.web(p,mob,duration);
@@ -232,7 +233,7 @@ public final class RpgNecromancer {
     }
     private static void mark(ServerPlayer p,LivingEntity target){
         if(!valid(target))return;var all=GROUPS.get(p.getUUID());if(all==null)return;
-        for(var g:all)if(g!=null){if(g.profile.rpgClass()==RpgClass.XAMA&&!(target instanceof Enemy))continue;g.target=target.getUUID();g.idle=g.world.getGameTime()+80;for(var m:g.units)m.mob.setTarget(target);}
+        for(var g:all)if(g!=null){g.target=target.getUUID();g.idle=g.world.getGameTime()+80;for(var m:g.units)m.mob.setTarget(target);}
     }
     public static void attack(AttackEntityEvent event){if(event.getEntity() instanceof ServerPlayer p&&event.getTarget() instanceof LivingEntity target)mark(p,target);}
     public static void damage(LivingDamageEvent.Post event){if(event.getSource().getEntity() instanceof ServerPlayer p&&event.getNewDamage()>0&&!isSummon(event.getSource().getDirectEntity()))mark(p,event.getEntity());}

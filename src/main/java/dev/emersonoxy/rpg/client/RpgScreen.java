@@ -2,125 +2,44 @@ package dev.emersonoxy.rpg.client;
 
 import dev.emersonoxy.rpg.*;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.*;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.client.input.KeyEvent;
+import net.minecraft.world.item.Items;
 
+/** Navigation hub; skills are used through the configured gameplay keys. */
 public final class RpgScreen extends Screen {
-    private RpgNetwork.State state;
-    private final long[] readyAt = new long[3];
-    private final Button[] abilities = new Button[3], classes = new Button[RpgClass.values().length-1];
-    private String notice = "Carregando perfil...";
-    private RpgClass selected;
-    private boolean pending;
-    private int ticks, pendingTicks, left, top, panelWidth, panelHeight;
-    private Button confirm, tree, missions, attributes;
-    public RpgScreen() { super(Component.literal("Oxy RPG")); }
-    @Override public boolean isPauseScreen() { return false; }
-    @Override public boolean keyPressed(KeyEvent event) {
-        if (OxyRpgClient.OPEN_MENU.matches(event)) { onClose(); return true; }
-        return super.keyPressed(event);
+    private RpgNetwork.State state;private Button tree,attributes,classes;private int left,top,w,h,ticks;
+    public RpgScreen(){super(Component.literal("Oxy RPG"));state=OxyRpgClient.state();}
+    @Override public boolean isPauseScreen(){return false;}
+    @Override public boolean keyPressed(KeyEvent e){if(OxyRpgClient.OPEN_MENU.matches(e)){onClose();return true;}return super.keyPressed(e);}
+    @Override protected void init(){
+        w=Math.min(510,width-16);h=Math.min(290,height-12);left=(width-w)/2;top=(height-h)/2;
+        int col=(w-38)/2,gap=7,body=top+76,row=(h-127)/3,tile=Math.max(24,row-gap),right=left+26+col;
+        classes=addRenderableWidget(RpgUi.button(left+12,body,col,tile,"Classes","Encontre seu estilo",Items.TOTEM_OF_UNDYING,RpgUi.GOLD,b->{if(state!=null)minecraft.setScreen(new ClassSelectionScreen(this,state));}));
+        tree=addRenderableWidget(RpgUi.button(right,body,col,tile,"Árvore de habilidades","Escolha seu caminho",Items.ENCHANTED_BOOK,0xFFB397E9,b->{if(state!=null)minecraft.setScreen(new SkillTreeScreen(this,state));}));
+        attributes=addRenderableWidget(RpgUi.button(left+12,body+row,col,tile,"Atributos","Planeje sua evolução",Items.APPLE,0xFFE98C8C,b->minecraft.setScreen(new AttributesScreen(this,OxyRpgClient.resources()))));
+        addRenderableWidget(RpgUi.button(right,body+row,col,tile,"Diário de missões","Objetivos e recompensas",Items.WRITABLE_BOOK,0xFFE9C77C,b->{if(state!=null)minecraft.setScreen(new MissionScreen(this,state));}));
+        addRenderableWidget(RpgUi.button(left+12,body+row*2,col,tile,"Trabalhos","Mineração e agricultura",Items.IRON_PICKAXE,0xFF88CBAF,b->minecraft.setScreen(new ProfessionsScreen(this,OxyRpgClient.professions()))));
+        addRenderableWidget(RpgUi.button(right,body+row*2,col,tile,"Arsenal","Conheça seu equipamento",Items.IRON_SWORD,0xFF93BFEA,b->minecraft.setScreen(new ArsenalScreen(this))));
+        int bw=(w-32)/3,y=top+h-30;
+        addRenderableWidget(Button.builder(Component.literal("Câmera"),b->minecraft.setScreen(new CameraSettingsScreen(this))).bounds(left+12,y,bw,20).build());
+        addRenderableWidget(Button.builder(Component.literal("Interface"),b->minecraft.setScreen(new HudSettingsScreen(this))).bounds(left+16+bw,y,bw,20).build());
+        addRenderableWidget(Button.builder(Component.literal("Fechar"),b->onClose()).bounds(left+20+2*bw,y,bw,20).build());
+        if(minecraft.player!=null)minecraft.player.connection.send(new RpgNetwork.Request(0));updateButtons();
     }
-    @Override protected void init() {
-        panelWidth = Math.min(420, width - 16);
-        left = (width - panelWidth) / 2;
-        panelHeight = Math.min(274, height - 8);
-        top = Math.max(4, (height - panelHeight) / 2);
-        int buttonWidth = (panelWidth - 24 - (classes.length-1)*4) / classes.length;
-        for (int i = 0; i < classes.length; i++) {
-            final RpgClass choice = RpgClass.values()[i + 1];
-            classes[i] = addRenderableWidget(Button.builder(Component.literal(choice.label()), b -> {
-                selected = choice;
-                notice = "Confirme " + choice.label() + ". O reset por comando volta ao nível 1.";
-                updateButtons();
-            }).tooltip(Tooltip.create(Component.literal(ClassRules.description(choice))))
-                .bounds(left + 12 + i * (buttonWidth + 4), top + row(123), buttonWidth, 20).build());
-        }
-        confirm = addRenderableWidget(Button.builder(Component.literal("Confirmar classe"), b -> {
-            if (selected != null) request(selected==RpgClass.NECROMANTE?7:selected==RpgClass.XAMA?10:selected.ordinal()+1);
-        }).bounds(left + 12, top + row(147), panelWidth - 24, 20).build());
-        missions = addRenderableWidget(Button.builder(Component.literal("Diário de missões"), b -> {
-            if (state != null) minecraft.setScreen(new MissionScreen(this, state));
-        }).bounds(left + 12, top + row(67), (panelWidth - 28)/2, 16).build());
-        addRenderableWidget(Button.builder(Component.literal("Profissões e contratos"),b->minecraft.setScreen(new ProfessionsScreen(this,OxyRpgClient.professions())))
-            .bounds(left+16+(panelWidth-28)/2,top+row(67),(panelWidth-28)/2,16).build());
-        tree = addRenderableWidget(Button.builder(Component.literal("Árvore de skills"), b -> {
-            if (state != null) minecraft.setScreen(new SkillTreeScreen(this, state));
-        }).bounds(left + 12, top + row(87), (panelWidth - 28)/2, 16).build());
-        attributes=addRenderableWidget(Button.builder(Component.literal("Atributos"),b->minecraft.setScreen(new AttributesScreen(this,OxyRpgClient.resources())))
-            .bounds(left+16+(panelWidth-28)/2,top+row(87),(panelWidth-28)/2,16).build());
-        for (int slot = 0; slot < 3; slot++) {
-            final int index = slot;
-            abilities[slot] = addRenderableWidget(Button.builder(Component.literal("Habilidade " + (slot + 1)), b -> {
-                pending = true; pendingTicks = 0; notice = "Aguardando resposta...";
-                OxyRpgClient.cast(index); updateButtons();
-            }).bounds(left + 12, top + row(173 + slot * 24), panelWidth - 24, 20).build());
-        }
-        addRenderableWidget(Button.builder(Component.literal("Fechar"), b -> onClose())
-            .bounds(left + 12, top + row(247), (panelWidth - 28)/2, 20).build()); addRenderableWidget(Button.builder(Component.literal("Câmera"),b->minecraft.setScreen(new CameraSettingsScreen(this))).bounds(left+16+(panelWidth-28)/2,top+row(247),(panelWidth-28)/2,20).build());
-        updateButtons(); request(0);
+    public void update(RpgNetwork.State value){state=value;updateButtons();}
+    private void updateButtons(){if(tree==null)return;classes.active=state!=null;tree.active=state!=null;attributes.active=state!=null&&state.rpgClass()!=0;
+        classes.setMessage(Component.literal(state==null||state.rpgClass()==0?"Escolher classe":state.testing()?"Trocar classe":"Sua classe"));
+        if(state!=null)tree.setMessage(Component.literal("Habilidades • "+Math.max(0,state.level()/2-Long.bitCount(state.skills()))+" pts"));
+        var resources=OxyRpgClient.resources();attributes.setMessage(Component.literal("Atributos"+(resources==null?"":" • "+resources.points()+" pts")));
     }
-    private int row(int y) { return y * panelHeight / 274; }
-    private long gameTime() { return minecraft.level == null ? 0 : minecraft.level.getGameTime(); }
-    private void request(int action) {
-        if (minecraft.player == null) return;
-        if (action != 0) { pending = true; pendingTicks = 0; notice = "Aguardando resposta..."; updateButtons(); }
-        minecraft.player.connection.send(new RpgNetwork.Request(action));
-    }
-    public void update(RpgNetwork.State value) {
-        state = value;
-        for(int slot=0;slot<3;slot++)readyAt[slot]=gameTime()+value.cooldown(slot);
-        pending = false;
-        if (!value.notice().isEmpty()) notice = value.notice();
-        else if (notice.equals("Carregando perfil...")) notice = "Três ramos, três habilidades. Abra a árvore para evoluir.";
-        updateButtons();
-    }
-    private void updateButtons() {
-        boolean choosing = state != null && state.rpgClass() == 0 && !pending;
-        for (Button b : classes) if (b != null) b.active = choosing;
-        if (confirm != null) {confirm.active = choosing && selected != null;confirm.setMessage(Component.literal(selected == null ? "Confirmar classe" : "Confirmar " + selected.label()));}
-        for(int slot=0;slot<3;slot++)if(abilities[slot]!=null){
-            long remaining=Math.max(0,readyAt[slot]-gameTime());
-            boolean usable=state!=null&&state.canUse(slot);
-            abilities[slot].active=usable&&!pending&&(remaining==0||(slot==2&&state.rpgClass()==RpgClass.ARQUEIRO.ordinal()&&state.hasSkill(20)&&remaining>740));
-            String name=state==null||state.rpgClass()==0?"Habilidade "+(slot+1):SkillTree.abilityName(RpgClass.values()[state.rpgClass()],slot);
-            int cost=state==null||state.rpgClass()==0?0:RpgResources.cost(new RpgProfile(RpgClass.values()[state.rpgClass()],100,0,0,0,state.skills()),slot,slot==2&&state.rpgClass()==RpgClass.ARQUEIRO.ordinal()&&state.hasSkill(20)&&remaining>740);
-            if(state!=null&&minecraft.player!=null)cost=ClassEquipment.discount(minecraft.player,RpgClass.values()[state.rpgClass()],cost);
-            boolean free=state!=null&&state.debug();
-            if(free)cost=0;
-            var resource=OxyRpgClient.resources();boolean enough=resource==null||resource.mana()>=cost;
-            abilities[slot].active=abilities[slot].active&&enough;
-            String status=!usable?"bloqueada":!enough?"sem mana":remaining>0?((remaining+19)/20)+" s":"usar";
-            abilities[slot].setMessage(Component.literal((slot+1)+" • "+name+" • "+cost+" MP • "+status));
-        }
-        if(tree!=null){tree.active=state!=null&&!pending;int points=state==null?0:Math.max(0,state.level()/5-Integer.bitCount(state.skills()));tree.setMessage(Component.literal("Árvore de skills • "+(state!=null&&state.debug()?"DEBUG":points+" pontos")));}
-        if(attributes!=null){attributes.active=state!=null&&state.rpgClass()!=0&&!pending;var resource=OxyRpgClient.resources();attributes.setMessage(Component.literal("Atributos"+(resource==null?"":" • "+resource.points())));}
-        if(missions!=null)missions.active=state!=null&&!pending;
-    }
-    @Override public void tick() {
-        if(minecraft.player==null||minecraft.level==null){onClose();return;}
-        if(pending&&++pendingTicks>=100){pending=false;notice="Resposta atrasada. Atualizando...";request(0);}
-        updateButtons();if(++ticks%40==0&&!pending)request(0);
-    }
-    @Override public void render(GuiGraphics g,int mouseX,int mouseY,float partialTick){
-        VanillaTheme.panel(g,left,top,panelWidth,panelHeight);
-        g.drawCenteredString(font,title,width/2,top+row(10),0xFF53D5BF);
-        String status=state==null?"Conectando...":RpgClass.values()[state.rpgClass()].label()+" • Nível "+state.level();
-        g.drawCenteredString(font,status,width/2,top+row(28),0xFFFFFFFF);
-        if(state!=null){int next=state.level()==100?0:state.level()*100;g.drawString(font,next==0?"Nível máximo!":"XP "+state.xp()+" / "+next,left+12,top+row(45),0xFFE1EAF0);
-            VanillaTheme.progress(g,left+12,top+row(57),panelWidth-24,next==0?1:state.xp(),next==0?1:next);}
-        g.drawString(font,font.plainSubstrByWidth(notice,panelWidth-24),left+12,top+row(109),0xFFB7C8D7);
-        super.render(g,mouseX,mouseY,partialTick);
+    @Override public void tick(){if(minecraft.player==null||minecraft.level==null){onClose();return;}updateButtons();if(++ticks%40==0)minecraft.player.connection.send(new RpgNetwork.Request(0));}
+    @Override public void render(GuiGraphics g,int mx,int my,float partial){
+        RpgUi.panel(g,left,top,w,h);g.drawString(font,Component.literal("OXY RPG").withStyle(net.minecraft.ChatFormatting.BOLD),left+16,top+15,RpgUi.GOLD);
+        String c=state==null?"Carregando…":RpgClass.values()[state.rpgClass()].label()+" • Nível "+state.level();g.drawString(font,font.plainSubstrByWidth(c,w-32),left+16,top+33,RpgUi.TEXT);
+        if(state!=null){String xp=state.level()==100?"Nível máximo":state.xp()+" / "+state.level()*100+" XP";g.drawString(font,xp,left+w-16-font.width(xp),top+15,RpgUi.MUTED);VanillaTheme.progress(g,left+16,top+51,w-32,state.level()==100?1:state.xp(),state.level()==100?1:state.level()*100);}
+        g.drawString(font,"SUA JORNADA",left+16,top+63,RpgUi.MUTED);super.render(g,mx,my,partial);
     }
 }
-
-
-
-
-
-
-
-
-
-

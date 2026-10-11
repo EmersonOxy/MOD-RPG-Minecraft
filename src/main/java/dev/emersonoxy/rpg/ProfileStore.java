@@ -22,9 +22,9 @@ public final class ProfileStore {
             return new RpgProfile(RpgClass.valueOf(data.getProperty("class")),
                 Integer.parseInt(data.getProperty("level")), Integer.parseInt(data.getProperty("xp")),
                 Integer.parseInt(data.getProperty("kills")), Long.parseLong(data.getProperty("abilityReadyAt")),
-                "2".equals(data.getProperty("skillTreeVersion")) ? Integer.parseInt(data.getProperty("skills", "0")) : 0, Integer.parseInt(data.getProperty("questStage", "0")),
+                "2".equals(data.getProperty("skillTreeVersion")) ? SkillTree.migrate(Long.parseLong(data.getProperty("skills", "0"))) : "3".equals(data.getProperty("skillTreeVersion")) ? Long.parseLong(data.getProperty("skills", "0")) : 0, Integer.parseInt(data.getProperty("questStage", "0")),
                 Integer.parseInt(data.getProperty("questFirst", "0")), Integer.parseInt(data.getProperty("questSecond", "0")), Long.parseLong(data.getProperty("readySecond", "0")), Long.parseLong(data.getProperty("readyThird", "0")),
-                new AttributeStats(Integer.parseInt(data.getProperty("attributeHealth","0")),Integer.parseInt(data.getProperty("attributeDamage","0")),Integer.parseInt(data.getProperty("attributeLuck","0")),Integer.parseInt(data.getProperty("attributeArmor","0")),Integer.parseInt(data.getProperty("attributeMana","0"))));
+                new AttributeStats(Integer.parseInt(data.getProperty("attributeHealth","0")),Integer.parseInt(data.getProperty("attributeDamage","0")),Integer.parseInt(data.getProperty("attributeLuck","0")),Integer.parseInt(data.getProperty("attributeArmor","0")),Integer.parseInt(data.getProperty("attributeMana","0"))),data.getProperty("attributeNodes",""));
         } catch (RuntimeException e) { throw new IOException("Perfil RPG inválido: " + file, e); }
     }
 
@@ -39,7 +39,8 @@ public final class ProfileStore {
         data.setProperty("skillTreeVersion", Integer.toString(SkillTree.VERSION));
         data.setProperty("readySecond", Long.toString(profile.readySecond()));
         data.setProperty("readyThird", Long.toString(profile.readyThird()));
-        data.setProperty("skills", Integer.toString(profile.skills()));
+        data.setProperty("skills", Long.toString(profile.skills()));
+        data.setProperty("attributeNodes",profile.attributeNodes());
         data.setProperty("attributeHealth",Integer.toString(profile.attributes().health()));
         data.setProperty("attributeDamage",Integer.toString(profile.attributes().damage()));
         data.setProperty("attributeLuck",Integer.toString(profile.attributes().luck()));

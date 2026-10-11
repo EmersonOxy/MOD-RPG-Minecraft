@@ -22,24 +22,44 @@ import dev.emersonoxy.rpg.QuestCatalog;
 
 @Mod(value = OxyRpg.MOD_ID, dist = Dist.CLIENT)
 public final class OxyRpgClient {
-    public static final KeyMapping OPEN_MENU = new KeyMapping("key.oxyrpg.menu", GLFW.GLFW_KEY_R, KeyMapping.Category.GAMEPLAY);
-    public static final KeyMapping TOGGLE_HUD = new KeyMapping("key.oxyrpg.hud", GLFW.GLFW_KEY_H, KeyMapping.Category.GAMEPLAY);
-    public static final KeyMapping SECOND_ABILITY = new KeyMapping("key.oxyrpg.ability2", GLFW.GLFW_KEY_V, KeyMapping.Category.GAMEPLAY);
-    public static final KeyMapping THIRD_ABILITY = new KeyMapping("key.oxyrpg.ability3", GLFW.GLFW_KEY_B, KeyMapping.Category.GAMEPLAY);
-    public static final KeyMapping USE_ABILITY = new KeyMapping("key.oxyrpg.ability", GLFW.GLFW_KEY_G, KeyMapping.Category.GAMEPLAY);
-    public static final KeyMapping CAMERA_OPTIONS = new KeyMapping("key.oxyrpg.camera", GLFW.GLFW_KEY_O, KeyMapping.Category.GAMEPLAY); public static final KeyMapping SWAP_SHOULDER = new KeyMapping("key.oxyrpg.shoulder", GLFW.GLFW_KEY_J, KeyMapping.Category.GAMEPLAY); public static final KeyMapping LOCK_TARGET=new KeyMapping("key.oxyrpg.lock",GLFW.GLFW_KEY_Z,KeyMapping.Category.GAMEPLAY);
-    public static final KeyMapping NEXT_TARGET=new KeyMapping("key.oxyrpg.next_target",GLFW.GLFW_KEY_N,KeyMapping.Category.GAMEPLAY);
+    private static final KeyMapping.Category CATEGORY=new KeyMapping.Category(ResourceLocation.fromNamespaceAndPath("oxyrpg","controls"));
+    private static final java.util.List<KeyMapping> ALL_KEYS=new java.util.ArrayList<>();
+    /** Declare every present and future shortcut through this factory; registration is automatic. */
+    private static KeyMapping key(String name,int code){
+        return key(name,code,net.neoforged.neoforge.client.settings.KeyConflictContext.IN_GAME);
+    }
+    private static KeyMapping key(String name,int code,net.neoforged.neoforge.client.settings.IKeyConflictContext context){
+        var mapping=new KeyMapping("key.oxyrpg."+name,context,
+            com.mojang.blaze3d.platform.InputConstants.Type.KEYSYM,code,CATEGORY);
+        ALL_KEYS.add(mapping);return mapping;
+    }
+    public static final KeyMapping COMPARE_EQUIPMENT=key("compare_equipment",GLFW.GLFW_KEY_LEFT_SHIFT,net.neoforged.neoforge.client.settings.KeyConflictContext.GUI);
+    public static final KeyMapping HUD_OPTIONS=key("hud_options",GLFW.GLFW_KEY_UNKNOWN);
+    public static final KeyMapping REVEAL_HUD=key("reveal_hud",GLFW.GLFW_KEY_UNKNOWN);
+    public static final KeyMapping MOVEMENT_MODE=key("movement_mode",GLFW.GLFW_KEY_UNKNOWN);
+    public static final KeyMapping OPEN_MENU = key("menu",GLFW.GLFW_KEY_R);
+    public static final KeyMapping TOGGLE_HUD = key("hud",GLFW.GLFW_KEY_H);
+    public static final KeyMapping SECOND_ABILITY = key("ability2",GLFW.GLFW_KEY_V);
+    public static final KeyMapping THIRD_ABILITY = key("ability3",GLFW.GLFW_KEY_B);
+    public static final KeyMapping USE_ABILITY = key("ability",GLFW.GLFW_KEY_G);
+    public static final KeyMapping CAMERA_OPTIONS = key("camera",GLFW.GLFW_KEY_O); public static final KeyMapping SWAP_SHOULDER = key("shoulder",GLFW.GLFW_KEY_J); public static final KeyMapping LOCK_TARGET=key("lock",GLFW.GLFW_KEY_Z);
+    public static final KeyMapping NEXT_TARGET=key("next_target",GLFW.GLFW_KEY_N);
     public static final KeyMapping[] CAMERA_POSITION={
-        new KeyMapping("key.oxyrpg.camera_far",GLFW.GLFW_KEY_KP_ADD,KeyMapping.Category.GAMEPLAY),
-        new KeyMapping("key.oxyrpg.camera_near",GLFW.GLFW_KEY_KP_SUBTRACT,KeyMapping.Category.GAMEPLAY),
-        new KeyMapping("key.oxyrpg.camera_side_out",GLFW.GLFW_KEY_KP_6,KeyMapping.Category.GAMEPLAY),
-        new KeyMapping("key.oxyrpg.camera_side_in",GLFW.GLFW_KEY_KP_4,KeyMapping.Category.GAMEPLAY),
-        new KeyMapping("key.oxyrpg.camera_up",GLFW.GLFW_KEY_KP_8,KeyMapping.Category.GAMEPLAY),
-        new KeyMapping("key.oxyrpg.camera_down",GLFW.GLFW_KEY_KP_2,KeyMapping.Category.GAMEPLAY)};
+        key("camera_far",GLFW.GLFW_KEY_KP_ADD),
+        key("camera_near",GLFW.GLFW_KEY_KP_SUBTRACT),
+        key("camera_side_out",GLFW.GLFW_KEY_KP_6),
+        key("camera_side_in",GLFW.GLFW_KEY_KP_4),
+        key("camera_up",GLFW.GLFW_KEY_KP_8),
+        key("camera_down",GLFW.GLFW_KEY_KP_2)};
     private static RpgNetwork.State hudState;
     private static RpgNetwork.Resources resourceState;
     private static RpgNetwork.ProfessionState professionState;
     public static RpgNetwork.ProfessionState professions(){return professionState;}
+    private static RpgNetwork.JourneyState journeyState;
+    public static RpgNetwork.JourneyState journey(){return journeyState;}
+    public static RpgNetwork.State state(){return hudState;}
+    public static long cooldown(int slot){var mc=Minecraft.getInstance();return mc.level==null?0:Math.max(0,hudReadyAt[slot]-mc.level.getGameTime());}
+    public static dev.emersonoxy.rpg.RpgProfile profile(){return hudState==null||hudState.rpgClass()==0?null:new dev.emersonoxy.rpg.RpgProfile(RpgClass.values()[hudState.rpgClass()],hudState.level(),hudState.xp(),hudState.kills(),0,hudState.skills());}
     public static RpgNetwork.Resources resources(){return resourceState;}
     private static final long[] hudReadyAt = new long[3];
     private static final long[] effectUntil = new long[3];
@@ -47,7 +67,6 @@ public final class OxyRpgClient {
     private static final net.minecraft.world.item.ItemStack[] skillIcons = new net.minecraft.world.item.ItemStack[3];
     private static LocalPlayer trackedPlayer;
     private static ClientLevel trackedLevel;
-    private static boolean showHud = true;
     private static int refreshTicks;
 
     public OxyRpgClient(IEventBus bus) {
@@ -56,35 +75,44 @@ public final class OxyRpgClient {
         bus.addListener(OxyRpgClient::registerPayloads);
         bus.addListener(OxyRpgClient::registerHud);
         NeoForge.EVENT_BUS.addListener(OxyRpgClient::tick); NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderHandEvent event)->{if(ShoulderCamera.hideHands())event.setCanceled(true);});
+        NeoForge.EVENT_BUS.addListener(DynamicHud::beforeLayer);
+        NeoForge.EVENT_BUS.addListener(DynamicHud::afterLayer);
         NeoForge.EVENT_BUS.addListener(OxyRpgClient::potionInput);
+        NeoForge.EVENT_BUS.addListener(EquipmentTooltip::gather);
+        NeoForge.EVENT_BUS.addListener(EquipmentTooltip::render);
+        NeoForge.EVENT_BUS.addListener(EquipmentTooltip::pressed);
+        NeoForge.EVENT_BUS.addListener(EquipmentTooltip::released);
         bus.addListener(EnemyNameplates::register);
+        bus.addListener(MovementFacing::register);
         NeoForge.EVENT_BUS.addListener(EnemyNameplates::player);
         NeoForge.EVENT_BUS.addListener(EnemyNameplates::hand);
         NeoForge.EVENT_BUS.addListener(EnemyNameplates::plate);
     }
     private static void registerKeys(RegisterKeyMappingsEvent event) {
-        event.register(LOCK_TARGET);event.register(NEXT_TARGET);for(var key:CAMERA_POSITION)event.register(key); event.register(OPEN_MENU); event.register(CAMERA_OPTIONS); event.register(SWAP_SHOULDER);
-        event.register(TOGGLE_HUD);
-        event.register(USE_ABILITY);
-        event.register(SECOND_ABILITY);
-        event.register(THIRD_ABILITY);
+        event.registerCategory(CATEGORY);
+        ALL_KEYS.forEach(event::register);
     }
     private static void registerHud(RegisterGuiLayersEvent event) {
         event.registerBelow(net.neoforged.neoforge.client.gui.VanillaGuiLayers.PLAYER_HEALTH,ResourceLocation.fromNamespaceAndPath("oxyrpg","mana_space"),(g,d)->{
-            var mc=Minecraft.getInstance();if(resourceState!=null&&hudState!=null&&hudState.rpgClass()!=0&&showHud&&!mc.options.hideGui&&mc.gameMode.canHurtPlayer())mc.gui.leftHeight+=10;
+            var mc=Minecraft.getInstance();if(resourceState!=null&&hudState!=null&&hudState.rpgClass()!=0&&DynamicHud.alpha(DynamicHud.Part.MANA)>0&&!mc.options.hideGui&&mc.gameMode.canHurtPlayer())mc.gui.leftHeight+=10;
         });
         event.registerAbove(net.neoforged.neoforge.client.gui.VanillaGuiLayers.PLAYER_HEALTH,ResourceLocation.fromNamespaceAndPath("oxyrpg","mana"),(g,d)->renderMana(g));
+        event.registerAboveAll(ResourceLocation.fromNamespaceAndPath("oxyrpg","combat_feedback"),(g,d)->{AbilityPreview.render(g);EliteWarnings.render(g);DamageNumbers.render(g);});
         event.registerAboveAll(ResourceLocation.fromNamespaceAndPath("oxyrpg", "hud"), (graphics, delta) -> renderHud(graphics));
         event.registerAboveAll(ResourceLocation.fromNamespaceAndPath("oxyrpg", "shoulder_crosshair"),(g,d)->{
-            var mc=Minecraft.getInstance();if(!ShoulderCamera.active()||mc.options.hideGui||mc.screen!=null||mc.player.isSpectator())return;
+            var mc=Minecraft.getInstance();if(!ShoulderCamera.active()||mc.options.hideGui||DynamicHud.mode()==DynamicHud.Mode.HIDDEN||mc.screen!=null||mc.player==null||mc.player.isSpectator())return;
             var pipeline=net.minecraft.client.renderer.RenderPipelines.CROSSHAIR;
             var point=ShoulderCamera.aimPoint(mc.gameRenderer.getMainCamera().getPartialTickTime());
-            var projection=mc.gameRenderer.projectPointToScreen(point);
+            var projection=CameraProjection.project(point);
             if(!Double.isFinite(projection.x)||!Double.isFinite(projection.y)||projection.z<-1||projection.z>1)return;
             int cx=(int)((projection.x+1)*g.guiWidth()/2),cy=(int)((1-projection.y)*g.guiHeight()/2);
             g.blitSprite(pipeline,ResourceLocation.withDefaultNamespace("hud/crosshair"),cx-7,cy-7,15,15);
             var target=TargetLock.target();if(target!=null){
-                g.drawString(mc.font,"[ "+target.getName().getString()+" ]",cx-6,cy+20,0xFFFFD36B);
+                var targetScreen=CameraProjection.project(TargetLock.point(target,mc.gameRenderer.getMainCamera().getPartialTickTime()));
+                if(targetScreen.z>=-1&&targetScreen.z<=1){
+                    int tx=(int)((targetScreen.x+1)*g.guiWidth()/2),ty=(int)((1-targetScreen.y)*g.guiHeight()/2);
+                    g.drawCenteredString(mc.font,"[ "+target.getName().getString()+" ]",tx,ty+20,0xFFFFD36B);
+                }
             }
             if(mc.options.attackIndicator().get()==net.minecraft.client.AttackIndicatorStatus.CROSSHAIR){
                 float strength=mc.player.getAttackStrengthScale(0);int x=cx-8,y=cy+9;
@@ -95,11 +123,20 @@ public final class OxyRpgClient {
         
     }
     private static void registerPayloads(RegisterClientPayloadHandlersEvent event) {
+        event.register(RpgNetwork.EliteWarning.TYPE,(value,context)->EliteWarnings.receive(value));
+        event.register(RpgNetwork.FlightState.TYPE,(value,context)->{
+            var p=Minecraft.getInstance().player;if(p==null)return;var tag=p.getPersistentData();
+            tag.putInt("oxy_flight_until",p.tickCount+value.remaining());tag.putInt("oxy_boost_until",p.tickCount+value.boost());tag.putInt("oxy_meteor_until",p.tickCount+value.meteor());tag.putBoolean("oxy_fast_flight",value.fast());tag.putFloat("oxy_flight_thrust",value.thrust());
+        });
+        event.register(RpgNetwork.DamageNumber.TYPE,(value,context)->DamageNumbers.receive(value));
+        event.register(RpgNetwork.JourneyState.TYPE,(value,context)->journeyState=value);
         event.register(RpgNetwork.ProfessionState.TYPE,(value,context)->{professionState=value;dev.emersonoxy.rpg.EquipmentAccess.clientXp(value.mining(),value.farming(),value.arsenal());var mc=Minecraft.getInstance();if(mc.screen instanceof ProfessionsScreen screen)screen.update(value);});
         event.register(RpgNetwork.VillagerMark.TYPE,(value,context)->EnemyNameplates.villagerMark(value.entityId(),value.state()));
         event.register(RpgNetwork.EliteInfo.TYPE,(value,context)->EnemyNameplates.eliteTitle(value.entityId(),value.title()));
         event.register(RpgNetwork.VillagerDialogue.TYPE,(value,context)->Minecraft.getInstance().setScreen(new VillagerDialogueScreen(value)));
         event.register(RpgNetwork.Resources.TYPE,(value,context)->{
+            if(resourceState==null||resourceState.mana()!=value.mana()||resourceState.maxMana()!=value.maxMana()){DynamicHud.signal(DynamicHud.Part.MANA);DynamicHud.signal(DynamicHud.Part.RPG);}
+            if(resourceState==null||resourceState.points()!=value.points())DynamicHud.signal(DynamicHud.Part.RPG);
             resourceState=value;var mc=Minecraft.getInstance();
             if(mc.screen instanceof AttributesScreen screen)screen.update(value);
         });
@@ -111,6 +148,8 @@ public final class OxyRpgClient {
         event.register(RpgNetwork.Ghost.TYPE, (ghost, context) -> EnemyNameplates.ghost(ghost.entityId(), ghost.ticks()));
         event.register(RpgNetwork.State.TYPE, (state, context) -> {
             var mc = Minecraft.getInstance();
+            if(hudState==null||state.xp()!=hudState.xp()||state.level()!=hudState.level()||state.rpgClass()!=hudState.rpgClass()||state.skills()!=hudState.skills())DynamicHud.signal(DynamicHud.Part.RPG);
+            if(hudState==null||state.kills()!=hudState.kills()||state.questStage()!=hudState.questStage()||state.questFirst()!=hudState.questFirst()||state.questSecond()!=hudState.questSecond())DynamicHud.signal(DynamicHud.Part.QUEST);
             hudState = state;
             dev.emersonoxy.rpg.EquipmentAccess.clientClass(state.rpgClass());
             dev.emersonoxy.rpg.EquipmentAccess.clientLevel(state.level());
@@ -123,6 +162,7 @@ public final class OxyRpgClient {
             }
             for (int slot = 0; slot < 3; slot++) hudReadyAt[slot] = (mc.level == null ? 0 : mc.level.getGameTime()) + state.cooldown(slot);
             if (mc.screen instanceof RpgScreen screen) screen.update(state);
+            if (mc.screen instanceof ClassSelectionScreen screen) screen.update(state);
             if (mc.screen instanceof SkillTreeScreen screen) screen.update(state);
             if (mc.screen instanceof MissionScreen screen) screen.update(state);
         });
@@ -130,7 +170,7 @@ public final class OxyRpgClient {
     private static void tick(ClientTickEvent.Post event) {
         var mc = Minecraft.getInstance();
         if (mc.player != trackedPlayer || mc.level != trackedLevel) {
-            ShoulderCamera.reset();TargetLock.clear(); trackedPlayer = mc.player;
+            DamageNumbers.clear();EliteWarnings.clear();AbilityPreview.clear();journeyState=null;ShoulderCamera.reset();TargetLock.clear();MovementFacing.reset();DynamicHud.reset(); trackedPlayer = mc.player;
             trackedLevel = mc.level;
             hudState = null;resourceState=null;professionState=null;
             dev.emersonoxy.rpg.EquipmentAccess.resetClient();
@@ -149,56 +189,33 @@ public final class OxyRpgClient {
         while(NEXT_TARGET.consumeClick())if(mc.player!=null&&mc.screen==null)TargetLock.cycle();
         for(int i=0;i<CAMERA_POSITION.length;i++)while(CAMERA_POSITION[i].consumeClick())if(mc.player!=null&&mc.screen==null)ShoulderCamera.adjust(i/2,i%2==0?.1:-.1);
         TargetLock.tick();
+        DynamicHud.tick();
+        while(HUD_OPTIONS.consumeClick())if(mc.player!=null&&mc.screen==null)mc.setScreen(new HudSettingsScreen(null));
+        while(MOVEMENT_MODE.consumeClick())if(mc.player!=null&&mc.screen==null)ShoulderCamera.toggleMovement();
         while(CAMERA_OPTIONS.consumeClick())if(mc.player!=null&&mc.screen==null)mc.setScreen(new CameraSettingsScreen(null)); while(SWAP_SHOULDER.consumeClick())if(mc.player!=null&&mc.screen==null)ShoulderCamera.swap(); while (TOGGLE_HUD.consumeClick()) {
-            if (mc.player != null && mc.screen == null) showHud = !showHud;
+            if (mc.player != null && mc.screen == null) DynamicHud.cycle();
         }
         while (USE_ABILITY.consumeClick()) {
-            if (mc.player != null && mc.level != null && mc.screen == null) cast(0);
+            if (mc.player != null && mc.level != null && mc.screen == null) AbilityPreview.press(0);
         }
-        while (SECOND_ABILITY.consumeClick()) if (mc.player != null && mc.screen == null) cast(1);
-        while (THIRD_ABILITY.consumeClick()) if (mc.player != null && mc.screen == null) cast(2);
+        while (SECOND_ABILITY.consumeClick()) if (mc.player != null && mc.screen == null) AbilityPreview.press(1);
+        while (THIRD_ABILITY.consumeClick()) if (mc.player != null && mc.screen == null) AbilityPreview.press(2);
         while (OPEN_MENU.consumeClick()) {
             if (mc.player != null && mc.screen == null) mc.setScreen(new RpgScreen());
         }
+        AbilityPreview.tick();
     }
 
     private static void renderHud(GuiGraphics g) {
-        var mc = Minecraft.getInstance();
-        if (!showHud || mc.options.hideGui || mc.player == null || mc.level == null || mc.screen != null || hudState == null) return;
+        var mc=Minecraft.getInstance();
+        if(DynamicHud.mode()==DynamicHud.Mode.HIDDEN||mc.options.hideGui||mc.player==null||mc.level==null||mc.screen!=null||hudState==null)return;
         renderAbilityIcons(g);
-        int x = 8, y = 8, width = Math.min(192, g.guiWidth() - 16);
-        var font = mc.font;
-        var state = hudState;
-        g.fill(x, y, x + width, y + 147, 0xB018202C);
-        g.fill(x, y, x + 2, y + 147, 0xFF53D5BF);
-        String header = RpgClass.values()[state.rpgClass()].label() + " • Nv. " + state.level() + (state.debug() ? " • DEBUG" : "");
-        g.drawString(font, font.plainSubstrByWidth(header, width - 16), x + 8, y + 6, state.debug() ? 0xFFFFCC79 : 0xFF53D5BF);
-        int next = state.level() == 100 ? 0 : state.level() * 100;
-        g.drawString(font, next == 0 ? "Nível máximo" : "XP " + state.xp() + "/" + next, x + 8, y + 19, 0xFFFFFFFF);
-        g.fill(x + 8, y + 30, x + width - 8, y + 34, 0xFF313B4B);
-        int filled = next == 0 ? width - 16 : (width - 16) * state.xp() / next;
-        g.fill(x + 8, y + 30, x + 8 + filled, y + 34, 0xFF53D5BF);
-        g.drawString(font, "Caçada " + state.kills() % 10 + "/10 • +100 XP", x + 8, y + 39, 0xFFE1EAF0);
-        var quest = QuestCatalog.quest(state.questStage());
-        var first = quest.targets().get(0);
-        g.drawString(font, "Missão: " + first.label() + " " + state.questFirst() + "/" + first.amount(), x + 8, y + 53, 0xFFB7C8D7);
-        String second = quest.targets().size() == 1 ? "Recompensa: +" + quest.reward() + " XP" : quest.targets().get(1).label()
-            + " " + state.questSecond() + "/" + quest.targets().get(1).amount();
-        g.drawString(font, second, x + 8, y + 66, 0xFFB7C8D7);
-        if(resourceState!=null)g.drawString(font,"Mana "+resourceState.mana()+"/"+resourceState.maxMana()+" • Atributos "+resourceState.points(),x+8,y+118,0xFF70BAFF);
-        var keys = new KeyMapping[] {USE_ABILITY, SECOND_ABILITY, THIRD_ABILITY};
-        for (int slot = 0; slot < 3; slot++) {
-            long remaining = Math.max(0, hudReadyAt[slot] - mc.level.getGameTime());
-            String name = state.rpgClass() == 0 ? "Habilidade " + (slot + 1) : dev.emersonoxy.rpg.SkillTree.abilityName(RpgClass.values()[state.rpgClass()], slot);
-            String status = !state.canUse(slot) ? "bloqueada" : state.debug() ? "DEBUG" : remaining == 0 ? "pronta" : ((remaining + 19) / 20) + " s";
-            g.drawString(font, font.plainSubstrByWidth(keys[slot].getTranslatedKeyMessage().getString() + " " + name + " • " + status, width - 16),
-                x + 8, y + 79 + slot * 13, remaining == 0 && state.canUse(slot) ? 0xFFFFCC79 : 0xFFB7C8D7);
-        }
-        g.drawString(font, OPEN_MENU.getTranslatedKeyMessage().getString() + " menu • " + TOGGLE_HUD.getTranslatedKeyMessage().getString() + " HUD", x + 8, y + 131, 0xFFB7C8D7);
+        renderDynamicPanels(g);
     }
     private static void renderMana(GuiGraphics g){
         var mc=Minecraft.getInstance();var r=resourceState;
-        if(!showHud||mc.options.hideGui||mc.screen!=null||mc.player==null||r==null||hudState==null||hudState.rpgClass()==0)return;
+        if(DynamicHud.alpha(DynamicHud.Part.MANA)<=0||mc.options.hideGui||mc.screen!=null||mc.player==null||r==null||hudState==null||hudState.rpgClass()==0)return;
+        HudOpacity.begin(DynamicHud.alpha(DynamicHud.Part.MANA));
         int x=g.guiWidth()/2-91,y=g.guiHeight()-39;
         // Ten drops represent the fraction of total mana, so the row stays compact at high levels.
         float fraction=(float)r.mana()/Math.max(1,r.maxMana());
@@ -209,7 +226,7 @@ public final class OxyRpgClient {
             g.fill(px+1,y+4,px+7,y+7,color);g.fill(px+2,y+7,px+6,y+8,color);
             if(fill>0)g.fill(px+2,y+4,px+3,y+6,0xFFB7E6FF);
         }
-
+        HudOpacity.end();
     }
     private static void renderAbilityIcons(GuiGraphics g) {
         var mc=Minecraft.getInstance();var state=hudState;
@@ -217,6 +234,8 @@ public final class OxyRpgClient {
         int start=g.guiWidth()/2-92,y=g.guiHeight()-Math.max(89,mc.gui.leftHeight+43);
         var keys=new KeyMapping[]{USE_ABILITY,SECOND_ABILITY,THIRD_ABILITY};
         for(int slot=0;slot<3;slot++){
+            float alpha=DynamicHud.alpha(DynamicHud.ability(slot));if(alpha<=0)continue;
+            HudOpacity.begin(alpha);
             int x=start+slot*62;long remaining=effectUntil[slot]==Long.MAX_VALUE?Long.MAX_VALUE:Math.max(0,effectUntil[slot]-mc.level.getGameTime());
             long cooldown=Math.max(0,hudReadyAt[slot]-mc.level.getGameTime());
             int phase=remaining>0?effectPhase[slot]:0;
@@ -227,7 +246,8 @@ public final class OxyRpgClient {
             if(skillIcons[slot]!=null)g.renderFakeItem(skillIcons[slot],x+5,y+5);
             if(!available)g.fill(x+4,y+4,x+22,y+22,0xAA101820);
             g.drawString(mc.font,keys[slot].getTranslatedKeyMessage().getString(),x+27,y+5,0xFFFFFFFF);
-            String label=!available?"Bloq.":phase==6?"Aliados":phase==1?"Projétil":phase==2?"Canal":phase==4?"Área":phase==5?"Efeito":phase>0?"Ativa":cooldown>0?((cooldown+19)/20)+" s":"Pronta";
+            boolean passive=state.rpgClass()==RpgClass.AVIARIO.ordinal()&&slot==1;
+            String label=!available?"Bloq.":passive?"Passiva":phase==6?"Aliados":phase==1?"Projétil":phase==2?"Canal":phase==4?"Área":phase==5?"Efeito":phase>0?"Ativa":cooldown>0?((cooldown+19)/20)+" s":"Pronta";
             g.drawString(mc.font,mc.font.plainSubstrByWidth(label,52),x+3,y+26,accent);
             g.fill(x+3,y+21,x+55,y+24,0xFF313B4B);
             if(phase>0){
@@ -239,6 +259,30 @@ public final class OxyRpgClient {
                 float charge=1-Math.clamp((float)cooldown/Math.max(1,cooldownTotal[slot]),0,1);
                 g.fill(x+3,y+21,x+3+(int)(52*charge),y+24,cooldown==0?0xFF53D5BF:0xFF707D90);
             }
+            HudOpacity.end();
+        }
+    }
+    public static boolean abilityActive(int slot){
+        var mc=Minecraft.getInstance();return mc.level!=null&&hudState!=null&&hudState.rpgClass()!=0
+            &&(hudReadyAt[slot]>mc.level.getGameTime()||effectUntil[slot]>mc.level.getGameTime());
+    }
+    private static void renderDynamicPanels(GuiGraphics g){
+        var mc=Minecraft.getInstance();var s=hudState;int width=Math.min(192,g.guiWidth()-16);
+        float rpg=DynamicHud.alpha(DynamicHud.Part.RPG),quest=DynamicHud.alpha(DynamicHud.Part.QUEST);
+        if(rpg>0){
+            HudOpacity.begin(rpg);g.fill(8,8,8+width,58,0xB018202C);
+            g.drawString(mc.font,RpgClass.values()[s.rpgClass()].label()+" • Nv. "+s.level()+(s.debug()?" • DEBUG":s.testing()?" • TESTE":""),16,14,0xFF53D5BF);
+            g.drawString(mc.font,"XP "+s.xp()+"/"+(s.level()*100),16,27,0xFFFFFFFF);
+            if(resourceState!=null)g.drawString(mc.font,"Atributos: "+resourceState.points(),16,38,0xFF70BAFF);
+            if(resourceState!=null)g.drawString(mc.font,"Mana: "+(s.debug()?"∞":resourceState.mana()+"/"+resourceState.maxMana())+" MP",16,48,0xFF70BAFF);
+            HudOpacity.end();
+        }
+        if(quest>0){
+            HudOpacity.begin(quest);g.fill(8,62,8+width,109,0xB018202C);var q=QuestCatalog.quest(s.questStage());var first=q.targets().getFirst();
+            g.drawString(mc.font,"Caçada "+s.kills()%10+"/10",16,68,0xFFE1EAF0);
+            g.drawString(mc.font,first.label()+" "+s.questFirst()+"/"+first.amount(),16,81,0xFFB7C8D7);
+            String second=q.targets().size()>1?q.targets().get(1).label()+" "+s.questSecond()+"/"+q.targets().get(1).amount():"Recompensa: +"+q.reward()+" XP";
+            g.drawString(mc.font,second,16,94,0xFFB7C8D7);HudOpacity.end();
         }
     }
     private static void potionInput(net.neoforged.neoforge.client.event.InputEvent.InteractionKeyMappingTriggered event){
@@ -247,20 +291,20 @@ public final class OxyRpgClient {
             ||effectUntil[2]<=mc.level.getGameTime()||!mc.player.getMainHandItem().isEmpty()||!mc.player.getOffhandItem().isEmpty())return;
         if(!event.isAttack()&&!event.isUseItem())return;
         event.setCanceled(true);event.setSwingHand(false);
-        if(event.getHand()==net.minecraft.world.InteractionHand.MAIN_HAND)mc.player.connection.send(new RpgNetwork.Request(event.isUseItem()?9:8));
+        if(event.getHand()==net.minecraft.world.InteractionHand.MAIN_HAND)mc.player.connection.send(aimedRequest(event.isUseItem()?9:8,0));
     }
     public static void cast(int slot) {
         var mc = Minecraft.getInstance();
         if (mc.player == null) return;
+        DynamicHud.signal(DynamicHud.ability(slot));DynamicHud.signal(DynamicHud.Part.MANA);DynamicHud.signal(DynamicHud.Part.RPG);
         int side = (mc.options.keyRight.isDown() ? 1 : 0) - (mc.options.keyLeft.isDown() ? 1 : 0);
         int forward = (mc.options.keyUp.isDown() ? 1 : 0) - (mc.options.keyDown.isDown() ? 1 : 0);
         int direction = side == 0 && forward == 0 ? 0 : Math.floorMod((int)Math.round(Math.atan2(side, forward) / (Math.PI / 4)), 8);
-        mc.player.connection.send(new RpgNetwork.Request(slot == 0 ? 1 : slot == 1 ? 5 : 6, direction));
+        mc.player.connection.send(aimedRequest(slot == 0 ? 1 : slot == 1 ? 5 : 6,direction));
+    }
+    private static RpgNetwork.Request aimedRequest(int action,int direction){
+        var mc=Minecraft.getInstance();var target=TargetLock.mouseLocked()?TargetLock.target():null;
+        var point=ShoulderCamera.aimPoint(mc.gameRenderer.getMainCamera().getPartialTickTime());
+        return new RpgNetwork.Request(action,direction,target==null?-1:target.getId(),point.x,point.y,point.z);
     }
 }
-
-
-
-
-
-

@@ -10,3 +10,6 @@
 - Preserve o JAR anterior fora de mods para evitar mods duplicados.
 - Não importe caminhos, proxy ou certificados da nuvem para o Windows.
 - Não afirme que uma versão funciona no jogo sem evidência dessa versão.
+- Declare todos os atalhos novos pela fábrica key() de OxyRpgClient: categoria Oxy RPG,
+  registro automático em RegisterKeyMappingsEvent e traduções em pt_br/en_us.
+  Nunca leia códigos GLFW fixos para executar ações do mod fora desse registro.

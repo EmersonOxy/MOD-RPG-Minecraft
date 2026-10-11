@@ -22,7 +22,7 @@ public final class MobLevels {
     public static void join(EntityJoinLevelEvent event) {
         if (event.isCanceled() || RpgNecromancer.isSummon(event.getEntity()) || !(event.getLevel() instanceof ServerLevel world)
             || !(event.getEntity() instanceof Mob mob) || !(mob instanceof Enemy)) return;
-        if (mob.getPersistentData().contains(KEY)) {EliteMobs.slow(mob);return;}
+        if (mob.getPersistentData().contains(KEY)) {balance(mob);EliteMobs.slow(mob);return;}
         int assigned = 1;
         if (!event.loadedFromDisk()) {
             ServerPlayer closest = null;
@@ -33,20 +33,31 @@ public final class MobLevels {
                 if (d < distance) { distance = d; closest = player; }
             }
             if (closest != null) try {
-                int playerLevel = new ProfileStore(world.getServer().getWorldPath(LevelResource.ROOT).resolve("oxyrpg")).load(closest.getUUID()).level();
+                var profile = new ProfileStore(world.getServer().getWorldPath(LevelResource.ROOT).resolve("oxyrpg")).load(closest.getUUID());
+                int playerLevel = RpgDebug.testing(closest) ? RpgProfile.MAX_LEVEL : profile.level();
                 assigned = Math.clamp(playerLevel + mob.getRandom().nextInt(5) - 2, 1, 100);
             } catch (IOException e) { LoggerFactory.getLogger(MobLevels.class).warn("Não foi possível ler o nível para spawn RPG; usando nível 1", e); }
         }
         mob.getPersistentData().putInt(KEY, assigned);
         if(!event.loadedFromDisk())equip(mob,assigned,world);
-        var health = mob.getAttribute(Attributes.MAX_HEALTH);
-        var damage = mob.getAttribute(Attributes.ATTACK_DAMAGE);
-        if (assigned > 1) {
-            if (health != null) health.addPermanentModifier(new AttributeModifier(ResourceLocation.fromNamespaceAndPath("oxyrpg", "mob_health"), (assigned - 1) * .04, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
-            if (damage != null) damage.addPermanentModifier(new AttributeModifier(ResourceLocation.fromNamespaceAndPath("oxyrpg", "mob_damage"), (assigned - 1) * .02, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
-            mob.setHealth(mob.getMaxHealth());
-        }
+        balance(mob);
         if(!event.loadedFromDisk())EliteMobs.roll(mob);
+    }
+    public static double healthFactor(int level){double n=level-1;return 1+n*.07+n*n*.0007;}
+    public static double damageFactor(int level){double n=level-1;return 1+n*.045+n*n*.00035;}
+    static void balance(Mob mob){
+        float ratio=mob.getHealth()/Math.max(1,mob.getMaxHealth());
+        modifier(mob,Attributes.MAX_HEALTH,"mob_health",healthFactor(level(mob))-1);
+        modifier(mob,Attributes.ATTACK_DAMAGE,"mob_damage",damageFactor(level(mob))-1);
+        mob.setHealth(Math.min(mob.getMaxHealth(),ratio*mob.getMaxHealth()));
+    }
+    static void modifier(Mob mob,net.minecraft.core.Holder<net.minecraft.world.entity.ai.attributes.Attribute> key,String name,double amount){
+        var attr=mob.getAttribute(key);if(attr==null)return;var id=ResourceLocation.fromNamespaceAndPath("oxyrpg",name);var old=attr.getModifier(id);
+        if(old!=null&&old.amount()==amount)return;if(old!=null)attr.removeModifier(id);if(amount!=0)attr.addPermanentModifier(new AttributeModifier(id,amount,AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+    }
+    public static void damage(net.neoforged.neoforge.event.entity.living.LivingDamageEvent.Pre event){
+        if(event.getSource().getEntity() instanceof Mob mob&&mob instanceof Enemy&&!RpgNecromancer.isSummon(mob)
+            &&(event.getSource().is(net.minecraft.tags.DamageTypeTags.IS_PROJECTILE)||event.getSource().is(net.minecraft.tags.DamageTypeTags.IS_EXPLOSION)))event.setNewDamage(event.getNewDamage()*(float)damageFactor(level(mob)));
     }
     private static void equip(Mob mob,int level,ServerLevel world){
         if(level<10)return;
@@ -68,7 +79,7 @@ public final class MobLevels {
             // Preserve named/special equipment supplied by spawn commands and other mods.
             var current=mob.getItemBySlot(slots[i]);
             if(current.isEmpty()||rank(current)<=tier&&!current.has(net.minecraft.core.component.DataComponents.CUSTOM_NAME)&&!current.isEnchanted()){
-                mob.setItemSlot(slots[i],stack);mob.setDropChance(slots[i],.015f);
+                mob.setItemSlot(slots[i],stack);mob.setDropChance(slots[i],.015f+level*.0004f);
             }
         }
         var held=mob.getMainHandItem();net.minecraft.world.item.ItemStack weapon;
@@ -79,7 +90,7 @@ public final class MobLevels {
         }
         if(held.isEmpty()||rank(held)<=tier&&!held.has(net.minecraft.core.component.DataComponents.CUSTOM_NAME)&&!held.isEnchanted()){
             mob.setItemSlot(net.minecraft.world.entity.EquipmentSlot.MAINHAND,enhance(weapon,level,world,mob));
-            mob.setDropChance(net.minecraft.world.entity.EquipmentSlot.MAINHAND,.015f);
+            mob.setDropChance(net.minecraft.world.entity.EquipmentSlot.MAINHAND,.015f+level*.0004f);
         }
     }
     private static int rank(net.minecraft.world.item.ItemStack item){

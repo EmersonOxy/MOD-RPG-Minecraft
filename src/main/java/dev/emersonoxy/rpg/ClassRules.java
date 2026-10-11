@@ -59,6 +59,7 @@ public final class ClassRules {
         case ARQUEIRO->"Sem escudos; -2 corações de vida base.";
         case MAGO->"+20% dano recebido de ataques corpo a corpo.";
         case NECROMANTE->"-20% dano próprio; -15% velocidade de dia.";
+        case AVIARIO->"Voo temporário, proteção na queda e impacto ao pousar.";
         case XAMA->"Não pode comer carne ou peixe.";
         default->"Escolha uma classe para começar.";
     };}
