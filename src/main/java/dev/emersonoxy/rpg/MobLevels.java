@@ -34,7 +34,7 @@ public final class MobLevels {
             }
             if (closest != null) try {
                 var profile = new ProfileStore(closest).load(closest.getUUID());
-                int playerLevel = RpgDebug.testing(closest) ? RpgProfile.MAX_LEVEL : profile.level();
+                int playerLevel = RpgDebug.effective(closest,profile).level();
                 assigned = Math.clamp(playerLevel + mob.getRandom().nextInt(5) - 2, 1, 100);
             } catch (IOException e) { LoggerFactory.getLogger(MobLevels.class).warn("Não foi possível ler o nível para spawn RPG; usando nível 1", e); }
         }

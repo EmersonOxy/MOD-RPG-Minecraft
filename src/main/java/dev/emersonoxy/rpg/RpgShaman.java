@@ -55,7 +55,7 @@ public final class RpgShaman {
         if(time<a.potion)return;
         var s=a.profile[2];int cost=ClassEquipment.discount(p,RpgClass.XAMA,(s.mainUnlocked(2)?5:4)-(s.hasSkill(20)?1:0));
         if(!RpgResources.affordable(p,cost)){p.sendSystemMessage(Component.literal("[Oxy RPG] Mana insuficiente: precisa de "+cost+" MP para a poção."));a.potion=time+10;return;}
-        a.potion=time+(RpgDebug.unlimited(p)?1:s.hasSkill(16)?15:20);
+        a.potion=time+(RpgDebug.cooldownsDisabled(p)?1:s.hasSkill(16)?15:20);
         List<Holder<MobEffect>> pool=positive?List.of(MobEffects.INSTANT_HEALTH,MobEffects.REGENERATION,MobEffects.SPEED,MobEffects.STRENGTH,MobEffects.FIRE_RESISTANCE,MobEffects.RESISTANCE)
             :List.of(MobEffects.INSTANT_DAMAGE,MobEffects.POISON,MobEffects.SLOWNESS,MobEffects.WEAKNESS);
         var effect=pool.get(p.getRandom().nextInt(pool.size()));

@@ -46,9 +46,9 @@ public final class AbilityPreview {
         var mc=Minecraft.getInstance();if(slot<0||mc.player==null||mc.level==null||mc.screen!=null||mc.options.hideGui)return;var profile=OxyRpgClient.profile();if(profile==null)return;
         if(built!=mc.level.getGameTime()){build(profile);built=mc.level.getGameTime();}
         int cost=ClassEquipment.discount(mc.player,profile.rpgClass(),RpgResources.cost(profile,slot,false));var resource=OxyRpgClient.resources();var state=OxyRpgClient.state();
-        String status=!state.canUse(slot)?"Habilidade bloqueada":!state.debug()&&OxyRpgClient.cooldown(slot)>0?"Em recarga":!state.debug()&&resource!=null&&resource.mana()<cost?"Mana insuficiente":"Solte para lançar";
+        String status=!state.canUse(slot)?"Habilidade bloqueada":OxyRpgClient.cooldown(slot)>0?"Em recarga":resource!=null&&resource.mana()<cost&&!(OxyRpgClient.debugState()!=null&&OxyRpgClient.debugState().resources())?"Mana insuficiente":"Solte para lançar";
         int color=status.equals("Solte para lançar")?0xD953D5BF:status.equals("Em recarga")?0xD9A1AAB8:0xD9FF7070;
         for(var line:LINES)WorldLines.line(g,line[0],line[1],color);
-        g.drawCenteredString(mc.font,SkillTree.abilityName(profile.rpgClass(),slot)+" • "+status+" • "+(state.debug()?0:cost)+" MP",g.guiWidth()/2,g.guiHeight()/2+30,0xFF000000|(color&0xFFFFFF));
+        g.drawCenteredString(mc.font,SkillTree.abilityName(profile.rpgClass(),slot)+" • "+status+" • "+(OxyRpgClient.debugState()!=null&&OxyRpgClient.debugState().resources()?0:cost)+" MP",g.guiWidth()/2,g.guiHeight()/2+30,0xFF000000|(color&0xFFFFFF));
     }
 }

@@ -39,6 +39,7 @@ public final class ProfileStore {
     }
 
     public void save(UUID id, RpgProfile profile) throws IOException {
+        if(profile.temporary())throw new IOException("Perfil temporário de debug não pode ser salvo.");
         if(player!=null){if(!id.equals(player.getUUID()))throw new IOException("UUID não corresponde ao dono do perfil.");player.setData(PlayerAttachments.PROFILE,new PlayerAttachments.Stored(true,profile));return;}
         Files.createDirectories(directory);
         Properties data = new Properties();

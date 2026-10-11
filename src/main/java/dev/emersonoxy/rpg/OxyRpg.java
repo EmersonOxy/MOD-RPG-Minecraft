@@ -184,7 +184,7 @@ public final class OxyRpg {
         try {
             RpgProfile profile = store(player).load(player.getUUID());
             var effective=RpgDebug.effective(player,profile);
-            boolean debug = RpgDebug.unlimited(player);
+            boolean debug=RpgDebug.debugging(player),noCooldown=RpgDebug.cooldownsDisabled(player);
             ClassEquipment.onProfile(player,profile);
             RpgResources.update(player,profile);RpgResources.sync(player);
             RpgAbilities.updateProfile(player, RpgDebug.effective(player, profile));
@@ -192,9 +192,10 @@ public final class OxyRpg {
             RpgAbilities.syncGhost(player);
             RpgSpecialists.sync(player);
             RpgAbilities.syncStatus(player);
-            long cooldown = debug ? 0 : Math.max(0, RpgDebug.readyAt(player,profile,0) - player.level().getGameTime());
+            RpgDebug.sync(player,profile);
+            long cooldown = noCooldown ? 0 : Math.max(0, RpgDebug.readyAt(player,profile,0) - player.level().getGameTime());
             net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(player,
-                new RpgNetwork.State(effective.rpgClass().ordinal(), effective.level(), effective.xp(), profile.kills(), cooldown, debug ? 0 : Math.max(0, RpgDebug.readyAt(player,profile,1) - player.level().getGameTime()), debug ? 0 : Math.max(0, RpgDebug.readyAt(player,profile,2) - player.level().getGameTime()),
+                new RpgNetwork.State(effective.rpgClass().ordinal(), effective.level(), effective.xp(), profile.kills(), cooldown, noCooldown ? 0 : Math.max(0, RpgDebug.readyAt(player,profile,1) - player.level().getGameTime()), noCooldown ? 0 : Math.max(0, RpgDebug.readyAt(player,profile,2) - player.level().getGameTime()),
                     RpgDebug.effective(player, profile).skills(), debug, RpgDebug.testing(player), profile.questStage(), profile.questFirst(), profile.questSecond(), notice));
         } catch (IOException e) {
             LOGGER.error("Não foi possível atualizar o menu RPG de {}", player.getUUID(), e);
@@ -212,6 +213,7 @@ public final class OxyRpg {
                 case "classes" -> tell(player, "Escolha sua classe no menu R, ou /rpg classe <nome>. Classes: guerreiro, mago, arqueiro, necromante, xama, aviario, ilusionista, hidromante e piromante. A escolha é definitiva neste mundo.");
                 case "classe" -> {
                     if(RpgDebug.testing(player))return testMode(player,selected,false);
+                    if(RpgDebug.debugging(player))return DebugControls.choose(player,selected);
                     RpgProfile next = profile.choose(selected);
                     store.save(player.getUUID(), next);
                     RpgDebug.clearSkills(player);
@@ -242,7 +244,7 @@ public final class OxyRpg {
             var real = store.load(player.getUUID());
             var effective = RpgDebug.effective(player, real);
             RpgAbilities.updateProfile(player, effective);
-            boolean debug = RpgDebug.unlimited(player), extra = RpgAbilities.extraDash(player, slot)||RpgAviary.boostAvailable(player,slot)||RpgSpecialists.extra(player,slot);
+            boolean debug=RpgDebug.cooldownsDisabled(player), extra = RpgAbilities.extraDash(player, slot)||RpgAviary.boostAvailable(player,slot)||RpgSpecialists.extra(player,slot);
             RpgSpecialists.validate(player,effective,slot);
             if(effective.rpgClass()==RpgClass.AVIARIO)RpgAviary.validate(player,slot);
             if (!effective.canUseAbility(slot)) { tell(player, "Aprenda o efeito inicial desse ramo na árvore de skills."); return 0; }
@@ -254,12 +256,12 @@ public final class OxyRpg {
             int cost=ClassEquipment.discount(player,effective.rpgClass(),RpgResources.cost(effective,slot,extra));
             RpgResources.update(player,real);
             if(!RpgResources.affordable(player,cost)){tell(player,"Mana insuficiente: precisa de "+cost+".");return 0;}
-            if (!debug && !extra){if(RpgDebug.testing(player))RpgDebug.cooldown(player,effective,slot,now);else store.save(player.getUUID(), real.useAbility(now, slot));}
+            if (!debug && !extra){if(RpgDebug.enabled(player))RpgDebug.cooldown(player,effective,slot,now);else store.save(player.getUUID(), real.useAbility(now, slot));}
             RpgResources.spend(player,cost);
             RpgAbilities.activate(player, effective, slot, direction);
             SkillEffects.cast(player,effective,slot);
             tell(player, (extra&&effective.rpgClass()==RpgClass.AVIARIO?"Impulso aéreo":SkillTree.abilityName(effective.rpgClass(), slot)) + (effective.mainUnlocked(slot) ? " ativada!" : " — versão inicial ativada!")
-                + (debug ? " DEBUG: sem recarga e sem gasto de mana." : " Recarga: " + effective.abilityCooldown(slot) / 20 + " s. Mana: "+cost+" MP."));
+                + (RpgDebug.debugging(player) ? " DEBUG: recargas "+(debug?"desligadas":"ativas")+"; recursos "+(RpgDebug.unlimited(player)?"ilimitados":"normais")+"." : " Recarga: " + effective.abilityCooldown(slot) / 20 + " s. Mana: "+cost+" MP."));
             return 1;
         } catch (IllegalStateException e) { tell(player, e.getMessage()); }
         catch (IOException e) { LOGGER.error("Falha ao usar habilidade de {}", player.getUUID(), e); tell(player, "Não foi possível salvar a habilidade."); }
@@ -267,7 +269,7 @@ public final class OxyRpg {
     }
 
     private static void allocateAttribute(ServerPlayer player,int id){
-        if(RpgDebug.testing(player)){tell(player,"TESTE: todos os atributos já estão no máximo temporário.");return;}
+        if(RpgDebug.enabled(player)){tell(player,"Atributos temporários: use /rpg debug atributos maximos|normais, ou saia do modo de desenvolvimento para gastar pontos reais.");return;}
         try{
             var storage=store(player);var next=storage.load(player.getUUID()).allocateNode(player.getUUID(),id);
             storage.save(player.getUUID(),next);
@@ -291,7 +293,7 @@ public final class OxyRpg {
     }
 
     private static int resetClass(net.minecraft.commands.CommandSourceStack source, ServerPlayer target) {
-        if(RpgDebug.testing(target)){source.sendFailure(Component.literal("Saia do modo teste com /rpg teste off antes de resetar o perfil real."));return 0;}
+        if(RpgDebug.enabled(target)){source.sendFailure(Component.literal("Use /rpg debug off antes de resetar o perfil real."));return 0;}
         try {
             ProfileStore store = store(target);
             store.save(target.getUUID(), store.load(target.getUUID()).resetClass());
@@ -322,7 +324,7 @@ public final class OxyRpg {
             return 1;
         }catch(IOException e){LOGGER.error("Falha ao preparar modo teste",e);tell(player,"Não foi possível ler seu perfil para o modo teste.");return 0;}
     }
-    private static int debug(ServerPlayer player, int mode) {
+    static int debug(ServerPlayer player, int mode) {
         try {
             if (mode == 1) RpgDebug.enable(player, store(player).load(player.getUUID()));
             else if (mode == 2) {
@@ -332,10 +334,10 @@ public final class OxyRpg {
                     RpgAbilities.clear(player);
             } else RpgDebug.disable(player);
             RpgAbilities.clear(player);
-            tell(player, mode == 1 ? "DEBUG ON: sem cooldown, pontos ou requisito de nível. Skills de teste são temporárias."
+            tell(player, mode == 1 ? "DEBUG ON: nível 100, todas as skills liberadas, recursos ilimitados e recargas desligadas. Configure em R > Debug ou /rpg debug. Tudo temporário."
                 : mode == 2 ? "DEBUG: árvore temporária limpa para testar outra combinação."
                 : "DEBUG OFF: skills e recarga normais restauradas.");
-            Professions.refreshModifiers(player);
+            sync(player,"");Professions.refreshModifiers(player);
             return 1;
         } catch (IOException e) {
             LOGGER.error("Falha ao preparar debug de {}", player.getUUID(), e);
@@ -365,13 +367,7 @@ public final class OxyRpg {
         root.then(Commands.literal("desempenho").requires(Commands.hasPermission(2)).executes(c->{for(var line:RpgProfiler.report())c.getSource().sendSuccess(()->Component.literal(line),false);return 1;})
             .then(Commands.literal("limpar").executes(c->{RpgProfiler.clear();return 1;})));
         root.then(Commands.literal("exportarperfil").requires(Commands.hasPermission(2)).executes(c->{var p=c.getSource().getPlayerOrException();try{var profile=new ProfileStore(p).load(p.getUUID());new ProfileStore(p.level().getServer().getWorldPath(LevelResource.ROOT).resolve("oxyrpg/exports")).save(p.getUUID(),profile);tell(p,"Perfil exportado em oxyrpg/exports.");return 1;}catch(IOException e){c.getSource().sendFailure(Component.literal("Não foi possível exportar o perfil."));return 0;}}));
-        root.then(Commands.literal("debug").requires(Commands.hasPermission(2))
-            .executes(c -> { tell(c.getSource().getPlayerOrException(), "Debug: "
-                + (RpgDebug.unlimited(c.getSource().getPlayerOrException()) ? "ON" : "OFF") + ". Use /rpg debug on|off|limpar."); return 1; })
-            .then(Commands.literal("on").executes(c -> debug(c.getSource().getPlayerOrException(), 1)))
-            .then(Commands.literal("off").executes(c -> debug(c.getSource().getPlayerOrException(), 0)))
-            .then(Commands.literal("limpar").executes(c -> debug(c.getSource().getPlayerOrException(), 2)))
-            .then(Commands.literal("arsenal").executes(c->{var p=c.getSource().getPlayerOrException();RpgDebug.arsenal(p);tell(p,"DEBUG Arsenal: nível 20 temporário. /rpg debug off restaura o nível salvo.");Professions.refreshModifiers(p);return 1;})));
+        root.then(DebugControls.commands());
         var tests=Commands.literal("teste").requires(Commands.hasPermission(2))
             .executes(c->testMode(c.getSource().getPlayerOrException(),null,false))
             .then(Commands.literal("on").executes(c->testMode(c.getSource().getPlayerOrException(),null,false)))
@@ -395,7 +391,7 @@ public final class OxyRpg {
         net.minecraft.world.entity.Entity credit = RpgNecromancer.owner(event.getSource());
         if (!(credit instanceof ServerPlayer)) credit = event.getEntity().getKillCredit();
         if (!(credit instanceof ServerPlayer player)) return;
-        if(RpgDebug.testing(player)){RpgAbilities.killed(player);RpgResources.rareDrop(player,event.getEntity());return;}
+        if(RpgDebug.enabled(player)){RpgAbilities.killed(player);RpgResources.rareDrop(player,event.getEntity());return;}
         try {
             ProfileStore store = store(player);
             RpgProfile previous = store.load(player.getUUID());

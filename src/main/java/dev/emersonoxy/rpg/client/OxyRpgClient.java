@@ -22,6 +22,8 @@ import dev.emersonoxy.rpg.QuestCatalog;
 
 @Mod(value = OxyRpg.MOD_ID, dist = Dist.CLIENT)
 public final class OxyRpgClient {
+    private static RpgNetwork.DebugState debugState;
+    public static RpgNetwork.DebugState debugState(){return debugState;}
     private static final KeyMapping.Category CATEGORY=new KeyMapping.Category(ResourceLocation.fromNamespaceAndPath("oxyrpg","controls"));
     private static final java.util.List<KeyMapping> ALL_KEYS=new java.util.ArrayList<>();
     /** Declare every present and future shortcut through this factory; registration is automatic. */
@@ -63,7 +65,7 @@ public final class OxyRpgClient {
     public static RpgNetwork.JourneyState journey(){return journeyState;}
     public static RpgNetwork.State state(){return hudState;}
     public static long cooldown(int slot){var mc=Minecraft.getInstance();return mc.level==null?0:Math.max(0,hudReadyAt[slot]-mc.level.getGameTime());}
-    public static dev.emersonoxy.rpg.RpgProfile profile(){return hudState==null||hudState.rpgClass()==0?null:new dev.emersonoxy.rpg.RpgProfile(RpgClass.values()[hudState.rpgClass()],hudState.level(),hudState.xp(),hudState.kills(),0,hudState.skills());}
+    public static dev.emersonoxy.rpg.RpgProfile profile(){return hudState==null||hudState.rpgClass()==0?null:new dev.emersonoxy.rpg.RpgProfile(RpgClass.values()[hudState.rpgClass()],hudState.level(),hudState.xp(),hudState.kills(),0,hudState.skills(),0,0,0,0,0,dev.emersonoxy.rpg.AttributeStats.EMPTY,"",hudState.debug()||hudState.testing());}
     public static RpgNetwork.Resources resources(){return resourceState;}
     private static final long[] hudReadyAt = new long[3];
     private static final long[] effectUntil = new long[3];
@@ -155,6 +157,7 @@ public final class OxyRpgClient {
             var mc=Minecraft.getInstance();long time=mc.level==null?0:mc.level.getGameTime();
             for(int slot=0;slot<3;slot++){effectUntil[slot]=value.remaining(slot)==-1?Long.MAX_VALUE:time+value.remaining(slot);effectTotal[slot]=value.total(slot);effectPhase[slot]=value.phase(slot);}
         });
+        event.register(RpgNetwork.DebugState.TYPE,(value,context)->{debugState=value;var player=Minecraft.getInstance().player;if(player!=null)player.getPersistentData().putBoolean("oxy_debug_no_cooldown",value.mode()==1&&!value.cooldowns());});
         event.register(RpgNetwork.CastFx.TYPE,(value,context)->ClassCastEffects.receive(value));
         event.register(RpgNetwork.ImpactFx.TYPE,(value,context)->SkillEffectsRenderer.receive(value));
         event.register(RpgNetwork.SpecialState.TYPE,(value,context)->SpecialistHud.receive(value));
@@ -167,7 +170,7 @@ public final class OxyRpgClient {
             dev.emersonoxy.rpg.EquipmentAccess.clientClass(state.rpgClass());
             dev.emersonoxy.rpg.EquipmentAccess.clientLevel(state.level());
             if(state.rpgClass()!=0)for(int slot=0;slot<3;slot++){
-                cooldownTotal[slot]=new dev.emersonoxy.rpg.RpgProfile(RpgClass.values()[state.rpgClass()],100,0,0,0,state.skills()).abilityCooldown(slot);
+                cooldownTotal[slot]=profile().abilityCooldown(slot);
                 int node=slot*7+(state.hasSkill(slot*7+3)?3:1);
                 var icon=dev.emersonoxy.rpg.SkillTree.nodes(RpgClass.values()[state.rpgClass()]).get(node).icon();
                 var item=net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(ResourceLocation.parse(icon));
@@ -183,7 +186,7 @@ public final class OxyRpgClient {
     private static void tick(ClientTickEvent.Post event) {
         var mc = Minecraft.getInstance();
         if (mc.player != trackedPlayer || mc.level != trackedLevel) {
-            EvasionHud.clear();SimpleMinimap.clear();DamageNumbers.clear();SkillEffectsRenderer.clear();ClassCastEffects.clear();EliteWarnings.clear();AbilityPreview.clear();journeyState=null;ShoulderCamera.reset();TargetLock.clear();MovementFacing.reset();DynamicHud.reset(); trackedPlayer = mc.player;
+            EvasionHud.clear();SimpleMinimap.clear();DamageNumbers.clear();SkillEffectsRenderer.clear();ClassCastEffects.clear();debugState=null;if(mc.player!=null)mc.player.getPersistentData().remove("oxy_debug_no_cooldown");EliteWarnings.clear();AbilityPreview.clear();journeyState=null;ShoulderCamera.reset();TargetLock.clear();MovementFacing.reset();DynamicHud.reset(); trackedPlayer = mc.player;
             trackedLevel = mc.level;
             hudState = null;resourceState=null;professionState=null;
             dev.emersonoxy.rpg.EquipmentAccess.resetClient();

@@ -43,7 +43,7 @@ public final class ClassSelectionScreen extends Screen {
         // getChildAt chooses the first overlapping child even if it declines the click.
         addRenderableWidget(selector);
     }
-    private boolean canChoose(){return pending==0&&(state.rpgClass()==0||state.testing())&&selected.ordinal()!=state.rpgClass();}
+    private boolean canChoose(){return pending==0&&(state.rpgClass()==0||state.testing()||state.debug())&&selected.ordinal()!=state.rpgClass();}
     public void update(RpgNetwork.State value){boolean done=pending>0&&value.rpgClass()==selected.ordinal();state=value;pending=0;parent.update(value);if(done)onClose();}
     @Override public void tick(){if(minecraft.player==null||minecraft.level==null){onClose();return;}if(pending>0)pending--;if(++ticks%40==0)minecraft.player.connection.send(new RpgNetwork.Request(0));}
     private int viewport(){return h-154;}
@@ -52,7 +52,7 @@ public final class ClassSelectionScreen extends Screen {
     @Override public void render(GuiGraphics g,int mx,int my,float partial){
         HudOpacity.begin(UiTransitions.opacity(opened,260));
         RpgUi.panel(g,left,top,w,h);g.drawCenteredString(font,Component.literal("ESCOLHA SEU CAMINHO").withStyle(net.minecraft.ChatFormatting.BOLD),width/2,top+14,RpgUi.GOLD);
-        String mode=state.testing()?"Modo de teste • troque livremente":state.rpgClass()==0?"Cada classe tem sua identidade, vantagens e limitações":"Explore as classes • seu personagem já tem uma classe";
+        String mode=(state.testing()||state.debug())?"Modo de desenvolvimento • troque livremente":state.rpgClass()==0?"Cada classe tem sua identidade, vantagens e limitações":"Explore as classes • seu personagem já tem uma classe";
         g.drawCenteredString(font,font.plainSubstrByWidth(mode,w-32),width/2,top+32,RpgUi.MUTED);
         int body=top+111,leftW=Math.min(215,(w-40)/3),lx=left+16,rx=lx+leftW+18,rw=w-leftW-50,accent=accent(selected);
         RpgUi.section(g,lx-3,body-3,leftW+6,viewport(),accent);RpgUi.section(g,rx-4,body-3,rw+8,viewport(),accent);
@@ -77,7 +77,7 @@ public final class ClassSelectionScreen extends Screen {
         }
         contentHeight=Math.max(heroHeight,sy+scroll-body);g.disableScissor();
         if(contentHeight>viewport())g.drawString(font,"Role para ler mais",left+w-12-font.width("Role para ler mais"),top+h-43,RpgUi.MUTED);
-        HudOpacity.end();HudOpacity.begin(UiTransitions.opacity(opened,260));confirm.active=canChoose();confirm.setMessage(Component.literal(pending>0?"Aguardando…":state.testing()?"Testar "+selected.label():state.rpgClass()!=0?"Classe definida":"Escolher "+selected.label()));super.render(g,mx,my,partial);HudOpacity.end();
+        HudOpacity.end();HudOpacity.begin(UiTransitions.opacity(opened,260));confirm.active=canChoose();confirm.setMessage(Component.literal(pending>0?"Aguardando…":(state.testing()||state.debug())?"Testar "+selected.label():state.rpgClass()!=0?"Classe definida":"Escolher "+selected.label()));super.render(g,mx,my,partial);HudOpacity.end();
     }
     @Override public void removed(){if(selector!=null)selector.dispose();super.removed();}
     static Item icon(RpgClass c){return switch(c){case GUERREIRO->Items.IRON_SWORD;case MAGO->Items.BLAZE_ROD;case ARQUEIRO->Items.BOW;case NECROMANTE->Items.BOOK;case XAMA->Items.AMETHYST_SHARD;case AVIARIO->Items.FEATHER;case ILUSIONISTA->Items.ENDER_EYE;case HIDROMANTE->Items.HEART_OF_THE_SEA;case PIROMANTE->Items.MAGMA_CREAM;default->Items.PAPER;};}

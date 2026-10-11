@@ -25,7 +25,7 @@ public final class RpgResources {
     private static long now(ServerPlayer p){return p.level().getGameTime();}
     private static Path file(ServerPlayer p){return p.level().getServer().getWorldPath(LevelResource.ROOT).resolve("oxyrpg/resources/"+p.getUUID()+".properties");}
     private static Pool pool(ServerPlayer p){
-        if(RpgDebug.testing(p))return TEST_POOLS.computeIfAbsent(p.getUUID(),id->{var value=new Pool(RpgProfile.NEW);value.mana=maximum(p,value.profile);return value;});
+        if(RpgDebug.enabled(p))return TEST_POOLS.computeIfAbsent(p.getUUID(),id->{var value=new Pool(RpgProfile.NEW);value.mana=maximum(p,value.profile);return value;});
         return POOLS.computeIfAbsent(p.getUUID(),id->{
             var value=new Pool(RpgProfile.NEW);
             if(Files.exists(file(p)))try(var in=Files.newBufferedReader(file(p))){
@@ -79,7 +79,7 @@ public final class RpgResources {
         var a=pool(p);if(!RpgDebug.unlimited(p)){a.mana=Math.max(0,a.mana-cost);if(cost>0)a.cast=now(p);save(p);}sync(p);
     }
     public static void tick(ServerPlayer p){
-        var a=RpgDebug.testing(p)?pool(p):POOLS.get(p.getUUID());if(a==null)return;
+        var a=RpgDebug.enabled(p)?pool(p):POOLS.get(p.getUUID());if(a==null)return;
         if(!p.isAlive())return;
         if(now(p)>=a.cast+60)a.mana=Math.min(maximum(p,a.profile),a.mana+.1f);
         if(p.tickCount%20==0)sync(p);
@@ -87,7 +87,7 @@ public final class RpgResources {
     public static void sync(ServerPlayer p){
         var a=pool(p);var s=RpgDebug.attributes(p,a.profile.attributes());
         a.mana=Math.min(a.mana,maximum(p,a.profile));
-        PacketDistributor.sendToPlayer(p,new RpgNetwork.Resources(RpgDebug.testing(p)?0:a.profile.attributePoints(),s.health(),s.damage(),s.luck(),s.armor(),s.mana(),RpgDebug.unlimited(p)?maximum(p,a.profile):(int)a.mana,maximum(p,a.profile),RpgDebug.testing(p)?allAttributeNodes():a.profile.attributeNodes()));
+        PacketDistributor.sendToPlayer(p,new RpgNetwork.Resources(RpgDebug.enabled(p)?0:a.profile.attributePoints(),s.health(),s.damage(),s.luck(),s.armor(),s.mana(),RpgDebug.unlimited(p)?maximum(p,a.profile):(int)a.mana,maximum(p,a.profile),RpgDebug.maxAttributes(p)?allAttributeNodes():a.profile.attributeNodes()));
     }
     private static String allAttributeNodes(){var bits=new java.util.BitSet(AttributeTree.COUNT);bits.set(0,AttributeTree.COUNT);return AttributeTree.encode(bits);}
     public static void damage(LivingDamageEvent.Pre event){
@@ -95,12 +95,12 @@ public final class RpgResources {
         if(p!=null){
             event.setNewDamage(event.getNewDamage()*(float)(RpgConfig.value(RpgConfig.PLAYER_DAMAGE,1)*RpgContent.damageMultiplier(RpgAbilities.profile(p).rpgClass())*(event.getSource().getDirectEntity()==p?RpgDataMaps.weapon(p.getMainHandItem()).damage():1)));
             event.setNewDamage(event.getNewDamage()*(1+.03f*SkillTree.bonus(RpgAbilities.profile(p).skills(),0)));
-            var a=RpgDebug.testing(p)?pool(p):POOLS.get(p.getUUID());if(a!=null)event.setNewDamage(event.getNewDamage()*(1+RpgDebug.attributes(p,a.profile.attributes()).damage()*.02f));
+            var a=RpgDebug.enabled(p)?pool(p):POOLS.get(p.getUUID());if(a!=null)event.setNewDamage(event.getNewDamage()*(1+RpgDebug.attributes(p,a.profile.attributes()).damage()*.02f));
         }
     }
     public static void rareDrop(ServerPlayer p,LivingEntity mob){MobLoot.reward(p,mob,RpgDebug.attributes(p,pool(p).profile.attributes()).luck());}
     private static void save(ServerPlayer p){
-        if(RpgDebug.testing(p))return;
+        if(RpgDebug.enabled(p))return;
         var a=POOLS.get(p.getUUID());if(a==null)return;Path temp=null;
         try{
             Files.createDirectories(file(p).getParent());var data=new Properties();
@@ -113,7 +113,7 @@ public final class RpgResources {
     }
     public static void reset(ServerPlayer p){var a=pool(p);a.mana=100;a.cast=0;save(p);}
     private static int maximum(ServerPlayer p,RpgProfile profile){return RpgDebug.attributes(p,profile.attributes()).maxMana()+ClassEquipment.manaBonus(p)+AdventureItems.manaBonus(p);}
-    public static void clonePlayer(PlayerEvent.Clone event){if(event.getEntity() instanceof ServerPlayer p){var a=RpgDebug.testing(p)?TEST_POOLS.get(p.getUUID()):POOLS.get(p.getUUID());if(a!=null){update(p,a.profile);if(event.isWasDeath()){a.mana=maximum(p,a.profile);a.cast=0;p.setHealth(p.getMaxHealth());}sync(p);}}}
+    public static void clonePlayer(PlayerEvent.Clone event){if(event.getEntity() instanceof ServerPlayer p){var a=RpgDebug.enabled(p)?TEST_POOLS.get(p.getUUID()):POOLS.get(p.getUUID());if(a!=null){update(p,a.profile);if(event.isWasDeath()){a.mana=maximum(p,a.profile);a.cast=0;p.setHealth(p.getMaxHealth());}sync(p);}}}
     public static void logout(PlayerEvent.PlayerLoggedOutEvent event){if(event.getEntity() instanceof ServerPlayer p){save(p);POOLS.remove(p.getUUID());TEST_POOLS.remove(p.getUUID());}}
     public static void stop(ServerStoppedEvent event){POOLS.clear();TEST_POOLS.clear();}
 }

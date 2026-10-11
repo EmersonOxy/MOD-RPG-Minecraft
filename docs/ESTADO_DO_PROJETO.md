@@ -1,8 +1,8 @@
-# Estado do Oxy RPG — revisão 0.36.0
+# Estado do Oxy RPG — revisão 0.37.0
 
-Revisão registrada em 11/10/2026. Minecraft 1.21.10, NeoForge 21.10.64, JDK 21, protocolo de rede 24. Este registro substitui descrições antigas do README. Os documentos numerados são históricos de cada entrega.
+Revisão registrada em 11/10/2026. Minecraft 1.21.10, NeoForge 21.10.64, JDK 21, protocolo de rede 25. Este registro substitui descrições antigas do README. Os documentos numerados são históricos de cada entrega.
 
-A revisão inventariou fontes Java, registros, eventos, mixins, telas, recursos JSON, geração de dados, integração e persistência. Código das áreas alteradas foi inspecionado em detalhe. Inventário de arquivos e hashes: [INVENTARIO_CODIGO_036.json](INVENTARIO_CODIGO_036.json). Não equivale a validação integral dentro do jogo nem a auditoria de segurança.
+A revisão inventariou fontes Java, registros, eventos, mixins, telas, recursos JSON, geração de dados, integração e persistência. Código das áreas alteradas foi inspecionado em detalhe. Inventário de arquivos e hashes: [INVENTARIO_CODIGO_037.json](INVENTARIO_CODIGO_037.json). Não equivale a validação integral dentro do jogo nem a auditoria de segurança.
 
 ## Sistemas implementados
 
@@ -86,3 +86,7 @@ Minimapa com orçamento de amostragem e uploads por mudança; filtro antecipado 
 ## Identidade do combate — 0.36
 
 Gestos de conjuração nos modelos nativos do jogador/armadura, cosméticos por classe e silhuetas orbitais no enxame do Ilusionista. Recuo/lateral para arqueiros e flanqueamento de parte dos inimigos corpo a corpo. Preparação de elites com contornos/legendas, especiais alternados e recuperação curta. Sem novos mobs, itens ou bibliotecas. Primeira etapa priorizada; chefes, eventos de vilas e especializações ainda não implementados. [Detalhes e limites](COMBATE_E_ANIMACOES_036.md). Compilação confirmada; comportamento no jogo ainda não validado.
+
+## Debug — 0.37
+
+Painel em R > Debug para operadores. Debug ON libera árvore completa e nível 100; nível 1–100, classe, atributos, Arsenal, recursos e recargas ajustáveis. Overrides não são gravados no perfil; pools de mana/esquiva isolados e cooldowns de skills/ação do item de classe por sessão. Modo teste mantém custos normais. Perfis temporários explicitamente identificados e bloqueados em ProfileStore. [Comandos, limitações e validação](DEBUG_037.md).

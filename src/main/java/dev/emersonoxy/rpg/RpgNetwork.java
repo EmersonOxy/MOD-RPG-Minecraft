@@ -10,6 +10,11 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 public final class RpgNetwork {
     private RpgNetwork() {}
 
+    public record DebugState(int mode,int level,int rpgClass,boolean allSkills,boolean cooldowns,boolean resources,boolean attributes,boolean arsenal) implements CustomPacketPayload {
+        public static final Type<DebugState> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath("oxyrpg","debug_state"));
+        public static final StreamCodec<RegistryFriendlyByteBuf,DebugState> CODEC=StreamCodec.of((b,v)->{b.writeVarInt(v.mode);b.writeVarInt(v.level);b.writeVarInt(v.rpgClass);b.writeBoolean(v.allSkills);b.writeBoolean(v.cooldowns);b.writeBoolean(v.resources);b.writeBoolean(v.attributes);b.writeBoolean(v.arsenal);},b->new DebugState(b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readBoolean(),b.readBoolean(),b.readBoolean(),b.readBoolean(),b.readBoolean()));
+        @Override public Type<DebugState> type(){return TYPE;}
+    }
     public record CastFx(int entity,int kind,int slot,int duration) implements CustomPacketPayload {
         public static final Type<CastFx> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath("oxyrpg","cast_fx"));
         public static final StreamCodec<RegistryFriendlyByteBuf,CastFx> CODEC=StreamCodec.of((b,v)->{b.writeVarInt(v.entity);b.writeVarInt(v.kind);b.writeVarInt(v.slot);b.writeVarInt(v.duration);},b->new CastFx(b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readVarInt()));
@@ -152,9 +157,10 @@ public final class RpgNetwork {
         @Override public Type<EliteInfo> type(){return TYPE;}
     }
     public static void register(RegisterPayloadHandlersEvent event) {
-        var registrar = event.registrar("24");
+        var registrar = event.registrar("25");
         registrar.playToClient(ImpactFx.TYPE,ImpactFx.CODEC);
         registrar.playToClient(CastFx.TYPE,CastFx.CODEC);
+        registrar.playToClient(DebugState.TYPE,DebugState.CODEC);
         registrar.playToClient(SpecialState.TYPE,SpecialState.CODEC);
         registrar.playToClient(ContentState.TYPE,ContentState.CODEC);
         registrar.playToClient(EvasionState.TYPE,EvasionState.CODEC);

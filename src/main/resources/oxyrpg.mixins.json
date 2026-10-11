@@ -12,7 +12,8 @@
     "SpecialistCollisionMixin",
     "DisguiseTargetMixin",
     "VillagerTradeInvoker",
-    "VillagerConversationMixin"
+    "VillagerConversationMixin",
+    "DebugItemCooldownMixin"
   ],
   "client": [
     "ShoulderCameraMixin",

@@ -2,7 +2,7 @@ package dev.emersonoxy.rpg;
 
 /** Immutable progression: RPG experience is independent of vanilla experience. */
 public record RpgProfile(RpgClass rpgClass, int level, int xp, int kills, long abilityReadyAt, long skills,
-                         int questStage, int questFirst, int questSecond, long readySecond, long readyThird, AttributeStats attributes, String attributeNodes) {
+                         int questStage, int questFirst, int questSecond, long readySecond, long readyThird, AttributeStats attributes, String attributeNodes, boolean temporary) {
     public static final int MAX_LEVEL = 100;
     public static final int ABILITY_DURATION_TICKS = 300;
     public static final int ABILITY_COOLDOWN_TICKS = 600;
@@ -26,6 +26,9 @@ public record RpgProfile(RpgClass rpgClass, int level, int xp, int kills, long a
     public RpgProfile(RpgClass rpgClass,int level,int xp,int kills,long abilityReadyAt,long skills,int questStage,int questFirst,int questSecond,long readySecond,long readyThird,AttributeStats attributes){
         this(rpgClass,level,xp,kills,abilityReadyAt,skills,questStage,questFirst,questSecond,readySecond,readyThird,attributes,"");
     }
+    public RpgProfile(RpgClass rpgClass,int level,int xp,int kills,long abilityReadyAt,long skills,int questStage,int questFirst,int questSecond,long readySecond,long readyThird,AttributeStats attributes,String attributeNodes){
+        this(rpgClass,level,xp,kills,abilityReadyAt,skills,questStage,questFirst,questSecond,readySecond,readyThird,attributes,attributeNodes,false);
+    }
     public RpgProfile allocateNode(java.util.UUID owner,int id){
         var nodes=AttributeTree.decode(attributeNodes);
         if(rpgClass==RpgClass.NONE||attributePoints()<1||!AttributeTree.available(nodes,id))throw new IllegalStateException("Escolha um nó conectado e tenha 1 ponto disponível.");
@@ -39,9 +42,9 @@ public record RpgProfile(RpgClass rpgClass, int level, int xp, int kills, long a
     }
     public RpgProfile {
         if (attributes==null||attributeNodes==null||AttributeTree.decode(attributeNodes).cardinality()>attributes.total())throw new IllegalArgumentException("Árvore de atributos inválida");
-        if (attributes == null || attributes.total()>level-1 || rpgClass == null || level < 1 || level > MAX_LEVEL || xp < 0
+        if (attributes == null || !temporary&&attributes.total()>level-1 || rpgClass == null || level < 1 || level > MAX_LEVEL || xp < 0
                 || xp >= level * 100 || (level == MAX_LEVEL && xp != 0)
-                || kills < 0 || abilityReadyAt < 0 || readySecond < 0 || readyThird < 0 || !SkillTree.validMask(level, skills)
+                || kills < 0 || abilityReadyAt < 0 || readySecond < 0 || readyThird < 0 || (temporary?(skills&~SkillTree.PAID_MASK)!=0:!SkillTree.validMask(level,skills))
                 || (rpgClass == RpgClass.NONE && skills != 0) || !QuestCatalog.valid(questStage, questFirst, questSecond)) {
             throw new IllegalArgumentException("Perfil RPG inválido");
         }

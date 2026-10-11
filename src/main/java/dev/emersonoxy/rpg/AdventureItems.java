@@ -36,9 +36,9 @@ public final class AdventureItems {
         public Weapon(Properties p,boolean frost){super(p);this.frost=frost;}
         @Override public InteractionResult use(Level level,Player player,InteractionHand hand){
             if(!(player instanceof ServerPlayer p))return InteractionResult.SUCCESS;
-            var stack=p.getItemInHand(hand);if(!RpgDebug.unlimited(p)&&p.getCooldowns().isOnCooldown(stack)||!EquipmentAccess.allowed(p,stack)||RpgSpecialists.intangible(p))return InteractionResult.FAIL;
+            var stack=p.getItemInHand(hand);if(!RpgDebug.cooldownsDisabled(p)&&p.getCooldowns().isOnCooldown(stack)||!EquipmentAccess.allowed(p,stack)||RpgSpecialists.intangible(p))return InteractionResult.FAIL;
             int cost=frost?18:24;if(!RpgResources.affordable(p,cost)){p.displayClientMessage(Component.translatable("message.oxyrpg.item_mana",cost),true);return InteractionResult.FAIL;}
-            RpgResources.spend(p,cost);if(!RpgDebug.unlimited(p))p.getCooldowns().addCooldown(stack,frost?160:220);
+            RpgResources.spend(p,cost);if(!RpgDebug.cooldownsDisabled(p))p.getCooldowns().addCooldown(stack,frost?160:220);
             var start=p.getEyePosition();var direction=p.getLookAngle();double length=frost?7:10;var end=start.add(direction.scale(length));
             var hit=level.clip(new ClipContext(start,end,ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,p));end=hit.getLocation();
             var world=p.level();var bounds=new AABB(start,end).inflate(frost?1.3:.9);int rank=RpgAbilities.profile(p).level();
