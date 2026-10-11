@@ -40,7 +40,7 @@ public final class ParticleFx {
         Vec3 at=new Vec3(packet.x(),packet.y(),packet.z());
         if(!finite(at)||!Float.isFinite(packet.damage())||packet.damage()<=0||packet.damage()>40||!visible(mc.level,at))return;
         Vec3 direction=new Vec3(packet.dx(),packet.dy(),packet.dz());if(!finite(direction)||direction.lengthSqr()>1.1)return;
-        var random=mc.level.random;int count=count(Math.clamp(4+(int)packet.damage()/2,4,14));
+        var random=mc.level.random;int count=count(Math.clamp((int)Math.ceil(packet.damage()*1.5),1,40));
         for(int i=0;i<count;i++){
             var velocity=direction.scale(.12+Math.min(20,packet.damage())*.006)
                 .add((random.nextDouble()-.5)*.24,.04+random.nextDouble()*.17,(random.nextDouble()-.5)*.24);

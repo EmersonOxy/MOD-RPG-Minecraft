@@ -138,7 +138,7 @@ public final class OxyRpgClient {
         event.register(RpgNetwork.EliteWarning.TYPE,(value,context)->EliteWarnings.receive(value));
         event.register(RpgNetwork.FlightState.TYPE,(value,context)->{
             var p=Minecraft.getInstance().player;if(p==null)return;var tag=p.getPersistentData();
-            tag.putInt("oxy_flight_until",p.tickCount+value.remaining());tag.putInt("oxy_boost_until",p.tickCount+value.boost());tag.putInt("oxy_meteor_until",p.tickCount+value.meteor());tag.putBoolean("oxy_fast_flight",value.fast());tag.putFloat("oxy_flight_thrust",value.thrust());tag.putBoolean("oxy_meteor_forward",value.forward());tag.putFloat("oxy_meteor_x",value.meteorX());tag.putFloat("oxy_meteor_y",value.meteorY());tag.putFloat("oxy_meteor_z",value.meteorZ());
+            tag.putBoolean("oxy_flight_gliding",value.gliding());tag.putInt("oxy_flight_until",p.tickCount+value.remaining());tag.putInt("oxy_boost_until",p.tickCount+value.boost());tag.putInt("oxy_meteor_until",p.tickCount+value.meteor());tag.putBoolean("oxy_fast_flight",value.fast());tag.putFloat("oxy_flight_thrust",value.thrust());tag.putBoolean("oxy_meteor_forward",value.forward());tag.putFloat("oxy_meteor_x",value.meteorX());tag.putFloat("oxy_meteor_y",value.meteorY());tag.putFloat("oxy_meteor_z",value.meteorZ());
         });
         event.register(RpgNetwork.DamageNumber.TYPE,(value,context)->DamageNumbers.receive(value));
         event.register(RpgNetwork.JourneyState.TYPE,(value,context)->journeyState=value);
@@ -168,6 +168,7 @@ public final class OxyRpgClient {
             if(hudState==null||state.xp()!=hudState.xp()||state.level()!=hudState.level()||state.rpgClass()!=hudState.rpgClass()||state.skills()!=hudState.skills())DynamicHud.signal(DynamicHud.Part.RPG);
             if(hudState==null||state.kills()!=hudState.kills()||state.questStage()!=hudState.questStage()||state.questFirst()!=hudState.questFirst()||state.questSecond()!=hudState.questSecond())DynamicHud.signal(DynamicHud.Part.QUEST);
             hudState = state;
+            if(mc.player!=null){mc.player.getPersistentData().putBoolean("oxy_feather_ready",state.rpgClass()==RpgClass.AVIARIO.ordinal()&&state.hasSkill(8));mc.player.getPersistentData().putBoolean("oxy_feather_enhanced",state.hasSkill(11));}
             dev.emersonoxy.rpg.EquipmentAccess.clientClass(state.rpgClass());
             dev.emersonoxy.rpg.EquipmentAccess.clientLevel(state.level());
             if(state.rpgClass()!=0)for(int slot=0;slot<3;slot++){

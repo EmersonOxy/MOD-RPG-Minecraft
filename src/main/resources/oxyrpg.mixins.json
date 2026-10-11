@@ -13,7 +13,8 @@
     "DisguiseTargetMixin",
     "VillagerTradeInvoker",
     "VillagerConversationMixin",
-    "DebugItemCooldownMixin"
+    "DebugItemCooldownMixin",
+    "AviaryPoseMixin"
   ],
   "client": [
     "ShoulderCameraMixin",
@@ -30,7 +31,8 @@
     "InventoryMovementMixin",
     "MerchantThemeMixin",
     "FreeMovementSprintMixin",
-    "ClassCastAnimationMixin"
+    "ClassCastAnimationMixin",
+    "AviaryCrouchMixin"
   ],
   "injectors": {
     "defaultRequire": 1

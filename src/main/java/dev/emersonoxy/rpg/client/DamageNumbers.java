@@ -32,18 +32,22 @@ public final class DamageNumbers {
     }
     public static void render(GuiGraphics g){
         var mc=Minecraft.getInstance();if(mc.level==null||mc.player==null)return;
-        double now=mc.level.getGameTime()+mc.gameRenderer.getMainCamera().getPartialTickTime();NUMBERS.removeIf(n->now-n.last>24);CombatOptions.load();
+        double now=mc.level.getGameTime()+mc.gameRenderer.getMainCamera().getPartialTickTime();NUMBERS.removeIf(n->now-n.last>32);CombatOptions.load();
         if(mc.options.hideGui||mc.screen!=null||DynamicHud.mode()==DynamicHud.Mode.HIDDEN)return;
         if(CombatOptions.numbers)for(var n:NUMBERS){
             double age=Math.max(0,now-n.born);var camera=mc.gameRenderer.getMainCamera();var right=new org.joml.Vector3f(1,0,0).rotate(camera.rotation());
-            var point=n.point.add(right.x*n.side,.65+right.y*n.side+age*.03,right.z*n.side);
+            var point=n.point.add(right.x*n.side,.25+right.y*n.side,right.z*n.side);
             if(!WorldLines.visible(point))continue;var p=CameraProjection.project(point);if(!WorldLines.onScreen(p))continue;
-            float alpha=(float)Math.clamp((24-(now-n.last))/8,0,1);if(alpha<=.03)continue;
+            float fade=(float)Math.clamp((32-(now-n.last))/10,0,1);
+            float alpha=fade*fade*(3-2*fade)*(float)Math.clamp(age/1.5,0,1);if(alpha<=.03)continue;
             int color=((int)(alpha*255)<<24)|(n.text!=null?n.textColor:n.blocked?0x75BFFF:n.critical?0xFFD36B:0xFFFFFF);
             String text=n.text!=null?n.text:n.blocked?"Bloqueado":String.format(Locale.ROOT,n.damage==Math.rint(n.damage)?"%.0f":"%.1f",n.damage)+(n.critical?" Crítico":"");
-            float scale=(float)(CombatOptions.size*(n.critical?1.2:1)*(1+.18*Math.max(0,1-age/4)));
-            g.pose().pushMatrix();g.pose().translate((float)((p.x+1)*g.guiWidth()/2),(float)((1-p.y)*g.guiHeight()/2));g.pose().scale(scale,scale);var label=net.minecraft.network.chat.Component.literal(text).withStyle(style->style.withBold(true).withItalic(n.critical));
-            int lx=-mc.font.width(label)/2;int outline=((int)(alpha*220)<<24)|0x20100A;
+            double pop=age<3?.55+.8*(1-Math.pow(1-age/3,2)):age<8?1+.35*Math.pow(1-(age-3)/5,2):1;
+            float scale=(float)(CombatOptions.size*(n.critical?1.75:1.45)*pop);
+            double hop=18*(1-Math.pow(1-Math.min(age,10)/10,2))+age*.4;
+            g.pose().pushMatrix();g.pose().translate((float)((p.x+1)*g.guiWidth()/2),(float)((1-p.y)*g.guiHeight()/2-hop));g.pose().scale(scale,scale);var label=net.minecraft.network.chat.Component.literal(text).withStyle(style->style.withBold(true).withItalic(n.critical));
+            int lx=-mc.font.width(label)/2;int outline=((int)(alpha*255)<<24)|0x10101B;
+            g.drawString(mc.font,label,lx-1,-1,outline,false);g.drawString(mc.font,label,lx+1,-1,outline,false);g.drawString(mc.font,label,lx-1,1,outline,false);g.drawString(mc.font,label,lx+1,1,outline,false);
             g.drawString(mc.font,label,lx-1,0,outline,false);g.drawString(mc.font,label,lx+1,0,outline,false);g.drawString(mc.font,label,lx,-1,outline,false);g.drawString(mc.font,label,lx,1,outline,false);g.drawString(mc.font,label,lx,0,color,false);g.pose().popMatrix();
         }
         if(CombatOptions.marker&&now<hitUntil){

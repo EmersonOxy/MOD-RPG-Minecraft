@@ -44,7 +44,6 @@ public final class OxyRpg {
         NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST,CombatFeedback::damage);
         NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST,CombatParticles::damage);
         NeoForge.EVENT_BUS.addListener(CombatParticles::explosion);
-        NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST,CombatParticles::block);
         NeoForge.EVENT_BUS.addListener(CombatParticles::stop);
         NeoForge.EVENT_BUS.addListener(CombatFeedback::logout);
         NeoForge.EVENT_BUS.addListener(CombatFeedback::stop);

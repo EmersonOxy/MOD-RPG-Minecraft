@@ -1,8 +1,12 @@
-# Estado do Oxy RPG — revisão 0.38.0
+# Estado do Oxy RPG — revisão 0.39.0
 
-Revisão registrada em 11/10/2026. Minecraft 1.21.10, NeoForge 21.10.64, JDK 21, protocolo de rede 26. Este registro substitui descrições antigas do README. Os documentos numerados são históricos de cada entrega.
+Revisão registrada em 11/10/2026. Minecraft 1.21.10, NeoForge 21.10.64, JDK 21, protocolo de rede 27. Este registro substitui descrições antigas do README. Os documentos numerados são históricos de cada entrega.
 
-A revisão inventariou fontes Java, registros, eventos, mixins, telas, recursos JSON, geração de dados, integração e persistência. Código das áreas alteradas foi inspecionado em detalhe. Inventário de arquivos e hashes: [INVENTARIO_CODIGO_038.json](INVENTARIO_CODIGO_038.json). Não equivale a validação integral dentro do jogo nem a auditoria de segurança.
+A revisão inventariou fontes Java, registros, eventos, mixins, telas, recursos JSON, geração de dados, integração e persistência. Código das áreas alteradas foi inspecionado em detalhe. Inventário de arquivos e hashes: [INVENTARIO_CODIGO_039.json](INVENTARIO_CODIGO_039.json). Não equivale a validação integral dentro do jogo nem a auditoria de segurança.
+
+## Entrega 0.39
+
+Números e textos maiores com salto/fade, sangue proporcional, retirada de impactos em ataques comuns, minimapa com piso estável e Aviário com lançamento separado da planagem, freio aéreo em pé e retomada ao soltar Agachar. [Detalhes e validação pendente](CORRECOES_039.md). Recursos externos de animação apenas pesquisados por escolha do usuário; nenhuma dependência nova instalada. Inventário de arquivos atualizado; revisão detalhada limitada aos caminhos alterados.
 
 ## Entrega 0.38
 
