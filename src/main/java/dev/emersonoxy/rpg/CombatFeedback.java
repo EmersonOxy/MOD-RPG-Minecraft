@@ -31,7 +31,7 @@ public final class CombatFeedback {
         if(source.getDirectEntity()==p&&mark!=null&&mark.tick()==p.level().getGameTime()&&mark.target().equals(target.getUUID())){crit|=mark.critical();CRITICAL.remove(p.getUUID());}
         if(source.getDirectEntity() instanceof AbstractArrow arrow)crit|=arrow.isCritArrow();
         PacketDistributor.sendToPlayer(p,new RpgNetwork.DamageNumber(target.getId(),target.getX(),target.getY()+target.getBbHeight()*.75,target.getZ(),event.getNewDamage(),crit,blocked));
-        if(!blocked){if(source.is(net.minecraft.world.damagesource.DamageTypes.PLAYER_ATTACK)&&source.getDirectEntity()==p&&!RpgAbilities.secondaryHit())ShieldParry.consume(p);ClassJourney.damage(p,event);}
+        if(!blocked){if(source.is(net.minecraft.world.damagesource.DamageTypes.PLAYER_ATTACK)&&source.getDirectEntity()==p&&!RpgAbilities.secondaryHit())ShieldParry.consume(p);if(!Bleeding.damage(source))ClassJourney.damage(p,event);}
     }
     public static void logout(PlayerEvent.PlayerLoggedOutEvent event){CRITICAL.remove(event.getEntity().getUUID());}
     public static void stop(ServerStoppedEvent event){CRITICAL.clear();}

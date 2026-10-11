@@ -21,12 +21,13 @@ public final class OxyRpg {
     private static final Logger LOGGER = LoggerFactory.getLogger(OxyRpg.class);
 
     public OxyRpg(net.neoforged.bus.api.IEventBus bus,net.neoforged.fml.ModContainer container) {
-        RpgConfig.register(container);PlayerAttachments.register(bus);RpgDataMaps.register(bus);RpgItems.register(bus);RpgParticles.register(bus);RpgGameTests.functions(bus);
+        RpgConfig.register(container);PlayerAttachments.register(bus);RpgDataMaps.register(bus);RpgItems.register(bus);RpgParticles.register(bus);Bleeding.register(bus);RpgGameTests.functions(bus);
         bus.addListener(RpgDataGenerator::gather);bus.addListener(RpgGameTests::register);
         NeoForge.EVENT_BUS.addListener(RpgContent::listeners);NeoForge.EVENT_BUS.addListener(RpgContent::sync);
         bus.addListener(RpgContent::configReloaded);
         bus.addListener(RpgNetwork::register);
         VillageLoot.register(bus);
+        NeoForge.EVENT_BUS.addListener(net.neoforged.bus.api.EventPriority.HIGH,Bleeding::interact);NeoForge.EVENT_BUS.addListener(Bleeding::hit);NeoForge.EVENT_BUS.addListener(Bleeding::removed);
         NeoForge.EVENT_BUS.addListener(AdventureItems::fall);
         NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST,CombatTactics::join);
         NeoForge.EVENT_BUS.addListener(RaiderPatrols::tick);NeoForge.EVENT_BUS.addListener(RaiderPatrols::cleanup);NeoForge.EVENT_BUS.addListener(RaiderPatrols::drops);

@@ -93,7 +93,7 @@
   "item.oxyrpg.wanderer_amulet": "Amuleto do Andarilho",
   "tooltip.oxyrpg.wanderer_amulet": "+8% de velocidade. Equipe no slot de colar.",
   "item.oxyrpg.bandage": "Bandagem",
-  "tooltip.oxyrpg.bandage": "Restaura 2 corações. Compartilha recarga de 8 s com antídotos.",
+  "tooltip.oxyrpg.bandage": "Estanca sangramento e restaura 2 corações. Use ou aplique em uma criatura. Recarga: 8 s.",
   "item.oxyrpg.antidote": "Antídoto",
   "tooltip.oxyrpg.antidote": "Remove veneno e fraqueza. Recarga compartilhada de 8 s.",
   "message.oxyrpg.item_mana": "Este item precisa de %s MP.",
@@ -115,5 +115,9 @@
   "option.oxyrpg.impacts": "Impactos",
   "option.oxyrpg.particle_intensity": "Intensidade das partículas",
   "option.oxyrpg.blood_duration": "Duração das marcas",
-  "option.oxyrpg.particles_hint": "Partículas respeitam a opção do Minecraft."
+  "option.oxyrpg.particles_hint": "Partículas respeitam a opção do Minecraft.",
+  "effect.oxyrpg.bleeding": "Sangramento",
+  "death.attack.oxyrpg.bleeding": "%1$s morreu por sangramento",
+  "death.attack.oxyrpg.bleeding.player": "%1$s morreu por sangramento causado por %2$s",
+  "tooltip.oxyrpg.bleeding_weapon": "Sangramento: %s%% de chance · %s dano/s"
 }

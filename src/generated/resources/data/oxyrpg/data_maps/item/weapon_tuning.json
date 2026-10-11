@@ -1,8 +1,28 @@
 {
   "values": {
     "#minecraft:swords": {
-      "critical_bonus": 0,
-      "damage": 1
+      "damage": 1,
+      "critical_bonus": 0
+    },
+    "minecraft:iron_sword": {
+      "bleed_chance": 0.08
+    },
+    "minecraft:diamond_sword": {
+      "bleed_chance": 0.12
+    },
+    "minecraft:netherite_sword": {
+      "bleed_chance": 0.18,
+      "bleed_severity": 1
+    },
+    "minecraft:iron_axe": {
+      "bleed_chance": 0.12
+    },
+    "minecraft:diamond_axe": {
+      "bleed_chance": 0.16
+    },
+    "minecraft:netherite_axe": {
+      "bleed_chance": 0.2,
+      "bleed_severity": 1
     }
   }
 }

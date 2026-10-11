@@ -1,0 +1,80 @@
+[
+  {
+    "project": "fresh-animations",
+    "title": "Fresh Animations",
+    "license": "LicenseRef-See-Terms-of-Use-in-Description",
+    "version": "1.10.4",
+    "version_id": "xN57JJts",
+    "game_versions": [
+      "1.20",
+      "1.20.1",
+      "1.20.2",
+      "1.20.3",
+      "1.20.4",
+      "1.20.5",
+      "1.20.6",
+      "1.21",
+      "1.21.1",
+      "1.21.2",
+      "1.21.3",
+      "1.21.4",
+      "1.21.5",
+      "1.21.6",
+      "1.21.7",
+      "1.21.8",
+      "1.21.9",
+      "1.21.10",
+      "1.21.11"
+    ],
+    "loaders": [
+      "minecraft"
+    ],
+    "dependencies": [],
+    "filename": "FreshAnimations_v1.10.4.zip",
+    "url": "https://cdn.modrinth.com/data/50dA9Sha/versions/xN57JJts/FreshAnimations_v1.10.4.zip",
+    "sha512": "41258f9bea1a773d823f9a014d0c08206e9e7b339bc538e1538211fff28fadd06878a836d292cbb636ed6829cd2801a509368ae3eb3ad4bedf42190a0d5f7a90"
+  },
+  {
+    "project": "entity-model-features",
+    "title": "[EMF] Entity Model Features",
+    "license": "LGPL-3.0-only",
+    "version": "3.3.11-neoforge-1.21.9",
+    "version_id": "gunEHTty",
+    "game_versions": [
+      "1.21.9",
+      "1.21.10"
+    ],
+    "loaders": [
+      "neoforge"
+    ],
+    "dependencies": [
+      {
+        "version_id": null,
+        "project_id": "BVzZfTc1",
+        "file_name": null,
+        "dependency_type": "required"
+      }
+    ],
+    "filename": "entity_model_features-3.3.11-1.21.9-neoforge.jar",
+    "url": "https://cdn.modrinth.com/data/4I1XuqiY/versions/gunEHTty/entity_model_features-3.3.11-1.21.9-neoforge.jar",
+    "sha512": "bd29c14435e6ecb5da93728770cb12a6c6f26abb1d8e74b3f07a76daac16bf0d279597e918cfdc0f188bd34914b393a3ce931cc005aa480948ec85c1609c1b36"
+  },
+  {
+    "project": "entitytexturefeatures",
+    "title": "[ETF] Entity Texture Features",
+    "license": "LGPL-3.0-only",
+    "version": "7.2.5-neoforge-1.21.9",
+    "version_id": "TodzZznO",
+    "game_versions": [
+      "1.21.9",
+      "1.21.10"
+    ],
+    "loaders": [
+      "neoforge"
+    ],
+    "dependencies": [],
+    "filename": "entity_texture_features-7.2.5-1.21.9-neoforge.jar",
+    "url": "https://cdn.modrinth.com/data/BVzZfTc1/versions/TodzZznO/entity_texture_features-7.2.5-1.21.9-neoforge.jar",
+    "sha512": "8eafe1bda9d66c978135786359c1e943c9b3107a11b4110df33c26b921578def392fe1d676664c674679172ec1a938445b75da6ff4f04624d8fa7ee4df3ddf1a"
+  }
+]

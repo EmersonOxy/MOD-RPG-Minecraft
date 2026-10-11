@@ -56,7 +56,18 @@ public final class AdventureItems {
     public static final class Remedy extends Item {
         private final boolean antidote;
         public Remedy(Properties p,boolean antidote){super(p);this.antidote=antidote;}
-        @Override public ItemStack finishUsingItem(ItemStack stack,Level level,LivingEntity entity){if(entity instanceof ServerPlayer p){if(antidote){p.removeEffect(MobEffects.POISON);p.removeEffect(MobEffects.WEAKNESS);}else p.heal(4);}return super.finishUsingItem(stack,level,entity);}
+        @Override public ItemStack finishUsingItem(ItemStack stack,Level level,LivingEntity entity){
+            int count=stack.getCount();boolean unlimited=entity instanceof ServerPlayer p&&RpgDebug.unlimited(p);
+            if(entity instanceof ServerPlayer p){if(antidote){p.removeEffect(MobEffects.POISON);p.removeEffect(MobEffects.WEAKNESS);}else {Bleeding.stop(p);p.heal(4);}}
+            var result=super.finishUsingItem(stack,level,entity);if(unlimited)result.setCount(count);return result;
+        }
+        @Override public InteractionResult interactLivingEntity(ItemStack stack,Player player,LivingEntity target,InteractionHand hand){
+            if(antidote||!target.hasEffect(Bleeding.EFFECT))return InteractionResult.PASS;
+            if(!(player instanceof ServerPlayer p))return InteractionResult.SUCCESS;
+            if(!RpgDebug.cooldownsDisabled(p)&&p.getCooldowns().isOnCooldown(stack)||RpgSpecialists.intangible(p))return InteractionResult.FAIL;
+            Bleeding.stop(target);target.heal(4);if(!RpgDebug.cooldownsDisabled(p))p.getCooldowns().addCooldown(stack,160);
+            if(!p.isCreative()&&!RpgDebug.unlimited(p))stack.shrink(1);return InteractionResult.SUCCESS;
+        }
         @Override public void appendHoverText(ItemStack stack,TooltipContext ctx,TooltipDisplay display,Consumer<Component> lines,TooltipFlag flag){tooltip(lines,antidote?"antidote":"bandage");}
     }
     public static final class Boots extends Item {

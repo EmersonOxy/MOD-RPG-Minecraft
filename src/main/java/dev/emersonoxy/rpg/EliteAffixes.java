@@ -41,11 +41,11 @@ public final class EliteAffixes {
             if(kind==0){victim.igniteForSeconds(3);victim.push(0,.45,0);victim.hurtMarked=true;}
         }
     }
-    public static void damage(LivingDamageEvent.Pre event){
+    public static void damage(LivingDamageEvent.Pre event){if(Bleeding.damage(event.getSource()))return;
         if(event.getEntity() instanceof Mob victim&&EliteMobs.elite(victim)&&victim.getPersistentData().getLongOr("oxy_ward_until",0)>victim.level().getGameTime())event.setNewDamage(event.getNewDamage()*.6f);
         if(event.getSource().getEntity() instanceof Mob attacker&&EliteMobs.elite(attacker)&&attacker.getHealth()<attacker.getMaxHealth()*.4f)event.setNewDamage(event.getNewDamage()*1.25f);
     }
-    public static void drain(LivingDamageEvent.Post event){
+    public static void drain(LivingDamageEvent.Post event){if(Bleeding.damage(event.getSource()))return;
         if(event.getNewDamage()<=0||!(event.getSource().getEntity() instanceof Mob mob)||!EliteMobs.elite(mob)||mob.getPersistentData().getIntOr("oxy_affix",-1)!=2)return;
         long now=mob.level().getGameTime();if(now<mob.getPersistentData().getLongOr("oxy_drain_ready",0))return;
         mob.heal(Math.min(mob.getMaxHealth()*.02f,event.getNewDamage()*.3f));mob.getPersistentData().putLong("oxy_drain_ready",now+20);

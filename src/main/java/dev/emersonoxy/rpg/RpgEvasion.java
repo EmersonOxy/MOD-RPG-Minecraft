@@ -44,7 +44,7 @@ public final class RpgEvasion {
         ((net.minecraft.server.level.ServerLevel)p.level()).playSound(null,p.blockPosition(),net.minecraft.sounds.SoundEvents.PLAYER_ATTACK_SWEEP,net.minecraft.sounds.SoundSource.PLAYERS,.45f,1.35f);
         save(p,a);sync(p,a);
     }
-    public static void incoming(LivingIncomingDamageEvent event){
+    public static void incoming(LivingIncomingDamageEvent event){if(Bleeding.damage(event.getSource()))return;
         if(!(event.getEntity() instanceof ServerPlayer p))return;var a=pool(p);var source=event.getSource();
         if(p.level().getGameTime()>=a.dodge||source.is(DamageTypeTags.BYPASSES_INVULNERABILITY))return;
         // Fall, lava, drowning and other environmental damage remain ordinary damage.

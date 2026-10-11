@@ -52,7 +52,7 @@ public final class ClassRelics {
         p.sendSystemMessage(Component.literal("[Oxy RPG] "+effect(s.rpgClass())));
     }
     private static boolean weapon(ServerPlayer p,ItemStack stack){return ClassEquipment.gear(stack)&&ClassEquipment.allowed(p,stack)&&ClassEquipment.identity(stack).getStringOr("part","").equals("weapon");}
-    public static void damage(LivingDamageEvent.Post e){if(e.getNewDamage()<=0||!(e.getSource().getEntity() instanceof ServerPlayer p)||!RpgAbilities.attackable(e.getEntity()))return;
+    public static void damage(LivingDamageEvent.Post e){if(Bleeding.damage(e.getSource()))return;if(e.getNewDamage()<=0||!(e.getSource().getEntity() instanceof ServerPlayer p)||!RpgAbilities.attackable(e.getEntity()))return;
         var d=data(p);long now=p.level().getGameTime();var c=RpgAbilities.profile(p).rpgClass();if(d.getLongOr("charged",0)<=now||d.getIntOr("charged_class",0)!=c.ordinal())return;
         d.remove("charged");if(c==RpgClass.MAGO)e.getEntity().addEffect(new MobEffectInstance(MobEffects.SLOWNESS,60,1));else if(c==RpgClass.ARQUEIRO)e.getEntity().addEffect(new MobEffectInstance(MobEffects.GLOWING,100,0));else if(c==RpgClass.NECROMANTE)p.heal(2);
     }

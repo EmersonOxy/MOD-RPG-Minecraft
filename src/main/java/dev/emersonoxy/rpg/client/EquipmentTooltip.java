@@ -38,6 +38,8 @@ public final class EquipmentTooltip {
         };
     }
     public static void gather(RenderTooltipEvent.GatherComponents event){
+        var wound=dev.emersonoxy.rpg.RpgDataMaps.weapon(event.getItemStack());
+        if(!drawing&&wound.bleedChance()>0)event.getTooltipElements().add(Either.left(Component.translatable("tooltip.oxyrpg.bleeding_weapon",Math.round(wound.bleedChance()*100),String.format(Locale.ROOT,"%.1f",.5f*(wound.bleedSeverity()+1))).withStyle(ChatFormatting.RED)));
         var mc=Minecraft.getInstance();if(drawing||mc.player==null||mc.screen==null||EquipmentComparison.slot(event.getItemStack())==null||held()||OxyRpgClient.COMPARE_EQUIPMENT.getKey().getValue()<0)return;
         event.getTooltipElements().add(Either.left(Component.translatable("tooltip.oxyrpg.compare_hint",OxyRpgClient.COMPARE_EQUIPMENT.getTranslatedKeyMessage()).withStyle(ChatFormatting.YELLOW)));
     }

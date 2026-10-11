@@ -1,8 +1,12 @@
-# Estado do Oxy RPG — revisão 0.40.0
+# Estado do Oxy RPG — revisão 0.41.0
 
-Revisão registrada em 11/10/2026. Minecraft 1.21.10, NeoForge 21.10.64, JDK 21, protocolo de rede 27. Este registro substitui descrições antigas do README. Os documentos numerados são históricos de cada entrega.
+Revisão registrada em 11/10/2026. Minecraft 1.21.10, NeoForge 21.10.64, JDK 21, protocolo de rede 28. Este registro substitui descrições antigas do README. Os documentos numerados são históricos de cada entrega.
 
 A revisão inventariou fontes Java, registros, eventos, mixins, telas, recursos JSON, geração de dados, integração e persistência. Código das áreas alteradas foi inspecionado em detalhe. Inventário de arquivos e hashes: [INVENTARIO_CODIGO_040.json](INVENTARIO_CODIGO_040.json). Não equivale a validação integral dentro do jogo nem a auditoria de segurança.
+
+## Entrega 0.41
+
+Sangramento persistente em jogadores e mobs, dano periódico, rastros de sangue existentes e cura por bandagens. Chances por arma em datamaps e tooltip; Arqueiro migrado ao efeito registrado. Fresh Animations original + EMF/ETF instalados como pacote/mods separados na instância local. [Detalhes, versões e validação manual pendente](SANGRAMENTO_ANIMACOES_041.md). Bibliotecas de combate/animação do jogador permanecem para avaliação posterior. Nenhuma nova classe nesta etapa.
 
 ## Entrega 0.40
 

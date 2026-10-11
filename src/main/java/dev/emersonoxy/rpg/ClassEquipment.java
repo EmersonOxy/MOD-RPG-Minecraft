@@ -143,7 +143,7 @@ public final class ClassEquipment {
         stack.set(DataComponents.LORE,new ItemLore(lore));return stack;
     }
     private static void enchant(ServerPlayer p,ItemStack stack,net.minecraft.resources.ResourceKey<Enchantment> key,int amount){var holder=p.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(key);var old=stack.getOrDefault(DataComponents.ENCHANTMENTS,ItemEnchantments.EMPTY);stack.enchant(holder,Math.max(amount,old.getLevel(holder)));}
-    public static void damage(LivingDamageEvent.Pre event){
+    public static void damage(LivingDamageEvent.Pre event){if(Bleeding.damage(event.getSource()))return;
         var owner=RpgNecromancer.owner(event.getSource());if(owner==null||RpgNecromancer.summonKill(event.getSource(),event.getEntity(),owner))return;
         RpgClass c=selected(owner);int grade=active(owner,c);
         if(c==RpgClass.GUERREIRO||c==RpgClass.AVIARIO||c==RpgClass.ARQUEIRO&&event.getSource().getDirectEntity() instanceof net.minecraft.world.entity.projectile.AbstractArrow)event.setNewDamage(event.getNewDamage()*(1+grade*.05f));

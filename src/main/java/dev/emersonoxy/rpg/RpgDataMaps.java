@@ -16,9 +16,10 @@ public final class RpgDataMaps {
             Codec.floatRange(.01f,20).optionalFieldOf("health",1f).forGetter(MobTuning::health),Codec.floatRange(.01f,20).optionalFieldOf("damage",1f).forGetter(MobTuning::damage),Codec.floatRange(0,20).optionalFieldOf("xp",1f).forGetter(MobTuning::xp),
             Codec.floatRange(0,1).optionalFieldOf("fire_resistance",0f).forGetter(MobTuning::fireResistance),Codec.floatRange(0,1).optionalFieldOf("frost_resistance",0f).forGetter(MobTuning::frostResistance),Codec.floatRange(0,1).optionalFieldOf("lightning_resistance",0f).forGetter(MobTuning::lightningResistance)).apply(i,MobTuning::new));
     }
-    public record WeaponTuning(float damage,float criticalBonus){
+    public record WeaponTuning(float damage,float criticalBonus,float bleedChance,int bleedSeverity){
+        public WeaponTuning(float damage,float criticalBonus){this(damage,criticalBonus,0,0);}
         public static final WeaponTuning DEFAULT=new WeaponTuning(1,0);
-        public static final Codec<WeaponTuning> CODEC=RecordCodecBuilder.create(i->i.group(Codec.floatRange(.01f,20).optionalFieldOf("damage",1f).forGetter(WeaponTuning::damage),Codec.floatRange(0,1).optionalFieldOf("critical_bonus",0f).forGetter(WeaponTuning::criticalBonus)).apply(i,WeaponTuning::new));
+        public static final Codec<WeaponTuning> CODEC=RecordCodecBuilder.create(i->i.group(Codec.floatRange(.01f,20).optionalFieldOf("damage",1f).forGetter(WeaponTuning::damage),Codec.floatRange(0,1).optionalFieldOf("critical_bonus",0f).forGetter(WeaponTuning::criticalBonus),Codec.floatRange(0,1).optionalFieldOf("bleed_chance",0f).forGetter(WeaponTuning::bleedChance),Codec.intRange(0,2).optionalFieldOf("bleed_severity",0).forGetter(WeaponTuning::bleedSeverity)).apply(i,WeaponTuning::new));
     }
     public static final DataMapType<EntityType<?>,MobTuning> MOBS=DataMapType.builder(ResourceLocation.fromNamespaceAndPath("oxyrpg","mob_tuning"),Registries.ENTITY_TYPE,MobTuning.CODEC).build();
     public static final DataMapType<Item,WeaponTuning> WEAPONS=DataMapType.builder(ResourceLocation.fromNamespaceAndPath("oxyrpg","weapon_tuning"),Registries.ITEM,WeaponTuning.CODEC).synced(WeaponTuning.CODEC,false).build();

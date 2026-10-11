@@ -90,7 +90,7 @@ public final class RpgResources {
         PacketDistributor.sendToPlayer(p,new RpgNetwork.Resources(RpgDebug.enabled(p)?0:a.profile.attributePoints(),s.health(),s.damage(),s.luck(),s.armor(),s.mana(),RpgDebug.unlimited(p)?maximum(p,a.profile):(int)a.mana,maximum(p,a.profile),RpgDebug.maxAttributes(p)?allAttributeNodes():a.profile.attributeNodes()));
     }
     private static String allAttributeNodes(){var bits=new java.util.BitSet(AttributeTree.COUNT);bits.set(0,AttributeTree.COUNT);return AttributeTree.encode(bits);}
-    public static void damage(LivingDamageEvent.Pre event){
+    public static void damage(LivingDamageEvent.Pre event){if(Bleeding.damage(event.getSource()))return;
         var p=RpgNecromancer.owner(event.getSource());
         if(p!=null){
             event.setNewDamage(event.getNewDamage()*(float)(RpgConfig.value(RpgConfig.PLAYER_DAMAGE,1)*RpgContent.damageMultiplier(RpgAbilities.profile(p).rpgClass())*(event.getSource().getDirectEntity()==p?RpgDataMaps.weapon(p.getMainHandItem()).damage():1)));

@@ -1,0 +1,9 @@
+{
+  "sources": [
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:mob_effect/instant_damage",
+      "sprite": "oxyrpg:mob_effect/bleeding"
+    }
+  ]
+}

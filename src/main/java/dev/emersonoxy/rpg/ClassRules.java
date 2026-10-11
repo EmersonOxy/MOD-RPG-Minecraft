@@ -40,7 +40,7 @@ public final class ClassRules {
         String reason=denial(p,event.getItemStack());if(reason.isEmpty())reason=Professions.denial(p,event.getItemStack(),true);
         if(!reason.isEmpty()){event.setCanceled(true);event.setCancellationResult(net.minecraft.world.InteractionResult.FAIL);Professions.notify(p,reason);}
     }
-    public static void damage(LivingDamageEvent.Pre event){
+    public static void damage(LivingDamageEvent.Pre event){if(Bleeding.damage(event.getSource()))return;
         var owner=RpgNecromancer.owner(event.getSource());
         if(owner!=null&&selected(owner)==RpgClass.NECROMANTE&&!RpgNecromancer.summonKill(event.getSource(),event.getEntity(),owner))event.setNewDamage(event.getNewDamage()*.8f);
         if(event.getEntity() instanceof ServerPlayer p&&selected(p)==RpgClass.MAGO

@@ -93,7 +93,7 @@
   "item.oxyrpg.wanderer_amulet": "Wanderer Amulet",
   "tooltip.oxyrpg.wanderer_amulet": "+8% movement speed. Equip in the necklace slot.",
   "item.oxyrpg.bandage": "Bandage",
-  "tooltip.oxyrpg.bandage": "Restores 2 hearts. Shares an 8 s cooldown with antidotes.",
+  "tooltip.oxyrpg.bandage": "Stops bleeding and restores 2 hearts. Consume or apply to a creature. Cooldown: 8 s.",
   "item.oxyrpg.antidote": "Antidote",
   "tooltip.oxyrpg.antidote": "Removes poison and weakness. Shared 8 s cooldown.",
   "message.oxyrpg.item_mana": "This item requires %s MP.",
@@ -115,5 +115,9 @@
   "option.oxyrpg.impacts": "Impacts",
   "option.oxyrpg.particle_intensity": "Particle intensity",
   "option.oxyrpg.blood_duration": "Mark lifetime",
-  "option.oxyrpg.particles_hint": "Particles respect the Minecraft setting."
+  "option.oxyrpg.particles_hint": "Particles respect the Minecraft setting.",
+  "effect.oxyrpg.bleeding": "Bleeding",
+  "death.attack.oxyrpg.bleeding": "%1$s bled to death",
+  "death.attack.oxyrpg.bleeding.player": "%1$s bled to death fighting %2$s",
+  "tooltip.oxyrpg.bleeding_weapon": "Bleeding: %s%% chance · %s damage/s"
 }

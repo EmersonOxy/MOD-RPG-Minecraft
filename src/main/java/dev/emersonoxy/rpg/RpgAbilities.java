@@ -29,7 +29,6 @@ public final class RpgAbilities {
     private static final Map<UUID,RpgProfile> PROFILES = new HashMap<>();
     private static final Map<UUID,Active> ACTIVE = new HashMap<>();
     private static final Map<UUID,Frost> FROST = new HashMap<>();
-    private static final Map<UUID,Bleed> BLEED = new HashMap<>();
     private static boolean secondaryDamage;
     static boolean secondaryHit(){return secondaryDamage;}
     private static final class Active {
@@ -47,7 +46,6 @@ public final class RpgAbilities {
         boolean ghost, statusWasActive;
     }
     private record Frost(UUID owner, long until, long paralyze, double x, double z) {}
-    private record Bleed(UUID owner, long until, float damage) {}
     private RpgAbilities() {}
     private static long now(ServerPlayer p) { return p.level().getGameTime(); }
     private static Active active(ServerPlayer p) { return ACTIVE.computeIfAbsent(p.getUUID(), id -> new Active()); }
@@ -234,7 +232,7 @@ public final class RpgAbilities {
     public static void onTick(EntityTickEvent.Post event){
         var entity=event.getEntity();if(!(entity.level() instanceof ServerLevel))return;
         if(!(entity instanceof ServerPlayer)&&!(entity instanceof Projectile)
-            &&!FROST.containsKey(entity.getUUID())&&!BLEED.containsKey(entity.getUUID()))return;
+            &&!FROST.containsKey(entity.getUUID()))return;
         RpgProfiler.run("abilities",()->onTickBody(event));
     }
     private static void onTickBody(EntityTickEvent.Post event){
@@ -255,8 +253,6 @@ public final class RpgAbilities {
                     if(e.tickCount%40==0&&e.canFreeze()){var owner=level.getServer().getPlayerList().getPlayer(frost.owner);if(owner!=null)secondary(e,level,new DamageSource(owner.damageSources().freeze().typeHolder(),e,owner),1);}
                 }
             }
-            var bleed=BLEED.get(e.getUUID());
-            if(bleed!=null){if(!e.isAlive()||time>=bleed.until)BLEED.remove(e.getUUID());else if(e.tickCount%20==0){var owner=level.getServer().getPlayerList().getPlayer(bleed.owner);if(owner!=null){secondary(e,level,owner.damageSources().playerAttack(owner),bleed.damage);level.sendParticles(ParticleTypes.DAMAGE_INDICATOR,e.getX(),e.getY()+1,e.getZ(),2,.1,.1,.1,.01);}}}
         }
     }
     private static void tickPlayer(ServerPlayer p) {
@@ -300,7 +296,7 @@ public final class RpgAbilities {
         if(p.getHealth()>p.getMaxHealth())p.setHealth(p.getMaxHealth());
     }
     public static void damagePre(LivingDamageEvent.Pre event) {
-        if(secondaryDamage)return;
+        if(secondaryDamage||Bleeding.damage(event.getSource()))return;
         if(event.getEntity() instanceof ServerPlayer victim){var s=profile(victim);if(s.rpgClass()==RpgClass.GUERREIRO&&s.hasSkill(16))event.setNewDamage(event.getNewDamage()*.95f);
             if(s.rpgClass()==RpgClass.MAGO&&s.hasSkill(0)&&event.getSource().is(DamageTypes.FREEZE))event.setNewDamage(event.getNewDamage()*.9f);}
         if(!attackable(event.getEntity())||!(event.getSource().getEntity() instanceof ServerPlayer p))return;
@@ -316,7 +312,7 @@ public final class RpgAbilities {
         if(event.getSource().getDirectEntity() instanceof LivingEntity enemy){var frost=FROST.get(enemy.getUUID());if(frost!=null&&frost.paralyze>enemy.level().getGameTime())event.setCanceled(true);}
     }
     public static void damagePost(LivingDamageEvent.Post event) {
-        if(secondaryDamage||event.getNewDamage()<=0)return;
+        if(secondaryDamage||Bleeding.damage(event.getSource())||event.getNewDamage()<=0)return;
         var target=event.getEntity();var source=event.getSource();
         if(attackable(target)&&source.getEntity() instanceof ServerPlayer p) {
             var s=profile(p);var a=active(p);long time=now(p);
@@ -335,8 +331,8 @@ public final class RpgAbilities {
                 if(source.getDirectEntity() instanceof AbstractArrow&&s.hasSkill(1))target.addEffect(new MobEffectInstance(MobEffects.GLOWING,s.hasSkill(2)?60:40,0));
                 boolean back=target.getLookAngle().dot(p.position().subtract(target.position()).normalize())<-.3;
                 boolean assassin=a.until[2]>time&&a.cast[2]!=null&&a.cast[2].mainUnlocked(2);
-                if((back&&s.hasSkill(15))||assassin){int seconds=assassin?(s.hasSkill(20)?8:5):s.hasSkill(16)?3:2;
-                    BLEED.put(target.getUUID(),new Bleed(p.getUUID(),time+seconds*20,assassin?1:.5f));if(assassin)target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS,60,0));}
+                if((back&&s.hasSkill(15))||assassin){
+                    Bleeding.apply(target,p,assassin&&s.hasSkill(20)?2:assassin||s.hasSkill(16)?1:0);if(assassin)target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS,60,0));}
                 if(a.ghost){ClassJourney.advance(p,1,1);stopGhost(p,a);}
             }
         }
@@ -419,10 +415,10 @@ public final class RpgAbilities {
         if(a!=null)a.statusWasActive=remaining[0]>0||remaining[1]>0||remaining[2]>0;
         PacketDistributor.sendToPlayer(p,new RpgNetwork.AbilityStatus(remaining[0],remaining[1],remaining[2],total[0],total[1],total[2],phase[0],phase[1],phase[2]));
     }
-    public static void cleanse(LivingEntity e){FROST.remove(e.getUUID());BLEED.remove(e.getUUID());e.setTicksFrozen(0);RpgNecromancer.cleanse(e);}
+    public static void cleanse(LivingEntity e){FROST.remove(e.getUUID());e.setTicksFrozen(0);RpgNecromancer.cleanse(e);}
     public static void clear(ServerPlayer p){RpgSpecialists.clear(p);RpgAviary.clear(p);RpgShaman.clear(p);RpgNecromancer.clear(p);var a=ACTIVE.remove(p.getUUID());if(a!=null){stopGhost(p,a);clearCracks(p,a);}stats(p,RpgProfile.NEW,null);}
-    public static void logout(PlayerEvent.PlayerLoggedOutEvent e){if(e.getEntity() instanceof ServerPlayer p){clear(p);PROFILES.remove(p.getUUID());FROST.entrySet().removeIf(x->x.getValue().owner.equals(p.getUUID()));BLEED.entrySet().removeIf(x->x.getValue().owner.equals(p.getUUID()));}}
-    public static void stop(ServerStoppedEvent e){ACTIVE.clear();PROFILES.clear();FROST.clear();BLEED.clear();}
+    public static void logout(PlayerEvent.PlayerLoggedOutEvent e){if(e.getEntity() instanceof ServerPlayer p){clear(p);PROFILES.remove(p.getUUID());FROST.entrySet().removeIf(x->x.getValue().owner.equals(p.getUUID()));}}
+    public static void stop(ServerStoppedEvent e){ACTIVE.clear();PROFILES.clear();FROST.clear();}
 }
 
 

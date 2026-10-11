@@ -236,7 +236,7 @@ public final class RpgNecromancer {
         for(var g:all)if(g!=null){g.target=target.getUUID();g.idle=g.world.getGameTime()+80;for(var m:g.units)m.mob.setTarget(target);}
     }
     public static void attack(AttackEntityEvent event){if(event.getEntity() instanceof ServerPlayer p&&event.getTarget() instanceof LivingEntity target)mark(p,target);}
-    public static void damage(LivingDamageEvent.Post event){if(event.getSource().getEntity() instanceof ServerPlayer p&&event.getNewDamage()>0&&!isSummon(event.getSource().getDirectEntity()))mark(p,event.getEntity());}
+    public static void damage(LivingDamageEvent.Post event){if(Bleeding.damage(event.getSource()))return;if(event.getSource().getEntity() instanceof ServerPlayer p&&event.getNewDamage()>0&&!isSummon(event.getSource().getDirectEntity()))mark(p,event.getEntity());}
     public static void targeting(LivingChangeTargetEvent event){
         var mob=event.getEntity();var next=event.getNewAboutToBeSetTarget();
         if(isSummon(mob)){var unit=MINIONS.get(mob.getUUID());if(next!=null&&(unit==null||target(unit.group)!=next))event.setNewAboutToBeSetTarget(null);}

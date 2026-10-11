@@ -162,7 +162,7 @@ public final class RpgNetwork {
         @Override public Type<EliteInfo> type(){return TYPE;}
     }
     public static void register(RegisterPayloadHandlersEvent event) {
-        var registrar = event.registrar("27");
+        var registrar = event.registrar("28");
         registrar.playToClient(BloodFx.TYPE,BloodFx.CODEC);
         registrar.playToClient(ImpactFx.TYPE,ImpactFx.CODEC);
         registrar.playToClient(CastFx.TYPE,CastFx.CODEC);

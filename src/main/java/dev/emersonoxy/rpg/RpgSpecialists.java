@@ -199,11 +199,11 @@ public final class RpgSpecialists {
         if(e.getEntity() instanceof ServerPlayer p&&intangible(p)&&!e.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY)){e.setCanceled(true);return;}
         if(e.getSource().getEntity() instanceof ServerPlayer p&&intangible(p))e.setCanceled(true);
     }
-    public static void damage(LivingDamageEvent.Pre e){
+    public static void damage(LivingDamageEvent.Pre e){if(Bleeding.damage(e.getSource()))return;
         if(e.getEntity() instanceof ServerPlayer p){var s=RpgAbilities.profile(p);float factor=1;if(s.rpgClass()==RpgClass.AVIARIO&&!p.onGround()&&e.getSource().is(DamageTypeTags.IS_PROJECTILE))factor=1.2f;if(s.rpgClass()==RpgClass.HIDROMANTE&&!p.isInWater()&&e.getSource().is(DamageTypeTags.IS_FIRE))factor=1.15f;if(s.rpgClass()==RpgClass.PIROMANTE&&e.getSource().is(net.minecraft.world.damagesource.DamageTypes.FREEZE))factor=1.2f;e.setNewDamage(e.getNewDamage()*factor);}
         if(e.getSource().getEntity() instanceof ServerPlayer p){var s=RpgAbilities.profile(p);float factor=1;if(s.rpgClass()==RpgClass.ILUSIONISTA&&e.getSource().getDirectEntity()==p)factor=.8f;if(s.rpgClass()==RpgClass.HIDROMANTE)factor=p.level().isRainingAt(p.blockPosition())?(p.level().isThundering()&&s.hasSkill(6)?1.4f:1.2f):p.isInWater()?1:.9f;if(s.rpgClass()==RpgClass.PIROMANTE){var c=CASTS.get(p.getUUID());factor=p.isInWater()? .8f:1+(c==null?0:c.heat*.002f);if(e.getSource().getDirectEntity()==p&&s.hasSkill(9))e.getEntity().igniteForSeconds(3);}if(s.rpgClass()==RpgClass.XAMA&&!p.getMainHandItem().isEmpty()&&e.getSource().getDirectEntity()==p)factor=.9f;e.setNewDamage(e.getNewDamage()*factor);}
     }
-    public static void damagePost(LivingDamageEvent.Post e){if(e.getNewDamage()>0&&e.getSource().getEntity() instanceof ServerPlayer p&&RpgAbilities.profile(p).rpgClass()==RpgClass.PIROMANTE&&RpgAbilities.attackable(e.getEntity()))heat(cast(p,RpgAbilities.profile(p)),2);}
+    public static void damagePost(LivingDamageEvent.Post e){if(Bleeding.damage(e.getSource()))return;if(e.getNewDamage()>0&&e.getSource().getEntity() instanceof ServerPlayer p&&RpgAbilities.profile(p).rpgClass()==RpgClass.PIROMANTE&&RpgAbilities.attackable(e.getEntity()))heat(cast(p,RpgAbilities.profile(p)),2);}
     public static void targeting(LivingChangeTargetEvent e){if(e.getNewAboutToBeSetTarget() instanceof ServerPlayer p&&(intangible(p)||disguised(p)))e.setNewAboutToBeSetTarget(null);}
     public static void attack(AttackEntityEvent e){if(intangible(e.getEntity()))e.setCanceled(true);}
     public static void rightItem(PlayerInteractEvent.RightClickItem e){if(intangible(e.getEntity()))e.setCanceled(true);}
