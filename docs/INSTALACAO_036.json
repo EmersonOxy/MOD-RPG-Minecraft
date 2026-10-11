@@ -1,0 +1,53 @@
+{
+  "version": "0.36.0",
+  "protocol": 24,
+  "instance": "C:\\Users\\canal\\AppData\\Roaming\\.sklauncher\\instances\\neoforge-1-21-10",
+  "backup": "C:\\Users\\canal\\AppData\\Roaming\\.sklauncher\\instances\\neoforge-1-21-10\\mod-backups\\20261011-165108-0.36.0",
+  "game_closed": true,
+  "game_validation": false,
+  "date": "2026-10-11T16:51:11.901009",
+  "sha256": "aa0852ce2b6868f289cc3095a995debde1e927fd0a52ec2b31aec0ebf9cfe781",
+  "installed": "oxyrpg-0.36.0.jar",
+  "mods_before": [
+    {
+      "file": "curios-neoforge-13.0.0+1.21.10.jar",
+      "sha256": "24d37149001ab0df77c9c7653a582aabb14667cd5cd9e798c99b25f038187e21"
+    },
+    {
+      "file": "DoAnotherBarrelRoll-3.7.4+1.21.10.jar",
+      "sha256": "f997d851fda2319a9aa81705dc1a7ca9720f2b826f9d8532b562f3fac798d271"
+    },
+    {
+      "file": "Explorify v1.6.5.mod.jar",
+      "sha256": "2dc76398b48b2aae9b4024642da098b0880125572de160cb5ecf91d102890cad"
+    },
+    {
+      "file": "ferritecore-8.1.0-neoforge.jar",
+      "sha256": "aab0374476365244c859b39e171499376cb57ca6c789b71676ff2228ce113de9"
+    },
+    {
+      "file": "geckolib-neoforge-1.21.10-5.3-alpha-3.jar",
+      "sha256": "8021252ddff1d1cbdbe891cd88a4f5b1edb996836c12d789dc15383748221efd"
+    },
+    {
+      "file": "lithium-neoforge-0.20.1+mc1.21.10.jar",
+      "sha256": "cd0ca6d3e226e02d2bfd37ff84df6cf965da59bbb2fd6e047859f6790cafeacb"
+    },
+    {
+      "file": "owo-lib-neoforge-0.12.28+1.21.10.jar",
+      "sha256": "ef2e458889bf1df8abc4eb2732031653d0b583b425639eb12a16dc197f3952ab"
+    },
+    {
+      "file": "oxyrpg-0.35.0.jar",
+      "sha256": "93f664ad8f68900ad1a370074bce4acd9850f3f0bdfdeba9878505b7c50f1d35"
+    },
+    {
+      "file": "Structory_26.2_v1.3.7.jar",
+      "sha256": "e9079b2bb9bc2efb9b0f1244376488e41f8b50f25415094d8f03dc753cdfb131"
+    },
+    {
+      "file": "yet_another_config_lib_v3-3.8.2+1.21.10-neoforge-oxycompat.jar",
+      "sha256": "28fa9bec444b27acbfd37c458859150eda08db165bf19f6a6382e34fe525d03a"
+    }
+  ]
+}

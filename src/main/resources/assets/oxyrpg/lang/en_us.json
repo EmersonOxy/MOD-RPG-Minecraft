@@ -98,5 +98,15 @@
   "tooltip.oxyrpg.antidote": "Removes poison and weakness. Shared 8 s cooldown.",
   "message.oxyrpg.item_mana": "This item requires %s MP.",
   "entity.oxyrpg.patrol_captain": "Raider captain",
-  "oxyrpg.config.raiderPatrols": "Raider patrols"
+  "oxyrpg.config.raiderPatrols": "Raider patrols",
+  "oxyrpg.config.enemyTactics": "Enemy combat tactics",
+  "screen.oxyrpg.combat_visuals": "Animations and effects",
+  "option.oxyrpg.cast_animations": "Skill gestures",
+  "option.oxyrpg.class_effects": "Class effects",
+  "option.oxyrpg.swarm_visuals": "Illusionist bats",
+  "option.oxyrpg.visuals_hint": "Cosmetics respect particle settings.",
+  "warning.oxyrpg.barrier": "Barrier",
+  "warning.oxyrpg.volley": "Preparing volley",
+  "warning.oxyrpg.empower": "Empowerment",
+  "warning.oxyrpg.strike": "Heavy strike"
 }

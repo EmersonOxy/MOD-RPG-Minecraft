@@ -98,5 +98,15 @@
   "tooltip.oxyrpg.antidote": "Remove veneno e fraqueza. Recarga compartilhada de 8 s.",
   "message.oxyrpg.item_mana": "Este item precisa de %s MP.",
   "entity.oxyrpg.patrol_captain": "Capitão saqueador",
-  "oxyrpg.config.raiderPatrols": "Patrulhas de saqueadores"
+  "oxyrpg.config.raiderPatrols": "Patrulhas de saqueadores",
+  "oxyrpg.config.enemyTactics": "Táticas de combate dos inimigos",
+  "screen.oxyrpg.combat_visuals": "Animações e efeitos",
+  "option.oxyrpg.cast_animations": "Gestos das habilidades",
+  "option.oxyrpg.class_effects": "Efeitos das classes",
+  "option.oxyrpg.swarm_visuals": "Morcegos do Ilusionista",
+  "option.oxyrpg.visuals_hint": "Cosméticos respeitam a opção de partículas.",
+  "warning.oxyrpg.barrier": "Barreira",
+  "warning.oxyrpg.volley": "Preparando salva",
+  "warning.oxyrpg.empower": "Fortificação",
+  "warning.oxyrpg.strike": "Golpe forte"
 }

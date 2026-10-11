@@ -28,6 +28,7 @@ public final class OxyRpg {
         bus.addListener(RpgNetwork::register);
         VillageLoot.register(bus);
         NeoForge.EVENT_BUS.addListener(AdventureItems::fall);
+        NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST,CombatTactics::join);
         NeoForge.EVENT_BUS.addListener(RaiderPatrols::tick);NeoForge.EVENT_BUS.addListener(RaiderPatrols::cleanup);NeoForge.EVENT_BUS.addListener(RaiderPatrols::drops);
         NeoForge.EVENT_BUS.addListener(EventPriority.HIGHEST,RpgEvasion::incoming);
         NeoForge.EVENT_BUS.addListener(EventPriority.LOW,CombatChances::incoming);
@@ -256,6 +257,7 @@ public final class OxyRpg {
             if (!debug && !extra){if(RpgDebug.testing(player))RpgDebug.cooldown(player,effective,slot,now);else store.save(player.getUUID(), real.useAbility(now, slot));}
             RpgResources.spend(player,cost);
             RpgAbilities.activate(player, effective, slot, direction);
+            SkillEffects.cast(player,effective,slot);
             tell(player, (extra&&effective.rpgClass()==RpgClass.AVIARIO?"Impulso aéreo":SkillTree.abilityName(effective.rpgClass(), slot)) + (effective.mainUnlocked(slot) ? " ativada!" : " — versão inicial ativada!")
                 + (debug ? " DEBUG: sem recarga e sem gasto de mana." : " Recarga: " + effective.abilityCooldown(slot) / 20 + " s. Mana: "+cost+" MP."));
             return 1;

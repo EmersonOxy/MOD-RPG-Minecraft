@@ -119,7 +119,7 @@ public final class RpgAviary {
         for(var mob:level.getEntitiesOfClass(LivingEntity.class,new AABB(center,center).inflate(radius),RpgAbilities::attackable))if(mob.position().distanceToSqr(center)<=radius*radius){if(mob.hurtServer(level,p.damageSources().playerAttack(p),damage))hits++;var away=mob.position().subtract(center).normalize();mob.push(away.x*.7,.5,away.z*.7);}
         if(hits>0)ClassJourney.advance(p,2,1);
         if(s.mainUnlocked(2)&&p.mayBuild())MeteorCrater.enqueue(p,center,radius,force,s.hasSkill(20),f.forward);
-        SkillEffects.impact(level,center,radius,4);
+        SkillEffects.impact(level,center,radius,6);
         level.sendParticles(ParticleTypes.EXPLOSION,center.x,center.y+.2,center.z,8,radius*.4,.3,radius*.4,0);
         level.playSound(null,BlockPos.containing(center),SoundEvents.GENERIC_EXPLODE.value(),SoundSource.PLAYERS,1.2f,.75f);p.fallDistance=0;
     }

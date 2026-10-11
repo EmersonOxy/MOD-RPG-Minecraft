@@ -28,7 +28,8 @@
     "RpgSliderThemeMixin",
     "InventoryMovementMixin",
     "MerchantThemeMixin",
-    "FreeMovementSprintMixin"
+    "FreeMovementSprintMixin",
+    "ClassCastAnimationMixin"
   ],
   "injectors": {
     "defaultRequire": 1

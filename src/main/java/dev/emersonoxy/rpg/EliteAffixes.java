@@ -21,11 +21,11 @@ public final class EliteAffixes {
         int kind=data.getIntOr("oxy_affix",0);if(kind==2)return;
         if(mob.distanceToSqr(target)>400||!mob.hasLineOfSight(target)){data.putLong("oxy_affix_cast",0);return;}
         long cast=data.getLongOr("oxy_affix_cast",0);
-        if(cast>0){if(now>=cast){data.putLong("oxy_affix_cast",0);apply(world,mob,target,kind,new Vec3(data.getDoubleOr("oxy_affix_x",mob.getX()),data.getDoubleOr("oxy_affix_y",mob.getY()),data.getDoubleOr("oxy_affix_z",mob.getZ())));}return;}
-        if(now<data.getLongOr("oxy_affix_ready",0))return;
+        if(cast>0){if(now>=cast){data.putLong("oxy_affix_cast",0);data.putLong("oxy_elite_recover_until",now+16);apply(world,mob,target,kind,new Vec3(data.getDoubleOr("oxy_affix_x",mob.getX()),data.getDoubleOr("oxy_affix_y",mob.getY()),data.getDoubleOr("oxy_affix_z",mob.getZ())));}return;}
+        if(now<data.getLongOr("oxy_affix_ready",0)||now<data.getLongOr("oxy_elite_cast_until",0)||now<data.getLongOr("oxy_elite_recover_until",0))return;
         Vec3 point=kind==3?mob.position():target.position();int windup=kind==3?20:32;
         data.putDouble("oxy_affix_x",point.x);data.putDouble("oxy_affix_y",point.y);data.putDouble("oxy_affix_z",point.z);
-        data.putLong("oxy_affix_cast",now+windup);data.putLong("oxy_affix_ready",now+(enraged?140:220));
+        mob.getNavigation().stop();data.putLong("oxy_affix_cast",now+windup);data.putLong("oxy_affix_ready",now+(enraged?140:220));
         PacketDistributor.sendToPlayersTrackingEntity(mob,new RpgNetwork.EliteWarning(mob.getId(),point.x,point.y,point.z,kind==3?2:3.5f,windup,kind));
     }
     private static void apply(ServerLevel world,Mob mob,LivingEntity target,int kind,Vec3 center){

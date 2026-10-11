@@ -67,12 +67,16 @@ public final class EliteAbilities {
         long cast=data.getLongOr("oxy_elite_cast_until",0);
         if(cast>0){
             if(now<cast){ring(world,mob,3,ParticleTypes.ENCHANT);return;}
-            data.putLong("oxy_elite_cast_until",0);cast(world,mob,target,trait);return;
+            data.putLong("oxy_elite_cast_until",0);cast(world,mob,target,trait);data.putLong("oxy_elite_recover_until",now+16);return;
         }
-        if(now<data.getLongOr("oxy_elite_ready",0))return;
+        if(now<data.getLongOr("oxy_elite_ready",0)||now<data.getLongOr("oxy_elite_recover_until",0)||now<data.getLongOr("oxy_affix_cast",0))return;
         if(!Set.of("frost_archer","marksman","summoner","storm","sentinel","berserker").contains(trait)&&mob.distanceToSqr(target)>64)return;
         data.putLong("oxy_elite_cast_until",now+20);data.putLong("oxy_elite_ready",now+(trait.equals("summoner")?220:trait.equals("sentinel")?200:130));
-        world.sendParticles(ParticleTypes.ENCHANT,mob.getX(),mob.getY()+mob.getBbHeight(),mob.getZ(),20,.4,.4,.4,.04);
+        mob.getNavigation().stop();
+        double radius=switch(trait){case "distorter","terror"->6;case "alchemist"->5;default->3+data.getDoubleOr("oxy_elite_scale",2)*.5;};
+        int kind=Set.of("frost_archer","marksman").contains(trait)?12:Set.of("berserker","sentinel","summoner").contains(trait)?13:10;
+        net.neoforged.neoforge.network.PacketDistributor.sendToPlayersTrackingEntity(mob,new RpgNetwork.EliteWarning(mob.getId(),mob.getX(),mob.getY(),mob.getZ(),(float)Math.clamp(radius,1,16),20,kind));
+        world.sendParticles(ParticleTypes.ENCHANT,mob.getX(),mob.getY()+mob.getBbHeight(),mob.getZ(),6,.4,.4,.4,.04);
     }
     private static List<LivingEntity> near(ServerLevel w,Mob mob,LivingEntity target,double radius){
         return w.getEntitiesOfClass(LivingEntity.class,mob.getBoundingBox().inflate(radius),e->target(e)&&(e==target||e instanceof Player||RpgNecromancer.isSummon(e))&&mob.distanceToSqr(e)<=radius*radius&&mob.hasLineOfSight(e));

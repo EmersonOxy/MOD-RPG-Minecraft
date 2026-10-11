@@ -10,6 +10,11 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 public final class RpgNetwork {
     private RpgNetwork() {}
 
+    public record CastFx(int entity,int kind,int slot,int duration) implements CustomPacketPayload {
+        public static final Type<CastFx> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath("oxyrpg","cast_fx"));
+        public static final StreamCodec<RegistryFriendlyByteBuf,CastFx> CODEC=StreamCodec.of((b,v)->{b.writeVarInt(v.entity);b.writeVarInt(v.kind);b.writeVarInt(v.slot);b.writeVarInt(v.duration);},b->new CastFx(b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readVarInt()));
+        @Override public Type<CastFx> type(){return TYPE;}
+    }
     public record ImpactFx(double x,double y,double z,float radius,int kind) implements CustomPacketPayload {
         public static final Type<ImpactFx> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath("oxyrpg","impact_fx"));
         public static final StreamCodec<RegistryFriendlyByteBuf,ImpactFx> CODEC=StreamCodec.of((b,v)->{b.writeDouble(v.x);b.writeDouble(v.y);b.writeDouble(v.z);b.writeFloat(v.radius);b.writeVarInt(v.kind);},b->new ImpactFx(b.readDouble(),b.readDouble(),b.readDouble(),b.readFloat(),b.readVarInt()));
@@ -147,8 +152,9 @@ public final class RpgNetwork {
         @Override public Type<EliteInfo> type(){return TYPE;}
     }
     public static void register(RegisterPayloadHandlersEvent event) {
-        var registrar = event.registrar("23");
+        var registrar = event.registrar("24");
         registrar.playToClient(ImpactFx.TYPE,ImpactFx.CODEC);
+        registrar.playToClient(CastFx.TYPE,CastFx.CODEC);
         registrar.playToClient(SpecialState.TYPE,SpecialState.CODEC);
         registrar.playToClient(ContentState.TYPE,ContentState.CODEC);
         registrar.playToClient(EvasionState.TYPE,EvasionState.CODEC);

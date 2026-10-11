@@ -23,8 +23,9 @@ public final class CombatSettingsScreen extends Screen {
             @Override protected void applyValue(){CombatOptions.size=.6+value;}
         });
         toggle(150,"Segurar para prever / soltar para lançar",CombatOptions.preview,()->{CombatOptions.preview=!CombatOptions.preview;AbilityPreview.clear();});
+        addRenderableWidget(Button.builder(Component.translatable("screen.oxyrpg.combat_visuals"),b->minecraft.setScreen(new CombatVisualSettingsScreen(this))).bounds(left+12,top+174,w-24,20).build());
         addRenderableWidget(Button.builder(Component.literal("Voltar"),b->onClose()).bounds(left+12,top+206,w-24,20).build());
     }
     private void toggle(int y,String label,boolean value,Runnable change){addRenderableWidget(Button.builder(Component.literal(label+": "+(value?"sim":"não")),b->{change.run();CombatOptions.save();rebuildWidgets();}).bounds(left+12,top+y,w-24,20).build());}
-    @Override public void render(GuiGraphics g,int x,int y,float delta){RpgUi.panel(g,left,top,w,234);g.drawCenteredString(font,title,width/2,top+12,RpgUi.GOLD);g.drawCenteredString(font,"Soltar a tecla lança; abrir um menu cancela.",width/2,top+184,0xFFB7C8D7);super.render(g,x,y,delta);}
+    @Override public void render(GuiGraphics g,int x,int y,float delta){RpgUi.panel(g,left,top,w,234);g.drawCenteredString(font,title,width/2,top+12,RpgUi.GOLD);super.render(g,x,y,delta);}
 }

@@ -1,4 +1,4 @@
-# Oxy RPG 0.35.0
+# Oxy RPG 0.36.0
 
 Mod RPG para Minecraft **1.21.10**, NeoForge **21.10.64**, JDK **21**.
 
@@ -9,6 +9,8 @@ A 0.33.0 acrescenta mapa local de cavernas, painéis independentes da HUD, corri
 A 0.34 corrige a detecção de cavernas, melhora encontros de patrulhas, amplia vilas com anexos conectados, simplifica a bússola e permite corrida em qualquer direção no modo independente. Ver [correções 0.34](docs/CORRECOES_034.md).
 
 A 0.35 reduz trabalho do minimapa, habilidades e indicadores, suaviza avisos de região e acrescenta Lithium/FerriteCore como complementos separados. [Desempenho, referências e limites](docs/DESEMPENHO_035.md).
+
+A 0.36 acrescenta gestos e efeitos das nove classes, enxame visual do Ilusionista, reposicionamento de inimigos e preparação/recuperação mais legível dos elites. Cosméticos configuráveis em R > Interface > Combate > Animações e efeitos. [Detalhes, limites e validação](docs/COMBATE_E_ANIMACOES_036.md).
 
 ## Controles
 
@@ -39,7 +41,7 @@ owo-lib **0.12.28+1.21.10**, Curios **13.0.0+1.21.10**, GeckoLib **5.3-alpha-3**
 
 ## Registro do projeto
 
-[Estado atual, evidências, limitações e preferências](docs/ESTADO_DO_PROJETO.md) · [Inventário de fontes](docs/INVENTARIO_CODIGO_035.json) · [Atualização 0.32](docs/INTERFACE_032.md) · [Atualização 0.33](docs/EXPLORACAO_033.md) · [Referências e próximos passos](docs/REFERENCIAS_E_IDEIAS_033.md).
+[Estado atual, evidências, limitações e preferências](docs/ESTADO_DO_PROJETO.md) · [Inventário de fontes](docs/INVENTARIO_CODIGO_036.json) · [Atualização 0.32](docs/INTERFACE_032.md) · [Atualização 0.33](docs/EXPLORACAO_033.md) · [Referências e próximos passos](docs/REFERENCIAS_E_IDEIAS_033.md).
 
 Os documentos numerados em docs preservam o histórico; descrições antigas não substituem o estado atual.
 
