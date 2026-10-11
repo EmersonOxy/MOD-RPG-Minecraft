@@ -12,7 +12,7 @@ public final class RpgUi {
     private static final java.util.Map<net.minecraft.client.gui.components.AbstractWidget,Hover> HOVERS=new java.util.WeakHashMap<>();
     private static final class Hover {long frame=System.nanoTime();float amount;}
     public interface ConfigTheme {boolean oxyOwned();}
-    public static boolean owns(net.minecraft.client.gui.screens.Screen screen){return screen!=null&&(screen.getClass().getName().startsWith("dev.emersonoxy.rpg.client.")||screen instanceof ConfigTheme theme&&theme.oxyOwned());}
+    public static boolean owns(net.minecraft.client.gui.screens.Screen screen){return screen!=null&&(screen instanceof net.minecraft.client.gui.screens.inventory.MerchantScreen||screen.getClass().getName().startsWith("dev.emersonoxy.rpg.client.")||screen instanceof ConfigTheme theme&&theme.oxyOwned());}
     private RpgUi(){}
     /** Rendering only; original click, keyboard, tooltip and narration behavior stays native. */
     public static void action(GuiGraphics g,net.minecraft.client.gui.components.AbstractWidget button){

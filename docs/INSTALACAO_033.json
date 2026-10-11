@@ -1,0 +1,25 @@
+{
+  "version": "0.33.0",
+  "minecraft": "1.21.10",
+  "neoforge": "21.10.64",
+  "protocol": 23,
+  "backup": "C:\\Users\\canal\\AppData\\Roaming\\.sklauncher\\instances\\neoforge-1-21-10\\mod-backups\\20261011-042427-0.33.0",
+  "installed": [
+    {
+      "file": "oxyrpg-0.33.0.jar",
+      "sha256": "50ec58904228cfb11d8b425a83dd22439a58d14dd0cedee85acf5ffec46d2743",
+      "bytes": 693077
+    },
+    {
+      "file": "Explorify v1.6.4 f15-88.mod.jar",
+      "sha256": "dcc5340dc771c61358f53b9818594e9e588d9af81c0a1e906c373fb14d9be7a3",
+      "bytes": 951495
+    },
+    {
+      "file": "Structory_1.21.x_v1.3.12.jar",
+      "sha256": "2bf47c257b031b50f3fe6aaaba6a30d9e30a0a0ea8bbce63e2a85dee1f1644b1",
+      "bytes": 1260796
+    }
+  ],
+  "validation": "assemble successful; no game launched or automated tests executed"
+}

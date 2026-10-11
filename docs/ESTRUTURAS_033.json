@@ -1,0 +1,73 @@
+{
+  "minecraft": "1.21.10",
+  "neoforge": "21.10.64",
+  "data_pack_format": 88,
+  "selected": [
+    {
+      "name": "Explorify",
+      "version": "1.6.4",
+      "version_id": "9vHj342y",
+      "file": "Explorify v1.6.4 f15-88.mod.jar",
+      "url": "https://cdn.modrinth.com/data/HSfsxuTo/versions/9vHj342y/Explorify%20v1.6.4%20f15-88.mod.jar",
+      "sha512": "601ee61e3619ab6a929ff06e4e3db6cc480d97a19e5716ac40a2a325d2d609b857a1ac17f2c0ed2b242e662b5486f4e0f59584fbd47acd481b318c45c244254b",
+      "license": "ARR",
+      "dependencies": [],
+      "minecraft_declared": [
+        "1.20",
+        "1.20.1",
+        "1.20.2",
+        "1.20.3",
+        "1.20.4",
+        "1.20.5",
+        "1.20.6",
+        "1.21",
+        "1.21.1",
+        "1.21.2",
+        "1.21.3",
+        "1.21.4",
+        "1.21.5",
+        "1.21.6",
+        "1.21.7",
+        "1.21.8",
+        "1.21.9",
+        "1.21.10",
+        "1.21.11"
+      ],
+      "loaders": [
+        "fabric",
+        "forge",
+        "neoforge",
+        "quilt"
+      ]
+    },
+    {
+      "name": "Structory",
+      "version": "1.3.12",
+      "version_id": "qm2RM1eD",
+      "file": "Structory_1.21.x_v1.3.12.jar",
+      "url": "https://cdn.modrinth.com/data/aKCwCJlY/versions/qm2RM1eD/Structory_1.21.x_v1.3.12.jar",
+      "sha512": "8df96ecbc05380f9969a23bc322aec0b5f12fe75873f02cbf4d0bd855dcb8254fd0f9a448fdfdaea160382e7fe9cc68e0122a01019179cec846c777ff7188ac7",
+      "license": "Stardust Labs License",
+      "dependencies": [],
+      "minecraft_declared": [
+        "1.21",
+        "1.21.1",
+        "1.21.2",
+        "1.21.3",
+        "1.21.4",
+        "1.21.5",
+        "1.21.6",
+        "1.21.7",
+        "1.21.8",
+        "1.21.9",
+        "1.21.10"
+      ],
+      "loaders": [
+        "fabric",
+        "forge",
+        "neoforge",
+        "quilt"
+      ]
+    }
+  ]
+}

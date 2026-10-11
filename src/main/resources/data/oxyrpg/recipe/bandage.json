@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " SS",
+    "SP ",
+    " SS"
+  ],
+  "key": {
+    "S": "minecraft:string",
+    "P": "minecraft:paper"
+  },
+  "result": {
+    "id": "oxyrpg:bandage",
+    "count": 2
+  }
+}

@@ -46,7 +46,9 @@ public final class VillagerQuests {
         if(event.isCanceled()||!(event.getEntity() instanceof ServerPlayer p)||!(event.getTarget() instanceof Villager v)||p.isShiftKeyDown()||v.isBaby()||!v.isAlive())return;
         event.setCanceled(true);event.setCancellationResult(InteractionResult.SUCCESS);
         if(event.getHand()!=InteractionHand.MAIN_HAND)return;
-        TALKS.put(p.getUUID(),new Conversation(v.getUUID(),p.level().getGameTime()+1200));
+        if(v.getTradingPlayer()!=null&&v.getTradingPlayer()!=p){Professions.notify(p,"Este morador já está negociando.");return;}
+        TALKS.put(p.getUUID(),new Conversation(v.getUUID(),p.level().getGameTime()+100));
+        v.getNavigation().stop();v.setDeltaMovement(0,v.getDeltaMovement().y,0);
         try{
             var d=ProfessionStore.get(p);
             if(d.quest>=0&&v.getUUID().equals(d.villager)&&QUESTS[d.quest].kind()==1){
@@ -68,13 +70,30 @@ public final class VillagerQuests {
         int status=d.quest<0?0:!mine?3:progress>=q.amount()?2:1;
         String objective=(q.kind()==0?"Derrotar ":q.kind()==1?"Entregar ":"Colher ")+q.amount()+" "+targetName(q)+(mine?" • "+Math.min(progress,q.amount())+"/"+q.amount():"");
         String dialogue=status==3?"Você já tem um compromisso com outro morador. Conclua-o ou abandone pelo diário.":status==2?"Você cumpriu o objetivo? Confirme a conclusão para receber sua recompensa.":status==1?(q.kind()==1?"Segure o item na mão principal e clique em mim para entregar. Aceito entregas parciais.":"Ainda precisamos da sua ajuda. Volte quando terminar."):q.dialogue();
-        PacketDistributor.sendToPlayer(p,new RpgNetwork.VillagerDialogue(v.getId(),v.getDisplayName().getString(),q.title(),dialogue,objective,q.emeralds()+" esmeraldas + 50 XP de "+Professions.NAMES[q.area()]+"; bônus a cada 5 contratos",status));
+        PacketDistributor.sendToPlayer(p,new RpgNetwork.VillagerDialogue(v.getId(),v.getDisplayName().getString(),q.title(),dialogue,objective,q.emeralds()+" esmeraldas + 50 XP de "+Professions.NAMES[q.area()]+"; bônus a cada 5 contratos",status,!v.getOffers().isEmpty()));
     }catch(IOException e){Professions.notify(p,"Não foi possível ler o contrato. Seus dados foram preservados.");}}
     private static String targetName(Quest q){return q.kind()==0?BuiltInRegistries.ENTITY_TYPE.getValue(net.minecraft.resources.ResourceLocation.parse(q.target())).getDescription().getString():targetItem(q).getName().getString();}
+    public static boolean conversing(Villager v){
+        if(!(v.level() instanceof net.minecraft.server.level.ServerLevel level))return false;
+        for(var entry:TALKS.entrySet()){
+            var talk=entry.getValue();if(!talk.npc().equals(v.getUUID())||talk.expires()<level.getGameTime())continue;
+            var p=level.getServer().getPlayerList().getPlayer(entry.getKey());if(p!=null&&p.level()==level&&p.isAlive()&&!p.isSpectator()&&p.distanceToSqr(v)<=36)return true;
+        }
+        return false;
+    }
     public static void action(ServerPlayer p,int action,int entityId){
         if(action==302){try{var d=ProfessionStore.get(p);d.quest=-1;d.progress=0;d.villager=null;ProfessionStore.save(p,d);Professions.sync(p);Professions.notify(p,"Contrato abandonado, sem recompensa.");}catch(IOException e){Professions.notify(p,"Falha ao abandonar contrato.");}return;}
         var talk=TALKS.get(p.getUUID());var entity=p.level().getEntity(entityId);
-        if(talk==null||talk.expires()<p.level().getGameTime()||!(entity instanceof Villager v)||!v.isAlive()||v.isBaby()||!v.getUUID().equals(talk.npc())||p.distanceToSqr(v)>36||!p.hasLineOfSight(v))return;
+        if(action==304){if(talk!=null&&entity!=null&&talk.npc().equals(entity.getUUID()))TALKS.remove(p.getUUID());return;}
+        if(talk==null||talk.expires()<p.level().getGameTime()||!(entity instanceof Villager v)||!v.isAlive()||v.isBaby()||!v.getUUID().equals(talk.npc())||p.distanceToSqr(v)>36||!p.hasLineOfSight(v)||!p.isAlive()||p.isSpectator())return;
+        TALKS.put(p.getUUID(),new Conversation(v.getUUID(),p.level().getGameTime()+100));
+        if(action==305)return;
+        if(action==303){p.closeContainer();show(p,v);return;}
+        if(action==306){
+            if(v.getTradingPlayer()!=null&&v.getTradingPlayer()!=p){Professions.notify(p,"Este morador já está negociando.");return;}
+            if(v.getOffers().isEmpty()){Professions.notify(p,"Este morador não tem trocas disponíveis.");show(p,v);return;}
+            ((dev.emersonoxy.rpg.mixin.VillagerTradeInvoker)v).oxyStartTrading(p);return;
+        }
         try{var d=ProfessionStore.get(p);
             if(action==300&&d.quest<0){d.quest=offer(v,d);d.villager=v.getUUID();d.progress=0;ProfessionStore.save(p,d);}
             else if(action==301&&v.getUUID().equals(d.villager)&&d.quest>=0){
@@ -95,7 +114,7 @@ public final class VillagerQuests {
         world.sendParticles(net.minecraft.core.particles.ParticleTypes.FIREWORK,v.getX(),v.getY()+1.8,v.getZ(),24,.5,.5,.5,.08);
         world.playSound(null,v.blockPosition(),net.minecraft.sounds.SoundEvents.VILLAGER_YES,net.minecraft.sounds.SoundSource.NEUTRAL,1,1.1f);
         world.playSound(null,p.blockPosition(),net.minecraft.sounds.SoundEvents.PLAYER_LEVELUP,net.minecraft.sounds.SoundSource.PLAYERS,.6f,1.3f);
-        PacketDistributor.sendToPlayer(p,new RpgNetwork.VillagerDialogue(v.getId(),v.getDisplayName().getString(),q.title(),"Muito obrigado! Seu trabalho ajudou nossa aldeia.","Missão concluída — todos os objetivos entregues/confirmados.",q.emeralds()+" esmeraldas + 50 XP de "+Professions.NAMES[q.area()],4));
+        PacketDistributor.sendToPlayer(p,new RpgNetwork.VillagerDialogue(v.getId(),v.getDisplayName().getString(),q.title(),"Muito obrigado! Seu trabalho ajudou nossa aldeia.","Missão concluída — todos os objetivos entregues/confirmados.",q.emeralds()+" esmeraldas + 50 XP de "+Professions.NAMES[q.area()],4,!v.getOffers().isEmpty()));
     }
     private static void give(ServerPlayer p,ItemStack stack){
         // Explicit survival-style insertion also preserves overflow in creative mode.

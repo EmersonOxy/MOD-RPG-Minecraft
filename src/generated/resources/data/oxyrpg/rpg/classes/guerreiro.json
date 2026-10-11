@@ -19,15 +19,15 @@
       "id": 1,
       "title": "Ímpeto",
       "x": 0,
-      "y": -130
+      "y": -129
     },
     {
       "description": "Ímpeto dura +1 s.",
       "icon": "apple",
       "id": 2,
       "title": "Fôlego de combate",
-      "x": 0,
-      "y": -190
+      "x": 1,
+      "y": -189
     },
     {
       "description": "dano em raio de 3 blocos e Força I por 10 s. Recarga 25 s.",
@@ -114,8 +114,8 @@
       "icon": "beetroot_soup",
       "id": 13,
       "title": "Sangue vigoroso",
-      "x": -383,
-      "y": -445
+      "x": -384,
+      "y": -444
     },
     {
       "description": "Resistência a empurrão +10%.",
@@ -138,8 +138,8 @@
       "icon": "iron_chestplate",
       "id": 16,
       "title": "Pele endurecida",
-      "x": 205,
-      "y": -120
+      "x": 204,
+      "y": -117
     },
     {
       "description": "brilho, Resistência III, Lentidão I, espinhos e reflexão frontal por 8 s. Recarga 45 s.",
@@ -170,16 +170,16 @@
       "icon": "netherite_chestplate",
       "id": 20,
       "title": "Fortaleza viva",
-      "x": 383,
-      "y": -445
+      "x": 384,
+      "y": -444
     },
     {
       "description": "Dano da classe +3%.",
       "icon": "iron_sword",
       "id": 21,
       "title": "Preparação: Corte circular",
-      "x": -20,
-      "y": -243
+      "x": -21,
+      "y": -245
     },
     {
       "description": "Dano da classe +3%.",
@@ -194,8 +194,8 @@
       "icon": "iron_sword",
       "id": 23,
       "title": "Potência I",
-      "x": -200,
-      "y": -519
+      "x": -192,
+      "y": -518
     },
     {
       "description": "Duração das habilidades +5%.",
@@ -218,8 +218,8 @@
       "icon": "amethyst_shard",
       "id": 26,
       "title": "Recuperação I",
-      "x": 200,
-      "y": -519
+      "x": 192,
+      "y": -518
     },
     {
       "description": "Dano da classe +3%.",
@@ -259,7 +259,7 @@
       "id": 31,
       "title": "Preparação: Vampirismo",
       "x": -257,
-      "y": -173
+      "y": -172
     },
     {
       "description": "Dano da classe +3%.",
@@ -267,7 +267,7 @@
       "id": 32,
       "title": "Domínio: Vampirismo",
       "x": -246,
-      "y": -231
+      "y": -232
     },
     {
       "description": "Dano da classe +3%.",
@@ -290,8 +290,8 @@
       "icon": "lapis_lazuli",
       "id": 35,
       "title": "Eficiência I",
-      "x": -357,
-      "y": -496
+      "x": -356,
+      "y": -497
     },
     {
       "description": "Recarga das habilidades -3%.",
@@ -330,16 +330,16 @@
       "icon": "amethyst_shard",
       "id": 40,
       "title": "Recuperação II",
-      "x": -243,
-      "y": -523
+      "x": -251,
+      "y": -524
     },
     {
       "description": "Dano da classe +3%.",
       "icon": "iron_sword",
       "id": 41,
       "title": "Preparação: Bastião",
-      "x": 218,
-      "y": -173
+      "x": 219,
+      "y": -176
     },
     {
       "description": "Dano da classe +3%.",
@@ -362,8 +362,8 @@
       "icon": "clock",
       "id": 44,
       "title": "Persistência I",
-      "x": 357,
-      "y": -496
+      "x": 356,
+      "y": -497
     },
     {
       "description": "Custo de mana das habilidades -3%.",
@@ -386,8 +386,8 @@
       "icon": "iron_sword",
       "id": 47,
       "title": "Potência II",
-      "x": 243,
-      "y": -523
+      "x": 251,
+      "y": -524
     },
     {
       "description": "Duração das habilidades +5%.",

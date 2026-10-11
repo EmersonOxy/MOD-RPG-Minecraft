@@ -18,7 +18,7 @@ public final class DynamicHud {
     public enum Part {
         HEALTH("Vida"), ARMOR("Armadura"), FOOD("Fome"), AIR("Ar"), HOTBAR("Hotbar"),
         XP("XP vanilla"), EFFECTS("Efeitos"), VEHICLE("Vida da montaria"),
-        RPG("Nível e XP RPG"), QUEST("Missões"), MANA("Mana"),
+        RPG("Nível e XP RPG"), QUEST("Missões"), MANA("Mana"), HEAT("Calor"),
         ABILITY_1("Habilidade 1"), ABILITY_2("Habilidade 2"), ABILITY_3("Habilidade 3"), EVASION("Esquiva"), MINIMAP("Minimapa");
         public final String label;Part(String label){this.label=label;}}
     private static final Map<ResourceLocation,Part> LAYERS=Map.ofEntries(
@@ -32,7 +32,7 @@ public final class DynamicHud {
     private static final long[] until=new long[Part.values().length];
     private static final double[] opacity=new double[Part.values().length];
     private static final long[] frames=new long[Part.values().length];
-    private static Mode mode=Mode.DYNAMIC;
+    private static Mode mode=Mode.DYNAMIC,panels=Mode.DYNAMIC;
     private static boolean loaded,initialized;
     private static long ticks;
     private static float health,absorption,experience,vehicleHealth;
@@ -46,12 +46,13 @@ public final class DynamicHud {
         try(var in=Files.newBufferedReader(file())){
             var p=new Properties();p.load(in);
             try{mode=Mode.valueOf(p.getProperty("mode","DYNAMIC"));}catch(IllegalArgumentException ignored){}
+            try{panels=Mode.valueOf(p.getProperty("panels","DYNAMIC"));}catch(IllegalArgumentException ignored){}
             for(var part:Part.values())if(!Boolean.parseBoolean(p.getProperty(part.name(),"true")))enabled.remove(part);
         }catch(IOException e){LoggerFactory.getLogger(DynamicHud.class).warn("Não foi possível ler opções de HUD",e);}
     }
     private static void save(){
         try{
-            Files.createDirectories(file().getParent());var p=new Properties();p.setProperty("mode",mode.name());
+            Files.createDirectories(file().getParent());var p=new Properties();p.setProperty("mode",mode.name());p.setProperty("panels",panels.name());
             for(var part:Part.values())p.setProperty(part.name(),""+enabled.contains(part));
             var temp=Files.createTempFile(file().getParent(),"oxyrpg-hud-",".tmp");
             try{
@@ -63,12 +64,15 @@ public final class DynamicHud {
             var p=Minecraft.getInstance().player;if(p!=null)p.displayClientMessage(Component.literal("Falha ao salvar opções de HUD."),true);}
     }
     public static Mode mode(){load();return mode;}
+    public static Mode panelsMode(){load();return panels;}
+    public static String panelsLabel(){return panelsMode().label;}
+    public static void cyclePanels(){load();panels=Mode.values()[(panels.ordinal()+1)%3];for(var part:new Part[]{Part.RPG,Part.QUEST}){opacity[part.ordinal()]=0;signal(part);}save();var p=Minecraft.getInstance().player;if(p!=null)p.displayClientMessage(Component.literal("Painéis: "+panels.label),true);}
     public static String modeLabel(){return mode().label;}
     public static boolean enabled(Part part){load();return enabled.contains(part);}
     public static void toggle(Part part){load();if(!enabled.remove(part))enabled.add(part);save();}
-    public static void cycle(){load();mode=Mode.values()[(mode.ordinal()+1)%Mode.values().length];if(mode==Mode.HIDDEN)Arrays.fill(opacity,0);Arrays.fill(frames,System.nanoTime());save();revealAll();
+    public static void cycle(){load();mode=Mode.values()[(mode.ordinal()+1)%Mode.values().length];for(var part:Part.values())if(part!=Part.RPG&&part!=Part.QUEST){if(mode==Mode.HIDDEN)opacity[part.ordinal()]=0;frames[part.ordinal()]=System.nanoTime();signal(part);}save();
         var p=Minecraft.getInstance().player;if(p!=null)p.displayClientMessage(Component.literal("HUD: "+mode.label),true);}
-    public static void defaults(){load();mode=Mode.DYNAMIC;enabled.clear();enabled.addAll(EnumSet.allOf(Part.class));save();revealAll();}
+    public static void defaults(){load();mode=panels=Mode.DYNAMIC;enabled.clear();enabled.addAll(EnumSet.allOf(Part.class));save();revealAll();}
     public static void signal(Part part){until[part.ordinal()]=ticks+80;}
     public static void revealAll(){for(var part:Part.values())signal(part);}
     public static Part ability(int slot){return Part.values()[Part.ABILITY_1.ordinal()+slot];}
@@ -76,9 +80,10 @@ public final class DynamicHud {
         load();var mc=Minecraft.getInstance();
         int index=part.ordinal();long frame=System.nanoTime();
         double dt=frames[index]==0||mc.isPaused()?0:Math.min(.1,(frame-frames[index])/1e9);frames[index]=frame;
-        if(!enabled.contains(part)||mode==Mode.HIDDEN){opacity[index]=0;return 0;}
+        Mode visibility=part==Part.RPG||part==Part.QUEST?panels:mode;
+        if(!enabled.contains(part)||visibility==Mode.HIDDEN){opacity[index]=0;return 0;}
         double now=ticks+(mc.isPaused()?0:mc.getDeltaTracker().getGameTimeDeltaPartialTick(false));
-        double desired=mode==Mode.ALWAYS||OxyRpgClient.REVEAL_HUD.isDown()?1:Math.clamp((until[index]+24-now)/24,0,1);
+        double desired=visibility==Mode.ALWAYS||OxyRpgClient.REVEAL_HUD.isDown()?1:Math.clamp((until[index]+24-now)/24,0,1);
         opacity[index]=CameraMotion.smooth(opacity[index],desired,12,dt);
         if(desired==0&&opacity[index]<.004)opacity[index]=0;
         return (float)opacity[index];

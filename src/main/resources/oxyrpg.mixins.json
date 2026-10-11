@@ -10,7 +10,9 @@
     "CreeperRadiusAccessor",
     "AviaryFlightMixin",
     "SpecialistCollisionMixin",
-    "DisguiseTargetMixin"
+    "DisguiseTargetMixin",
+    "VillagerTradeInvoker",
+    "VillagerConversationMixin"
   ],
   "client": [
     "ShoulderCameraMixin",
@@ -23,7 +25,9 @@
     "RpgButtonThemeMixin",
     "RpgConfigThemeMixin",
     "RpgConfigSectionThemeMixin",
-    "RpgSliderThemeMixin"
+    "RpgSliderThemeMixin",
+    "InventoryMovementMixin",
+    "MerchantThemeMixin"
   ],
   "injectors": {
     "defaultRequire": 1

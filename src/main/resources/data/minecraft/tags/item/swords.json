@@ -1,6 +1,8 @@
 {
   "replace": false,
   "values": [
-    "oxyrpg:relic_guerreiro"
+    "oxyrpg:relic_guerreiro",
+    "oxyrpg:frostblade",
+    "oxyrpg:emberblade"
   ]
 }

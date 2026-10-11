@@ -1,0 +1,1502 @@
+{
+  "version": "0.32.0",
+  "date": "2026-10-11",
+  "review": "Static source/module inventory; not an exhaustive runtime or security audit",
+  "java_files": 121,
+  "files": [
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/AbilityAim.java",
+      "module": "AbilityAim",
+      "purpose": "A validated aim hint for this cast only. Projectiles still collide normally; there is no homing, automatic attack or direct damage to the chosen target.",
+      "public_methods": [
+        "direction",
+        "cast",
+        "target",
+        "shoot"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/AnimatedSigilItem.java",
+      "module": "AnimatedSigilItem",
+      "purpose": "Cosmetic focus. It never changes existing class weapons or their combat values.",
+      "public_methods": [
+        "getAnimatableInstanceCache",
+        "registerControllers",
+        "createGeoRenderer",
+        "getGeoItemRenderer"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/AttributeStats.java",
+      "module": "AttributeStats",
+      "purpose": "Permanent point allocation. One point per level gained, independently of skill points.",
+      "public_methods": [
+        "AttributeStats",
+        "total",
+        "value",
+        "add",
+        "maxMana",
+        "label",
+        "benefit"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/AttributeTree.java",
+      "module": "AttributeTree",
+      "purpose": "Stable UUID-seeded layout. Old allocations remain bonuses outside this new graph.",
+      "public_methods": [
+        "type",
+        "decode",
+        "encode",
+        "parents",
+        "available",
+        "x",
+        "y"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/ClassEquipment.java",
+      "module": "ClassEquipment",
+      "purpose": "Class-bound variants of native items. Receipt and pending inventory share the player's saved NBT.",
+      "public_methods": [
+        "identity",
+        "gear",
+        "stage",
+        "allowed",
+        "denial",
+        "active",
+        "discount",
+        "frost",
+        "summonHealth",
+        "summonDamage",
+        "manaBonus",
+        "onProfile",
+        "stageName",
+        "damage",
+        "tick",
+        "request",
+        "logout",
+        "stop"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/ClassJourney.java",
+      "module": "ClassJourney",
+      "purpose": "Three permanent lessons per class; reward and completion share one atomic profession record.",
+      "public_methods": [
+        "objective",
+        "goal",
+        "reward",
+        "sync",
+        "advance",
+        "damage"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/ClassRelicItem.java",
+      "module": "ClassRelicItem",
+      "purpose": "A registered class artifact activates through the game's configurable Use Item binding.",
+      "public_methods": [
+        "use",
+        "useOn",
+        "use"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/ClassRelics.java",
+      "module": "ClassRelics",
+      "purpose": "Soulbound equipment recovery uses saved player NBT, not a session-only item cache.",
+      "public_methods": [
+        "effect",
+        "use",
+        "use",
+        "damage",
+        "recovering",
+        "attack",
+        "drops",
+        "clonePlayer",
+        "tick"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/ClassRules.java",
+      "module": "ClassRules",
+      "purpose": "",
+      "public_methods": [
+        "selected",
+        "ranged",
+        "meat",
+        "denial",
+        "use",
+        "rightClick",
+        "damage",
+        "tick",
+        "description"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/AbilityPreview.java",
+      "module": "AbilityPreview",
+      "purpose": "",
+      "public_methods": [
+        "clear",
+        "press",
+        "tick",
+        "render"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/ArsenalScreen.java",
+      "module": "ArsenalScreen",
+      "purpose": "Read-only inventory comparison. Nothing is equipped, spent or transferred by this screen.",
+      "public_methods": [
+        "isPauseScreen",
+        "onClose",
+        "tick",
+        "render"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/AttributesScreen.java",
+      "module": "AttributesScreen",
+      "purpose": "",
+      "public_methods": [
+        "update"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/BarrelRollCompat.java",
+      "module": "BarrelRollCompat",
+      "purpose": "Optional client bridge: the flight controller owns view rotation while active.",
+      "public_methods": [
+        "active"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/CameraClientQA.java",
+      "module": "CameraClientQA",
+      "purpose": "Opt-in client integration fixture; only runs in a dedicated dev directory and named QA world.",
+      "public_methods": [
+        "tick"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/CameraMotion.java",
+      "module": "CameraMotion",
+      "purpose": "Numerical rules independent of Minecraft, shared by runtime and regression tests.",
+      "public_methods": [
+        "smooth",
+        "angle",
+        "clamp",
+        "update",
+        "reset"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/CameraProjection.java",
+      "module": "CameraProjection",
+      "purpose": "Projects markers through the world projection, including damage and FOV effects.",
+      "public_methods": [
+        "capture",
+        "project"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/CameraSettingsScreen.java",
+      "module": "CameraSettingsScreen",
+      "purpose": "",
+      "public_methods": [
+        "removed",
+        "onRelease",
+        "isPauseScreen",
+        "onClose",
+        "render"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/ClassJourneyScreen.java",
+      "module": "ClassJourneyScreen",
+      "purpose": "",
+      "public_methods": [
+        "isPauseScreen",
+        "onClose",
+        "mouseScrolled",
+        "render"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/ClassSelectionScreen.java",
+      "module": "ClassSelectionScreen",
+      "purpose": "Class identity with an embedded owo component selector and native detail cards.",
+      "public_methods": [
+        "isPauseScreen",
+        "onClose",
+        "update",
+        "tick",
+        "mouseScrolled",
+        "render",
+        "removed",
+        "contentChanged",
+        "role"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/CombatOptions.java",
+      "module": "CombatOptions",
+      "purpose": "",
+      "public_methods": [
+        "load",
+        "save"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/CombatSettingsScreen.java",
+      "module": "CombatSettingsScreen",
+      "purpose": "",
+      "public_methods": [
+        "isPauseScreen",
+        "onClose",
+        "removed",
+        "render"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/DamageNumbers.java",
+      "module": "DamageNumbers",
+      "purpose": "",
+      "public_methods": [
+        "clear",
+        "receive",
+        "receiveText",
+        "render"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/DynamicHud.java",
+      "module": "DynamicHud",
+      "purpose": "",
+      "public_methods": [
+        "mode",
+        "modeLabel",
+        "enabled",
+        "toggle",
+        "cycle",
+        "defaults",
+        "signal",
+        "revealAll",
+        "ability",
+        "alpha",
+        "reset",
+        "tick",
+        "beforeLayer",
+        "afterLayer"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/EliteWarnings.java",
+      "module": "EliteWarnings",
+      "purpose": "",
+      "public_methods": [
+        "clear",
+        "receive",
+        "render"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/EnemyNameplates.java",
+      "module": "EnemyNameplates",
+      "purpose": "",
+      "public_methods": [
+        "ally",
+        "world",
+        "eliteTitle",
+        "villagerMark",
+        "mobLevel",
+        "ghost",
+        "clearGhosts",
+        "hidden",
+        "register",
+        "plate",
+        "player",
+        "hand"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/EquipmentComparison.java",
+      "module": "EquipmentComparison",
+      "purpose": "Read-only comparison uses the same slot and modifier operations as equipment.",
+      "public_methods": [
+        "slot",
+        "stat",
+        "restriction"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/EquipmentTooltip.java",
+      "module": "EquipmentTooltip",
+      "purpose": "Two tooltips while the configured comparison key is held, without changing inventory input.",
+      "public_methods": [
+        "pressed",
+        "released",
+        "gather",
+        "render"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/EvasionHud.java",
+      "module": "EvasionHud",
+      "purpose": "",
+      "public_methods": [
+        "clear",
+        "receive",
+        "render"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/GraphScreen.java",
+      "module": "GraphScreen",
+      "purpose": "Advancement-style canvas with pointer-anchored zoom and drag-to-pan.",
+      "public_methods": [
+        "isPauseScreen",
+        "onClose",
+        "mouseClicked",
+        "mouseDragged",
+        "mouseReleased",
+        "mouseScrolled",
+        "tick",
+        "render"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/HudOpacity.java",
+      "module": "HudOpacity",
+      "purpose": "Opacity is captured when GUI commands are queued, including deferred item icons.",
+      "public_methods": [
+        "begin",
+        "end",
+        "color",
+        "color",
+        "capture",
+        "itemColor"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/HudSettingsScreen.java",
+      "module": "HudSettingsScreen",
+      "purpose": "",
+      "public_methods": [
+        "isPauseScreen",
+        "onClose",
+        "render"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/InventoryMovement.java",
+      "module": "InventoryMovement",
+      "purpose": "Poll the player's mapped movement bindings, never fixed WASD codes.",
+      "public_methods": [
+        "load",
+        "save",
+        "input"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/InventorySettingsScreen.java",
+      "module": "InventorySettingsScreen",
+      "purpose": "",
+      "public_methods": [
+        "isPauseScreen",
+        "onClose",
+        "render"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/MinimapOptions.java",
+      "module": "MinimapOptions",
+      "purpose": "",
+      "public_methods": [
+        "load",
+        "save",
+        "step",
+        "cornerLabel",
+        "defaults"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/MinimapPositionScreen.java",
+      "module": "MinimapPositionScreen",
+      "purpose": "Normalized placement stays inside the viewport when resolution/GUI scale changes.",
+      "public_methods": [
+        "isPauseScreen",
+        "onClose",
+        "removed",
+        "mouseClicked",
+        "mouseDragged",
+        "mouseReleased",
+        "render"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/MinimapSettingsScreen.java",
+      "module": "MinimapSettingsScreen",
+      "purpose": "",
+      "public_methods": [
+        "isPauseScreen",
+        "onClose",
+        "removed",
+        "render"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/MissionScreen.java",
+      "module": "MissionScreen",
+      "purpose": "Quest journal: objectives, progress and reward are presented on a readable page.",
+      "public_methods": [
+        "isPauseScreen",
+        "onClose",
+        "update",
+        "tick",
+        "mouseScrolled",
+        "render"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/MovementFacing.java",
+      "module": "MovementFacing",
+      "purpose": "Separate the visible character's facing from camera/interaction aim. Vanilla WASD remains camera-relative and the server keeps the ordinary interaction direction.",
+      "public_methods": [
+        "reset",
+        "register"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/OxyRpgClient.java",
+      "module": "OxyRpgClient",
+      "purpose": "Declare every present and future shortcut through this factory; registration is automatic.",
+      "public_methods": [
+        "professions",
+        "journey",
+        "state",
+        "cooldown",
+        "profile",
+        "resources",
+        "abilityActive",
+        "cast"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/ProfessionsScreen.java",
+      "module": "ProfessionsScreen",
+      "purpose": "",
+      "public_methods": [
+        "update",
+        "isPauseScreen",
+        "onClose",
+        "tick",
+        "mouseScrolled",
+        "render"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/RpgScreen.java",
+      "module": "RpgScreen",
+      "purpose": "Navigation hub; skills are used through the configured gameplay keys.",
+      "public_methods": [
+        "isPauseScreen",
+        "keyPressed",
+        "update",
+        "tick",
+        "render"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/RpgSlider.java",
+      "module": "RpgSlider",
+      "purpose": "Shared RPG slider appearance, preserving native pointer and keyboard handling.",
+      "public_methods": [
+        "renderWidget"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/RpgUi.java",
+      "module": "RpgUi",
+      "purpose": "Shared original RPG frames built from vanilla items and GUI primitives.",
+      "public_methods": [
+        "owns",
+        "action",
+        "slider",
+        "panel",
+        "border",
+        "section",
+        "medallion",
+        "button"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/ShoulderCamera.java",
+      "module": "ShoulderCamera",
+      "purpose": "Stable player orientation, with a projected reticle instead of frame-dependent toe-in.",
+      "public_methods": [
+        "Pose",
+        "enabled",
+        "independentMovement",
+        "toggleMovement",
+        "shoulder",
+        "sway",
+        "value",
+        "position",
+        "setPosition",
+        "savePositions",
+        "adjust",
+        "defaults",
+        "toggle",
+        "swap",
+        "cycle",
+        "active",
+        "hideHands",
+        "reset",
+        "pose",
+        "aimPoint"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/SigilRenderer.java",
+      "module": "SigilRenderer",
+      "purpose": "",
+      "public_methods": [
+        "getModelResource",
+        "getAnimationResource",
+        "getTextureResource"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/SimpleMinimap.java",
+      "module": "SimpleMinimap",
+      "purpose": "Loaded surface only, bounded sampling and one uploaded terrain texture.",
+      "public_methods": [
+        "Bounds",
+        "clear",
+        "tick",
+        "bounds",
+        "render",
+        "draw"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/SkillEffectsRenderer.java",
+      "module": "SkillEffectsRenderer",
+      "purpose": "Short depth-occluded impact waves; bounded and cleared on world changes.",
+      "public_methods": [
+        "clear",
+        "receive",
+        "render"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/SkillGlyphs.java",
+      "module": "SkillGlyphs",
+      "purpose": "Original vector pictograms; consistent strokes at every GUI scale.",
+      "public_methods": [
+        "draw",
+        "marker",
+        "disk"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/SkillTreeScreen.java",
+      "module": "SkillTreeScreen",
+      "purpose": "",
+      "public_methods": [
+        "update"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/SpecialistHud.java",
+      "module": "SpecialistHud",
+      "purpose": "",
+      "public_methods": [
+        "receive",
+        "tick",
+        "render"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/TargetLock.java",
+      "module": "TargetLock",
+      "purpose": "Look assistance uses ordinary rotation packets, without bypassing server reach.",
+      "public_methods": [
+        "target",
+        "clear",
+        "mouseLocked",
+        "toggle",
+        "cycle",
+        "point",
+        "viewDirection",
+        "firstPersonRotation",
+        "tick"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/UiTransitions.java",
+      "module": "UiTransitions",
+      "purpose": "Wall-clock easing stays smooth when the integrated world is paused.",
+      "public_methods": []
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/VanillaTheme.java",
+      "module": "VanillaTheme",
+      "purpose": "Nine-slice of vanilla inventory frame, with a blank center rather than stretched slots.",
+      "public_methods": [
+        "panel",
+        "progress"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/VillagerClient.java",
+      "module": "VillagerClient",
+      "purpose": "",
+      "public_methods": [
+        "receive",
+        "request",
+        "close",
+        "tick",
+        "init"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/VillagerDialogueScreen.java",
+      "module": "VillagerDialogueScreen",
+      "purpose": "",
+      "public_methods": [
+        "isPauseScreen",
+        "onClose",
+        "mouseScrolled",
+        "tick",
+        "render"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/client/WorldLines.java",
+      "module": "WorldLines",
+      "purpose": "Ground contours projected with the world camera; walls occlude each segment.",
+      "public_methods": [
+        "onScreen",
+        "visible",
+        "ground",
+        "line"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/CombatChances.java",
+      "module": "CombatChances",
+      "purpose": "One server roll per direct hit, before armor, shield durability or health are spent.",
+      "public_methods": [
+        "incoming",
+        "take",
+        "stop"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/CombatFeedback.java",
+      "module": "CombatFeedback",
+      "purpose": "Feedback comes from completed server damage, never from a client damage estimate.",
+      "public_methods": [
+        "critical",
+        "text",
+        "vanillaCritical",
+        "damage",
+        "logout",
+        "stop"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/EliteAbilities.java",
+      "module": "EliteAbilities",
+      "purpose": "Short telegraphs, line-of-sight attacks and bounded native enemy reinforcements.",
+      "public_methods": [
+        "initialize",
+        "title",
+        "tick",
+        "arrowEffect",
+        "projectile",
+        "force"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/EliteAffixes.java",
+      "module": "EliteAffixes",
+      "purpose": "One persistent secondary identity per elite, plus a low-health combat phase.",
+      "public_methods": [
+        "initialize",
+        "title",
+        "tick",
+        "damage",
+        "drain"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/EliteMobs.java",
+      "module": "EliteMobs",
+      "purpose": "",
+      "public_methods": [
+        "elite",
+        "roll",
+        "promote",
+        "slow",
+        "xp",
+        "damage",
+        "experience",
+        "reward"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/EquipmentAccess.java",
+      "module": "EquipmentAccess",
+      "purpose": "Pure client preview plus authoritative slot guard; never creates, deletes or moves stacks.",
+      "public_methods": [
+        "clientClass",
+        "clientXp",
+        "clientLevel",
+        "clientLevel",
+        "clientSelected",
+        "clientProfessionLevel",
+        "resetClient",
+        "allowed"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/FluidPockets.java",
+      "module": "FluidPockets",
+      "purpose": "Drained water is restored; a durable ledger also recovers pockets after a restart.",
+      "public_methods": [
+        "drain",
+        "tick",
+        "placed",
+        "stop"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/ManaPotionItem.java",
+      "module": "ManaPotionItem",
+      "purpose": "Vanilla drinking consumes one bottle; the server restores the real mana pool.",
+      "public_methods": [
+        "use",
+        "finishUsingItem",
+        "appendHoverText"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/MeteorCrater.java",
+      "module": "MeteorCrater",
+      "purpose": "Large impacts are processed over several ticks, with a global block/entity budget.",
+      "public_methods": [
+        "enqueue",
+        "enqueue",
+        "tick",
+        "stop"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/mixin/ArmorSlotMixin.java",
+      "module": "ArmorSlotMixin",
+      "purpose": "",
+      "public_methods": []
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/mixin/AviaryFlightMixin.java",
+      "module": "AviaryFlightMixin",
+      "purpose": "",
+      "public_methods": []
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/mixin/CreativeEquipmentMixin.java",
+      "module": "CreativeEquipmentMixin",
+      "purpose": "",
+      "public_methods": []
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/mixin/CreeperRadiusAccessor.java",
+      "module": "CreeperRadiusAccessor",
+      "purpose": "",
+      "public_methods": []
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/mixin/DisguiseTargetMixin.java",
+      "module": "DisguiseTargetMixin",
+      "purpose": "Covers target acquisition as well as goals that validate targets without a change event.",
+      "public_methods": []
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/mixin/EquipmentSlotMixin.java",
+      "module": "EquipmentSlotMixin",
+      "purpose": "",
+      "public_methods": []
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/mixin/HudGraphicsMixin.java",
+      "module": "HudGraphicsMixin",
+      "purpose": "",
+      "public_methods": []
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/mixin/HudItemRendererMixin.java",
+      "module": "HudItemRendererMixin",
+      "purpose": "",
+      "public_methods": []
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/mixin/HudItemStateMixin.java",
+      "module": "HudItemStateMixin",
+      "purpose": "",
+      "public_methods": []
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/mixin/HudOversizedItemMixin.java",
+      "module": "HudOversizedItemMixin",
+      "purpose": "",
+      "public_methods": []
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/mixin/InventoryMovementMixin.java",
+      "module": "InventoryMovementMixin",
+      "purpose": "",
+      "public_methods": []
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/mixin/RpgButtonThemeMixin.java",
+      "module": "RpgButtonThemeMixin",
+      "purpose": "",
+      "public_methods": []
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/mixin/RpgConfigSectionThemeMixin.java",
+      "module": "RpgConfigSectionThemeMixin",
+      "purpose": "",
+      "public_methods": [
+        "oxyOwned"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/mixin/RpgConfigThemeMixin.java",
+      "module": "RpgConfigThemeMixin",
+      "purpose": "",
+      "public_methods": [
+        "oxyOwned"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/mixin/RpgSliderThemeMixin.java",
+      "module": "RpgSliderThemeMixin",
+      "purpose": "",
+      "public_methods": []
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/mixin/ShoulderBobMixin.java",
+      "module": "ShoulderBobMixin",
+      "purpose": "",
+      "public_methods": []
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/mixin/ShoulderCameraMixin.java",
+      "module": "ShoulderCameraMixin",
+      "purpose": "",
+      "public_methods": []
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/mixin/SpecialistCollisionMixin.java",
+      "module": "SpecialistCollisionMixin",
+      "purpose": "",
+      "public_methods": []
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/mixin/TargetLockMouseMixin.java",
+      "module": "TargetLockMouseMixin",
+      "purpose": "",
+      "public_methods": []
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/mixin/VillagerConversationMixin.java",
+      "module": "VillagerConversationMixin",
+      "purpose": "",
+      "public_methods": []
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/mixin/VillagerTradeInvoker.java",
+      "module": "VillagerTradeInvoker",
+      "purpose": "",
+      "public_methods": []
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/MobLevels.java",
+      "module": "MobLevels",
+      "purpose": "Level is assigned once, after vanilla spawn setup, and saved with the mob.",
+      "public_methods": [
+        "level",
+        "join",
+        "healthFactor",
+        "damageFactor",
+        "damage",
+        "tracking"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/MobLoot.java",
+      "module": "MobLoot",
+      "purpose": "Level gates quality; luck increases the roll chance without bypassing those gates.",
+      "public_methods": [
+        "reward",
+        "drops"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/OxyRpg.java",
+      "module": "OxyRpg",
+      "purpose": "",
+      "public_methods": []
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/PlayerAttachments.java",
+      "module": "PlayerAttachments",
+      "purpose": "",
+      "public_methods": [
+        "Stored",
+        "register"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/Professions.java",
+      "module": "Professions",
+      "purpose": "",
+      "public_methods": [
+        "notify",
+        "level",
+        "tier",
+        "cropLevel",
+        "Requirement",
+        "requirement",
+        "denial",
+        "award",
+        "sync",
+        "placed",
+        "breakGuard",
+        "leftBlock",
+        "broken",
+        "rightBlock",
+        "attack",
+        "modifier",
+        "tick",
+        "refreshModifiers",
+        "login",
+        "stop"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/ProfessionStore.java",
+      "module": "ProfessionStore",
+      "purpose": "Separate world/UUID record: class resets do not destroy profession or villager progress.",
+      "public_methods": [
+        "copy",
+        "get",
+        "save",
+        "nextXp",
+        "level",
+        "remainder",
+        "clear"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/ProfileStore.java",
+      "module": "ProfileStore",
+      "purpose": "One file per UUID, inside each world; never replaces unreadable profiles with defaults.",
+      "public_methods": [
+        "load",
+        "save"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/ProgressionEffects.java",
+      "module": "ProgressionEffects",
+      "purpose": "",
+      "public_methods": [
+        "levelUp",
+        "skillPoint"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/QuestCatalog.java",
+      "module": "QuestCatalog",
+      "purpose": "Stable recurring contracts; exact entity ids keep objectives unambiguous.",
+      "public_methods": [
+        "Target",
+        "Quest",
+        "defaults",
+        "quest",
+        "valid",
+        "progress"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/RpgAbilities.java",
+      "module": "RpgAbilities",
+      "purpose": "Server-authoritative skills using vanilla entities, items, effects, particles and sounds.",
+      "public_methods": [
+        "updateProfile",
+        "attackable",
+        "extraDash",
+        "activate",
+        "syncGhost",
+        "tracking",
+        "killed",
+        "onTick",
+        "damagePre",
+        "incoming",
+        "damagePost",
+        "targeting",
+        "onImpact",
+        "syncStatus",
+        "cleanse",
+        "clear",
+        "logout",
+        "stop"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/RpgAviary.java",
+      "module": "RpgAviary",
+      "purpose": "Server owns duration, costs and impacts; the local player simulates the same glide as vanilla.",
+      "public_methods": [
+        "boostAvailable",
+        "canFly",
+        "validate",
+        "activate",
+        "remaining",
+        "tick",
+        "fall",
+        "damage",
+        "clear",
+        "stop"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/RpgClass.java",
+      "module": "RpgClass",
+      "purpose": "",
+      "public_methods": [
+        "defaultLabel",
+        "label"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/RpgConfig.java",
+      "module": "RpgConfig",
+      "purpose": "Authoritative settings are SERVER configs, synchronized by NeoForge.",
+      "public_methods": [
+        "register",
+        "value",
+        "value",
+        "profiling",
+        "charges",
+        "recharge",
+        "miss",
+        "critical"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/RpgContent.java",
+      "module": "RpgContent",
+      "purpose": "Atomic, validated datapack definitions. Stable node IDs and objective sizes preserve old saves.",
+      "public_methods": [
+        "ClassDefinition",
+        "Bundle",
+        "listeners",
+        "nodes",
+        "position",
+        "label",
+        "manaMultiplier",
+        "cooldownMultiplier",
+        "damageMultiplier",
+        "durationMultiplier",
+        "quest",
+        "validate",
+        "json",
+        "receive",
+        "sync",
+        "configReloaded"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/RpgDataGenerator.java",
+      "module": "RpgDataGenerator",
+      "purpose": "Generates class definitions, quest definitions, recipe, data maps and the developer test template.",
+      "public_methods": [
+        "gather",
+        "getName"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/RpgDataMaps.java",
+      "module": "RpgDataMaps",
+      "purpose": "",
+      "public_methods": [
+        "MobTuning",
+        "WeaponTuning",
+        "register",
+        "mob",
+        "weapon",
+        "resistance"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/RpgDebug.java",
+      "module": "RpgDebug",
+      "purpose": "Session-only skill overrides. Real points, class and cooldown are never overwritten.",
+      "public_methods": [
+        "unlimited",
+        "readyAt",
+        "cooldown",
+        "enabled",
+        "enable",
+        "testing",
+        "professionOverride",
+        "equipmentOverride",
+        "professionXp",
+        "attributes",
+        "arsenal",
+        "test",
+        "disable",
+        "clearSkills",
+        "effective",
+        "unlock",
+        "onLogout",
+        "onStop"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/RpgEvasion.java",
+      "module": "RpgEvasion",
+      "purpose": "Server-owned charges. Test mode spends charges normally; only debug bypasses them.",
+      "public_methods": [
+        "maximum",
+        "currentEnergy",
+        "use",
+        "incoming",
+        "sync",
+        "tick",
+        "clonePlayer",
+        "endTesting",
+        "logout",
+        "stop"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/RpgGameTests.java",
+      "module": "RpgGameTests",
+      "purpose": "",
+      "public_methods": [
+        "functions",
+        "register",
+        "send"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/RpgItems.java",
+      "module": "RpgItems",
+      "purpose": "",
+      "public_methods": [
+        "relic",
+        "register"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/RpgNecromancer.java",
+      "module": "RpgNecromancer",
+      "purpose": "Session-owned vanilla creatures. No permanent blocks, pets, loot or spawn-level modifications.",
+      "public_methods": [
+        "summonKill",
+        "isSummon",
+        "owner",
+        "animals",
+        "cleanse",
+        "activate",
+        "impact",
+        "join",
+        "tick",
+        "attack",
+        "damage",
+        "targeting",
+        "incoming",
+        "drops",
+        "experience",
+        "remaining",
+        "phase",
+        "death",
+        "tracking",
+        "clear",
+        "logout",
+        "stop"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/RpgNetwork.java",
+      "module": "RpgNetwork",
+      "purpose": "",
+      "public_methods": [
+        "ImpactFx",
+        "type",
+        "SpecialState",
+        "type",
+        "ContentState",
+        "type",
+        "EvasionState",
+        "type",
+        "CombatText",
+        "type",
+        "FlightState",
+        "type",
+        "EliteWarning",
+        "type",
+        "DamageNumber",
+        "type",
+        "JourneyState",
+        "type",
+        "Request",
+        "type",
+        "State",
+        "cooldown",
+        "hasSkill",
+        "canUse",
+        "type",
+        "Ghost",
+        "type",
+        "MobLevel",
+        "type",
+        "AbilityStatus",
+        "remaining",
+        "total",
+        "phase",
+        "type",
+        "Resources",
+        "value",
+        "type",
+        "ProfessionState",
+        "xp",
+        "type",
+        "VillagerDialogue",
+        "type",
+        "VillagerMark",
+        "type",
+        "EliteInfo",
+        "type",
+        "register"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/RpgProfile.java",
+      "module": "RpgProfile",
+      "purpose": "Immutable progression: RPG experience is independent of vanilla experience.",
+      "public_methods": [
+        "RpgProfile",
+        "allocateNode",
+        "attributePoints",
+        "allocateAttribute",
+        "xpToNextLevel",
+        "skillPoints",
+        "hasSkill",
+        "canUseAbility",
+        "mainUnlocked",
+        "readyAt",
+        "abilityDuration",
+        "abilityDuration",
+        "abilityCooldown",
+        "abilityCooldown",
+        "abilityDamage",
+        "unlockSkill",
+        "resetClass",
+        "choose",
+        "gainXp",
+        "defeatedEnemy",
+        "defeatedEnemy",
+        "defeatedEnemy",
+        "useAbility",
+        "useAbility"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/RpgProfiler.java",
+      "module": "RpgProfiler",
+      "purpose": "Native profiler sections plus optional local timing counters; no telemetry or uploads.",
+      "public_methods": [
+        "run",
+        "report",
+        "clear"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/RpgResources.java",
+      "module": "RpgResources",
+      "purpose": "",
+      "public_methods": [
+        "endTesting",
+        "update",
+        "cost",
+        "currentMana",
+        "manaMissing",
+        "restoreMana",
+        "affordable",
+        "spend",
+        "tick",
+        "sync",
+        "damage",
+        "rareDrop",
+        "reset",
+        "clonePlayer",
+        "logout",
+        "stop"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/RpgShaman.java",
+      "module": "RpgShaman",
+      "purpose": "Vanilla visual lightning and splash potions, with authoritative hand/mana/timer checks.",
+      "public_methods": [
+        "activate",
+        "expertise",
+        "attack",
+        "potion",
+        "tick",
+        "clear",
+        "logout",
+        "stop"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/RpgSpecialists.java",
+      "module": "RpgSpecialists",
+      "purpose": "Bounded, server-owned casts. Temporary creatures never produce loot or XP.",
+      "public_methods": [
+        "handles",
+        "temporary",
+        "intangible",
+        "disguised",
+        "ghostFlight",
+        "waterWalking",
+        "phaseTier",
+        "extra",
+        "validate",
+        "activate",
+        "remaining",
+        "sync",
+        "projectile",
+        "tick",
+        "incoming",
+        "damage",
+        "damagePost",
+        "targeting",
+        "attack",
+        "rightItem",
+        "rightBlock",
+        "interactSpecific",
+        "interact",
+        "breakBlock",
+        "join",
+        "drops",
+        "experience",
+        "clear",
+        "tracking",
+        "logout",
+        "stop"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/ShieldParry.java",
+      "module": "ShieldParry",
+      "purpose": "",
+      "public_methods": [
+        "block",
+        "counter",
+        "consume",
+        "logout",
+        "stop"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/SkillEffects.java",
+      "module": "SkillEffects",
+      "purpose": "Cosmetic messages never alter damage, targeting, resources or terrain.",
+      "public_methods": [
+        "impact"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/SkillTree.java",
+      "module": "SkillTree",
+      "purpose": "Versioned three-branch tree: preparation, minor effect, minor upgrade, main, two upgrades, capstone.",
+      "public_methods": [
+        "Node",
+        "requiredLevel",
+        "parents",
+        "validMask",
+        "migrate",
+        "bonus",
+        "abilityName",
+        "defaults"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/SkillTreeLayouts.java",
+      "module": "SkillTreeLayouts",
+      "purpose": "Class silhouettes affect coordinates only; node IDs and unlock dependencies stay intact.",
+      "public_methods": [
+        "nodePosition",
+        "position"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/SpecialistTrees.java",
+      "module": "SpecialistTrees",
+      "purpose": "",
+      "public_methods": []
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/TemporaryBlocks.java",
+      "module": "TemporaryBlocks",
+      "purpose": "Only places in air. Durable expiry ledger prevents temporary blocks surviving a restart.",
+      "public_methods": [
+        "web",
+        "ice",
+        "tick",
+        "broken",
+        "placed",
+        "stop"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/VillageLoot.java",
+      "module": "VillageLoot",
+      "purpose": "Reduces only unopened vanilla village chest loot; other structures and inventories are untouched.",
+      "public_methods": [
+        "register",
+        "codec"
+      ]
+    },
+    {
+      "file": "src/main/java/dev/emersonoxy/rpg/VillagerQuests.java",
+      "module": "VillagerQuests",
+      "purpose": "",
+      "public_methods": [
+        "Quest",
+        "journal",
+        "journal",
+        "interact",
+        "conversing",
+        "action",
+        "harvest",
+        "death",
+        "syncMarkers",
+        "tracking",
+        "logout",
+        "clear"
+      ]
+    }
+  ]
+}

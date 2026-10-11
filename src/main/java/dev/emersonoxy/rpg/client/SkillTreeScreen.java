@@ -18,6 +18,7 @@ public final class SkillTreeScreen extends GraphScreen {
         var parents=new ArrayList<Integer>();for(int p=0;p<SkillTree.COUNT;p++)if((n.parents()&(1L<<p))!=0)parents.add(p);
         list.add(new Node(id,x,y,parents.stream().mapToInt(Integer::intValue).toArray(),n.title()+" • Nv. "+n.level(),n.description(),n.icon(),id<21&&(step==3||step==6)));
     }nodes=List.copyOf(list);}
+    @Override protected void drawNodeIcon(net.minecraft.client.gui.GuiGraphics g,Node n){if(n.id()<21&&n.major())SkillGlyphs.draw(g,viewed,n.id()/7,(int)n.x()-11,(int)n.y()-11,22,owned(n.id())?ClassSelectionScreen.accent(viewed):0xFFE1E9EF);else super.drawNodeIcon(g,n);}
     private boolean own(){return state.rpgClass()==viewed.ordinal();}
     @Override protected boolean owned(int id){return own()&&state.hasSkill(id);}
     private int points(){return Math.max(0,state.level()/2-Long.bitCount(state.skills()));}

@@ -67,7 +67,7 @@
       "id": 7,
       "title": "Passos leves",
       "x": 70,
-      "y": 0
+      "y": -1
     },
     {
       "description": "Agachar por 2 s concede camuflagem fraca; Ative para um breve sumiço.",
@@ -122,8 +122,8 @@
       "icon": "sugar",
       "id": 14,
       "title": "Agilidade",
-      "x": 46,
-      "y": 53
+      "x": 45,
+      "y": 54
     },
     {
       "description": "Ataques pelas costas causam sangramento fraco por 2 s; Libera a arrancada inicial.",

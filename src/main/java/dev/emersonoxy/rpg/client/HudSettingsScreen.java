@@ -13,17 +13,20 @@ public final class HudSettingsScreen extends Screen {
     @Override protected void init(){
         panelWidth=Math.min(370,width-16);panelHeight=Math.min(290,height-8);left=(width-panelWidth)/2;top=Math.max(4,(height-panelHeight)/2);
         addRenderableWidget(Button.builder(Component.literal("Modo: "+DynamicHud.modeLabel()),b->{DynamicHud.cycle();rebuildWidgets();})
-            .bounds(left+12,top+row(28),panelWidth-24,20).build());
+            .bounds(left+12,top+row(28),(panelWidth-28)/2,20).build());
+        addRenderableWidget(Button.builder(Component.literal("Painéis: "+DynamicHud.panelsLabel()),b->{DynamicHud.cyclePanels();rebuildWidgets();}).bounds(left+16+(panelWidth-28)/2,top+row(28),(panelWidth-28)/2,20).build());
         var parts=DynamicHud.Part.values();int column=(panelWidth-28)/2;
         for(int i=0;i<parts.length;i++){
             var part=parts[i];int x=left+12+(i%2)*(column+4),y=top+row(54+(i/2)*20);
             addRenderableWidget(Button.builder(Component.literal(part.label+": "+(DynamicHud.enabled(part)?"sim":"não")),b->{DynamicHud.toggle(part);rebuildWidgets();})
                 .bounds(x,y,column,Math.min(18,panelHeight*20/290-1)).build());
         }
-        int footer=(panelWidth-32)/3;
+        int footer=(panelWidth-40)/5;
         addRenderableWidget(Button.builder(Component.literal("Padrões"),b->{DynamicHud.defaults();rebuildWidgets();}).bounds(left+12,top+row(258),footer,20).build());
         addRenderableWidget(Button.builder(Component.literal("Combate"),b->minecraft.setScreen(new CombatSettingsScreen(this))).bounds(left+16+footer,top+row(258),footer,20).build());
-        addRenderableWidget(Button.builder(Component.literal("Voltar"),b->onClose()).bounds(left+20+footer*2,top+row(258),footer,20).build());
+        addRenderableWidget(Button.builder(Component.literal("Inventário"),b->minecraft.setScreen(new InventorySettingsScreen(this))).bounds(left+20+footer*2,top+row(258),footer,20).build());
+        addRenderableWidget(Button.builder(Component.literal("Explorar"),b->minecraft.setScreen(new ExplorationSettingsScreen(this))).bounds(left+24+footer*3,top+row(258),footer,20).build());
+        addRenderableWidget(Button.builder(Component.literal("Voltar"),b->onClose()).bounds(left+28+footer*4,top+row(258),footer,20).build());
     }
     private int row(int y){return y*panelHeight/290;}
     @Override public void render(GuiGraphics g,int x,int y,float delta){

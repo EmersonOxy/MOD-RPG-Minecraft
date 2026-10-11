@@ -47,7 +47,7 @@ public final class EliteMobs {
             accessor.oxyrpg$setExplosionRadius((int)Math.round(data.getIntOr("oxy_elite_original_blast",3)*scale));
         }
     }
-    public static int xp(LivingEntity mob,int base){return Math.max(0,Math.round((elite(mob)?base*4:mob.getPersistentData().getBooleanOr("oxy_elite_child",false)?Math.max(1,base/2):base)*RpgDataMaps.mob(mob).xp()));}
+    public static int xp(LivingEntity mob,int base){return Math.max(0,Math.round((elite(mob)?base*(mob.getPersistentData().getBooleanOr("oxy_patrol_captain",false)?6:4):mob.getPersistentData().getBooleanOr("oxy_elite_child",false)?Math.max(1,base/2):base)*RpgDataMaps.mob(mob).xp()));}
     public static void damage(LivingDamageEvent.Pre event){
         if(event.getSource().getEntity() instanceof LivingEntity mob&&elite(mob)
             &&(event.getSource().is(net.minecraft.tags.DamageTypeTags.IS_PROJECTILE)||event.getSource().is(net.minecraft.tags.DamageTypeTags.IS_EXPLOSION)))

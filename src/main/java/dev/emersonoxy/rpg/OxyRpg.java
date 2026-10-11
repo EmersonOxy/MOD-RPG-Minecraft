@@ -27,6 +27,8 @@ public final class OxyRpg {
         bus.addListener(RpgContent::configReloaded);
         bus.addListener(RpgNetwork::register);
         VillageLoot.register(bus);
+        NeoForge.EVENT_BUS.addListener(AdventureItems::fall);
+        NeoForge.EVENT_BUS.addListener(RaiderPatrols::tick);NeoForge.EVENT_BUS.addListener(RaiderPatrols::cleanup);NeoForge.EVENT_BUS.addListener(RaiderPatrols::drops);
         NeoForge.EVENT_BUS.addListener(EventPriority.HIGHEST,RpgEvasion::incoming);
         NeoForge.EVENT_BUS.addListener(EventPriority.LOW,CombatChances::incoming);
         NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST,ShieldParry::block);
@@ -171,7 +173,7 @@ public final class OxyRpg {
             case 11 -> action(player,"classe",RpgClass.AVIARIO);
             case 10 -> action(player,"classe",RpgClass.XAMA);
             case 8,9 -> RpgShaman.potion(player,requested==9);
-            case 300,301,302 -> VillagerQuests.action(player,requested,direction);
+            case 300,301,302,303,304,305,306 -> VillagerQuests.action(player,requested,direction);
             default -> { if (requested >= 102 && requested < 100+SkillTree.COUNT) unlockSkill(player, requested - 100);
                 else if(requested>=1000&&requested<1000+AttributeTree.COUNT)allocateAttribute(player,requested-1000); }
         }

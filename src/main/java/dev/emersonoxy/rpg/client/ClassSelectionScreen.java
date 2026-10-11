@@ -72,7 +72,7 @@ public final class ClassSelectionScreen extends Screen {
             String label=(selected==RpgClass.AVIARIO&&slot==1?"Passiva":keys[slot].getTranslatedKeyMessage().getString())+" • "+skill.title();
             var titleLines=font.split(Component.literal(label),wrap);var lines=font.split(Component.literal(summary(selected,slot)),wrap);int cardH=24+(titleLines.size()+lines.size())*11;
             g.fill(rx+4,sy,rx+rw-4,sy+cardH,0xFF242F3E);g.fill(rx+4,sy,rx+6,sy+cardH,accent);
-            var item=net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(net.minecraft.resources.ResourceLocation.parse(skill.icon()));g.renderFakeItem(new ItemStack(item),rx+12,sy+11);
+            SkillGlyphs.draw(g,selected,slot,rx+10,sy+9,20,accent);
             int ty=sy+10;for(var line:titleLines){g.drawString(font,line,rx+34,ty,accent);ty+=11;}ty+=4;for(var line:lines){g.drawString(font,line,rx+34,ty,RpgUi.TEXT);ty+=11;}sy+=cardH+8;
         }
         contentHeight=Math.max(heroHeight,sy+scroll-body);g.disableScissor();

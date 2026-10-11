@@ -29,6 +29,7 @@ public final class ArsenalScreen extends Screen {
         for(int i=0;i<rows&&page*rows+i<slots.size();i++){int id=slots.get(page*rows+i);var stack=minecraft.player.getInventory().getItem(id);addRenderableWidget(RpgUi.button(left+12,top+44+i*22,listWidth,20,stack.getHoverName().getString(),"",stack.getItem(),id==selected?RpgUi.GOLD:0xFF61758D,button->{selected=id;rebuildWidgets();})).setTooltip(Tooltip.create(details(stack)));}
         addRenderableWidget(Button.builder(Component.literal("◀"),button->{page--;rebuildWidgets();}).bounds(left+12,top+h-52,28,18).build()).active=page>0;
         addRenderableWidget(Button.builder(Component.literal("▶"),button->{page++;rebuildWidgets();}).bounds(left+44,top+h-52,28,18).build()).active=(page+1)*rows<slots.size();
+        addRenderableWidget(Button.builder(Component.literal("Achados de exploração"),b->minecraft.setScreen(new AdventureCatalogScreen(this))).bounds(left+80,top+h-52,w-92,18).build());
         addRenderableWidget(Button.builder(Component.literal("Voltar"),button->onClose()).bounds(left+12,top+h-28,w-24,20).build());
         minecraft.player.connection.send(new RpgNetwork.Request(0));
     }

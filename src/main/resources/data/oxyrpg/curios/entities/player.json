@@ -3,6 +3,8 @@
     "minecraft:player"
   ],
   "slots": [
-    "oxy_relic"
+    "oxy_relic",
+    "ring",
+    "necklace"
   ]
 }

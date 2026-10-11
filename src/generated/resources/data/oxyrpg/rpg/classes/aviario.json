@@ -19,23 +19,23 @@
       "id": 1,
       "title": "Salto alado",
       "x": 0,
-      "y": 104
+      "y": 94
     },
     {
       "description": "Voo +2 s.",
       "icon": "phantom_membrane",
       "id": 2,
       "title": "Asas firmes",
-      "x": 0,
-      "y": 152
+      "x": 4,
+      "y": 154
     },
     {
       "description": "Voo por 15 s. Impulsos gastam 8 MP; velocidade cresce com nível e melhorias.",
       "icon": "elytra",
       "id": 3,
       "title": "Decolagem",
-      "x": 0,
-      "y": 296
+      "x": -1,
+      "y": 299
     },
     {
       "description": "Voo +4 s.",
@@ -66,128 +66,128 @@
       "icon": "white_wool",
       "id": 7,
       "title": "Penas leves",
-      "x": -63,
-      "y": 12
+      "x": -58,
+      "y": 14
     },
     {
       "description": "Passiva: queda recebida -30%; agache ao cair para descer lentamente.",
       "icon": "feather",
       "id": 8,
       "title": "Pluma protetora",
-      "x": -117,
-      "y": -10
+      "x": -114,
+      "y": -9
     },
     {
       "description": "Enquanto desce agachado, dano de inimigos -10%.",
       "icon": "white_carpet",
       "id": 9,
       "title": "Ar amortecido",
-      "x": -171,
-      "y": -36
+      "x": -170,
+      "y": -32
     },
     {
       "description": "Passiva: queda recebida -30%. Agache ao cair: queda lenta e dano de inimigos -25%.",
       "icon": "chicken_spawn_egg",
       "id": 10,
       "title": "Peso pena",
-      "x": -333,
-      "y": -129
+      "x": -340,
+      "y": -132
     },
     {
       "description": "Descida agachada mais lenta.",
       "icon": "breeze_rod",
       "id": 11,
       "title": "Brisa gentil",
-      "x": -303,
-      "y": -176
+      "x": -301,
+      "y": -178
     },
     {
       "description": "Redução de dano durante a descida +10%.",
       "icon": "leather_chestplate",
       "id": 12,
       "title": "Manto de penas",
-      "x": -498,
-      "y": -176
+      "x": -500,
+      "y": -174
     },
     {
       "description": "Redução de dano durante a descida +10%.",
       "icon": "totem_of_undying",
       "id": 13,
       "title": "Corpo etéreo",
-      "x": -463,
-      "y": -222
+      "x": -461,
+      "y": -220
     },
     {
       "description": "Impactos causam +5% de dano.",
       "icon": "stone",
       "id": 14,
       "title": "Massa concentrada",
-      "x": 63,
-      "y": 12
+      "x": 58,
+      "y": 14
     },
     {
       "description": "No ar: prepara impacto menor. Voando, avance até atingir um alvo; caindo, mergulhe. Não destrói blocos.",
       "icon": "anvil",
       "id": 15,
       "title": "Queda ofensiva",
-      "x": 117,
-      "y": -10
+      "x": 114,
+      "y": -9
     },
     {
       "description": "Dano do impacto +15%.",
       "icon": "iron_block",
       "id": 16,
       "title": "Peso crescente",
-      "x": 171,
-      "y": -36
+      "x": 170,
+      "y": -32
     },
     {
       "description": "No ar: explode ao atingir o solo. Voando, avança na mira e explode ao atingir mobs ou obstáculos. Altura e velocidade ampliam dano e destruição.",
       "icon": "magma_block",
       "id": 17,
       "title": "Impacto Meteoro",
-      "x": 333,
-      "y": -129
+      "x": 340,
+      "y": -132
     },
     {
       "description": "Raio do impacto +1 bloco.",
       "icon": "tnt",
       "id": 18,
       "title": "Cratera ampla",
-      "x": 303,
-      "y": -176
+      "x": 301,
+      "y": -178
     },
     {
       "description": "Dano do impacto +20%.",
       "icon": "obsidian",
       "id": 19,
       "title": "Núcleo denso",
-      "x": 498,
-      "y": -176
+      "x": 500,
+      "y": -174
     },
     {
       "description": "Raio +1 bloco e mais detritos arremessados.",
       "icon": "netherite_block",
       "id": 20,
       "title": "Cataclismo",
-      "x": 464,
-      "y": -222
+      "x": 462,
+      "y": -220
     },
     {
       "description": "Dano da classe +3%.",
       "icon": "iron_sword",
       "id": 21,
       "title": "Preparação: Decolagem",
-      "x": -20,
-      "y": 200
+      "x": -24,
+      "y": 208
     },
     {
       "description": "Dano da classe +3%.",
       "icon": "iron_sword",
       "id": 22,
       "title": "Domínio: Decolagem",
-      "x": 25,
-      "y": 248
+      "x": 26,
+      "y": 245
     },
     {
       "description": "Dano da classe +3%.",
@@ -258,16 +258,16 @@
       "icon": "iron_sword",
       "id": 31,
       "title": "Preparação: Peso pena",
-      "x": -205,
-      "y": -64
+      "x": -214,
+      "y": -72
     },
     {
       "description": "Dano da classe +3%.",
       "icon": "iron_sword",
       "id": 32,
       "title": "Domínio: Peso pena",
-      "x": -304,
-      "y": -95
+      "x": -299,
+      "y": -89
     },
     {
       "description": "Dano da classe +3%.",
@@ -283,7 +283,7 @@
       "id": 34,
       "title": "Persistência I",
       "x": -463,
-      "y": -276
+      "y": -280
     },
     {
       "description": "Custo de mana das habilidades -3%.",
@@ -338,16 +338,16 @@
       "icon": "iron_sword",
       "id": 41,
       "title": "Preparação: Impacto Meteoro",
-      "x": 205,
-      "y": -64
+      "x": 214,
+      "y": -72
     },
     {
       "description": "Dano da classe +3%.",
       "icon": "iron_sword",
       "id": 42,
       "title": "Domínio: Impacto Meteoro",
-      "x": 304,
-      "y": -95
+      "x": 299,
+      "y": -89
     },
     {
       "description": "Dano da classe +3%.",
@@ -363,7 +363,7 @@
       "id": 44,
       "title": "Persistência I",
       "x": 463,
-      "y": -276
+      "y": -280
     },
     {
       "description": "Custo de mana das habilidades -3%.",

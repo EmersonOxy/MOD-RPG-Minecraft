@@ -5,7 +5,11 @@ import dev.emersonoxy.rpg.RpgClass;
 /** Class silhouettes affect coordinates only; node IDs and unlock dependencies stay intact. */
 public final class SkillTreeLayouts {
     private SkillTreeLayouts(){}
-    public static double[] nodePosition(RpgClass type,int id){
+    private static final java.util.Map<RpgClass,double[][]> CACHE=new java.util.EnumMap<>(RpgClass.class);
+    public static double[] nodePosition(RpgClass type,int id){return CACHE.computeIfAbsent(type,SkillTreeLayouts::layout)[id].clone();}
+    private static double[][] layout(RpgClass type){double[][] points=new double[SkillTree.COUNT][];for(int id=0;id<points.length;id++)points[id]=raw(type,id);separate(points);return points;}
+    private static void separate(double[][] points){for(int pass=0;pass<80;pass++)for(int a=0;a<points.length;a++)for(int b=a+1;b<points.length;b++){double dx=points[b][0]-points[a][0],dy=points[b][1]-points[a][1],distance=Math.hypot(dx,dy);if(distance>=60)continue;if(distance<.001){dx=1;dy=0;distance=1;}double shift=(60-distance)/2+.05;if(a>0){points[a][0]-=dx/distance*shift;points[a][1]-=dy/distance*shift;}points[b][0]+=dx/distance*shift*(a==0?2:1);points[b][1]+=dy/distance*shift*(a==0?2:1);}}
+    private static double[] raw(RpgClass type,int id){
         int branch=id<21?id/7:(id-21)/10,step=id<21?id%7:(id-21)%10;double radius,offset=0;
         if(id==0)radius=0;
         else if(id<21){radius=new int[]{70,130,190,370,445,445,515}[step];if(step==4)offset=-.22;if(step==5)offset=.22;}

@@ -37,6 +37,7 @@ public final class OxyRpgClient {
     public static final KeyMapping DODGE=key("dodge",GLFW.GLFW_KEY_LEFT_ALT);
     public static final KeyMapping MINIMAP=key("minimap",GLFW.GLFW_KEY_M);
     public static final KeyMapping MINIMAP_OPTIONS=key("minimap_options",GLFW.GLFW_KEY_UNKNOWN);
+    public static final KeyMapping TOGGLE_PANELS=key("panels",GLFW.GLFW_KEY_UNKNOWN);
     public static final KeyMapping HUD_OPTIONS=key("hud_options",GLFW.GLFW_KEY_UNKNOWN);
     public static final KeyMapping REVEAL_HUD=key("reveal_hud",GLFW.GLFW_KEY_UNKNOWN);
     public static final KeyMapping MOVEMENT_MODE=key("movement_mode",GLFW.GLFW_KEY_UNKNOWN);
@@ -78,7 +79,7 @@ public final class OxyRpgClient {
         bus.addListener(OxyRpgClient::registerKeys);
         bus.addListener(OxyRpgClient::registerPayloads);
         bus.addListener(OxyRpgClient::registerHud);
-        NeoForge.EVENT_BUS.addListener(OxyRpgClient::tick); NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderHandEvent event)->{if(ShoulderCamera.hideHands())event.setCanceled(true);});
+        NeoForge.EVENT_BUS.addListener(OxyRpgClient::tick);NeoForge.EVENT_BUS.addListener(VillagerClient::init);NeoForge.EVENT_BUS.addListener(InventoryMovement::opening); NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderHandEvent event)->{if(ShoulderCamera.hideHands())event.setCanceled(true);});
         NeoForge.EVENT_BUS.addListener(DynamicHud::beforeLayer);
         NeoForge.EVENT_BUS.addListener(DynamicHud::afterLayer);
         NeoForge.EVENT_BUS.addListener(OxyRpgClient::potionInput);
@@ -102,7 +103,7 @@ public final class OxyRpgClient {
             var mc=Minecraft.getInstance();if(resourceState!=null&&hudState!=null&&hudState.rpgClass()!=0&&DynamicHud.alpha(DynamicHud.Part.MANA)>0&&!mc.options.hideGui&&mc.gameMode.canHurtPlayer())mc.gui.leftHeight+=10;
         });
         event.registerAbove(net.neoforged.neoforge.client.gui.VanillaGuiLayers.PLAYER_HEALTH,ResourceLocation.fromNamespaceAndPath("oxyrpg","mana"),(g,d)->renderMana(g));
-        event.registerAboveAll(ResourceLocation.fromNamespaceAndPath("oxyrpg","exploration"),(g,d)->{EvasionHud.render(g);SimpleMinimap.render(g);});
+        event.registerAboveAll(ResourceLocation.fromNamespaceAndPath("oxyrpg","exploration"),(g,d)->{EvasionHud.render(g);SimpleMinimap.render(g);ExplorationHud.render(g);});
         event.registerAboveAll(ResourceLocation.fromNamespaceAndPath("oxyrpg","combat_feedback"),(g,d)->{AbilityPreview.render(g);EliteWarnings.render(g);DamageNumbers.render(g);SkillEffectsRenderer.render(g);});
         event.registerAboveAll(ResourceLocation.fromNamespaceAndPath("oxyrpg", "hud"), (graphics, delta) -> renderHud(graphics));
         event.registerAboveAll(ResourceLocation.fromNamespaceAndPath("oxyrpg", "shoulder_crosshair"),(g,d)->{
@@ -142,9 +143,9 @@ public final class OxyRpgClient {
         event.register(RpgNetwork.ProfessionState.TYPE,(value,context)->{professionState=value;dev.emersonoxy.rpg.EquipmentAccess.clientXp(value.mining(),value.farming(),value.arsenal());var mc=Minecraft.getInstance();if(mc.screen instanceof ProfessionsScreen screen)screen.update(value);});
         event.register(RpgNetwork.VillagerMark.TYPE,(value,context)->EnemyNameplates.villagerMark(value.entityId(),value.state()));
         event.register(RpgNetwork.EliteInfo.TYPE,(value,context)->EnemyNameplates.eliteTitle(value.entityId(),value.title()));
-        event.register(RpgNetwork.VillagerDialogue.TYPE,(value,context)->Minecraft.getInstance().setScreen(new VillagerDialogueScreen(value)));
+        event.register(RpgNetwork.VillagerDialogue.TYPE,(value,context)->VillagerClient.receive(value));
         event.register(RpgNetwork.Resources.TYPE,(value,context)->{
-            if(resourceState==null||resourceState.mana()!=value.mana()||resourceState.maxMana()!=value.maxMana()){DynamicHud.signal(DynamicHud.Part.MANA);DynamicHud.signal(DynamicHud.Part.RPG);}
+            if(resourceState==null||resourceState.mana()!=value.mana()||resourceState.maxMana()!=value.maxMana()){DynamicHud.signal(DynamicHud.Part.MANA);}
             if(resourceState==null||resourceState.points()!=value.points())DynamicHud.signal(DynamicHud.Part.RPG);
             resourceState=value;var mc=Minecraft.getInstance();
             if(mc.screen instanceof AttributesScreen screen)screen.update(value);
@@ -206,9 +207,10 @@ public final class OxyRpgClient {
         }
         while(MINIMAP.consumeClick())if(mc.player!=null&&mc.screen==null)DynamicHud.toggle(DynamicHud.Part.MINIMAP);
         while(MINIMAP_OPTIONS.consumeClick())if(mc.player!=null&&mc.screen==null)mc.setScreen(new MinimapSettingsScreen(null));
-        SimpleMinimap.tick();
+        SimpleMinimap.tick();VillagerClient.tick();ExplorationHud.tick();
         TargetLock.tick();
         DynamicHud.tick();
+        while(TOGGLE_PANELS.consumeClick())if(mc.player!=null&&mc.screen==null)DynamicHud.cyclePanels();
         while(HUD_OPTIONS.consumeClick())if(mc.player!=null&&mc.screen==null)mc.setScreen(new HudSettingsScreen(null));
         while(MOVEMENT_MODE.consumeClick())if(mc.player!=null&&mc.screen==null)ShoulderCamera.toggleMovement();
         while(CAMERA_OPTIONS.consumeClick())if(mc.player!=null&&mc.screen==null)mc.setScreen(new CameraSettingsScreen(null)); while(SWAP_SHOULDER.consumeClick())if(mc.player!=null&&mc.screen==null)ShoulderCamera.swap(); while (TOGGLE_HUD.consumeClick()) {
@@ -228,7 +230,7 @@ public final class OxyRpgClient {
 
     private static void renderHud(GuiGraphics g) {
         var mc=Minecraft.getInstance();
-        if(DynamicHud.mode()==DynamicHud.Mode.HIDDEN||mc.options.hideGui||mc.getDebugOverlay().showDebugScreen()||mc.player==null||mc.level==null||mc.screen!=null||hudState==null)return;
+        if(mc.options.hideGui||mc.getDebugOverlay().showDebugScreen()||mc.player==null||mc.level==null||mc.screen!=null||hudState==null)return;
         SpecialistHud.render(g);
         renderAbilityIcons(g);
         renderDynamicPanels(g);
@@ -252,33 +254,35 @@ public final class OxyRpgClient {
     private static void renderAbilityIcons(GuiGraphics g) {
         var mc=Minecraft.getInstance();var state=hudState;
         if(state==null||state.rpgClass()==0)return;
-        int start=g.guiWidth()/2-92,y=g.guiHeight()-Math.max(89,mc.gui.leftHeight+43);
+        int start=g.guiWidth()/2-81,y=g.guiHeight()-Math.max(106,mc.gui.leftHeight+58);
         var keys=new KeyMapping[]{USE_ABILITY,SECOND_ABILITY,THIRD_ABILITY};
         for(int slot=0;slot<3;slot++){
             float alpha=DynamicHud.alpha(DynamicHud.ability(slot));if(alpha<=0)continue;
             HudOpacity.begin(alpha);
-            int x=start+slot*62;long remaining=effectUntil[slot]==Long.MAX_VALUE?Long.MAX_VALUE:Math.max(0,effectUntil[slot]-mc.level.getGameTime());
+            int x=start+slot*56;long remaining=effectUntil[slot]==Long.MAX_VALUE?Long.MAX_VALUE:Math.max(0,effectUntil[slot]-mc.level.getGameTime());
             long cooldown=Math.max(0,hudReadyAt[slot]-mc.level.getGameTime());
             int phase=remaining>0?effectPhase[slot]:0;
             boolean available=state.canUse(slot);
-            int accent=phase==1||phase==2?0xFFFFB74D:phase>0?0xFF53D5BF:0xFF707D90;
-            g.fill(x,y,x+58,y+39,0xB018202C);
-            g.fill(x,y,x+58,y+1,accent);
-            if(skillIcons[slot]!=null)g.renderFakeItem(skillIcons[slot],x+5,y+5);
-            if(!available)g.fill(x+4,y+4,x+22,y+22,0xAA101820);
-            g.drawString(mc.font,keys[slot].getTranslatedKeyMessage().getString(),x+27,y+5,0xFFFFFFFF);
+            int accent=phase==1||phase==2?0xFFFFB74D:phase>0?0xFF53D5BF:available&&cooldown==0?0xFF83D9BA:0xFF778391;
+            int identity=ClassSelectionScreen.accent(RpgClass.values()[state.rpgClass()]);
+            g.fill(x,y,x+50,y+52,0xE014202C);RpgUi.border(g,x,y,50,52,available?identity:0xFF526071);
+            g.fill(x+2,y+2,x+48,y+3,available?identity:0xFF526071);
+            SkillGlyphs.draw(g,RpgClass.values()[state.rpgClass()],slot,x+12,y+8,26,available?identity:0xFF526071);
+            String key=mc.font.plainSubstrByWidth(keys[slot].getTranslatedKeyMessage().getString(),24);
+            int keyW=Math.max(12,mc.font.width(key)+6);g.fill(x+50-keyW,y-5,x+50,y+7,0xFF283849);
+            g.drawCenteredString(mc.font,key,x+50-keyW/2,y-3,0xFFF5E9D0);
             boolean passive=state.rpgClass()==RpgClass.AVIARIO.ordinal()&&slot==1;
             String label=!available?"Bloq.":passive?"Passiva":phase==6?"Aliados":phase==1?"Projétil":phase==2?"Canal":phase==4?"Área":phase==5?"Efeito":phase>0?"Ativa":cooldown>0?((cooldown+19)/20)+" s":"Pronta";
-            g.drawString(mc.font,mc.font.plainSubstrByWidth(label,52),x+3,y+26,accent);
-            g.fill(x+3,y+21,x+55,y+24,0xFF313B4B);
+            g.drawString(mc.font,mc.font.plainSubstrByWidth(label,44),x+3,y+37,accent);
+            g.fill(x+3,y+48,x+47,y+51,0xFF313B4B);
             if(phase>0){
                 float fraction=remaining==Long.MAX_VALUE?1:Math.clamp((float)remaining/Math.max(1,effectTotal[slot]),0,1);
                 if(phase==1||phase==2)fraction=1-fraction;
-                g.fill(x+3,y+21,x+3+(int)(52*fraction),y+24,accent);
-                if(remaining!=Long.MAX_VALUE)g.drawString(mc.font,((remaining+19)/20)+"s",x+27,y+13,0xFFE1EAF0);
+                g.fill(x+3,y+48,x+3+(int)(44*fraction),y+51,accent);
+                if(remaining!=Long.MAX_VALUE)g.drawString(mc.font,((remaining+19)/20)+"s",x+31,y+26,0xFFE1EAF0);
             } else if(available){
                 float charge=1-Math.clamp((float)cooldown/Math.max(1,cooldownTotal[slot]),0,1);
-                g.fill(x+3,y+21,x+3+(int)(52*charge),y+24,cooldown==0?0xFF53D5BF:0xFF707D90);
+                g.fill(x+3,y+48,x+3+(int)(44*charge),y+51,cooldown==0?0xFF53D5BF:0xFF707D90);
             }
             HudOpacity.end();
         }
@@ -288,22 +292,28 @@ public final class OxyRpgClient {
             &&(hudReadyAt[slot]>mc.level.getGameTime()||effectUntil[slot]>mc.level.getGameTime());
     }
     private static void renderDynamicPanels(GuiGraphics g){
-        var mc=Minecraft.getInstance();var s=hudState;int width=Math.min(192,g.guiWidth()-16);
+        var mc=Minecraft.getInstance();var s=hudState;int width=Math.min(174,g.guiWidth()/3),x=10,base=Math.max(28,g.guiHeight()/2-70);
         float rpg=DynamicHud.alpha(DynamicHud.Part.RPG),quest=DynamicHud.alpha(DynamicHud.Part.QUEST);
         if(rpg>0){
-            HudOpacity.begin(rpg);g.fill(8,8,8+width,58,0xB018202C);
-            g.drawString(mc.font,RpgClass.values()[s.rpgClass()].label()+" • Nv. "+s.level()+(s.debug()?" • DEBUG":s.testing()?" • TESTE":""),16,14,0xFF53D5BF);
-            g.drawString(mc.font,s.level()>=100?"Nível máximo":"XP "+s.xp()+"/"+(s.level()*100),16,27,0xFFFFFFFF);
-            if(resourceState!=null)g.drawString(mc.font,"Atributos: "+resourceState.points(),16,38,0xFF70BAFF);
-            if(resourceState!=null)g.drawString(mc.font,"Mana: "+(s.debug()?"∞":resourceState.mana()+"/"+resourceState.maxMana())+" MP",16,48,0xFF70BAFF);
+            HudOpacity.begin(rpg);int accent=ClassSelectionScreen.accent(RpgClass.values()[s.rpgClass()]);
+            g.fill(x,base,x+width,base+57,0xDA14202C);g.fill(x,base,x+2,base+57,accent);
+            SkillGlyphs.draw(g,RpgClass.values()[s.rpgClass()],0,x+8,base+8,20,accent);
+            g.drawString(mc.font,mc.font.plainSubstrByWidth(RpgClass.values()[s.rpgClass()].label(),width-65),x+35,base+8,accent);
+            g.drawString(mc.font,"Nv. "+s.level()+(s.debug()?" • DEBUG":s.testing()?" • TESTE":""),x+35,base+20,RpgUi.TEXT);
+            double fraction=s.level()>=100?1:Math.clamp(s.xp()/(double)Math.max(100,s.level()*100),0,1);
+            g.fill(x+9,base+35,x+width-9,base+38,0xFF2A3B4B);g.fill(x+9,base+35,x+9+(int)((width-18)*fraction),base+38,accent);
+            String xp=s.level()>=100?"Nível máximo":"XP "+s.xp()+" / "+(s.level()*100);
+            g.drawString(mc.font,xp,x+9,base+44,RpgUi.MUTED);
+            if(resourceState!=null&&resourceState.points()>0){String points="+"+resourceState.points()+" pts";g.drawString(mc.font,points,x+width-9-mc.font.width(points),base+20,RpgUi.GOLD);}
             HudOpacity.end();
         }
         if(quest>0){
-            HudOpacity.begin(quest);g.fill(8,62,8+width,109,0xB018202C);var q=QuestCatalog.quest(s.questStage());var first=q.targets().getFirst();
-            g.drawString(mc.font,"Caçada "+s.kills()%10+"/10",16,68,0xFFE1EAF0);
-            g.drawString(mc.font,first.label()+" "+s.questFirst()+"/"+first.amount(),16,81,0xFFB7C8D7);
-            String second=q.targets().size()>1?q.targets().get(1).label()+" "+s.questSecond()+"/"+q.targets().get(1).amount():"Recompensa: +"+q.reward()+" XP";
-            g.drawString(mc.font,second,16,94,0xFFB7C8D7);HudOpacity.end();
+            HudOpacity.begin(quest);int y=base+65;var q=QuestCatalog.quest(s.questStage());var first=q.targets().getFirst();
+            g.fill(x,y,x+width,y+58,0xDA14202C);g.fill(x,y,x+2,y+58,RpgUi.GOLD);
+            g.drawString(mc.font,"OBJETIVO",x+9,y+8,RpgUi.GOLD);g.drawString(mc.font,"Caçada "+s.kills()%10+"/10",x+9,y+22,RpgUi.TEXT);
+            String target=first.label()+" "+s.questFirst()+"/"+first.amount();g.drawString(mc.font,mc.font.plainSubstrByWidth(target,width-18),x+9,y+34,RpgUi.MUTED);
+            String second=q.targets().size()>1?q.targets().get(1).label()+" "+s.questSecond()+"/"+q.targets().get(1).amount():"+"+q.reward()+" XP";
+            g.drawString(mc.font,mc.font.plainSubstrByWidth(second,width-18),x+9,y+46,RpgUi.MUTED);HudOpacity.end();
         }
     }
     private static void potionInput(net.neoforged.neoforge.client.event.InputEvent.InteractionKeyMappingTriggered event){
@@ -317,7 +327,7 @@ public final class OxyRpgClient {
     public static void cast(int slot) {
         var mc = Minecraft.getInstance();
         if (mc.player == null) return;
-        DynamicHud.signal(DynamicHud.ability(slot));DynamicHud.signal(DynamicHud.Part.MANA);DynamicHud.signal(DynamicHud.Part.RPG);
+        DynamicHud.signal(DynamicHud.ability(slot));DynamicHud.signal(DynamicHud.Part.MANA);
         int side = (mc.options.keyRight.isDown() ? 1 : 0) - (mc.options.keyLeft.isDown() ? 1 : 0);
         int forward = (mc.options.keyUp.isDown() ? 1 : 0) - (mc.options.keyDown.isDown() ? 1 : 0);
         int direction = side == 0 && forward == 0 ? 0 : Math.floorMod((int)Math.round(Math.atan2(side, forward) / (Math.PI / 4)), 8);

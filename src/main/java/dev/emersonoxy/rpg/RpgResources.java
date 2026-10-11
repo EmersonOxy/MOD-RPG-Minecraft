@@ -112,7 +112,7 @@ public final class RpgResources {
         finally{if(temp!=null)try{Files.deleteIfExists(temp);}catch(IOException ignored){}}
     }
     public static void reset(ServerPlayer p){var a=pool(p);a.mana=100;a.cast=0;save(p);}
-    private static int maximum(ServerPlayer p,RpgProfile profile){return RpgDebug.attributes(p,profile.attributes()).maxMana()+ClassEquipment.manaBonus(p);}
+    private static int maximum(ServerPlayer p,RpgProfile profile){return RpgDebug.attributes(p,profile.attributes()).maxMana()+ClassEquipment.manaBonus(p)+AdventureItems.manaBonus(p);}
     public static void clonePlayer(PlayerEvent.Clone event){if(event.getEntity() instanceof ServerPlayer p){var a=RpgDebug.testing(p)?TEST_POOLS.get(p.getUUID()):POOLS.get(p.getUUID());if(a!=null){update(p,a.profile);if(event.isWasDeath()){a.mana=maximum(p,a.profile);a.cast=0;p.setHealth(p.getMaxHealth());}sync(p);}}}
     public static void logout(PlayerEvent.PlayerLoggedOutEvent event){if(event.getEntity() instanceof ServerPlayer p){save(p);POOLS.remove(p.getUUID());TEST_POOLS.remove(p.getUUID());}}
     public static void stop(ServerStoppedEvent event){POOLS.clear();TEST_POOLS.clear();}

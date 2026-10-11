@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " S ",
+    " HB",
+    "   "
+  ],
+  "key": {
+    "S": "minecraft:spider_eye",
+    "H": "minecraft:honey_bottle",
+    "B": "minecraft:glass_bottle"
+  },
+  "result": {
+    "id": "oxyrpg:antidote",
+    "count": 1
+  }
+}

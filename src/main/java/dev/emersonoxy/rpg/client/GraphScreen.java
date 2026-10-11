@@ -49,6 +49,7 @@ public abstract class GraphScreen extends Screen {
     @Override public boolean mouseScrolled(double x,double y,double horizontal,double vertical){if(canvas(x,y)){double next=Math.clamp(zoom*Math.pow(1.15,vertical),.3,2);panX=x-(x-panX)*next/zoom;panY=y-(y-panY)*next/zoom;zoom=next;return true;}return super.mouseScrolled(x,y,horizontal,vertical);}
     @Override public void tick(){if(minecraft.player==null||minecraft.level==null){onClose();return;}if(waiting>0)waiting--;if(++ticks%40==0)minecraft.player.connection.send(new dev.emersonoxy.rpg.RpgNetwork.Request(0));}
     private static void line(GuiGraphics g,double ax,double ay,double bx,double by,int color){float dx=(float)(bx-ax),dy=(float)(by-ay);g.pose().pushMatrix();g.pose().translate((float)ax,(float)ay);g.pose().rotate((float)Math.atan2(dy,dx));g.fill(0,-1,(int)Math.hypot(dx,dy),1,color);g.pose().popMatrix();}
+    protected void drawNodeIcon(GuiGraphics g,Node n){var icon=icons.computeIfAbsent(n.icon,k->new ItemStack(BuiltInRegistries.ITEM.getValue(ResourceLocation.parse(k))));g.renderFakeItem(icon,(int)n.x-8,(int)n.y-8);}
     @Override public void render(GuiGraphics g,int mx,int my,float partial){
         RpgUi.panel(g,left,top,panelWidth,panelHeight);
         g.fill(left+5,top+5,left+panelWidth-5,top+panelHeight-5,0xFF151D28);
@@ -61,7 +62,7 @@ public abstract class GraphScreen extends Screen {
             int color=owned(n.id)?n.major?RpgUi.GOLD:0xFF7AB7A6:available(n.id)?0xFF93BFEA:0xFF576477;
             if(n.id==selected)RpgUi.medallion(g,(int)n.x,(int)n.y,n.major?22:19,RpgUi.GOLD);
             RpgUi.medallion(g,(int)n.x,(int)n.y,n.major?18:14,color);
-            var icon=icons.computeIfAbsent(n.icon,k->new ItemStack(BuiltInRegistries.ITEM.getValue(ResourceLocation.parse(k))));g.renderFakeItem(icon,(int)n.x-8,(int)n.y-8);
+            drawNodeIcon(g,n);
         }
         g.pose().popMatrix();g.disableScissor();
         var n=nodes.get(selected);g.drawString(font,font.plainSubstrByWidth(n.title,panelWidth-20),left+10,bottom()+6,0xFFFFD580);
