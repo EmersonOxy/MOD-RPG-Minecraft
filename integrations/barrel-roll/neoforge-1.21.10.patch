@@ -37,7 +37,7 @@ index 0000000..0d7a0f9
 +call "%~dp0gradlew.bat" -p "%~dp0." :1.21.10:assemble --no-daemon --no-configuration-cache --max-workers=2 %*
 +exit /b %ERRORLEVEL%
 diff --git a/build.gradle.kts b/build.gradle.kts
-index ce1c494..140c31d 100644
+index ce1c494..b6988a9 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -113,7 +113,7 @@ val iconField = if (versionAtLeast("26.2")) "iconFile" else "logoFile"
@@ -49,6 +49,16 @@ index ce1c494..140c31d 100644
      sourceSets.main.get().java.exclude("**/render/RollDebugEntry.java")
  }
  
+@@ -122,7 +122,8 @@ if (!versionAtLeast("1.21.11")) {
+ val packFormatField = if (versionAtLeast("1.21.9")) {
+     val major = prop("resource_pack_format")
+     val minor = prop("resource_pack_format_minor")
+-    "\"min_format\": $major," + System.lineSeparator() + "        \"max_format\": [$major, $minor],"
++    val legacy = if (major.toInt() < 82) "\"pack_format\": $major, \"supported_formats\": [$major, $major]," + System.lineSeparator() + "        " else ""
++    legacy + "\"min_format\": $major," + System.lineSeparator() + "        \"max_format\": [$major, $minor],"
+ } else {
+     "\"pack_format\": " + prop("resource_pack_format") + ","
+ }
 diff --git a/settings.gradle.kts b/settings.gradle.kts
 index 527f2e2..735c2b5 100644
 --- a/settings.gradle.kts

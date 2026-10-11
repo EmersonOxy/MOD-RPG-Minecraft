@@ -33,12 +33,14 @@ public final class EnemyNameplates {
     private static final java.util.Set<Integer> COSMETIC=new java.util.HashSet<>();
     private static final java.util.Set<Integer> ALLIES=new java.util.HashSet<>();
     private static final java.util.Set<Integer> ELITES=new java.util.HashSet<>();
+    private record Sight(long tick,Vec3 camera,Vec3 target,boolean clear){}
+    private static final Map<Mob,Sight> SIGHTS=new java.util.WeakHashMap<>();
     private static ClientLevel trackedWorld;
     private static final ContextKey<Boolean> HIDDEN = new ContextKey<>(ResourceLocation.fromNamespaceAndPath("oxyrpg", "ghost"));
     private static final ContextKey<Plate> PLATE = new ContextKey<>(ResourceLocation.fromNamespaceAndPath("oxyrpg", "plate"));
     private record Plate(Component name, float health, float max, int level, boolean hostile,boolean ally,boolean elite,int marker) {}
     private EnemyNameplates() {}
-    public static void world(ClientLevel level) { if(trackedWorld!=level){trackedWorld=level;LEVELS.clear();GHOSTS.clear();ALLIES.clear();COSMETIC.clear();ELITES.clear();VILLAGERS.clear();TRAITS.clear();} }
+    public static void world(ClientLevel level) { if(trackedWorld!=level){trackedWorld=level;LEVELS.clear();GHOSTS.clear();ALLIES.clear();COSMETIC.clear();ELITES.clear();VILLAGERS.clear();TRAITS.clear();SIGHTS.clear();} }
     public static void eliteTitle(int id,String title){world(Minecraft.getInstance().level);TRAITS.put(id,title);}
     public static void villagerMark(int id,int marker){world(Minecraft.getInstance().level);if(marker==0)VILLAGERS.remove(id);else VILLAGERS.put(id,marker);}
     public static void mobLevel(int id,int level) { world(Minecraft.getInstance().level);if(level==-2)COSMETIC.add(id);else COSMETIC.remove(id);if(level<0)ALLIES.add(id);else ALLIES.remove(id);if(level>=1000){ELITES.add(id);level-=1000;}else ELITES.remove(id);LEVELS.put(id, Math.clamp(Math.abs(level),1,100)); }
@@ -65,7 +67,11 @@ public final class EnemyNameplates {
         double aspect=(double)mc.getWindow().getWidth()/Math.max(1,mc.getWindow().getHeight());
         if(Math.abs(relative.dot(new Vec3(camera.getUpVector())))>front*tangent
             ||Math.abs(relative.dot(new Vec3(camera.getLeftVector())))>front*tangent*aspect)return false;
-        return mc.level.clip(new ClipContext(start,end,ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,mob)).getType()==HitResult.Type.MISS;
+        // Reuse stationary sight lines for at most 100 ms; view/frustum checks remain per frame.
+        long tick=mc.level.getGameTime();var old=SIGHTS.get(mob);
+        if(old!=null&&tick-old.tick()<2&&start.distanceToSqr(old.camera())<.0625&&end.distanceToSqr(old.target())<.0625)return old.clear();
+        boolean clear=mc.level.clip(new ClipContext(start,end,ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,mob)).getType()==HitResult.Type.MISS;
+        SIGHTS.put(mob,new Sight(tick,start,end,clear));return clear;
     }
     public static void register(RegisterRenderStateModifiersEvent event) {
         event.registerEntityModifier(new TypeToken<EntityRenderer<Entity, EntityRenderState>>() {}, (entity, state) -> {

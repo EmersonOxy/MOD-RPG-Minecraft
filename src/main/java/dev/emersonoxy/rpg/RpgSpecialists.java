@@ -131,7 +131,11 @@ public final class RpgSpecialists {
         var c=CASTS.get(data.player().getUUID());if(c!=null&&c.world==shot.level()){int max=c.profile.hasSkill(11)?6:3;if(c.cores.size()>=max)c.cores.remove(0);UUID target=e.getRayTraceResult() instanceof EntityHitResult hit&&hit.getEntity() instanceof Mob mob&&RpgAbilities.attackable(mob)?mob.getUUID():null;var point=e.getRayTraceResult().getLocation();c.cores.add(new Core(point,target,c.world.getGameTime()+240));if(target!=null){var mob=(Mob)c.world.getEntity(target);hit(c,mob,2);mob.igniteForSeconds(c.profile.hasSkill(9)?5:3);}SkillEffects.impact(c.world,point,1.2,1);sync(c.player);}
         shot.discard();e.setCanceled(true);
     }
-    public static void tick(EntityTickEvent.Post e){RpgProfiler.run("specialists",()->tickBody(e));}
+    public static void tick(EntityTickEvent.Post e){
+        var entity=e.getEntity();if(!(entity.level() instanceof ServerLevel))return;
+        if(!(entity instanceof ServerPlayer)&&!(entity instanceof Snowball&&SHOTS.containsKey(entity.getUUID())))return;
+        RpgProfiler.run("specialists",()->tickBody(e));
+    }
     private static void tickBody(EntityTickEvent.Post e){
         if(e.getEntity() instanceof Snowball shot&&SHOTS.containsKey(shot.getUUID())){var data=SHOTS.get(shot.getUUID());if(shot.level().getGameTime()>=data.expires()){SHOTS.remove(shot.getUUID());shot.discard();}else if(shot.level() instanceof ServerLevel world&&shot.tickCount%2==0){var v=shot.getDeltaMovement();for(int i=0;i<4;i++){var at=shot.position().subtract(v.scale(i*.2));world.sendParticles(i%2==0?ParticleTypes.FLAME:ParticleTypes.SMALL_FLAME,at.x,at.y,at.z,1,.015,.015,.015,0);}}}
         if(!(e.getEntity() instanceof ServerPlayer p))return;var s=RpgAbilities.profile(p);var c=CASTS.get(p.getUUID());

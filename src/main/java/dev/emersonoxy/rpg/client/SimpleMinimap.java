@@ -16,38 +16,45 @@ public final class SimpleMinimap {
     private static final int GRID=64;
     private static final int[] PIXELS=java.util.stream.IntStream.range(0,GRID*GRID).boxed().sorted(java.util.Comparator.comparingInt(i->{int x=i%GRID-GRID/2,z=i/GRID-GRID/2;return x*x+z*z;})).mapToInt(Integer::intValue).toArray();
     private static final ResourceLocation TEXTURE=ResourceLocation.fromNamespaceAndPath("oxyrpg","minimap_surface");
-    private record Sample(int color,long updated){}
+    private record Sample(int color,long updated,int height){}
     public record Bounds(int x,int y,int size,int height){}
     private static final LinkedHashMap<Long,Sample> COLORS=new LinkedHashMap<>();
+    private static boolean dirty;private static int warmup;
     private static int cursor,lastStep,lastX=Integer.MIN_VALUE,lastZ;private static long uploaded=-1;private static Object dimension;
     private static DynamicTexture texture;private static boolean uploadedRound,cave,retainPixels;private static int layer=Integer.MIN_VALUE;
     private SimpleMinimap(){}
-    public static void clear(){COLORS.clear();cursor=0;uploaded=-1;lastX=Integer.MIN_VALUE;dimension=null;retainPixels=false;if(texture!=null){Minecraft.getInstance().getTextureManager().release(TEXTURE);texture=null;}}
+    public static void clear(){COLORS.clear();cursor=warmup=0;dirty=true;uploaded=-1;lastX=Integer.MIN_VALUE;dimension=null;retainPixels=false;if(texture!=null){Minecraft.getInstance().getTextureManager().release(TEXTURE);texture=null;}}
     private static int base(int value,int step){return Math.floorDiv(value,step)*step-GRID*step/2;}
     public static void tick(){dev.emersonoxy.rpg.RpgProfiler.run("minimap",SimpleMinimap::tickBody);}
     private static void tickBody(){
         var mc=Minecraft.getInstance();boolean preview=mc.screen instanceof MinimapSettingsScreen||mc.screen instanceof MinimapPositionScreen;
         if(mc.player==null||mc.level==null||mc.isPaused()||!preview&&(!DynamicHud.enabled(DynamicHud.Part.MINIMAP)||DynamicHud.mode()==DynamicHud.Mode.HIDDEN))return;
         int step=MinimapOptions.step();if(dimension!=mc.level.dimension()||step!=lastStep){clear();dimension=mc.level.dimension();lastStep=step;}
+        if(!mc.level.getChunkSource().hasChunk(mc.player.getBlockX()>>4,mc.player.getBlockZ()>>4))return;
+        warmup++;
         // Only WORLD_SURFACE and MOTION_BLOCKING are sent in the client chunk heightmaps.
         int surface=mc.level.getHeight(Heightmap.Types.MOTION_BLOCKING,mc.player.getBlockX(),mc.player.getBlockZ());
         boolean underground=MinimapOptions.layerMode==2||MinimapOptions.layerMode==0&&(mc.level.dimensionType().hasCeiling()||surface>mc.player.getBlockY()+3);int slice=underground?mc.player.getBlockY():Integer.MIN_VALUE;
-        if(cave!=underground||layer!=slice){COLORS.clear();cursor=0;uploaded=-1;retainPixels=cave==underground&&texture!=null;cave=underground;layer=slice;}
+        if(cave!=underground||layer!=slice){COLORS.clear();cursor=0;dirty=true;uploaded=-1;retainPixels=cave==underground&&texture!=null;cave=underground;layer=slice;}
         int bx=base(mc.player.getBlockX(),step),bz=base(mc.player.getBlockZ(),step);long now=mc.level.getGameTime();
-        for(int i=0;i<128;i++){
+        // Leave time for chunk building when entering a world. Bound both samples and wall time.
+        long deadline=System.nanoTime()+1_000_000;int budget=warmup<60?32:64;
+        for(int i=0;i<budget;i++){
+            if(i>0&&System.nanoTime()>=deadline)break;
             int pixel=PIXELS[cursor];cursor=(cursor+1)%(GRID*GRID);int x=bx+pixel%GRID*step,z=bz+pixel/GRID*step;long key=BlockPos.asLong(x,0,z);
-            if(!mc.level.getChunkSource().hasChunk(x>>4,z>>4)){COLORS.remove(key);continue;}
+            if(!mc.level.getChunkSource().hasChunk(x>>4,z>>4)){if(COLORS.remove(key)!=null)dirty=true;continue;}
             var previous=COLORS.get(key);if(previous!=null&&now-previous.updated()<100)continue;
             int y=cave?floor(x,z):mc.level.getHeight(Heightmap.Types.WORLD_SURFACE,x,z)-1;
-            if(y==Integer.MIN_VALUE){COLORS.put(key,new Sample(0xFF121B24,now));continue;}var pos=new BlockPos(x,y,z);var color=mc.level.getBlockState(pos).getMapColor(mc.level,pos);
-            int slope=0;if(mc.level.getChunkSource().hasChunk(x>>4,(z-step)>>4)){int neighbor=cave?floor(x,z-step):mc.level.getHeight(Heightmap.Types.WORLD_SURFACE,x,z-step)-1;if(neighbor!=Integer.MIN_VALUE)slope=y-neighbor;}
+            if(y==Integer.MIN_VALUE){put(key,new Sample(0xFF121B24,now,y));continue;}var pos=new BlockPos(x,y,z);var color=mc.level.getBlockState(pos).getMapColor(mc.level,pos);
+            int slope=0;if(mc.level.getChunkSource().hasChunk(x>>4,(z-step)>>4)){var cached=COLORS.get(BlockPos.asLong(x,0,z-step));int neighbor=cave?(cached==null?y:cached.height()):mc.level.getHeight(Heightmap.Types.WORLD_SURFACE,x,z-step)-1;if(neighbor!=Integer.MIN_VALUE)slope=y-neighbor;}
             int value=color.calculateARGBColor(slope>0?MapColor.Brightness.HIGH:slope<0?MapColor.Brightness.LOW:MapColor.Brightness.NORMAL);
             if(cave&&mc.level.getBlockState(new BlockPos(x,layer,z)).isSolidRender()){int a=value;value=0xFF000000|((a>>16&255)*2/5<<16)|((a>>8&255)*2/5<<8)|(a&255)*2/5;}
-            COLORS.put(key,new Sample(value==0?0xFF25313B:value,now));if(COLORS.size()>16384)COLORS.remove(COLORS.keySet().iterator().next());
+            put(key,new Sample(value==0?0xFF25313B:value,now,y));
         }
         if(texture==null){texture=new DynamicTexture(()->"Oxy RPG minimap",new NativeImage(GRID,GRID,false));mc.getTextureManager().register(TEXTURE,texture);}
-        if(now-uploaded>=4||bx!=lastX||bz!=lastZ||uploadedRound!=MinimapOptions.round){var image=texture.getPixels();for(int z=0;z<GRID;z++)for(int x=0;x<GRID;x++){var sample=COLORS.get(BlockPos.asLong(bx+x*step,0,bz+z*step));double radius=GRID/2.0,dx=x+.5-radius,dz=z+.5-radius;image.setPixel(x,z,MinimapOptions.round&&dx*dx+dz*dz>radius*radius?0:sample==null?(retainPixels&&bx==lastX&&bz==lastZ&&mc.level.getChunkSource().hasChunk((bx+x*step)>>4,(bz+z*step)>>4)?image.getPixel(x,z):((x/4+z/4)%2==0?0xFF1C2631:0xFF202C37)):sample.color());}texture.upload();uploadedRound=MinimapOptions.round;uploaded=now;lastX=bx;lastZ=bz;}
+        if(dirty&&now-uploaded>=4||bx!=lastX||bz!=lastZ||uploadedRound!=MinimapOptions.round){var image=texture.getPixels();for(int z=0;z<GRID;z++)for(int x=0;x<GRID;x++){var sample=COLORS.get(BlockPos.asLong(bx+x*step,0,bz+z*step));double radius=GRID/2.0,dx=x+.5-radius,dz=z+.5-radius;image.setPixel(x,z,MinimapOptions.round&&dx*dx+dz*dz>radius*radius?0:sample==null?(retainPixels&&bx==lastX&&bz==lastZ&&mc.level.getChunkSource().hasChunk((bx+x*step)>>4,(bz+z*step)>>4)?image.getPixel(x,z):((x/4+z/4)%2==0?0xFF1C2631:0xFF202C37)):sample.color());}texture.upload();dirty=false;uploadedRound=MinimapOptions.round;uploaded=now;lastX=bx;lastZ=bz;}
     }
+    private static void put(long key,Sample sample){var old=COLORS.put(key,sample);if(old==null||old.color()!=sample.color())dirty=true;if(COLORS.size()>16384)COLORS.remove(COLORS.keySet().iterator().next());}
     private static int floor(int x,int z){
         var world=Minecraft.getInstance().level;int anchor=Math.clamp(layer,world.getMinY()+1,world.getMaxY()-2);var pos=new BlockPos.MutableBlockPos(x,anchor,z);
         if(world.getBlockState(pos).isSolidRender())return anchor;

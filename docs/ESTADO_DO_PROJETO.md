@@ -1,8 +1,8 @@
-# Estado do Oxy RPG — revisão 0.34.0
+# Estado do Oxy RPG — revisão 0.35.0
 
 Revisão registrada em 11/10/2026. Minecraft 1.21.10, NeoForge 21.10.64, JDK 21, protocolo de rede 23. Este registro substitui descrições antigas do README. Os documentos numerados são históricos de cada entrega.
 
-A revisão inventariou fontes Java, registros, eventos, mixins, telas, recursos JSON, geração de dados, integração e persistência. Código das áreas alteradas foi inspecionado em detalhe. Inventário de arquivos e hashes: [INVENTARIO_CODIGO_034.json](INVENTARIO_CODIGO_034.json). Não equivale a validação integral dentro do jogo nem a auditoria de segurança.
+A revisão inventariou fontes Java, registros, eventos, mixins, telas, recursos JSON, geração de dados, integração e persistência. Código das áreas alteradas foi inspecionado em detalhe. Inventário de arquivos e hashes: [INVENTARIO_CODIGO_035.json](INVENTARIO_CODIGO_035.json). Não equivale a validação integral dentro do jogo nem a auditoria de segurança.
 
 ## Sistemas implementados
 
@@ -78,3 +78,7 @@ Minimap usa heightmap sincronizado e permite forçar subsolo; patrulhas aceitam 
 ## Evidência desta atualização
 
 Os prints 2026-10-11_03.21.04 e 03.22.54 foram inspecionados. A compilação assemble foi concluída. Não foram executados testes nem aberto o Minecraft para validar. O registro distingue implementação em código de comportamento confirmado pessoalmente no jogo.
+
+## Desempenho e exploração — 0.35
+
+Minimapa com orçamento de amostragem e uploads por mudança; filtro antecipado de ticks e cache curto de oclusão dos indicadores. Avisos de bioma/dimensão com cache de regiões recentes e fade interpolado, inspirados na leitura do Traveler’s Titles. Lithium 0.20.1 e FerriteCore 8.1.0 em versões oficiais NeoForge/1.21.10 instalados separadamente. Metadados do Barrel Roll corrigidos. Distâncias, vilas e saves preservados. Compilação concluída, ganho em jogo ainda não medido. [Diagnóstico, revisão e limites](DESEMPENHO_035.md).

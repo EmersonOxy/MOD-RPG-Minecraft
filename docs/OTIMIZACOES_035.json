@@ -1,0 +1,39 @@
+[
+  {
+    "dependencies": [],
+    "source": "https://modrinth.com/mod/ferrite-core",
+    "loaders": [
+      "neoforge"
+    ],
+    "project": "ferrite-core",
+    "version": "8.1.0-neoforge",
+    "game_versions": [
+      "1.21.9",
+      "1.21.10"
+    ],
+    "version_id": "G34Jddxu",
+    "url": "https://cdn.modrinth.com/data/uXXizFIs/versions/G34Jddxu/ferritecore-8.1.0-neoforge.jar",
+    "sha512": "10ed489075238d6d0b8410a8305b7d12fe28c1941f6d95a4e9306ddbf495e1f0edd3ff2f8f23c77d5c5ecc858d898b09d5a081a740f7aa2e8fe76eece2b3be0e",
+    "filename": "ferritecore-8.1.0-neoforge.jar",
+    "license": "MIT",
+    "source_url": "https://github.com/malte0811/FerriteCore"
+  },
+  {
+    "dependencies": [],
+    "source": "https://modrinth.com/mod/lithium",
+    "loaders": [
+      "neoforge"
+    ],
+    "project": "lithium",
+    "version": "mc1.21.10-0.20.1-neoforge",
+    "game_versions": [
+      "1.21.10"
+    ],
+    "version_id": "HADn4LHe",
+    "url": "https://cdn.modrinth.com/data/gvQqBUqZ/versions/HADn4LHe/lithium-neoforge-0.20.1%2Bmc1.21.10.jar",
+    "sha512": "4d956569801b1a78814f89e859a11f0179553879c74c7de53cb0a9b6f5c44904fba576849f15e8bcedfa2b48b63fd095918dc88904f4bdb0dd152b9ccc9ed7e8",
+    "filename": "lithium-neoforge-0.20.1+mc1.21.10.jar",
+    "license": "LGPL-3.0-only",
+    "source_url": "https://github.com/caffeinemc/lithium-fabric"
+  }
+]

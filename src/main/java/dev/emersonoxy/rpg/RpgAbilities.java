@@ -230,7 +230,12 @@ public final class RpgAbilities {
     public static void tracking(PlayerEvent.StartTracking event) {if(event.getEntity() instanceof ServerPlayer viewer&&event.getTarget() instanceof ServerPlayer target){var a=ACTIVE.get(target.getUUID());if(a!=null&&a.ghost)PacketDistributor.sendToPlayer(viewer,new RpgNetwork.Ghost(target.getId(),(int)Math.max(0,a.until[1]-now(target))));}}
     private static void smoke(ServerPlayer p,RpgProfile s) {((ServerLevel)p.level()).sendParticles(ParticleTypes.SMOKE,p.getX(),p.getY()+.4,p.getZ(),30,s.hasSkill(12)?1.5:1,.5,s.hasSkill(12)?1.5:1,.04);}
     public static void killed(ServerPlayer p) {var s=profile(p);if(s.rpgClass()==RpgClass.GUERREIRO&&s.hasSkill(1))active(p).impetus=now(p)+40+(s.hasSkill(2)?20:0);}
-    public static void onTick(EntityTickEvent.Post event){RpgProfiler.run("abilities",()->onTickBody(event));}
+    public static void onTick(EntityTickEvent.Post event){
+        var entity=event.getEntity();if(!(entity.level() instanceof ServerLevel))return;
+        if(!(entity instanceof ServerPlayer)&&!(entity instanceof Projectile)
+            &&!FROST.containsKey(entity.getUUID())&&!BLEED.containsKey(entity.getUUID()))return;
+        RpgProfiler.run("abilities",()->onTickBody(event));
+    }
     private static void onTickBody(EntityTickEvent.Post event){
         if(!(event.getEntity().level() instanceof ServerLevel level))return;
         if(event.getEntity() instanceof ServerPlayer p) {RpgResources.tick(p);tickPlayer(p);return;}

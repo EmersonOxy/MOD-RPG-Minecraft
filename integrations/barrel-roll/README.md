@@ -14,3 +14,5 @@ git -C DoAnotherBarrelRoll apply <caminho-absoluto>/neoforge-1.21.10.patch
 ```
 
 Depois execute `build-windows.bat` no clone. JAR e sources JAR em versions/1.21.10/build/libs. Preserve LICENSE e os créditos dos autores ao distribuir. Consulte PORT_1_21_10.md criado pelo patch. Esta adaptação é local, não oficial.
+
+Na entrega Oxy 0.35, o patch também corrige supported_formats no pack.mcmeta dos formatos abaixo de 82; port recompilado sem mudanças de voo.
