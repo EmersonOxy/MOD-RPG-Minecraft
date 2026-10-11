@@ -1,0 +1,315 @@
+{
+  "label": "Vampiresco",
+  "mana_multiplier": 1,
+  "cooldown_multiplier": 1,
+  "damage_multiplier": 1,
+  "duration_multiplier": 1,
+  "nodes": [
+    {
+      "id": 0,
+      "title": "Instinto noturno",
+      "description": "Passiva: sol fere, dia enfraquece; à noite recebe visão noturna.",
+      "icon": "redstone"
+    },
+    {
+      "id": 1,
+      "title": "Primeira mordida",
+      "description": "Arme um vínculo ao perder vida: seu próximo golpe cura e abre uma ferida.",
+      "icon": "sweet_berries"
+    },
+    {
+      "id": 2,
+      "title": "Paladar aguçado",
+      "description": "Alimentar-se de animais recupera mais sede.",
+      "icon": "beef"
+    },
+    {
+      "id": 3,
+      "title": "Sede de Sangue",
+      "description": "Ao perder vida, marque um alvo com um golpe. Cura imediata e gradual; repetir o golpe paralisa e fortalece o dano.",
+      "icon": "fermented_spider_eye"
+    },
+    {
+      "id": 4,
+      "title": "Vínculo cruel",
+      "description": "Golpes no alvo vinculado recebem mais dano adicional.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 5,
+      "title": "Sangue restaurador",
+      "description": "Amplia a cura gradual do vínculo.",
+      "icon": "ghast_tear"
+    },
+    {
+      "id": 6,
+      "title": "Noite eterna",
+      "description": "O vínculo paralisa por mais tempo; reduz o dano do sol.",
+      "icon": "nether_star"
+    },
+    {
+      "id": 7,
+      "title": "Pele de morcego",
+      "description": "Metamorfose conserva o controle do voo.",
+      "icon": "bat_spawn_egg"
+    },
+    {
+      "id": 8,
+      "title": "Asas menores",
+      "description": "Transforme-se em morcego: voe sem atacar ou usar itens. Reative para voltar com escolta.",
+      "icon": "feather"
+    },
+    {
+      "id": 9,
+      "title": "Reservas sombrias",
+      "description": "Preparação para ampliar sua escolta.",
+      "icon": "coal"
+    },
+    {
+      "id": 10,
+      "title": "Metamorfose",
+      "description": "Voo livre consome 1 MP/s. Reative sem custo para voltar e convocar morcegos que absorvem dano.",
+      "icon": "bat_spawn_egg"
+    },
+    {
+      "id": 11,
+      "title": "Legião crescente",
+      "description": "Dois morcegos adicionais protegem você.",
+      "icon": "phantom_membrane"
+    },
+    {
+      "id": 12,
+      "title": "Carne das sombras",
+      "description": "Cada morcego suporta dois pontos de dano adicionais.",
+      "icon": "leather"
+    },
+    {
+      "id": 13,
+      "title": "Guarda noturna",
+      "description": "Escolta permanece mais quatro segundos.",
+      "icon": "clock"
+    },
+    {
+      "id": 14,
+      "title": "Afinidade crepuscular",
+      "description": "Prepare-se para enxergar a trilha de sangue.",
+      "icon": "red_dye"
+    },
+    {
+      "id": 15,
+      "title": "Crepúsculo menor",
+      "description": "Força, velocidade e pressa; atravessa folhas, mas recebe mais dano físico.",
+      "icon": "amethyst_shard"
+    },
+    {
+      "id": 16,
+      "title": "Olhar carmesim",
+      "description": "Preparação para o domínio do Twilight.",
+      "icon": "spider_eye"
+    },
+    {
+      "id": 17,
+      "title": "Twilight",
+      "description": "Fortalece atributos, atravessa folhas e bloqueia feitiços e poções. Recebe +25% de dano. Trilhas de sangue guiam e aceleram.",
+      "icon": "ender_eye"
+    },
+    {
+      "id": 18,
+      "title": "Caçador veloz",
+      "description": "Twilight concede Velocidade II.",
+      "icon": "sugar"
+    },
+    {
+      "id": 19,
+      "title": "Mãos vorazes",
+      "description": "Twilight concede Pressa II.",
+      "icon": "golden_pickaxe"
+    },
+    {
+      "id": 20,
+      "title": "Trilha da caça",
+      "description": "Seguir sangue concede mais velocidade.",
+      "icon": "redstone_block"
+    },
+    {
+      "id": 21,
+      "title": "Preparação: Sede de Sangue",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 22,
+      "title": "Domínio: Sede de Sangue",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 23,
+      "title": "Potência I",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 24,
+      "title": "Persistência I",
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock"
+    },
+    {
+      "id": 25,
+      "title": "Eficiência I",
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli"
+    },
+    {
+      "id": 26,
+      "title": "Recuperação I",
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard"
+    },
+    {
+      "id": 27,
+      "title": "Potência II",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 28,
+      "title": "Persistência II",
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock"
+    },
+    {
+      "id": 29,
+      "title": "Eficiência II",
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli"
+    },
+    {
+      "id": 30,
+      "title": "Recuperação II",
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard"
+    },
+    {
+      "id": 31,
+      "title": "Preparação: Metamorfose",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 32,
+      "title": "Domínio: Metamorfose",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 33,
+      "title": "Potência I",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 34,
+      "title": "Persistência I",
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock"
+    },
+    {
+      "id": 35,
+      "title": "Eficiência I",
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli"
+    },
+    {
+      "id": 36,
+      "title": "Recuperação I",
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard"
+    },
+    {
+      "id": 37,
+      "title": "Potência II",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 38,
+      "title": "Persistência II",
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock"
+    },
+    {
+      "id": 39,
+      "title": "Eficiência II",
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli"
+    },
+    {
+      "id": 40,
+      "title": "Recuperação II",
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard"
+    },
+    {
+      "id": 41,
+      "title": "Preparação: Twilight",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 42,
+      "title": "Domínio: Twilight",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 43,
+      "title": "Potência I",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 44,
+      "title": "Persistência I",
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock"
+    },
+    {
+      "id": 45,
+      "title": "Eficiência I",
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli"
+    },
+    {
+      "id": 46,
+      "title": "Recuperação I",
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard"
+    },
+    {
+      "id": 47,
+      "title": "Potência II",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 48,
+      "title": "Persistência II",
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock"
+    },
+    {
+      "id": 49,
+      "title": "Eficiência II",
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli"
+    },
+    {
+      "id": 50,
+      "title": "Recuperação II",
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard"
+    }
+  ]
+}

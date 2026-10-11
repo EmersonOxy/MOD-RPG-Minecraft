@@ -1,4 +1,4 @@
-# Oxy RPG 0.41.1
+# Oxy RPG 0.42.0
 
 Mod RPG para Minecraft **1.21.10**, NeoForge **21.10.64**, JDK **21**.
 
@@ -17,6 +17,8 @@ A 0.37 acrescenta **R > Debug**, liberação total de skills, níveis ajustávei
 A 0.38 acrescenta sangue com marcas temporárias nas superfícies, fumaça em impactos/explosões/decolagem e partículas de golpes fortes. Controles individuais, intensidade e duração em Animações e efeitos. [Efeitos, limites e validação](docs/PARTICULAS_038.md).
 
 A 0.39 amplia/anima números e textos, torna sangue proporcional ao dano, remove fumaça de golpes comuns, estabiliza a camada do minimapa e separa lançamento/voo do Aviário com freio aéreo em pé. [Correções e validação](docs/CORRECOES_039.md). [Opções externas de animação pesquisadas, sem instalação](docs/ANIMACOES_EXTERNAS_039.md).
+
+A 0.42 adiciona Vampiresco, cores de dano por condição, HUD compacto das skills, folhas/vento, ondulações sobre água e vegetação reativa. Sangramento das passivas do Arqueiro removido. [Implementação, referências e limites](docs/VAMPIRESCO_AMBIENTE_042.md).
 
 A 0.41 adiciona sangramento persistente, bandagens para estancar, chances por arma e instala Fresh Animations original com EMF/ETF na instância local. [Funcionamento e versões](docs/SANGRAMENTO_ANIMACOES_041.md).
 

@@ -23,6 +23,7 @@ public final class ClassJourney {
             case AVIARIO->new String[]{"Realize 3 decolagens.","Use a descida de Peso pena em 3 saltos.","Acerte mobs com 3 Impactos Meteoro."}[stage];
             case ILUSIONISTA->new String[]{"Use Mímico em 3 alvos.","Suspenda 3 inimigos.","Use Corpo de Eclipse 3 vezes."}[stage];
             case HIDROMANTE->new String[]{"Faça 3 impulsos aquáticos.","Acerte 3 jatos em mobs.","Recupere vida com Sobre-água 3 vezes."}[stage];
+            case VAMPIRESCO->new String[]{"Ative Sede de Sangue 3 vezes após perder vida.","Assuma a forma de morcego 3 vezes.","Ative Twilight 3 vezes."}[stage];
             case PIROMANTE->new String[]{"Detone 3 sequências de fogos.","Detone 3 grupos de núcleos.","Assuma a forma da Fênix 3 vezes."}[stage];
             case XAMA->new String[]{"Acerte 3 raios da habilidade em mobs.","Restaure vida com a aura em 3 ocasiões.","Lance 3 poções do Especialista."}[stage];
             default->"Escolha uma classe para começar.";

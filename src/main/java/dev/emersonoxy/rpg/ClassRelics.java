@@ -26,11 +26,13 @@ public final class ClassRelics {
         case AVIARIO->"Pluma de Resgate: impulso curto e queda lenta por 3 s.";
         case ILUSIONISTA->"Véu de Espelhos: desorienta inimigos próximos por 3 s.";
         case HIDROMANTE->"Gota Vital: cura na água e concede impulso de nado.";
+        case VAMPIRESCO->"Presa Noturna: a próxima mordida recupera um coração.";
         case PIROMANTE->"Fagulha Guardada: queima inimigos próximos por 3 s.";
         default->"Escolha uma classe.";
     };}
     public static void use(ServerPlayer p){var stack=p.getMainHandItem();if(!weapon(p,stack))stack=p.getOffhandItem();use(p,stack);}
     public static void use(ServerPlayer p,ItemStack stack){
+        if(RpgVampire.bat(p))return;
         var s=RpgAbilities.profile(p);if(s.rpgClass()==RpgClass.NONE||!p.isAlive()||p.isSpectator())return;
         if(RpgSpecialists.intangible(p)){p.displayClientMessage(Component.literal("[Oxy RPG] O enxame não pode usar itens."),true);return;}
         if(!weapon(p,stack)||recovering(p,stack)){p.displayClientMessage(Component.literal("[Oxy RPG] Segure seu item de classe em uma das mãos."),true);return;}
@@ -43,7 +45,7 @@ public final class ClassRelics {
         if(!RpgDebug.cooldownsDisabled(p)){if(RpgDebug.enabled(p))RpgDebug.itemCooldown(p,s.rpgClass(),now+cooldown);else d.putLong(s.rpgClass().name(),now+cooldown);}
         switch(s.rpgClass()){
             case GUERREIRO->{p.addEffect(new MobEffectInstance(MobEffects.RESISTANCE,60,0));for(var m:p.level().getEntitiesOfClass(net.minecraft.world.entity.Mob.class,p.getBoundingBox().inflate(3),RpgAbilities::attackable))m.knockback(.6,p.getX()-m.getX(),p.getZ()-m.getZ());}
-            case MAGO,ARQUEIRO,NECROMANTE->{d.putLong("charged",now+200);d.putInt("charged_class",s.rpgClass().ordinal());}
+            case MAGO,ARQUEIRO,NECROMANTE,VAMPIRESCO->{d.putLong("charged",now+200);d.putInt("charged_class",s.rpgClass().ordinal());}
             case XAMA->{p.removeEffect(MobEffects.POISON);p.removeEffect(MobEffects.WEAKNESS);p.heal(2);}
             case AVIARIO->{p.setDeltaMovement(p.getDeltaMovement().add(0,.45,0));p.hurtMarked=true;p.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING,60,0));}
             case ILUSIONISTA->{for(var m:p.level().getEntitiesOfClass(net.minecraft.world.entity.Mob.class,p.getBoundingBox().inflate(3),RpgAbilities::attackable)){m.addEffect(new MobEffectInstance(MobEffects.SLOWNESS,60,0));m.setTarget(null);}}
@@ -56,7 +58,7 @@ public final class ClassRelics {
     private static boolean weapon(ServerPlayer p,ItemStack stack){return ClassEquipment.gear(stack)&&ClassEquipment.allowed(p,stack)&&ClassEquipment.identity(stack).getStringOr("part","").equals("weapon");}
     public static void damage(LivingDamageEvent.Post e){if(Bleeding.damage(e.getSource()))return;if(e.getNewDamage()<=0||!(e.getSource().getEntity() instanceof ServerPlayer p)||!RpgAbilities.attackable(e.getEntity()))return;
         var d=data(p);long now=p.level().getGameTime();var c=RpgAbilities.profile(p).rpgClass();if(d.getLongOr("charged",0)<=now||d.getIntOr("charged_class",0)!=c.ordinal())return;
-        d.remove("charged");if(c==RpgClass.MAGO)e.getEntity().addEffect(new MobEffectInstance(MobEffects.SLOWNESS,60,1));else if(c==RpgClass.ARQUEIRO)e.getEntity().addEffect(new MobEffectInstance(MobEffects.GLOWING,100,0));else if(c==RpgClass.NECROMANTE)p.heal(2);
+        d.remove("charged");if(c==RpgClass.MAGO)e.getEntity().addEffect(new MobEffectInstance(MobEffects.SLOWNESS,60,1));else if(c==RpgClass.ARQUEIRO)e.getEntity().addEffect(new MobEffectInstance(MobEffects.GLOWING,100,0));else if(c==RpgClass.NECROMANTE||c==RpgClass.VAMPIRESCO)p.heal(2);
     }
     public static boolean recovering(ServerPlayer p,ItemStack stack){if(RpgDebug.cooldownsDisabled(p)||!ClassEquipment.gear(stack))return false;int id=ClassEquipment.identity(stack).getIntOr("class",0);return id>0&&id<RpgClass.values().length&&data(p).getLongOr("death_"+RpgClass.values()[id].name(),0)>p.level().getGameTime();}
     public static void attack(net.neoforged.neoforge.event.entity.player.AttackEntityEvent e){if(e.getEntity() instanceof ServerPlayer p&&recovering(p,p.getMainHandItem())){e.setCanceled(true);p.displayClientMessage(Component.literal("[Oxy RPG] O item ainda está se recuperando da morte."),true);}}

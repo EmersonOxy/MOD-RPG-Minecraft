@@ -27,6 +27,7 @@ public final class CombatParticles {
         var target=event.getEntity();var source=event.getSource();float damage=event.getNewDamage();
         if(!(target.level() instanceof ServerLevel level)||!(target instanceof Player||target instanceof Mob)||!Float.isFinite(damage)||damage<=0)return;
         if(source.getEntity()==null&&!source.is(DamageTypeTags.IS_EXPLOSION)&&!source.is(DamageTypeTags.IS_FALL))return;
+        RpgVampire.trail(level,target.position());
         Vec3 at=target.position().add(0,target.getBbHeight()*.55,0);
         var origin=source.getSourcePosition();Vec3 direction=origin==null?Vec3.ZERO:at.subtract(origin).normalize();
         PacketDistributor.sendToPlayersNear(level,null,at.x,at.y,at.z,48,

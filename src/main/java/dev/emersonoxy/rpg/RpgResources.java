@@ -54,8 +54,10 @@ public final class RpgResources {
     }
     public static int cost(RpgProfile profile,int slot,boolean extra){return (int)Math.ceil(baseCost(profile,slot,extra)*RpgContent.manaMultiplier(profile.rpgClass())*RpgConfig.value(RpgConfig.MANA_COST,1)*Math.max(.4,1-.03*SkillTree.bonus(profile.skills(),2)));}
     private static int baseCost(RpgProfile profile,int slot,boolean extra){
+        if(extra&&profile.rpgClass()==RpgClass.VAMPIRESCO)return 0;
         if(extra)return profile.rpgClass()==RpgClass.AVIARIO?8:profile.rpgClass()==RpgClass.PIROMANTE&&slot==1?10:4;
         return switch(profile.rpgClass()){
+            case VAMPIRESCO->profile.mainUnlocked(slot)?new int[]{18,24,30}[slot]:new int[]{10,14,16}[slot];
             case MAGO->profile.mainUnlocked(slot)?new int[]{20,30,35}[slot]:new int[]{8,8,10}[slot];
             case GUERREIRO->slot==0&&!profile.mainUnlocked(0)?0:new int[]{12,20,25}[slot];
             case ARQUEIRO->profile.mainUnlocked(slot)?new int[]{12,20,15}[slot]:new int[]{5,8,5}[slot];

@@ -6,7 +6,7 @@ import net.minecraft.client.gui.GuiGraphics;
 /** Original vector pictograms; consistent strokes at every GUI scale. */
 public final class SkillGlyphs {
     private SkillGlyphs(){}
-    private static void line(GuiGraphics g,int x,int y,int xx,int yy,int color){int dx=Math.abs(xx-x),dy=-Math.abs(yy-y),sx=x<xx?1:-1,sy=y<yy?1:-1,e=dx+dy;for(;;){g.fill(x,y,x+2,y+2,color);if(x==xx&&y==yy)break;int n=2*e;if(n>=dy){e+=dy;x+=sx;}if(n<=dx){e+=dx;y+=sy;}}}
+    private static void line(GuiGraphics g,int x,int y,int xx,int yy,int color){int dx=Math.abs(xx-x),dy=-Math.abs(yy-y),sx=x<xx?1:-1,sy=y<yy?1:-1,e=dx+dy;for(;;){g.fill(x,y,x+1,y+1,color);if(x==xx&&y==yy)break;int n=2*e;if(n>=dy){e+=dy;x+=sx;}if(n<=dx){e+=dx;y+=sy;}}}
     private static void ring(GuiGraphics g,int x,int y,int radius,int c){for(int i=0;i<16;i++){double a=i*Math.PI/8,b=(i+1)*Math.PI/8;line(g,x+(int)Math.round(Math.cos(a)*radius),y+(int)Math.round(Math.sin(a)*radius),x+(int)Math.round(Math.cos(b)*radius),y+(int)Math.round(Math.sin(b)*radius),c);}}
     private static void wing(GuiGraphics g,int c){line(g,3,5,11,11,c);line(g,11,11,21,5,c);for(int i=0;i<4;i++){line(g,3+i*2,5+i,5+i*2,13+i,c);line(g,21-i*2,5+i,19-i*2,13+i,c);}line(g,11,11,12,20,c);}
     private static void flame(GuiGraphics g,int c){line(g,12,2,7,10,c);line(g,7,10,4,9,c);line(g,4,9,5,17,c);line(g,5,17,12,21,c);line(g,12,21,19,17,c);line(g,19,17,17,8,c);line(g,17,8,13,13,c);line(g,13,13,12,2,c);}
@@ -28,6 +28,7 @@ public final class SkillGlyphs {
             case ILUSIONISTA->{if(slot==0){eye(g,color);line(g,5,19,19,19,color);}else if(slot==1){ring(g,12,15,5,color);line(g,12,9,12,2,color);line(g,7,6,12,2,color);line(g,17,6,12,2,color);}else{wing(g,color);ring(g,12,12,10,color);}}
             case HIDROMANTE->{if(slot==0){waves(g,color);line(g,5,2,19,2,color);}else if(slot==1){arrow(g,color);line(g,2,7,8,7,color);}else{drop(g,color);line(g,2,20,21,20,color);}}
             case PIROMANTE->{if(slot==0)spark(g,color);else if(slot==1){flame(g,color);ring(g,12,16,3,color);}else{wing(g,color);flame(g,color);}}
+            case VAMPIRESCO->{if(slot==0){drop(g,color);line(g,6,4,9,10,color);line(g,18,4,15,10,color);}else if(slot==1){wing(g,color);line(g,10,9,12,4,color);line(g,12,4,14,9,color);}else{ring(g,12,12,9,color);line(g,6,6,7,14,color);line(g,7,14,16,20,color);}}
             default->spark(g,color);
         }
         g.pose().popMatrix();

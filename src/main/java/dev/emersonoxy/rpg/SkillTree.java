@@ -37,7 +37,7 @@ public final class SkillTree {
     public static List<Node> defaults(RpgClass type){return TREES.computeIfAbsent(type,SkillTree::createNodes);}
     private static List<Node> createNodes(RpgClass type) {
         String[][] data = switch (type) {
-            case ILUSIONISTA,HIDROMANTE,PIROMANTE -> SpecialistTrees.nodes(type);
+            case ILUSIONISTA,HIDROMANTE,PIROMANTE,VAMPIRESCO -> SpecialistTrees.nodes(type);
             case MAGO -> new String[][] {
                 {"Afinidade glacial","Frio recebido -10%; dano mágico contra alvos gelados +10%.","snowball"},
                 {"Toque gelado","Lança um fragmento de gelo fraco; Lentidão II por 3 s.","ice"},
@@ -100,12 +100,12 @@ public final class SkillTree {
                 {"Névoa densa","Raio da fumaça +0,5 bloco.","campfire"},
                 {"Ataque das sombras","Primeiro ataque saindo da furtividade causa +75% de dano.","ender_eye"},
                 {"Agilidade","Velocidade de movimento +3%.","sugar"},
-                {"Ferida leve","Ataques pelas costas abrem feridas leves. Libera a arrancada inicial.","flint"},
-                {"Corte profundo","Feridas pelas costas causam mais dano por segundo.","iron_sword"},
-                {"Assassino","dash de 5 blocos, velocidade e dano físico dobrado por 8 s. Ataques causam sangramento e lentidão. Recarga 45 s.","diamond_sword"},
+                {"Ataque furtivo","Desbloqueia a arrancada inicial, preparando ataques físicos.","flint"},
+                {"Passo preciso","Alcance da arrancada +0,5 bloco.","iron_sword"},
+                {"Assassino","dash de 5 blocos, velocidade e dano físico dobrado por 8 s. Melhora o dano físico durante a arrancada. Recarga 45 s.","diamond_sword"},
                 {"Passo longo","Dash +1 bloco.","rabbit_foot"},
                 {"Execução","Multiplicador de dano da principal +10%.","netherite_axe"},
-                {"Passo duplo","Um segundo dash durante a ativação; fortalece sangramento.","feather"}
+                {"Passo duplo","Um segundo dash durante a ativação; prolonga a mobilidade.","feather"}
             };
             case NECROMANTE -> new String[][] {
                 {"Pacto sombrio","Dano das invocações +5%.","fermented_spider_eye"},

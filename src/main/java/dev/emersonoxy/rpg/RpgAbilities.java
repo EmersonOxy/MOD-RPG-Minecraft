@@ -51,7 +51,7 @@ public final class RpgAbilities {
     private static Active active(ServerPlayer p) { return ACTIVE.computeIfAbsent(p.getUUID(), id -> new Active()); }
     public static void updateProfile(ServerPlayer p, RpgProfile profile) { PROFILES.put(p.getUUID(), profile); }
     static RpgProfile profile(ServerPlayer p) { return PROFILES.getOrDefault(p.getUUID(), RpgProfile.NEW); }
-    public static boolean attackable(LivingEntity e) { return e instanceof Mob && e.isAlive()&&!RpgNecromancer.isSummon(e)&&!RpgSpecialists.temporary(e); }
+    public static boolean attackable(LivingEntity e) { return e instanceof Mob && e.isAlive()&&!RpgNecromancer.isSummon(e)&&!RpgSpecialists.temporary(e)&&!RpgVampire.proxy(e); }
     private static boolean enemy(LivingEntity e){return attackable(e);}
     private static List<LivingEntity> near(ServerLevel level, Vec3 center, double radius) {
         return level.getEntitiesOfClass(LivingEntity.class, new AABB(center,center).inflate(radius),
@@ -63,6 +63,7 @@ public final class RpgAbilities {
     }
     public static void activate(ServerPlayer p, RpgProfile s, int slot, int direction) {
         if(s.rpgClass()==RpgClass.AVIARIO){RpgAviary.activate(p,s,slot);return;}
+        if(s.rpgClass()==RpgClass.VAMPIRESCO){RpgVampire.activate(p,s,slot);return;}
         if(RpgSpecialists.handles(s.rpgClass())){RpgSpecialists.activate(p,s,slot);return;}
         Active a = active(p);
         if (extraDash(p,slot)) { a.dashes--; dash(p,a.cast[2],direction); return; }
@@ -144,6 +145,7 @@ public final class RpgAbilities {
         Vec3 dir = p.getLookAngle().multiply(1,0,1).normalize().yRot((float)(-Math.floorMod(direction,8)*Math.PI/4));
         if(dir.lengthSqr()<.01) dir = new Vec3(0,0,1).yRot((float)Math.toRadians(-p.getYRot()));
         double distance = s.mainUnlocked(2)?5+(s.hasSkill(18)?1:0):2;
+        if(s.hasSkill(16))distance+=.5;
         Vec3 start = p.position(); double safe = 0;
         for(double step=.25;step<=distance;step+=.25) {
             if(!p.level().noCollision(p,p.getBoundingBox().move(dir.scale(step)))) break;
@@ -329,10 +331,7 @@ public final class RpgAbilities {
             }
             if(s.rpgClass()==RpgClass.ARQUEIRO) {
                 if(source.getDirectEntity() instanceof AbstractArrow&&s.hasSkill(1))target.addEffect(new MobEffectInstance(MobEffects.GLOWING,s.hasSkill(2)?60:40,0));
-                boolean back=target.getLookAngle().dot(p.position().subtract(target.position()).normalize())<-.3;
-                boolean assassin=a.until[2]>time&&a.cast[2]!=null&&a.cast[2].mainUnlocked(2);
-                if((source.getDirectEntity() instanceof AbstractArrow||source.getDirectEntity()==p&&(p.getMainHandItem().is(net.minecraft.tags.ItemTags.SWORDS)||p.getMainHandItem().is(net.minecraft.tags.ItemTags.AXES)))&&((back&&s.hasSkill(15))||assassin)){
-                    Bleeding.apply(target,p,assassin&&s.hasSkill(20)?2:assassin||s.hasSkill(16)?1:0);if(assassin)target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS,60,0));}
+
                 if(a.ghost){ClassJourney.advance(p,1,1);stopGhost(p,a);}
             }
         }
@@ -407,6 +406,7 @@ public final class RpgAbilities {
         syncStatus(p);
     }
     public static void syncStatus(ServerPlayer p) {
+        if(profile(p).rpgClass()==RpgClass.VAMPIRESCO){RpgVampire.syncStatus(p);return;}
         var a=ACTIVE.get(p.getUUID());int[] remaining=new int[3],total=new int[3],phase=new int[3];
         if(a!=null)for(int i=0;i<3;i++){remaining[i]=(int)Math.max(0,a.until[i]-now(p));total[i]=Math.max(1,a.total[i]);phase[i]=remaining[i]>0?a.phase[i]:0;}
         if(profile(p).rpgClass()==RpgClass.NECROMANTE)for(int i=0;i<3;i++){remaining[i]=RpgNecromancer.remaining(p,i);total[i]=i==0?80:Math.max(1,profile(p).abilityDuration(i));phase[i]=remaining[i]!=0?RpgNecromancer.phase(p,i):0;if(phase[i]==1)total[i]=120;}
@@ -416,7 +416,7 @@ public final class RpgAbilities {
         PacketDistributor.sendToPlayer(p,new RpgNetwork.AbilityStatus(remaining[0],remaining[1],remaining[2],total[0],total[1],total[2],phase[0],phase[1],phase[2]));
     }
     public static void cleanse(LivingEntity e){FROST.remove(e.getUUID());e.setTicksFrozen(0);RpgNecromancer.cleanse(e);}
-    public static void clear(ServerPlayer p){RpgSpecialists.clear(p);RpgAviary.clear(p);RpgShaman.clear(p);RpgNecromancer.clear(p);var a=ACTIVE.remove(p.getUUID());if(a!=null){stopGhost(p,a);clearCracks(p,a);}stats(p,RpgProfile.NEW,null);}
+    public static void clear(ServerPlayer p){RpgVampire.clear(p);RpgSpecialists.clear(p);RpgAviary.clear(p);RpgShaman.clear(p);RpgNecromancer.clear(p);var a=ACTIVE.remove(p.getUUID());if(a!=null){stopGhost(p,a);clearCracks(p,a);}stats(p,RpgProfile.NEW,null);}
     public static void logout(PlayerEvent.PlayerLoggedOutEvent e){if(e.getEntity() instanceof ServerPlayer p){clear(p);PROFILES.remove(p.getUUID());FROST.entrySet().removeIf(x->x.getValue().owner.equals(p.getUUID()));}}
     public static void stop(ServerStoppedEvent e){ACTIVE.clear();PROFILES.clear();FROST.clear();}
 }

@@ -27,6 +27,10 @@ public final class OxyRpg {
         bus.addListener(RpgContent::configReloaded);
         bus.addListener(RpgNetwork::register);
         VillageLoot.register(bus);
+        NeoForge.EVENT_BUS.addListener(RpgVampire::tick);NeoForge.EVENT_BUS.addListener(RpgVampire::damage);NeoForge.EVENT_BUS.addListener(RpgVampire::hit);
+        NeoForge.EVENT_BUS.addListener(EventPriority.HIGH,RpgVampire::incoming);NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST,RpgVampire::shield);NeoForge.EVENT_BUS.addListener(RpgVampire::applicable);NeoForge.EVENT_BUS.addListener(RpgVampire::useItem);
+        NeoForge.EVENT_BUS.addListener(RpgVampire::attack);NeoForge.EVENT_BUS.addListener(RpgVampire::rightItem);NeoForge.EVENT_BUS.addListener(RpgVampire::rightBlock);NeoForge.EVENT_BUS.addListener(RpgVampire::interact);NeoForge.EVENT_BUS.addListener(RpgVampire::specific);NeoForge.EVENT_BUS.addListener(RpgVampire::breaking);
+        NeoForge.EVENT_BUS.addListener(RpgVampire::tracking);NeoForge.EVENT_BUS.addListener(RpgVampire::logout);NeoForge.EVENT_BUS.addListener(RpgVampire::stop);
         NeoForge.EVENT_BUS.addListener(net.neoforged.bus.api.EventPriority.HIGH,Bleeding::interact);NeoForge.EVENT_BUS.addListener(Bleeding::hit);NeoForge.EVENT_BUS.addListener(Bleeding::removed);
         NeoForge.EVENT_BUS.addListener(AdventureItems::fall);
         NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST,CombatTactics::join);
@@ -165,10 +169,11 @@ public final class OxyRpg {
     static void menuAction(ServerPlayer player, int requested, int direction) {
         switch (requested) {
             case 0 -> {sync(player, "");RpgEvasion.sync(player);}
-            case 12 -> {if(!RpgSpecialists.intangible(player))RpgEvasion.use(player,direction);}
+            case 12 -> {if(!RpgSpecialists.intangible(player)&&!RpgVampire.bat(player))RpgEvasion.use(player,direction);}
             case 13 -> action(player,"classe",RpgClass.ILUSIONISTA);
             case 14 -> action(player,"classe",RpgClass.HIDROMANTE);
             case 15 -> action(player,"classe",RpgClass.PIROMANTE);
+            case 17 -> action(player,"classe",RpgClass.VAMPIRESCO);
             case 16 -> {}
             case 1 -> castAbility(player, 0, direction);
             case 5 -> castAbility(player, 1, direction);
@@ -214,7 +219,7 @@ public final class OxyRpg {
             RpgProfile profile = store.load(player.getUUID());
             if(!command.equals("classe"))profile=RpgDebug.effective(player,profile);
             switch (command) {
-                case "classes" -> tell(player, "Escolha sua classe no menu R, ou /rpg classe <nome>. Classes: guerreiro, mago, arqueiro, necromante, xama, aviario, ilusionista, hidromante e piromante. A escolha é definitiva neste mundo.");
+                case "classes" -> tell(player, "Escolha sua classe no menu R, ou /rpg classe <nome>. Classes: guerreiro, mago, arqueiro, necromante, xama, aviario, ilusionista, hidromante, piromante e vampiresco. A escolha é definitiva neste mundo.");
                 case "classe" -> {
                     if(RpgDebug.testing(player))return testMode(player,selected,false);
                     if(RpgDebug.debugging(player))return DebugControls.choose(player,selected);
@@ -248,8 +253,8 @@ public final class OxyRpg {
             var real = store.load(player.getUUID());
             var effective = RpgDebug.effective(player, real);
             RpgAbilities.updateProfile(player, effective);
-            boolean debug=RpgDebug.cooldownsDisabled(player), extra = RpgAbilities.extraDash(player, slot)||RpgAviary.boostAvailable(player,slot)||RpgSpecialists.extra(player,slot);
-            RpgSpecialists.validate(player,effective,slot);
+            boolean debug=RpgDebug.cooldownsDisabled(player), extra = RpgAbilities.extraDash(player, slot)||RpgAviary.boostAvailable(player,slot)||RpgSpecialists.extra(player,slot)||RpgVampire.extra(player,slot);
+            RpgVampire.validate(player,slot);RpgSpecialists.validate(player,effective,slot);
             if(effective.rpgClass()==RpgClass.AVIARIO)RpgAviary.validate(player,slot);
             if (!effective.canUseAbility(slot)) { tell(player, "Aprenda o efeito inicial desse ramo na árvore de skills."); return 0; }
             if(effective.rpgClass()==RpgClass.XAMA&&slot==2&&(!player.getMainHandItem().isEmpty()||!player.getOffhandItem().isEmpty())){tell(player,"Especialista exige ambas as mãos vazias.");return 0;}

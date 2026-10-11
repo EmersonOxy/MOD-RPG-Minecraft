@@ -14,7 +14,9 @@
     "VillagerTradeInvoker",
     "VillagerConversationMixin",
     "DebugItemCooldownMixin",
-    "AviaryPoseMixin"
+    "AviaryPoseMixin",
+    "PoisonDamageMixin",
+    "VampirePotionMixin"
   ],
   "client": [
     "ShoulderCameraMixin",
@@ -32,7 +34,8 @@
     "MerchantThemeMixin",
     "FreeMovementSprintMixin",
     "ClassCastAnimationMixin",
-    "AviaryCrouchMixin"
+    "AviaryCrouchMixin",
+    "VegetationModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

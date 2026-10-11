@@ -126,23 +126,23 @@
       "y": 54
     },
     {
-      "description": "Ataques pelas costas causam sangramento fraco por 2 s; Libera a arrancada inicial.",
+      "description": "Desbloqueia a arrancada inicial, preparando ataques físicos.",
       "icon": "flint",
       "id": 15,
-      "title": "Ferida leve",
+      "title": "Ataque furtivo",
       "x": 86,
       "y": 98
     },
     {
-      "description": "Sangramento inicial +1 s.",
+      "description": "Alcance da arrancada +0,5 bloco.",
       "icon": "iron_sword",
       "id": 16,
-      "title": "Corte profundo",
+      "title": "Passo preciso",
       "x": 125,
       "y": 143
     },
     {
-      "description": "dash de 5 blocos, velocidade e dano físico dobrado por 8 s. Ataques causam sangramento e lentidão. Recarga 45 s.",
+      "description": "dash de 5 blocos, velocidade e dano físico dobrado por 8 s. Melhora o dano físico durante a arrancada. Recarga 45 s.",
       "icon": "diamond_sword",
       "id": 17,
       "title": "Assassino",
@@ -166,7 +166,7 @@
       "y": 390
     },
     {
-      "description": "Um segundo dash durante a ativação; fortalece sangramento.",
+      "description": "Um segundo dash durante a ativação; prolonga a mobilidade.",
       "icon": "feather",
       "id": 20,
       "title": "Passo duplo",

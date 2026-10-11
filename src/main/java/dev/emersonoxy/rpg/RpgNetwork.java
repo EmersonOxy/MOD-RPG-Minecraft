@@ -30,6 +30,11 @@ public final class RpgNetwork {
         public static final StreamCodec<RegistryFriendlyByteBuf,ImpactFx> CODEC=StreamCodec.of((b,v)->{b.writeDouble(v.x);b.writeDouble(v.y);b.writeDouble(v.z);b.writeFloat(v.radius);b.writeVarInt(v.kind);},b->new ImpactFx(b.readDouble(),b.readDouble(),b.readDouble(),b.readFloat(),b.readVarInt()));
         @Override public Type<ImpactFx> type(){return TYPE;}
     }
+    public record VampireState(boolean bat,int twilight,int bats) implements CustomPacketPayload {
+        public static final Type<VampireState> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath("oxyrpg","vampire"));
+        public static final StreamCodec<RegistryFriendlyByteBuf,VampireState> CODEC=StreamCodec.of((b,v)->{b.writeBoolean(v.bat);b.writeVarInt(v.twilight);b.writeVarInt(v.bats);},b->new VampireState(b.readBoolean(),b.readVarInt(),b.readVarInt()));
+        @Override public Type<VampireState> type(){return TYPE;}
+    }
     public record SpecialState(int phase,int ticks,float heat,int overheated,boolean waterwalk) implements CustomPacketPayload {
         public static final Type<SpecialState> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath("oxyrpg","special"));
         public static final StreamCodec<RegistryFriendlyByteBuf,SpecialState> CODEC=StreamCodec.of((b,v)->{b.writeVarInt(v.phase);b.writeVarInt(v.ticks);b.writeFloat(v.heat);b.writeVarInt(v.overheated);b.writeBoolean(v.waterwalk);},b->new SpecialState(b.readVarInt(),b.readVarInt(),b.readFloat(),b.readVarInt(),b.readBoolean()));
@@ -62,9 +67,10 @@ public final class RpgNetwork {
         public static final StreamCodec<RegistryFriendlyByteBuf,EliteWarning> CODEC=StreamCodec.of((b,v)->{b.writeVarInt(v.entity);b.writeDouble(v.x);b.writeDouble(v.y);b.writeDouble(v.z);b.writeFloat(v.radius);b.writeVarInt(v.ticks);b.writeVarInt(v.kind);},b->new EliteWarning(b.readVarInt(),b.readDouble(),b.readDouble(),b.readDouble(),b.readFloat(),b.readVarInt(),b.readVarInt()));
         @Override public Type<EliteWarning> type(){return TYPE;}
     }
-    public record DamageNumber(int entity,double x,double y,double z,float damage,boolean critical,boolean blocked) implements CustomPacketPayload {
+    public record DamageNumber(int entity,double x,double y,double z,float damage,boolean critical,boolean blocked,int color) implements CustomPacketPayload {
+        public DamageNumber(int entity,double x,double y,double z,float damage,boolean critical,boolean blocked){this(entity,x,y,z,damage,critical,blocked,0);}
         public static final Type<DamageNumber> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath("oxyrpg","damage_number"));
-        public static final StreamCodec<RegistryFriendlyByteBuf,DamageNumber> CODEC=StreamCodec.of((b,v)->{b.writeVarInt(v.entity);b.writeDouble(v.x);b.writeDouble(v.y);b.writeDouble(v.z);b.writeFloat(v.damage);b.writeBoolean(v.critical);b.writeBoolean(v.blocked);},b->new DamageNumber(b.readVarInt(),b.readDouble(),b.readDouble(),b.readDouble(),b.readFloat(),b.readBoolean(),b.readBoolean()));
+        public static final StreamCodec<RegistryFriendlyByteBuf,DamageNumber> CODEC=StreamCodec.of((b,v)->{b.writeVarInt(v.entity);b.writeDouble(v.x);b.writeDouble(v.y);b.writeDouble(v.z);b.writeFloat(v.damage);b.writeBoolean(v.critical);b.writeBoolean(v.blocked);b.writeInt(v.color);},b->new DamageNumber(b.readVarInt(),b.readDouble(),b.readDouble(),b.readDouble(),b.readFloat(),b.readBoolean(),b.readBoolean(),b.readInt()));
         @Override public Type<DamageNumber> type(){return TYPE;}
     }
     public record JourneyState(int rpgClass,int stage,int progress) implements CustomPacketPayload {
@@ -162,11 +168,12 @@ public final class RpgNetwork {
         @Override public Type<EliteInfo> type(){return TYPE;}
     }
     public static void register(RegisterPayloadHandlersEvent event) {
-        var registrar = event.registrar("28");
+        var registrar = event.registrar("29");
         registrar.playToClient(BloodFx.TYPE,BloodFx.CODEC);
         registrar.playToClient(ImpactFx.TYPE,ImpactFx.CODEC);
         registrar.playToClient(CastFx.TYPE,CastFx.CODEC);
         registrar.playToClient(DebugState.TYPE,DebugState.CODEC);
+        registrar.playToClient(VampireState.TYPE,VampireState.CODEC);
         registrar.playToClient(SpecialState.TYPE,SpecialState.CODEC);
         registrar.playToClient(ContentState.TYPE,ContentState.CODEC);
         registrar.playToClient(EvasionState.TYPE,EvasionState.CODEC);

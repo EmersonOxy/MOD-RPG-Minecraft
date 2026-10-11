@@ -56,6 +56,7 @@ public final class Bleeding {
             if(!entity.isAlive()||entity instanceof Player p&&(p.isCreative()||p.isSpectator()))return true;
             int rank=Math.max(0,Math.min(2,amplifier));
             if(entity.tickCount%4==0){
+                if(entity.tickCount%20==0)RpgVampire.trail(level,entity.position());
                 double spread=Math.max(.08,Math.min(.3,entity.getBbWidth()*.3));
                 for(int i=0;i<=rank;i++){
                     double x=entity.getX()+(level.random.nextDouble()-.5)*spread*2,z=entity.getZ()+(level.random.nextDouble()-.5)*spread*2;

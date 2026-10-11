@@ -1,8 +1,12 @@
-# Estado do Oxy RPG — revisão 0.41.1
+# Estado do Oxy RPG — revisão 0.42.0
 
-Revisão registrada em 11/10/2026. Minecraft 1.21.10, NeoForge 21.10.64, JDK 21, protocolo de rede 28. Este registro substitui descrições antigas do README. Os documentos numerados são históricos de cada entrega.
+Revisão registrada em 11/10/2026. Minecraft 1.21.10, NeoForge 21.10.64, JDK 21, protocolo de rede 29. Este registro substitui descrições antigas do README. Os documentos numerados são históricos de cada entrega.
 
 A revisão inventariou fontes Java, registros, eventos, mixins, telas, recursos JSON, geração de dados, integração e persistência. Código das áreas alteradas foi inspecionado em detalhe. Inventário de arquivos e hashes: [INVENTARIO_CODIGO_040.json](INVENTARIO_CODIGO_040.json). Não equivale a validação integral dentro do jogo nem a auditoria de segurança.
+
+## Entrega 0.42
+
+Vampiresco: vínculos de cura/sangramento, forma de morcego com voo, escolta com vida própria e absorção limitada, Twilight, fraquezas solares e sede. Décima classe integrada às árvores/kit/menus/debug; IDs anteriores preservados. Sangramento do Arqueiro removido. Números distinguem condição por cor, inclusive dano próprio; HUD de skills reduzido. Folhas/vento com tintas de árvores, ondas ao voar sobre água, grama/samambaias reativas sem mudar blocos e folha seca em novos chunks de florestas selecionadas. [Mecânicas, recursos, referências e validação pendente](VAMPIRESCO_AMBIENTE_042.md).
 
 ## Correções 0.41.1
 
@@ -28,7 +32,7 @@ Sangue e marcas transitórias em superfícies, fumaça de impactos/explosões/de
 
 | Sistema | Estado e arquivos principais |
 |---|---|
-| Classes | Nove: Guerreiro, Mago, Arqueiro, Necromante, Xamã, Aviário, Ilusionista, Hidromante e Piromante. Três ramos por classe. RpgClass, RpgAbilities, RpgAviary, RpgNecromancer, RpgShaman, RpgSpecialists. |
+| Classes | Dez: Guerreiro, Mago, Arqueiro, Necromante, Xamã, Aviário, Ilusionista, Hidromante, Piromante e Vampiresco. Três ramos por classe. RpgClass, RpgAbilities, RpgAviary, RpgNecromancer, RpgShaman, RpgSpecialists. |
 | Progressão | Nível 1–100, XP RPG separado do vanilla. 51 nós por classe com posições próprias, preparação, principais e melhorias. RpgProfile, SkillTree, SkillTreeLayouts, SpecialistTrees. |
 | Atributos | 160 nós; distribuição estável por UUID, caminhos conectados, arraste e zoom. AttributeTree, AttributeStats, AttributesScreen, GraphScreen. |
 | Trabalhos e arsenal | Mineração, Agricultura e Arsenal; bloqueios de equipamentos, progressão de uso e lições da classe. Professions, ProfessionStore, EquipmentAccess, ClassJourney. |

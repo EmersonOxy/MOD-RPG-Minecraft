@@ -109,6 +109,7 @@ public final class DynamicHud {
     }
     public static void beforeLayer(RenderGuiLayerEvent.Pre event){
         HudOpacity.end();var part=LAYERS.get(event.getName());
+        if(part==Part.FOOD&&dev.emersonoxy.rpg.EquipmentAccess.clientSelected()==dev.emersonoxy.rpg.RpgClass.VAMPIRESCO){event.setCanceled(true);VampireHud.render(event.getGuiGraphics());return;}
         if(mode()==Mode.HIDDEN&&(event.getName().equals(VanillaGuiLayers.CROSSHAIR)||event.getName().equals(VanillaGuiLayers.BOSS_OVERLAY))){event.setCanceled(true);return;}
         if(part!=null)HudOpacity.begin(alpha(part));
     }

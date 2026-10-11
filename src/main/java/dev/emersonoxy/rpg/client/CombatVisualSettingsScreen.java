@@ -22,6 +22,7 @@ public final class CombatVisualSettingsScreen extends Screen {
         toggle(82,1,"option.oxyrpg.impacts",CombatOptions.impacts,()->CombatOptions.impacts=!CombatOptions.impacts);
         addRenderableWidget(Button.builder(Component.translatable("option.oxyrpg.particle_intensity").append(": "+Math.round(CombatOptions.particleIntensity*100)+"%"),b->{CombatOptions.particleIntensity=CombatOptions.particleIntensity>=1.5?.5:CombatOptions.particleIntensity+.5;CombatOptions.save();rebuildWidgets();}).bounds(x+12,y+row(134),w-24,buttonHeight()).build());
         addRenderableWidget(Button.builder(Component.translatable("option.oxyrpg.blood_duration").append(": "+CombatOptions.bloodMarkSeconds+" s"),b->{int n=CombatOptions.bloodMarkSeconds;CombatOptions.bloodMarkSeconds=n<30?30:n<60?60:n<120?120:15;CombatOptions.save();rebuildWidgets();}).bounds(x+12,y+row(160),w-24,buttonHeight()).build());
+        addRenderableWidget(Button.builder(Component.literal("Ambiente"),b->minecraft.setScreen(new AmbientSettingsScreen(this))).bounds(x+12,y+row(187),w-24,buttonHeight()).build());
         addRenderableWidget(Button.builder(Component.translatable("gui.back"),b->onClose()).bounds(x+12,y+row(213),w-24,buttonHeight()).build());
     }
     private int row(int n){return n*h/244;}
@@ -30,5 +31,5 @@ public final class CombatVisualSettingsScreen extends Screen {
         int columnWidth=(w-30)/2;
         addRenderableWidget(Button.builder(Component.translatable(key).append(": ").append(Component.translatable(value?"options.on":"options.off")),b->{action.run();CombatOptions.save();rebuildWidgets();}).bounds(x+12+column*(columnWidth+6),y+row(offset),columnWidth,buttonHeight()).build());
     }
-    @Override public void render(GuiGraphics g,int mx,int my,float dt){RpgUi.panel(g,x,y,w,h);g.drawCenteredString(font,title,width/2,y+8,RpgUi.GOLD);g.drawCenteredString(font,Component.translatable("option.oxyrpg.particles_hint"),width/2,y+row(188),RpgUi.MUTED);super.render(g,mx,my,dt);}
+    @Override public void render(GuiGraphics g,int mx,int my,float dt){RpgUi.panel(g,x,y,w,h);g.drawCenteredString(font,title,width/2,y+8,RpgUi.GOLD);super.render(g,mx,my,dt);}
 }

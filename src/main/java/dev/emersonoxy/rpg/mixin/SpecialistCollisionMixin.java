@@ -18,6 +18,7 @@ abstract class SpecialistCollisionMixin {
     private void oxyShape(BlockGetter level,BlockPos pos,CollisionContext context,CallbackInfoReturnable<VoxelShape> ci){
         if(!(context instanceof EntityCollisionContext ec)||!(ec.getEntity() instanceof Player p))return;
         var state=(BlockState)(Object)this;
+        if(dev.emersonoxy.rpg.RpgVampire.twilight(p)&&state.is(BlockTags.LEAVES)){ci.setReturnValue(Shapes.empty());return;}
         if(RpgSpecialists.intangible(p)){
             int tier=RpgSpecialists.phaseTier(p);
             var tag=TagKey.create(net.minecraft.core.registries.Registries.BLOCK,net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("oxyrpg",tier>=3?"phase_glass":tier>=2?"phase_barriers":"phase_light"));

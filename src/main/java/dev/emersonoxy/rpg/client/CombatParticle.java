@@ -90,6 +90,7 @@ public final class CombatParticle extends SingleQuadParticle {
             }
         }
         @Override protected Layer getLayer(){return Layer.TRANSLUCENT;}
+        @Override protected int getLightColor(float partial){var p=Minecraft.getInstance().player;return p!=null&&dev.emersonoxy.rpg.RpgVampire.twilight(p)?240:super.getLightColor(partial);}
         @Override public Optional<ParticleLimit> getParticleLimit(){return Optional.empty();}
         @Override public void tick(){
             if(!CombatOptions.blood||!CombatOptions.bloodMarks||Minecraft.getInstance().level!=level||!level.hasChunkAt(support)||age++>=lifetime){remove();return;}

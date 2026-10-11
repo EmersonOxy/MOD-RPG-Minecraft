@@ -29,7 +29,7 @@ public final class DebugScreen extends Screen {
         cooldowns=control(1,120,"Recargas",()->command("cooldowns "+(state()!=null&&state().cooldowns()?"off":"on")));
         attributes=control(0,146,"Atributos",()->command("atributos "+(state()!=null&&state().attributes()?"normais":"maximos")));
         arsenal=control(1,146,"Arsenal",()->command("arsenal "+(state()!=null&&state().arsenal()?"off":"on")));
-        control(0,172,"Trocar de classe",()->{var s=state();if(s!=null){int next=s.rpgClass()%9+1;command("classe "+RpgClass.values()[next].name().toLowerCase(java.util.Locale.ROOT));}});
+        control(0,172,"Trocar de classe",()->{var s=state();if(s!=null){int next=s.rpgClass()%(RpgClass.values().length-1)+1;command("classe "+RpgClass.values()[next].name().toLowerCase(java.util.Locale.ROOT));}});
         control(1,172,"Limpar recargas das skills",()->command("cooldowns limpar"));
         control(0,198,"Maximizar tudo",()->command("tudo"));control(1,198,"Recuperar vida / mana",()->command("recuperar"));
         control(0,224,"Limpar skills temporárias",()->command("skills limpar"));button(1,224,"Voltar",this::onClose);

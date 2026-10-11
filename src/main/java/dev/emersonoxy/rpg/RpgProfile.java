@@ -72,6 +72,7 @@ public record RpgProfile(RpgClass rpgClass, int level, int xp, int kills, long a
             case AVIARIO -> slot==0?(mainUnlocked(0)?300:160)+(hasSkill(2)?40:0)+(hasSkill(4)?80:0)+(hasSkill(6)?(int)(240*level/100.0):0):slot==1?0:600;
             case ILUSIONISTA -> slot==0?(mainUnlocked(0)?240:120):slot==1?(mainUnlocked(1)?100:60):(mainUnlocked(2)?120:60)+(hasSkill(18)?40:0);
             case HIDROMANTE -> slot==0?60:slot==1?(mainUnlocked(1)?80:40):(mainUnlocked(2)?300:120);
+            case VAMPIRESCO -> slot==0?(mainUnlocked(0)?200:120):slot==1?160:(mainUnlocked(2)?240:120);
             case PIROMANTE -> slot==0?200:slot==1?240:(mainUnlocked(2)?180:80)+(hasSkill(18)?60:0);
             case XAMA -> slot==0?(mainUnlocked(0)?300:100)+(hasSkill(4)?60:0):slot==1?(mainUnlocked(1)?200:100)+(hasSkill(9)?40:0)+(hasSkill(13)?100:0):(mainUnlocked(2)?300:160)+(hasSkill(18)?100:0);
             default -> 0;
@@ -80,6 +81,7 @@ public record RpgProfile(RpgClass rpgClass, int level, int xp, int kills, long a
     public int abilityCooldown() { return abilityCooldown(0); }
     public int abilityCooldown(int slot) {return (int)Math.round(baseCooldown(slot)*Math.max(.4,1-.03*SkillTree.bonus(skills,3))*RpgContent.cooldownMultiplier(rpgClass)*RpgConfig.value(RpgConfig.COOLDOWN,1));}
     private int baseCooldown(int slot) {
+        if(rpgClass==RpgClass.VAMPIRESCO)return new int[]{25,35,45}[slot]*20;
         if(rpgClass==RpgClass.AVIARIO)return slot==0?abilityDuration(0)+200:slot==1?0:600;
         if(rpgClass==RpgClass.HIDROMANTE&&slot==0)return 100;
         if(rpgClass==RpgClass.PIROMANTE&&slot==1)return 120;

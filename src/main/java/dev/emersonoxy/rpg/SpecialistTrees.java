@@ -3,6 +3,30 @@ package dev.emersonoxy.rpg;
 final class SpecialistTrees {
     private SpecialistTrees(){}
     static String[][] nodes(RpgClass type){return switch(type){
+        case VAMPIRESCO -> new String[][] {
+            {"Instinto noturno","Passiva: sol fere, dia enfraquece; à noite recebe visão noturna.","redstone"},
+            {"Primeira mordida","Arme um vínculo ao perder vida: seu próximo golpe cura e abre uma ferida.","sweet_berries"},
+            {"Paladar aguçado","Alimentar-se de animais recupera mais sede.","beef"},
+            {"Sede de Sangue","Ao perder vida, marque um alvo com um golpe. Cura imediata e gradual; repetir o golpe paralisa e fortalece o dano.","fermented_spider_eye"},
+            {"Vínculo cruel","Golpes no alvo vinculado recebem mais dano adicional.","iron_sword"},
+            {"Sangue restaurador","Amplia a cura gradual do vínculo.","ghast_tear"},
+            {"Noite eterna","O vínculo paralisa por mais tempo; reduz o dano do sol.","nether_star"},
+            {"Pele de morcego","Metamorfose conserva o controle do voo.","bat_spawn_egg"},
+            {"Asas menores","Transforme-se em morcego: voe sem atacar ou usar itens. Reative para voltar com escolta.","feather"},
+            {"Reservas sombrias","Preparação para ampliar sua escolta.","coal"},
+            {"Metamorfose","Voo livre consome 1 MP/s. Reative sem custo para voltar e convocar morcegos que absorvem dano.","bat_spawn_egg"},
+            {"Legião crescente","Dois morcegos adicionais protegem você.","phantom_membrane"},
+            {"Carne das sombras","Cada morcego suporta dois pontos de dano adicionais.","leather"},
+            {"Guarda noturna","Escolta permanece mais quatro segundos.","clock"},
+            {"Afinidade crepuscular","Prepare-se para enxergar a trilha de sangue.","red_dye"},
+            {"Crepúsculo menor","Força, velocidade e pressa; atravessa folhas, mas recebe mais dano físico.","amethyst_shard"},
+            {"Olhar carmesim","Preparação para o domínio do Twilight.","spider_eye"},
+            {"Twilight","Fortalece atributos, atravessa folhas e bloqueia feitiços e poções. Recebe +25% de dano. Trilhas de sangue guiam e aceleram.","ender_eye"},
+            {"Caçador veloz","Twilight concede Velocidade II.","sugar"},
+            {"Mãos vorazes","Twilight concede Pressa II.","golden_pickaxe"},
+            {"Trilha da caça","Seguir sangue concede mais velocidade.","redstone_block"}
+        };
+
         case ILUSIONISTA -> new String[][]{
             {"Espelhos frágeis","Ataques diretos -20%; ilusões distraem os inimigos.","glass"},
             {"Reflexo vivo","Duas cópias e aparência do alvo por 6 s.","ender_eye"},

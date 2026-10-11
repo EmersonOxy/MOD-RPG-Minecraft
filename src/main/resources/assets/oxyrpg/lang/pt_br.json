@@ -119,5 +119,6 @@
   "effect.oxyrpg.bleeding": "Sangramento",
   "death.attack.oxyrpg.bleeding": "%1$s morreu por sangramento",
   "death.attack.oxyrpg.bleeding.player": "%1$s morreu por sangramento causado por %2$s",
-  "tooltip.oxyrpg.bleeding_weapon": "Sangramento: %s%% de chance · %s dano/s"
+  "tooltip.oxyrpg.bleeding_weapon": "Sangramento: %s%% de chance · %s dano/s",
+  "item.oxyrpg.relic_vampiresco": "Presa Noturna"
 }

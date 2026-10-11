@@ -38,6 +38,7 @@ public final class SkillTreeLayouts {
                 new double[]{(branch==1?-1:1)*(radius*.9+Math.sin(offset)*radius),-radius*.3-radius*radius/2600+Math.cos(offset)*35};
             case ILUSIONISTA -> polar(radius,angle+offset+Math.sin(radius/90)*.3);
             case HIDROMANTE -> polar(radius,angle+offset+Math.sin(radius/140+branch)*.16);
+            case VAMPIRESCO -> branch==0?polar(radius,Math.PI/2+offset):new double[]{(branch==1?-1:1)*(radius*.9+Math.sin(offset)*radius),-radius*.55+Math.sin(radius/125)*55};
             case PIROMANTE -> polar(radius,angle+offset+Math.sin(radius/80+branch)*.18);
             default -> polar(radius,angle+offset);
         };

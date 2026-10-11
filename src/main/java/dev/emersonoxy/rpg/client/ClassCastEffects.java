@@ -25,7 +25,7 @@ public final class ClassCastEffects {
     private record Cast(int entity,int kind,int slot,int duration,long born){}
     public record Pose(int kind,int slot,float weight){}
     private static final Map<Integer,Cast> CASTS=new LinkedHashMap<>();
-    private static final int[] COLORS={0,0xE5B768,0x72CFF5,0xADD86A,0xB388E9,0x64D9AE,0xD7EFF8,0xA878DB,0x54BEDF,0xF58A40};
+    private static final int[] COLORS={0,0xE5B768,0x72CFF5,0xADD86A,0xB388E9,0x64D9AE,0xD7EFF8,0xA878DB,0x54BEDF,0xF58A40,0xB81F43};
     private static final DustParticleOptions[] DUST=Arrays.stream(COLORS).mapToObj(c->new DustParticleOptions(c,.8f)).toArray(DustParticleOptions[]::new);
     private static final ContextKey<Pose> POSE=new ContextKey<>(ResourceLocation.fromNamespaceAndPath("oxyrpg","cast_pose"));
     private static Object world;

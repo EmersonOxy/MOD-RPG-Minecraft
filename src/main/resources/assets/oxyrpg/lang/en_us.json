@@ -119,5 +119,6 @@
   "effect.oxyrpg.bleeding": "Bleeding",
   "death.attack.oxyrpg.bleeding": "%1$s bled to death",
   "death.attack.oxyrpg.bleeding.player": "%1$s bled to death fighting %2$s",
-  "tooltip.oxyrpg.bleeding_weapon": "Bleeding: %s%% chance · %s damage/s"
+  "tooltip.oxyrpg.bleeding_weapon": "Bleeding: %s%% chance · %s damage/s",
+  "item.oxyrpg.relic_vampiresco": "Night Fang"
 }
