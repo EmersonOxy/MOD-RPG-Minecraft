@@ -1,6 +1,12 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "oxyrpg:item/emberblade"
+    "model": "minecraft:item/diamond_sword",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": 16103320
+      }
+    ]
   }
 }

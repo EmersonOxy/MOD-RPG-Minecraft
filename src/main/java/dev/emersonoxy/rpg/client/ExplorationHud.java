@@ -25,11 +25,13 @@ public final class ExplorationHud {
         heading=changed?name(d,"dimension"):name(b,"biome");subtitle=changed?name(b,"biome"):name(d,"dimension");
     }
     public static void render(GuiGraphics g){load();var mc=Minecraft.getInstance();if(mc.player==null||mc.level==null||mc.options.hideGui||mc.screen!=null||mc.getDebugOverlay().showDebugScreen()||DynamicHud.mode()==DynamicHud.Mode.HIDDEN)return;
-        if(compass){int w=Math.min(220,g.guiWidth()-40),cx=g.guiWidth()/2,y=12;float yaw=mc.gameRenderer.getMainCamera().getYRot();
-            g.fill(cx-w/2-6,y-5,cx+w/2+6,y+20,0x9011151D);g.fill(cx-w/2,y+12,cx+w/2,y+13,0x99796341);g.enableScissor(cx-w/2,y-3,cx+w/2,y+17);
-            for(int angle=0;angle<360;angle+=15){float offset=Mth.wrapDegrees(angle-yaw);int x=cx+Math.round(offset*w/150f);if(Math.abs(x-cx)>w/2)continue;g.fill(x,y+9,x+1,y+12,0xFFD4C7A5);
-                if(angle%45==0){String label=new String[]{"S","SO","O","NO","N","NE","L","SE"}[angle/45];g.drawCenteredString(mc.font,label,x,y-1,angle%90==0?RpgUi.GOLD:RpgUi.MUTED);}}
-            g.disableScissor();g.fill(cx-1,y+14,cx+2,y+18,RpgUi.GOLD);
+        if(compass){int w=Math.min(160,g.guiWidth()-40),cx=g.guiWidth()/2,y=10;float yaw=mc.gameRenderer.getMainCamera().getYRot();
+            g.enableScissor(cx-w/2,y-2,cx+w/2,y+16);
+            for(int angle=0;angle<360;angle+=30){float offset=Mth.wrapDegrees(angle-yaw);int x=cx+Math.round(offset*w/150f);if(Math.abs(x-cx)>w/2)continue;
+                int opacity=(int)(220*(1-Math.pow(Math.abs(x-cx)/(w/2.0),2)));int color=opacity<<24|0xD5D0C2;
+                if(angle%90==0){String label=new String[]{"S","O","N","L"}[angle/90];g.drawCenteredString(mc.font,label,x,y,color);}else g.fill(x,y+9,x+1,y+11,color);
+            }
+            g.disableScissor();g.fill(cx,y+13,cx+1,y+16,0xFFE9C77C);
         }
         int elapsed=ticks-announced;if(regions&&shown>0&&elapsed<shown){float a=Math.min(1,elapsed/12f)*Math.min(1,(shown-elapsed)/24f);HudOpacity.begin(a);int cy=Math.max(48,g.guiHeight()/4);String title=mc.font.plainSubstrByWidth(heading,Math.max(20,(g.guiWidth()-40)*2/3));
             g.pose().pushMatrix();g.pose().translate(g.guiWidth()/2f,cy);g.pose().scale(1.5f,1.5f);g.drawCenteredString(mc.font,title,0,0,RpgUi.GOLD);g.pose().popMatrix();

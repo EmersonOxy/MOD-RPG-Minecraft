@@ -1,8 +1,8 @@
-# Estado do Oxy RPG — revisão 0.33.0
+# Estado do Oxy RPG — revisão 0.34.0
 
 Revisão registrada em 11/10/2026. Minecraft 1.21.10, NeoForge 21.10.64, JDK 21, protocolo de rede 23. Este registro substitui descrições antigas do README. Os documentos numerados são históricos de cada entrega.
 
-A revisão inventariou fontes Java, registros, eventos, mixins, telas, recursos JSON, geração de dados, integração e persistência. Código das áreas alteradas foi inspecionado em detalhe. Inventário completo de arquivos e métodos públicos: [INVENTARIO_CODIGO_033.json](INVENTARIO_CODIGO_033.json). Não equivale a validação integral dentro do jogo nem a auditoria de segurança.
+A revisão inventariou fontes Java, registros, eventos, mixins, telas, recursos JSON, geração de dados, integração e persistência. Código das áreas alteradas foi inspecionado em detalhe. Inventário de arquivos e hashes: [INVENTARIO_CODIGO_034.json](INVENTARIO_CODIGO_034.json). Não equivale a validação integral dentro do jogo nem a auditoria de segurança.
 
 ## Sistemas implementados
 
@@ -61,6 +61,10 @@ A revisão inventariou fontes Java, registros, eventos, mixins, telas, recursos 
 - Nove itens: duas armas, quatro acessórios, botas e dois consumíveis; catálogo em Arsenal > Achados.
 - Patrulhas de saqueadores e estruturas vanilla mais frequentes; complementos Explorify/Structory selecionados.
 - Detalhes e limites: [EXPLORACAO_033.md](EXPLORACAO_033.md). Pesquisa/ideias: [REFERENCIAS_E_IDEIAS_033.md](REFERENCIAS_E_IDEIAS_033.md).
+
+## Correções da 0.34
+
+Minimap usa heightmap sincronizado e permite forçar subsolo; patrulhas aceitam vegetação e terreno irregular, com prazo menor; vilas novas expandem em até 112 blocos e recebem três anexos conectados às ruas. Bússola minimalista e corrida lateral/para trás em terceira pessoa independente. Nenhum item novo adicionado. [Detalhes e limites](CORRECOES_034.md).
 
 ## Preferências registradas
 

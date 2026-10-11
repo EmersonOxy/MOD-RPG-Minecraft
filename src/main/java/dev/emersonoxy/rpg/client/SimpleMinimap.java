@@ -14,6 +14,7 @@ import net.minecraft.world.level.material.MapColor;
 /** Loaded terrain and cave floors, bounded sampling and one uploaded terrain texture. */
 public final class SimpleMinimap {
     private static final int GRID=64;
+    private static final int[] PIXELS=java.util.stream.IntStream.range(0,GRID*GRID).boxed().sorted(java.util.Comparator.comparingInt(i->{int x=i%GRID-GRID/2,z=i/GRID-GRID/2;return x*x+z*z;})).mapToInt(Integer::intValue).toArray();
     private static final ResourceLocation TEXTURE=ResourceLocation.fromNamespaceAndPath("oxyrpg","minimap_surface");
     private record Sample(int color,long updated){}
     public record Bounds(int x,int y,int size,int height){}
@@ -28,26 +29,27 @@ public final class SimpleMinimap {
         var mc=Minecraft.getInstance();boolean preview=mc.screen instanceof MinimapSettingsScreen||mc.screen instanceof MinimapPositionScreen;
         if(mc.player==null||mc.level==null||mc.isPaused()||!preview&&(!DynamicHud.enabled(DynamicHud.Part.MINIMAP)||DynamicHud.mode()==DynamicHud.Mode.HIDDEN))return;
         int step=MinimapOptions.step();if(dimension!=mc.level.dimension()||step!=lastStep){clear();dimension=mc.level.dimension();lastStep=step;}
-        int surface=mc.level.getHeight(Heightmap.Types.OCEAN_FLOOR,mc.player.getBlockX(),mc.player.getBlockZ());
-        boolean underground=mc.level.dimensionType().hasCeiling()||surface>mc.player.getBlockY()+6;int slice=underground?Math.floorDiv(mc.player.getBlockY(),2)*2:Integer.MIN_VALUE;
-        if(cave!=underground||layer!=slice){COLORS.clear();cursor=0;uploaded=-1;retainPixels=texture!=null;cave=underground;layer=slice;}
+        // Only WORLD_SURFACE and MOTION_BLOCKING are sent in the client chunk heightmaps.
+        int surface=mc.level.getHeight(Heightmap.Types.MOTION_BLOCKING,mc.player.getBlockX(),mc.player.getBlockZ());
+        boolean underground=MinimapOptions.layerMode==2||MinimapOptions.layerMode==0&&(mc.level.dimensionType().hasCeiling()||surface>mc.player.getBlockY()+3);int slice=underground?mc.player.getBlockY():Integer.MIN_VALUE;
+        if(cave!=underground||layer!=slice){COLORS.clear();cursor=0;uploaded=-1;retainPixels=cave==underground&&texture!=null;cave=underground;layer=slice;}
         int bx=base(mc.player.getBlockX(),step),bz=base(mc.player.getBlockZ(),step);long now=mc.level.getGameTime();
         for(int i=0;i<128;i++){
-            int pixel=cursor;cursor=(cursor+1)%(GRID*GRID);int x=bx+pixel%GRID*step,z=bz+pixel/GRID*step;long key=BlockPos.asLong(x,0,z);
+            int pixel=PIXELS[cursor];cursor=(cursor+1)%(GRID*GRID);int x=bx+pixel%GRID*step,z=bz+pixel/GRID*step;long key=BlockPos.asLong(x,0,z);
             if(!mc.level.getChunkSource().hasChunk(x>>4,z>>4)){COLORS.remove(key);continue;}
             var previous=COLORS.get(key);if(previous!=null&&now-previous.updated()<100)continue;
             int y=cave?floor(x,z):mc.level.getHeight(Heightmap.Types.WORLD_SURFACE,x,z)-1;
             if(y==Integer.MIN_VALUE){COLORS.put(key,new Sample(0xFF121B24,now));continue;}var pos=new BlockPos(x,y,z);var color=mc.level.getBlockState(pos).getMapColor(mc.level,pos);
             int slope=0;if(mc.level.getChunkSource().hasChunk(x>>4,(z-step)>>4)){int neighbor=cave?floor(x,z-step):mc.level.getHeight(Heightmap.Types.WORLD_SURFACE,x,z-step)-1;if(neighbor!=Integer.MIN_VALUE)slope=y-neighbor;}
             int value=color.calculateARGBColor(slope>0?MapColor.Brightness.HIGH:slope<0?MapColor.Brightness.LOW:MapColor.Brightness.NORMAL);
-            if(cave&&mc.level.getBlockState(new BlockPos(x,layer+1,z)).isSolidRender()){int a=value;value=0xFF000000|((a>>16&255)*2/5<<16)|((a>>8&255)*2/5<<8)|(a&255)*2/5;}
+            if(cave&&mc.level.getBlockState(new BlockPos(x,layer,z)).isSolidRender()){int a=value;value=0xFF000000|((a>>16&255)*2/5<<16)|((a>>8&255)*2/5<<8)|(a&255)*2/5;}
             COLORS.put(key,new Sample(value==0?0xFF25313B:value,now));if(COLORS.size()>16384)COLORS.remove(COLORS.keySet().iterator().next());
         }
         if(texture==null){texture=new DynamicTexture(()->"Oxy RPG minimap",new NativeImage(GRID,GRID,false));mc.getTextureManager().register(TEXTURE,texture);}
         if(now-uploaded>=4||bx!=lastX||bz!=lastZ||uploadedRound!=MinimapOptions.round){var image=texture.getPixels();for(int z=0;z<GRID;z++)for(int x=0;x<GRID;x++){var sample=COLORS.get(BlockPos.asLong(bx+x*step,0,bz+z*step));double radius=GRID/2.0,dx=x+.5-radius,dz=z+.5-radius;image.setPixel(x,z,MinimapOptions.round&&dx*dx+dz*dz>radius*radius?0:sample==null?(retainPixels&&bx==lastX&&bz==lastZ&&mc.level.getChunkSource().hasChunk((bx+x*step)>>4,(bz+z*step)>>4)?image.getPixel(x,z):((x/4+z/4)%2==0?0xFF1C2631:0xFF202C37)):sample.color());}texture.upload();uploadedRound=MinimapOptions.round;uploaded=now;lastX=bx;lastZ=bz;}
     }
     private static int floor(int x,int z){
-        var world=Minecraft.getInstance().level;int anchor=Math.clamp(layer+1,world.getMinY()+1,world.getMaxY()-2);var pos=new BlockPos.MutableBlockPos(x,anchor,z);
+        var world=Minecraft.getInstance().level;int anchor=Math.clamp(layer,world.getMinY()+1,world.getMaxY()-2);var pos=new BlockPos.MutableBlockPos(x,anchor,z);
         if(world.getBlockState(pos).isSolidRender())return anchor;
         // Stay in this air/fluid pocket. Its first solid floor is shown; other cave levels are not leaked.
         for(int y=anchor;y>=Math.max(world.getMinY(),anchor-24);y--){pos.setY(y);var state=world.getBlockState(pos);if(!state.isAir()&&(state.isSolidRender()||!state.getFluidState().isEmpty()))return y;}

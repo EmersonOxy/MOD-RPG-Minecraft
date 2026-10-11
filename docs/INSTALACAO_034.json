@@ -1,0 +1,9 @@
+{
+  "version": "0.34.0",
+  "minecraft": "1.21.10",
+  "protocol": 23,
+  "backup": "C:\\Users\\canal\\AppData\\Roaming\\.sklauncher\\instances\\neoforge-1-21-10\\mod-backups\\20261011-113406-0.34.0",
+  "file": "oxyrpg-0.34.0.jar",
+  "sha256": "6e642f09d9376cc21e022a018f84f3ea135f5a13c2d192e43447f48765737405",
+  "validation": "assemble successful; game closed during install; no client run or automated tests"
+}
