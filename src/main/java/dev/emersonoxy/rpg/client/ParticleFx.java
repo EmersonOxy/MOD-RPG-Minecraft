@@ -13,13 +13,17 @@ import net.minecraft.world.phys.Vec3;
 public final class ParticleFx {
     private static ClientLevel tracked;
     private static long tick=Long.MIN_VALUE;
-    private static int emitted,rays;
-    private ParticleFx(){}
-    public static void clear(){tracked=null;tick=Long.MIN_VALUE;emitted=rays=0;}
-    private static void refresh(ClientLevel level){
-        if(tracked!=level||tick!=level.getGameTime()){tracked=level;tick=level.getGameTime();emitted=rays=0;}
+    private static int emitted;
+    private static final java.util.ArrayDeque<BloodBurst> BLOOD=new java.util.ArrayDeque<>();
+    private static final class BloodBurst {
+        final Vec3 at,direction;final double power;long remaining;int index;
+        BloodBurst(Vec3 at,Vec3 direction,double damage,long count){this.at=at;this.direction=direction;this.power=Math.sqrt(damage)*.025;remaining=count;}
     }
-    static boolean ray(ClientLevel level){refresh(level);return rays++<48;}
+    private ParticleFx(){}
+    public static void clear(){tracked=null;tick=Long.MIN_VALUE;emitted=0;BLOOD.clear();}
+    private static void refresh(ClientLevel level){
+        if(tracked!=level||tick!=level.getGameTime()){tracked=level;tick=level.getGameTime();emitted=0;}
+    }
     static boolean visible(ClientLevel level,Vec3 at){
         var mc=Minecraft.getInstance();CombatOptions.load();
         return mc.level==level&&mc.options.particles().get()!=ParticleStatus.MINIMAL
@@ -38,14 +42,32 @@ public final class ParticleFx {
     public static void blood(RpgNetwork.BloodFx packet){
         var mc=Minecraft.getInstance();CombatOptions.load();if(mc.level==null||!CombatOptions.blood)return;
         Vec3 at=new Vec3(packet.x(),packet.y(),packet.z());
-        if(!finite(at)||!Float.isFinite(packet.damage())||packet.damage()<=0||packet.damage()>40||!visible(mc.level,at))return;
+        if(!finite(at)||!Float.isFinite(packet.damage())||packet.damage()<=0||!visible(mc.level,at))return;
         Vec3 direction=new Vec3(packet.dx(),packet.dy(),packet.dz());if(!finite(direction)||direction.lengthSqr()>1.1)return;
-        var random=mc.level.random;int count=count(Math.clamp((int)Math.ceil(packet.damage()*1.5),1,40));
-        for(int i=0;i<count;i++){
-            var velocity=direction.scale(.12+Math.min(20,packet.damage())*.006)
-                .add((random.nextDouble()-.5)*.24,.04+random.nextDouble()*.17,(random.nextDouble()-.5)*.24);
-            if(i==0)velocity=new Vec3(velocity.x,-.2,velocity.z);
-            spawn(RpgParticles.BLOOD.get(),at.add((random.nextDouble()-.5)*.25,(random.nextDouble()-.5)*.3,(random.nextDouble()-.5)*.25),velocity);
+        double scale=CombatOptions.particleIntensity*(mc.options.particles().get()==ParticleStatus.DECREASED?.5:1);
+        // No artistic damage/drop ceiling: batches spread computation without cutting the requested total.
+        long total=Math.max(1,(long)Math.ceil(packet.damage()*1.5*scale));
+        if(tracked!=mc.level){clear();tracked=mc.level;}
+        BLOOD.addLast(new BloodBurst(at,direction,packet.damage(),total));
+    }
+    public static void tick(){
+        var mc=Minecraft.getInstance();if(mc.level==null){clear();return;}
+        if(tracked!=mc.level){clear();tracked=mc.level;}
+        CombatOptions.load();if(!CombatOptions.blood){BLOOD.clear();return;}if(mc.isPaused())return;
+        int budget=128;var random=mc.level.random;
+        while(budget>0&&!BLOOD.isEmpty()){
+            var burst=BLOOD.removeFirst();if(!visible(mc.level,burst.at))continue;
+            int n=(int)Math.min(Math.min(budget,16),burst.remaining);
+            for(int i=0;i<n;i++){
+                double spread=.12+burst.power;
+                var velocity=burst.direction.scale(.12+burst.power)
+                    .add((random.nextDouble()-.5)*spread,.04+random.nextDouble()*(.17+burst.power*.4),(random.nextDouble()-.5)*spread);
+                // Mix downward splashes with the outward spray so hard hits soak nearby floors too.
+                if(burst.index++%4==0)velocity=new Vec3(velocity.x,-.2-random.nextDouble()*burst.power,velocity.z);
+                var at=burst.at.add((random.nextDouble()-.5)*.25,(random.nextDouble()-.5)*.3,(random.nextDouble()-.5)*.25);
+                mc.particleEngine.createParticle(RpgParticles.BLOOD.get(),at.x,at.y,at.z,velocity.x,velocity.y,velocity.z);
+            }
+            burst.remaining-=n;budget-=n;if(burst.remaining>0)BLOOD.addLast(burst);
         }
     }
     public static void impact(RpgNetwork.ImpactFx packet){

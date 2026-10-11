@@ -1,8 +1,12 @@
-# Estado do Oxy RPG — revisão 0.39.0
+# Estado do Oxy RPG — revisão 0.40.0
 
 Revisão registrada em 11/10/2026. Minecraft 1.21.10, NeoForge 21.10.64, JDK 21, protocolo de rede 27. Este registro substitui descrições antigas do README. Os documentos numerados são históricos de cada entrega.
 
-A revisão inventariou fontes Java, registros, eventos, mixins, telas, recursos JSON, geração de dados, integração e persistência. Código das áreas alteradas foi inspecionado em detalhe. Inventário de arquivos e hashes: [INVENTARIO_CODIGO_039.json](INVENTARIO_CODIGO_039.json). Não equivale a validação integral dentro do jogo nem a auditoria de segurança.
+A revisão inventariou fontes Java, registros, eventos, mixins, telas, recursos JSON, geração de dados, integração e persistência. Código das áreas alteradas foi inspecionado em detalhe. Inventário de arquivos e hashes: [INVENTARIO_CODIGO_040.json](INVENTARIO_CODIGO_040.json). Não equivale a validação integral dentro do jogo nem a auditoria de segurança.
+
+## Entrega 0.40
+
+Removidos os tetos próprios de sangue por golpe/partículas/manchas; emissão em lotes preserva o volume solicitado. Caches distintos de superfície e pisos no minimapa, seleção de teto mais estável e sombreado subterrâneo independente da ordem de amostras. Sete prints vistos, anteriores à 0.39; nenhuma validação de jogo desta entrega. [Mudanças e limites do motor](CORRECOES_040.md). Animações externas permanecem somente em planejamento/pesquisa.
 
 ## Entrega 0.39
 

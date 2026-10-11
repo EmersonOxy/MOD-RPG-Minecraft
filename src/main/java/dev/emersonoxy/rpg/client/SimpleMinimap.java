@@ -18,7 +18,9 @@ public final class SimpleMinimap {
     private static final ResourceLocation TEXTURE=ResourceLocation.fromNamespaceAndPath("oxyrpg","minimap_surface");
     private record Sample(int color,long updated,int height){}
     public record Bounds(int x,int y,int size,int height){}
-    private static final LinkedHashMap<Long,Sample> COLORS=new LinkedHashMap<>();
+    private record LayerKey(boolean cave,int floor){}
+    private static final LinkedHashMap<LayerKey,LinkedHashMap<Long,Sample>> LAYERS=new LinkedHashMap<>(8,.75f,true);
+    private static LinkedHashMap<Long,Sample> COLORS=new LinkedHashMap<>();
     private static boolean dirty;private static int warmup;
     private static long layerCheck=-1,candidateSince;
     private static boolean candidateCave,layerInitialized;
@@ -26,7 +28,7 @@ public final class SimpleMinimap {
     private static int cursor,lastStep,lastX=Integer.MIN_VALUE,lastZ;private static long uploaded=-1;private static Object dimension;
     private static DynamicTexture texture;private static boolean uploadedRound,cave,retainPixels;private static int layer=Integer.MIN_VALUE;
     private SimpleMinimap(){}
-    public static void clear(){COLORS.clear();cursor=warmup=0;dirty=true;uploaded=-1;lastX=Integer.MIN_VALUE;dimension=null;retainPixels=false;cave=false;layer=Integer.MIN_VALUE;layerCheck=-1;selectedMode=-1;candidateLayer=Integer.MIN_VALUE;layerInitialized=false;if(texture!=null){Minecraft.getInstance().getTextureManager().release(TEXTURE);texture=null;}}
+    public static void clear(){LAYERS.clear();COLORS=new LinkedHashMap<>();cursor=warmup=0;dirty=true;uploaded=-1;lastX=Integer.MIN_VALUE;dimension=null;retainPixels=false;cave=false;layer=Integer.MIN_VALUE;layerCheck=-1;selectedMode=-1;candidateLayer=Integer.MIN_VALUE;layerInitialized=false;if(texture!=null){Minecraft.getInstance().getTextureManager().release(TEXTURE);texture=null;}}
     private static int base(int value,int step){return Math.floorDiv(value,step)*step-GRID*step/2;}
     public static void tick(){dev.emersonoxy.rpg.RpgProfiler.run("minimap",SimpleMinimap::tickBody);}
     private static void tickBody(){
@@ -46,7 +48,7 @@ public final class SimpleMinimap {
             var previous=COLORS.get(key);if(previous!=null&&now-previous.updated()<100)continue;
             int y=cave?floor(x,z):mc.level.getHeight(Heightmap.Types.WORLD_SURFACE,x,z)-1;
             if(y==Integer.MIN_VALUE){put(key,new Sample(0xFF121B24,now,y));continue;}var pos=new BlockPos(x,y,z);var color=mc.level.getBlockState(pos).getMapColor(mc.level,pos);
-            int slope=0;if(mc.level.getChunkSource().hasChunk(x>>4,(z-step)>>4)){var cached=COLORS.get(BlockPos.asLong(x,0,z-step));int neighbor=cave?(cached==null?y:cached.height()):mc.level.getHeight(Heightmap.Types.WORLD_SURFACE,x,z-step)-1;if(neighbor!=Integer.MIN_VALUE)slope=y-neighbor;}
+            int slope=0;if(mc.level.getChunkSource().hasChunk(x>>4,(z-step)>>4)){int neighbor=cave?y:mc.level.getHeight(Heightmap.Types.WORLD_SURFACE,x,z-step)-1;if(neighbor!=Integer.MIN_VALUE)slope=y-neighbor;}
             int value=color.calculateARGBColor(slope>0?MapColor.Brightness.HIGH:slope<0?MapColor.Brightness.LOW:MapColor.Brightness.NORMAL);
             if(cave&&mc.level.getBlockState(new BlockPos(x,layer,z)).isSolidRender()){int a=value;value=0xFF000000|((a>>16&255)*2/5<<16)|((a>>8&255)*2/5<<8)|(a&255)*2/5;}
             put(key,new Sample(value==0?0xFF25313B:value,now,y));
@@ -59,7 +61,7 @@ public final class SimpleMinimap {
         var mc=Minecraft.getInstance();long now=mc.level.getGameTime();int mode=MinimapOptions.layerMode;
         boolean forced=selectedMode!=mode;selectedMode=mode;
         if(!forced&&layerCheck>=0&&now-layerCheck<10)return;layerCheck=now;
-        boolean next=mode==2||mode==0&&(mc.level.dimensionType().hasCeiling()||covered());
+        boolean next=mode==2||mode==0&&(mc.level.dimensionType().hasCeiling()&&mc.player.getBlockY()<mc.level.getHeight(Heightmap.Types.MOTION_BLOCKING,mc.player.getBlockX(),mc.player.getBlockZ())||covered());
         int floor=playerFloor(),anchor=floor==Integer.MIN_VALUE?mc.player.getBlockY():floor+1;
         // Airborne motion keeps the previous slice; gradual slopes tolerate five blocks.
         int slice=next?(cave&&layer!=Integer.MIN_VALUE&&(floor==Integer.MIN_VALUE||Math.abs(anchor-layer)<=5)?layer:anchor):Integer.MIN_VALUE;
@@ -68,7 +70,10 @@ public final class SimpleMinimap {
             if(candidateCave!=next||next&&Math.abs((long)candidateLayer-slice)>5){candidateCave=next;candidateLayer=slice;candidateSince=now;return;}
             if(now-candidateSince<20)return;
         }else if(!forced&&!next&&cave==next)return;
-        COLORS.clear();cursor=0;dirty=true;uploaded=-1;retainPixels=cave==next&&texture!=null;
+        // Switching a floor never erases the surface or a previously visited floor.
+        COLORS=LAYERS.computeIfAbsent(new LayerKey(next,slice),key->new LinkedHashMap<>());
+        if(LAYERS.size()>4)LAYERS.remove(LAYERS.keySet().iterator().next());
+        cursor=0;dirty=true;retainPixels=cave==next&&texture!=null;
         cave=next;layer=slice;candidateLayer=slice;candidateCave=next;candidateSince=now;layerInitialized=true;
     }
     private static boolean covered(){
@@ -76,9 +81,13 @@ public final class SimpleMinimap {
         if(mc.level.canSeeSky(head))return false;
         // Canopy height alone must not switch a surface map to a cave map.
         var pos=new BlockPos.MutableBlockPos(head.getX(),head.getY(),head.getZ());
+        int thickness=0;
         for(int y=head.getY();y<Math.min(mc.level.getMaxY(),head.getY()+64);y++){
             pos.setY(y);var state=mc.level.getBlockState(pos);
-            if(!state.is(net.minecraft.tags.BlockTags.LEAVES)&&!state.is(net.minecraft.tags.BlockTags.LOGS)&&state.isSolidRender())return true;
+            boolean roof=!state.is(net.minecraft.tags.BlockTags.LEAVES)&&!state.is(net.minecraft.tags.BlockTags.LOGS)&&state.isSolidRender();
+            thickness=roof?thickness+1:0;
+            // A thin building roof or tree canopy should not turn surface exploration into cave mode.
+            if(thickness>=3)return true;
         }
         return false;
     }

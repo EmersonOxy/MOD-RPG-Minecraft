@@ -16,7 +16,6 @@ import net.neoforged.neoforge.network.PacketDistributor;
 /** Post-damage cosmetics: misses, invulnerability and fully blocked hits never bleed. */
 public final class CombatParticles {
     private record Budget(long tick,int count){}
-    private static final Map<LivingEntity,Long> BLOOD=new WeakHashMap<>();
     private static final Map<ServerLevel,Budget> BUDGET=new WeakHashMap<>();
     private CombatParticles(){}
     private static boolean reserve(ServerLevel level){
@@ -28,17 +27,15 @@ public final class CombatParticles {
         var target=event.getEntity();var source=event.getSource();float damage=event.getNewDamage();
         if(!(target.level() instanceof ServerLevel level)||!(target instanceof Player||target instanceof Mob)||!Float.isFinite(damage)||damage<=0)return;
         if(source.getEntity()==null&&!source.is(DamageTypeTags.IS_EXPLOSION)&&!source.is(DamageTypeTags.IS_FALL))return;
-        long now=level.getGameTime();Long previous=BLOOD.get(target);
-        if(previous!=null&&now-previous<4||!reserve(level))return;BLOOD.put(target,now);
         Vec3 at=target.position().add(0,target.getBbHeight()*.55,0);
         var origin=source.getSourcePosition();Vec3 direction=origin==null?Vec3.ZERO:at.subtract(origin).normalize();
         PacketDistributor.sendToPlayersNear(level,null,at.x,at.y,at.z,48,
-            new RpgNetwork.BloodFx(at.x,at.y,at.z,(float)direction.x,(float)direction.y,(float)direction.z,Math.min(40,damage)));
+            new RpgNetwork.BloodFx(at.x,at.y,at.z,(float)direction.x,(float)direction.y,(float)direction.z,damage));
 
     }
     public static void explosion(ExplosionEvent.Detonate event){
         if(event.getLevel() instanceof ServerLevel level&&reserve(level))
             SkillEffects.impact(level,event.getExplosion().center(),event.getExplosion().radius(),1);
     }
-    public static void stop(ServerStoppedEvent event){BLOOD.clear();BUDGET.clear();}
+    public static void stop(ServerStoppedEvent event){BUDGET.clear();}
 }

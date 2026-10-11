@@ -213,7 +213,7 @@ public final class OxyRpgClient {
         }
         while(MINIMAP.consumeClick())if(mc.player!=null&&mc.screen==null)DynamicHud.toggle(DynamicHud.Part.MINIMAP);
         while(MINIMAP_OPTIONS.consumeClick())if(mc.player!=null&&mc.screen==null)mc.setScreen(new MinimapSettingsScreen(null));
-        SimpleMinimap.tick();VillagerClient.tick();ExplorationHud.tick();ClassCastEffects.tick();
+        SimpleMinimap.tick();ParticleFx.tick();VillagerClient.tick();ExplorationHud.tick();ClassCastEffects.tick();
         TargetLock.tick();
         DynamicHud.tick();
         while(TOGGLE_PANELS.consumeClick())if(mc.player!=null&&mc.screen==null)DynamicHud.cyclePanels();

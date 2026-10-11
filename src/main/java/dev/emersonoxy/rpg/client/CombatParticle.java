@@ -23,7 +23,7 @@ import org.joml.Quaternionf;
 /** Reuses native atlas sprites with custom trajectories, fading, collision and surface orientation. */
 public final class CombatParticle extends SingleQuadParticle {
     // ParticleLimit is a value record: distinct limits prevent separate categories sharing a counter.
-    private static final ParticleLimit BLOOD_LIMIT=new ParticleLimit(96),SMOKE_LIMIT=new ParticleLimit(128),IMPACT_LIMIT=new ParticleLimit(64),MARK_LIMIT=new ParticleLimit(160);
+    private static final ParticleLimit SMOKE_LIMIT=new ParticleLimit(128),IMPACT_LIMIT=new ParticleLimit(64);
     private final int kind;
     private final SpriteSet sprites;
     private final float initialSize;
@@ -42,14 +42,14 @@ public final class CombatParticle extends SingleQuadParticle {
     }
     private static boolean enabled(int kind){CombatOptions.load();return kind==0?CombatOptions.blood:kind==1?CombatOptions.smoke:CombatOptions.impacts;}
     @Override protected Layer getLayer(){return Layer.TRANSLUCENT;}
-    @Override public Optional<ParticleLimit> getParticleLimit(){return Optional.of(kind==0?BLOOD_LIMIT:kind==1?SMOKE_LIMIT:IMPACT_LIMIT);}
+    @Override public Optional<ParticleLimit> getParticleLimit(){return kind==0?Optional.empty():Optional.of(kind==1?SMOKE_LIMIT:IMPACT_LIMIT);}
     @Override public float getQuadSize(float partial){float t=(age+partial)/lifetime;return initialSize*(kind==1?.6f+1.7f*t:kind==2?1-.75f*t:1);}
     @Override public void tick(){
         if(!enabled(kind)||!ParticleFx.visible(level,getPos())||!level.getFluidState(BlockPos.containing(x,y,z)).isEmpty()){remove();return;}
         if(kind==0){
             xo=x;yo=y;zo=z;if(age++>=lifetime){remove();return;}
             yd-=.04*gravity;Vec3 from=getPos(),to=from.add(xd,yd,zd);
-            if(!level.hasChunkAt(BlockPos.containing(to))||!ParticleFx.ray(level)){remove();return;}
+            if(!level.hasChunkAt(BlockPos.containing(to))){remove();return;}
             var hit=level.clip(new ClipContext(from,to,ClipContext.Block.COLLIDER,ClipContext.Fluid.ANY,CollisionContext.empty()));
             if(hit.getType()!=HitResult.Type.MISS){
                 if(CombatOptions.bloodMarks&&level.getFluidState(hit.getBlockPos()).isEmpty())
@@ -90,9 +90,9 @@ public final class CombatParticle extends SingleQuadParticle {
             }
         }
         @Override protected Layer getLayer(){return Layer.TRANSLUCENT;}
-        @Override public Optional<ParticleLimit> getParticleLimit(){return Optional.of(MARK_LIMIT);}
+        @Override public Optional<ParticleLimit> getParticleLimit(){return Optional.empty();}
         @Override public void tick(){
-            if(!CombatOptions.blood||!CombatOptions.bloodMarks||!ParticleFx.visible(level,getPos())||age++>=lifetime){remove();return;}
+            if(!CombatOptions.blood||!CombatOptions.bloodMarks||Minecraft.getInstance().level!=level||!level.hasChunkAt(support)||age++>=lifetime){remove();return;}
             if(age%10==0&&(level.getBlockState(support)!=original||!level.getFluidState(support).isEmpty()
                 ||!level.getFluidState(BlockPos.containing(getPos().add(normal.scale(.05)))).isEmpty()
                 ||level.isRainingAt(BlockPos.containing(getPos()).above()))){remove();return;}
