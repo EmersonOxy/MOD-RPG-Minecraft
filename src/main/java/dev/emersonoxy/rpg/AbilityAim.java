@@ -38,6 +38,11 @@ public final class AbilityAim {
         var hit=p.level().clip(new ClipContext(p.getEyePosition(),point,ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,p));
         return hit.getType()==HitResult.Type.MISS?mob:null;
     }
+    public static Mob target(ServerPlayer p){
+        var locked=TARGET.get();if(locked!=null)return locked;
+        var direction=direction(p);return p.level().getEntitiesOfClass(Mob.class,p.getBoundingBox().inflate(24),m->RpgAbilities.attackable(m)&&!(m instanceof Villager)&&!(m instanceof TamableAnimal pet&&pet.isTame())&&p.hasLineOfSight(m))
+            .stream().filter(m->{var delta=m.getBoundingBox().getCenter().subtract(p.getEyePosition());return delta.lengthSqr()<=24*24&&delta.normalize().dot(direction)>.985;}).min(java.util.Comparator.comparingDouble(p::distanceToSqr)).orElse(null);
+    }
     public static void shoot(Projectile shot,ServerPlayer p,float speed){
         var mob=TARGET.get();
         if(mob==null){

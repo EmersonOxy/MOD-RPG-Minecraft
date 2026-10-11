@@ -1,0 +1,17 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "#minecraft:leaves",
+      "required": false
+    },
+    {
+      "id": "#minecraft:climbable",
+      "required": false
+    },
+    {
+      "id": "minecraft:cobweb",
+      "required": false
+    }
+  ]
+}

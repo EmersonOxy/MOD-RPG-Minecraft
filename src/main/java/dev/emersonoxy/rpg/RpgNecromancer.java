@@ -125,7 +125,7 @@ public final class RpgNecromancer {
         if(mob instanceof Zombie zombie){zombie.setBaby(false);mob.setItemSlot(EquipmentSlot.MAINHAND,new ItemStack(Items.STONE_SWORD));}
         if(mob instanceof Zombie||mob instanceof AbstractSkeleton)mob.setItemSlot(EquipmentSlot.HEAD,new ItemStack(Items.LEATHER_HELMET));
         for(var slot:new EquipmentSlot[]{EquipmentSlot.MAINHAND,EquipmentSlot.OFFHAND,EquipmentSlot.HEAD,EquipmentSlot.CHEST,EquipmentSlot.LEGS,EquipmentSlot.FEET})mob.setDropChance(slot,0);
-        var health=mob.getAttribute(Attributes.MAX_HEALTH);if(health!=null){health.setBaseValue(mob instanceof Phantom?14:mob instanceof Spider?12:16);if(g.profile.hasSkill(7))health.setBaseValue(health.getBaseValue()*1.1);}
+        var health=mob.getAttribute(Attributes.MAX_HEALTH);if(health!=null){health.setBaseValue((mob instanceof Phantom?14:mob instanceof Spider?12:16)*(.65+.35*g.profile.level()/100.0));if(g.profile.hasSkill(7))health.setBaseValue(health.getBaseValue()*1.1);}
         var attack=mob.getAttribute(Attributes.ATTACK_DAMAGE);if(attack!=null)attack.setBaseValue(mob instanceof Phantom?4:3);
         if(g.profile.rpgClass()==RpgClass.NECROMANTE&&health!=null)health.setBaseValue(health.getBaseValue()*ClassEquipment.summonHealth(g.player));
         mob.setHealth(mob.getMaxHealth());mob.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE,Integer.MAX_VALUE,0,false,false));
@@ -254,7 +254,7 @@ public final class RpgNecromancer {
         if(!allowed){event.setCanceled(true);return;}
         event.getEntity().setLastHurtByPlayer(p,100);
         STRIKES.put(event.getEntity().getUUID(),new LastStrike(p.getUUID(),event.getEntity().level().getGameTime()+100));
-        float factor=g.profile.hasSkill(0)?1.05f:1;
+        float factor=(g.profile.hasSkill(0)?1.05f:1)*(.65f+.35f*g.profile.level()/100f);
         if(slot==2&&g.profile.hasSkill(19))factor*=1.15f;
         if(g.profile.rpgClass()==RpgClass.NECROMANTE)factor*=ClassEquipment.summonDamage(p);
         event.setAmount(event.getAmount()*factor);

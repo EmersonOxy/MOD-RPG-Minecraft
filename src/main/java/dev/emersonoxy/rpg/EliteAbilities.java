@@ -49,7 +49,8 @@ public final class EliteAbilities {
         case "berserker"->"Berserker";case "tide"->"Maré Sombria";case "gale"->"Vendaval";case "storm"->"Tempestade";case "hunter"->"Predador";default->"Sentinela";
     };}
     private static boolean target(LivingEntity e){return e!=null&&e.isAlive()&&(!(e instanceof Player p)||!p.isCreative()&&!p.isSpectator());}
-    public static void tick(EntityTickEvent.Post event){
+    public static void tick(EntityTickEvent.Post event){RpgProfiler.run("elites",()->tickBody(event));}
+    private static void tickBody(EntityTickEvent.Post event){
         if(!(event.getEntity() instanceof Mob mob)||!(mob.level() instanceof ServerLevel world))return;var data=mob.getPersistentData();long now=world.getGameTime();
         if(data.getBooleanOr("oxy_elite_child",false)){
             if(now>=data.getLongOr("oxy_elite_child_expiry",0))mob.discard();return;

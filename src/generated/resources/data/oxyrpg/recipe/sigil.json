@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": "minecraft:amethyst_shard",
+    "G": "minecraft:gold_ingot"
+  },
+  "pattern": [
+    " G ",
+    "GAG",
+    " G "
+  ],
+  "result": {
+    "count": 1,
+    "id": "oxyrpg:sigil"
+  }
+}

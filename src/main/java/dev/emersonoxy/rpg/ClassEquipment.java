@@ -70,7 +70,7 @@ public final class ClassEquipment {
         boolean changed=false;
         for(int i=0;i<p.getInventory().getContainerSize();i++){
             var old=p.getInventory().getItem(i);var data=tag(old);
-            if(old.isEmpty()||!data.getStringOr("owner","").equals(p.getUUID().toString())||data.getIntOr("class",0)!=c.ordinal()||data.getIntOr("stage",1)>=stage)continue;
+            if(old.isEmpty()||!data.getStringOr("owner","").equals(p.getUUID().toString())||data.getIntOr("class",0)!=c.ordinal()||data.getIntOr("stage",1)>=stage&&data.getIntOr("schema",0)>=2)continue;
             String part=data.getStringOr("part","");if(!Set.of("weapon","armor","food","ammo","travel_food","normal_arrow").contains(part))continue;
             p.getInventory().setItem(i,build(p,c,stage,part,old));changed=true;
         }
@@ -100,7 +100,7 @@ public final class ClassEquipment {
             case "ammo"->stage==1?Items.ARROW:stage==2?Items.SPECTRAL_ARROW:Items.TIPPED_ARROW;
             case "normal_arrow"->Items.ARROW;
             case "armor"->switch(c){case GUERREIRO->Items.DIAMOND_CHESTPLATE;case ARQUEIRO->Items.DIAMOND_BOOTS;case MAGO,NECROMANTE->Items.LEATHER_HELMET;default->Items.LEATHER_CHESTPLATE;};
-            default->switch(c){case GUERREIRO->stage==1?Items.WOODEN_SWORD:stage==2?Items.IRON_SWORD:Items.DIAMOND_SWORD;case ARQUEIRO->Items.BOW;case MAGO->Items.BLAZE_ROD;case NECROMANTE->Items.BOOK;case AVIARIO->Items.MACE;default->Items.AMETHYST_SHARD;};
+            default->switch(c){case GUERREIRO->stage==1?Items.WOODEN_SWORD:stage==2?Items.IRON_SWORD:Items.DIAMOND_SWORD;case ARQUEIRO->Items.BOW;case MAGO->Items.BLAZE_ROD;case NECROMANTE->Items.BOOK;case AVIARIO->stage==1?Items.FEATHER:stage==2?Items.BREEZE_ROD:Items.MACE;case ILUSIONISTA->Items.AMETHYST_SHARD;case HIDROMANTE->Items.PRISMARINE_SHARD;case PIROMANTE->Items.MAGMA_CREAM;default->Items.AMETHYST_SHARD;};
         };
     }
     public static String stageName(int stage){return stage==1?"Básico":stage==2?"Intermediário":"Avançado";}
@@ -108,21 +108,24 @@ public final class ClassEquipment {
         double wear=old.getMaxDamage()>0?(double)old.getDamageValue()/old.getMaxDamage():0;
         var stack=old.transmuteCopy(base(c,stage,part),old.getCount());
         if(stack.getMaxDamage()>0)stack.setDamageValue(Math.min(stack.getMaxDamage()-1,(int)(stack.getMaxDamage()*wear)));
-        var data=stack.getOrDefault(DataComponents.CUSTOM_DATA,CustomData.EMPTY).copyTag();var identity=new CompoundTag();identity.putString("owner",p.getUUID().toString());identity.putInt("class",c.ordinal());identity.putInt("stage",stage);identity.putString("part",part);data.put(KEY,identity);stack.set(DataComponents.CUSTOM_DATA,CustomData.of(data));
-        String name=part.equals("weapon")?switch(c){case GUERREIRO->"Espada do Gladiador";case ARQUEIRO->"Arco do Caçador";case MAGO->"Cajado Glacial";case NECROMANTE->"Grimório dos Mortos";case AVIARIO->"Martelo dos Céus";default->"Totem da Tempestade";}:part.equals("armor")?switch(c){case GUERREIRO->"Peitoral do Gladiador";case ARQUEIRO->"Botas do Vento";case MAGO->"Capuz Glacial";case NECROMANTE->"Coroa dos Mortos";case AVIARIO->"Manto das Alturas";default->"Manto da Tempestade";}:part.equals("ammo")?"Flechas do Caçador":part.equals("normal_arrow")?"Flecha de Infinidade":"Provisões de "+c.label();
+        var data=stack.getOrDefault(DataComponents.CUSTOM_DATA,CustomData.EMPTY).copyTag();var identity=new CompoundTag();identity.putString("owner",p.getUUID().toString());identity.putInt("class",c.ordinal());identity.putInt("stage",stage);identity.putInt("schema",2);identity.putString("part",part);data.put(KEY,identity);stack.set(DataComponents.CUSTOM_DATA,CustomData.of(data));
+        String name=part.equals("weapon")?switch(c){case GUERREIRO->"Espada do Gladiador";case ARQUEIRO->"Arco do Caçador";case MAGO->"Cajado Glacial";case NECROMANTE->"Grimório dos Mortos";case AVIARIO->stage==1?"Pluma de Resgate":stage==2?"Bastão das Correntes":"Martelo dos Céus";case ILUSIONISTA->"Espelho de Bolso";case HIDROMANTE->"Gota do Abismo";case PIROMANTE->"Brasa da Caldeira";default->"Totem da Tempestade";}:part.equals("armor")?switch(c){case GUERREIRO->"Peitoral do Gladiador";case ARQUEIRO->"Botas do Vento";case MAGO->"Capuz Glacial";case NECROMANTE->"Coroa dos Mortos";case AVIARIO->"Manto das Alturas";default->"Manto da Tempestade";}:part.equals("ammo")?"Flechas do Caçador":part.equals("normal_arrow")?"Flecha de Infinidade":"Provisões de "+c.label();
         stack.set(DataComponents.CUSTOM_NAME,Component.literal(name+" • "+stageName(stage)).withStyle(stage==3?ChatFormatting.LIGHT_PURPLE:stage==2?ChatFormatting.AQUA:ChatFormatting.WHITE));
         var lore=new ArrayList<Component>();
         if(part.equals("weapon")||part.equals("armor")){
             stack.set(DataComponents.MAX_STACK_SIZE,1);
             lore.add(Component.literal("Exclusivo de "+p.getName().getString()+" • "+c.label()));
             lore.add(Component.literal(stage==1?"Etapa inicial da classe":stage==2?"Nível 20 + Arsenal 8":"Nível 50 + Arsenal 16"));
+            lore.add(Component.literal("Vinculado: retorna após a morte; efeito recupera em 60 s."));
             if(part.equals("weapon")){
-                stack.set(DataComponents.UNBREAKABLE,Unit.INSTANCE);stack.set(DataComponents.DAMAGE_RESISTANT,new DamageResistant(net.minecraft.tags.DamageTypeTags.IS_FIRE));
+                lore.add(Component.literal(ClassRelics.effect(c)));
+                lore.add(Component.literal("Efeito do item: tecla configurável; 10 MP, recarga "+(40-stage*5)+" s."));
+                stack.set(DataComponents.USE_COOLDOWN,new UseCooldown(.05f,Optional.of(ResourceLocation.fromNamespaceAndPath("oxyrpg","class_item_"+c.name().toLowerCase(Locale.ROOT)))));stack.set(DataComponents.UNBREAKABLE,Unit.INSTANCE);stack.set(DataComponents.DAMAGE_RESISTANT,new DamageResistant(net.minecraft.tags.DamageTypeTags.IS_FIRE));
                 if(c==RpgClass.GUERREIRO){lore.add(Component.literal("Dano do kit +"+(stage*5)+"%; Corte Circular ganha alcance."));if(stage>=2)enchant(p,stack,Enchantments.SHARPNESS,stage==2?2:4);if(stage==3)enchant(p,stack,Enchantments.LOOTING,2);}
                 if(c==RpgClass.ARQUEIRO){if(stage>=2){enchant(p,stack,Enchantments.POWER,stage==2?2:4);enchant(p,stack,Enchantments.PUNCH,1);}if(stage==3)enchant(p,stack,Enchantments.INFINITY,1);lore.add(Component.literal("Flechas e Flecha Espectral: dano +"+(stage*5)+"%."));if(stage==3)lore.add(Component.literal("Infinidade funciona com flechas normais; especiais são consumidas."));}
                 if(c==RpgClass.MAGO){stack.set(DataComponents.ITEM_MODEL,ResourceLocation.withDefaultNamespace(stage==1?"blaze_rod":stage==2?"breeze_rod":"end_rod"));lore.add(Component.literal("Mana -"+(stage==3?20:stage*5)+"%; gelo +"+(Math.max(0,stage-1))+" s."));}
                 if(c==RpgClass.NECROMANTE){lore.add(Component.literal("Vida das invocações +"+(stage*10)+"%; dano +"+(Math.max(0,stage-1)*5)+"%."));stack.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE,stage>=2);}
-                if(c==RpgClass.AVIARIO){lore.add(Component.literal("Dano do kit +"+(stage*5)+"%."));}
+                if(c==RpgClass.AVIARIO&&stage==3){lore.add(Component.literal("Dano do kit +15%."));}
                 if(c==RpgClass.XAMA){stack.set(DataComponents.ITEM_MODEL,ResourceLocation.withDefaultNamespace("totem_of_undying"));lore.add(Component.literal("Raios e cura +"+(stage*5)+"%. Use na mão secundária para atacar com punhos."));lore.add(Component.literal("Totem visual: não ressuscita nem substitui mãos livres do Especialista."));}
             }else{
                 lore.add(Component.literal("Mantém bônus do kit quando equipado."));
@@ -147,7 +150,7 @@ public final class ClassEquipment {
         if(!(event.getEntity() instanceof ServerPlayer p)||!p.isAlive()||p.tickCount%20!=0)return;var real=REAL.get(p.getUUID());if(real==null||real.rpgClass()==RpgClass.NONE)return;progress(p,real);
         var boots=p.getItemBySlot(EquipmentSlot.FEET);if(real.rpgClass()==RpgClass.ARQUEIRO&&gear(boots)&&allowed(p,boots)&&tag(boots).getStringOr("part","").equals("armor")&&!p.onGround()&&p.getDeltaMovement().y<-.05&&!p.isCreative())p.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING,40,0,false,false));
     }
-    public static void request(ServerPlayer p){var real=REAL.get(p.getUUID());if(real!=null&&real.rpgClass()!=RpgClass.NONE){progress(p,real);p.sendSystemMessage(Component.literal("[Oxy RPG] Kit "+stageName(stage(p))+". Etapas: nível 20/Arsenal 8; nível 50/Arsenal 16. Itens pendentes aguardam espaço. Provisões não são repetidas."));}}
+    public static void request(ServerPlayer p){if(RpgDebug.testing(p)){var choice=RpgAbilities.profile(p).rpgClass();for(int i=0;i<36;i++){var item=p.getInventory().getItem(i);var id=tag(item);if(gear(item)&&id.getIntOr("class",0)==choice.ordinal()&&id.getStringOr("part","").equals("weapon")){p.sendSystemMessage(Component.literal("[Oxy RPG] Seu item de teste já está no inventário."));return;}}var stack=build(p,choice,3,"weapon",new ItemStack(base(choice,3,"weapon")));insert(p,stack);if(!stack.isEmpty())p.sendSystemMessage(Component.literal("[Oxy RPG] Abra um espaço e solicite o kit novamente."));else{p.getInventory().setChanged();p.inventoryMenu.broadcastFullState();p.sendSystemMessage(Component.literal("[Oxy RPG] Item de teste recebido. Continua exclusivo dessa classe."));}return;}var real=REAL.get(p.getUUID());if(real!=null&&real.rpgClass()!=RpgClass.NONE){progress(p,real);p.sendSystemMessage(Component.literal("[Oxy RPG] Kit "+stageName(stage(p))+". Etapas: nível 20/Arsenal 8; nível 50/Arsenal 16. Itens pendentes aguardam espaço. Provisões não são repetidas."));}}
     public static void logout(PlayerEvent.PlayerLoggedOutEvent event){if(event.getEntity() instanceof ServerPlayer p)REAL.remove(p.getUUID());}
     public static void stop(ServerStoppedEvent event){REAL.clear();}
 }

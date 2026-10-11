@@ -9,21 +9,22 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class SkillTreeTest {
     @TempDir Path directory;
-    private RpgProfile veteran(RpgClass type) { return new RpgProfile(type, 95, 0, 20, 700); }
+    private RpgProfile veteran(RpgClass type) { return new RpgProfile(type, 100, 0, 20, 700); }
 
+    private RpgProfile learn(RpgProfile p,int id){if(p.hasSkill(id))return p;long parents=SkillTree.parents(id);for(int n=0;n<SkillTree.COUNT;n++)if((parents&(1L<<n))!=0)p=learn(p,n);return p.unlockSkill(id);}
     @Test void noClassOrInsufficientLevelCannotBuySkills() {
         assertThrows(IllegalStateException.class, () -> RpgProfile.NEW.unlockSkill(2));
         assertThrows(IllegalStateException.class, () -> RpgProfile.NEW.choose(RpgClass.GUERREIRO).unlockSkill(2));
     }
     @Test void prerequisitesAndPointBudgetAreEnforced() {
         var low = new RpgProfile(RpgClass.GUERREIRO, 5, 0, 0, 0);
-        assertEquals(1, low.skillPoints());
+        assertEquals(2, low.skillPoints());
         var bought = low.unlockSkill(2);
-        assertEquals(0, bought.skillPoints());
-        assertThrows(IllegalStateException.class, () -> bought.unlockSkill(7));
+        assertEquals(1, bought.skillPoints());
+        assertThrows(IllegalStateException.class, () -> new RpgProfile(RpgClass.GUERREIRO,2,0,0,0).unlockSkill(7));
         assertThrows(IllegalStateException.class, () -> bought.unlockSkill(2));
         assertThrows(IllegalStateException.class, () -> veteran(RpgClass.GUERREIRO).unlockSkill(4));
-        var branch = veteran(RpgClass.GUERREIRO).unlockSkill(2).unlockSkill(3).unlockSkill(4);
+        var branch = learn(veteran(RpgClass.GUERREIRO),4);
         assertThrows(IllegalStateException.class, () -> branch.unlockSkill(6));
     }
     @Test void allThreeTreesCanBeCompletedAndHaveIndependentCooldowns() {
@@ -31,22 +32,22 @@ final class SkillTreeTest {
             var profile = veteran(type);
             assertTrue(profile.hasSkill(0)); assertTrue(profile.hasSkill(1));
             assertEquals(3, profile.abilityDamage());
-            for (int id = 2; id < SkillTree.COUNT; id++) profile = profile.unlockSkill(id);
-            assertEquals(0, profile.skillPoints());
+            for (int id = 2; id < SkillTree.COUNT; id++) profile = learn(profile,id);
+            assertEquals(1, profile.skillPoints());
             assertEquals(type == RpgClass.MAGO ? 6 : 8, profile.abilityDamage());
-            assertEquals(500, profile.abilityCooldown(0));
+            assertEquals(410, profile.abilityCooldown(0));
             var first = profile.useAbility(800, 0);
-            assertEquals(1300, first.readyAt(0));
+            assertEquals(800+profile.abilityCooldown(0), first.readyAt(0));
             assertEquals(0, first.readyAt(1));
             var second = first.useAbility(801, 1);
             assertEquals(first.readyAt(0), second.readyAt(0));
             assertTrue(second.readyAt(1) > 801);
             assertEquals(0, second.readyAt(2));
-            assertEquals(21, SkillTree.nodes(type).size());
+            assertEquals(SkillTree.COUNT, SkillTree.nodes(type).size());
         }
     }
     @Test void resetClearsLevelsExperienceSkillsAndAllCooldownsButPreservesHunts() {
-        var before = veteran(RpgClass.MAGO).unlockSkill(2).unlockSkill(3);
+        var before = learn(veteran(RpgClass.MAGO),3);
         var reset = before.resetClass();
         assertEquals(RpgClass.NONE, reset.rpgClass());
         assertEquals(1, reset.level()); assertEquals(0, reset.xp());
@@ -60,7 +61,7 @@ final class SkillTreeTest {
     }
     @Test void skillDataSurvivesPersistenceAndProgression() throws Exception {
         var id = UUID.randomUUID();
-        var profile = veteran(RpgClass.MAGO).unlockSkill(2).unlockSkill(3).unlockSkill(7).unlockSkill(8).useAbility(800, 1);
+        var profile = learn(veteran(RpgClass.MAGO),3).unlockSkill(7).unlockSkill(8).useAbility(800, 1);
         var store = new ProfileStore(directory);
         store.save(id, profile);
         assertEquals(profile, new ProfileStore(directory).load(id));
@@ -73,7 +74,7 @@ final class SkillTreeTest {
         var store = new ProfileStore(directory);
         var profile = store.load(id);
         assertEquals(new RpgProfile(RpgClass.GUERREIRO, 5, 50, 30, 600), profile);
-        assertEquals(1, profile.skillPoints());
+        assertEquals(2, profile.skillPoints());
         var upgraded = profile.unlockSkill(2);
         store.save(id, upgraded);
         assertEquals(upgraded, store.load(id));

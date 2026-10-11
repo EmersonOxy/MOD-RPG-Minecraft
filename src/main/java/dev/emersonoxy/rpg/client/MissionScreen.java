@@ -37,7 +37,7 @@ public final class MissionScreen extends Screen {
             y=text(g,"OBJETIVOS",x+10,y,pw-24,0xFF725434)+8;
             for(int i=0;i<quest.targets().size();i++){
                 var target=quest.targets().get(i);int progress=i==0?state.questFirst():state.questSecond();boolean done=progress>=target.amount();
-                var item=BuiltInRegistries.ITEM.getValue(ResourceLocation.withDefaultNamespace(target.icon()));g.renderFakeItem(new ItemStack(item==null?Items.PAPER:item),x+10,y);
+                var item=BuiltInRegistries.ITEM.getValue(ResourceLocation.parse(target.icon()));g.renderFakeItem(new ItemStack(item==null?Items.PAPER:item),x+10,y);
                 y=text(g,target.label()+" • "+progress+" / "+target.amount(),x+34,y+2,pw-48,done?0xFF376247:0xFF3B3024);
                 g.fill(x+34,y+3,x+pw-14,y+8,0xFFB09B78);int filled=(pw-48)*progress/Math.max(1,target.amount());g.fill(x+34,y+3,x+34+filled,y+8,done?0xFF658968:0xFF9B7338);y+=24;
             }

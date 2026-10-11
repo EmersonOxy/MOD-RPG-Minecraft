@@ -19,7 +19,7 @@ public final class DynamicHud {
         HEALTH("Vida"), ARMOR("Armadura"), FOOD("Fome"), AIR("Ar"), HOTBAR("Hotbar"),
         XP("XP vanilla"), EFFECTS("Efeitos"), VEHICLE("Vida da montaria"),
         RPG("Nível e XP RPG"), QUEST("Missões"), MANA("Mana"),
-        ABILITY_1("Habilidade 1"), ABILITY_2("Habilidade 2"), ABILITY_3("Habilidade 3");
+        ABILITY_1("Habilidade 1"), ABILITY_2("Habilidade 2"), ABILITY_3("Habilidade 3"), EVASION("Esquiva"), MINIMAP("Minimapa");
         public final String label;Part(String label){this.label=label;}}
     private static final Map<ResourceLocation,Part> LAYERS=Map.ofEntries(
         Map.entry(VanillaGuiLayers.PLAYER_HEALTH,Part.HEALTH),Map.entry(VanillaGuiLayers.ARMOR_LEVEL,Part.ARMOR),

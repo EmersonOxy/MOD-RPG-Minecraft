@@ -27,6 +27,7 @@ sourceSets.main.resources {
 }
 
 repositories {
+    maven { url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'; content { includeGroup('software.bernie.geckolib') } }
     // Add here additional repositories if required by some of the dependencies below.
 }
 
@@ -74,6 +75,7 @@ neoForge {
         // By default, the server will crash when no gametests are provided.
         // The gametest system is also enabled by default for other run configs under the /test command.
         gameTestServer {
+            gameDirectory = project.file("run-gametest")
             type = "gameTestServer"
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
@@ -122,6 +124,7 @@ configurations {
 }
 
 dependencies {
+    implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:5.3-alpha-3"
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
     // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"

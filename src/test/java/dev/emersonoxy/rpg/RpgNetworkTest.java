@@ -16,6 +16,13 @@ final class RpgNetworkTest {
             assertEquals(0, buf.readableBytes());
         } finally { buf.release(); }
     }
+    @Test void explorationAndDatapackPayloadsSurviveTransmission(){
+        var buf=new RegistryFriendlyByteBuf(Unpooled.buffer(),RegistryAccess.EMPTY);
+        try{var energy=new RpgNetwork.EvasionState(3,1.25f,120);RpgNetwork.EvasionState.CODEC.encode(buf,energy);assertEquals(energy,RpgNetwork.EvasionState.CODEC.decode(buf));
+            var text=new RpgNetwork.CombatText(4,1,2,3,"Errou",0x75BFFF);RpgNetwork.CombatText.CODEC.encode(buf,text);assertEquals(text,RpgNetwork.CombatText.CODEC.decode(buf));
+            var content=new RpgNetwork.ContentState("{\"classes\":{}}");RpgNetwork.ContentState.CODEC.encode(buf,content);assertEquals(content,RpgNetwork.ContentState.CODEC.decode(buf));assertEquals(0,buf.readableBytes());
+        }finally{buf.release();}
+    }
     @Test void everyMenuActionSurvivesTransmission() {
         var buf = new RegistryFriendlyByteBuf(Unpooled.buffer(), RegistryAccess.EMPTY);
         try {

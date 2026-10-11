@@ -14,17 +14,23 @@ public final class CombatFeedback {
     private static final Map<UUID,Critical> CRITICAL=new HashMap<>();
     private CombatFeedback(){}
     public static void critical(CriticalHitEvent event){if(event.getEntity() instanceof ServerPlayer p)CRITICAL.put(p.getUUID(),new Critical(event.getTarget().getUUID(),p.level().getGameTime(),event.isCriticalHit()));}
+    public static void text(ServerPlayer viewer,net.minecraft.world.entity.LivingEntity target,String text,int color){
+        PacketDistributor.sendToPlayer(viewer,new RpgNetwork.CombatText(target.getId(),target.getX(),target.getY()+target.getBbHeight()*.75,target.getZ(),text,color));
+    }
+    public static boolean vanillaCritical(ServerPlayer p,net.minecraft.world.entity.LivingEntity target,net.minecraft.world.damagesource.DamageSource source){
+        var mark=CRITICAL.get(p.getUUID());return source.getDirectEntity() instanceof AbstractArrow arrow?arrow.isCritArrow():source.getDirectEntity()==p&&mark!=null&&mark.tick()==p.level().getGameTime()&&mark.target().equals(target.getUUID())&&mark.critical();
+    }
     public static void damage(LivingDamageEvent.Post event){
         var target=event.getEntity();var source=event.getSource();var p=RpgNecromancer.owner(source);
         if(target instanceof ServerPlayer victim&&event.getBlockedDamage()>0&&RpgAbilities.profile(victim).rpgClass()==RpgClass.GUERREIRO)ClassJourney.advance(victim,2,1);
         if(p==null||target==p||RpgNecromancer.isSummon(target))return;
         boolean blocked=event.getNewDamage()<=0&&event.getBlockedDamage()>0;
         if(!blocked&&event.getNewDamage()<=0)return;
-        var mark=CRITICAL.get(p.getUUID());boolean crit=false;
-        if(source.getDirectEntity()==p&&mark!=null&&mark.tick()==p.level().getGameTime()&&mark.target().equals(target.getUUID())){crit=mark.critical();CRITICAL.remove(p.getUUID());}
-        if(source.getDirectEntity() instanceof AbstractArrow arrow)crit=arrow.isCritArrow();
+        var mark=CRITICAL.get(p.getUUID());boolean crit=CombatChances.take(source,target);
+        if(source.getDirectEntity()==p&&mark!=null&&mark.tick()==p.level().getGameTime()&&mark.target().equals(target.getUUID())){crit|=mark.critical();CRITICAL.remove(p.getUUID());}
+        if(source.getDirectEntity() instanceof AbstractArrow arrow)crit|=arrow.isCritArrow();
         PacketDistributor.sendToPlayer(p,new RpgNetwork.DamageNumber(target.getId(),target.getX(),target.getY()+target.getBbHeight()*.75,target.getZ(),event.getNewDamage(),crit,blocked));
-        if(!blocked)ClassJourney.damage(p,event);
+        if(!blocked){if(source.is(net.minecraft.world.damagesource.DamageTypes.PLAYER_ATTACK)&&source.getDirectEntity()==p&&!RpgAbilities.secondaryHit())ShieldParry.consume(p);ClassJourney.damage(p,event);}
     }
     public static void logout(PlayerEvent.PlayerLoggedOutEvent event){CRITICAL.remove(event.getEntity().getUUID());}
     public static void stop(ServerStoppedEvent event){CRITICAL.clear();}

@@ -1,11 +1,19 @@
-package dev.emersonoxy.rpg.client;
+package dev.emersonoxy.rpg;
 
 import dev.emersonoxy.rpg.RpgClass;
 
 /** Class silhouettes affect coordinates only; node IDs and unlock dependencies stay intact. */
-final class SkillTreeLayouts {
+public final class SkillTreeLayouts {
     private SkillTreeLayouts(){}
-    static double[] position(RpgClass type,int branch,double radius,double offset){
+    public static double[] nodePosition(RpgClass type,int id){
+        int branch=id<21?id/7:(id-21)/10,step=id<21?id%7:(id-21)%10;double radius,offset=0;
+        if(id==0)radius=0;
+        else if(id<21){radius=new int[]{70,130,190,370,445,445,515}[step];if(step==4)offset=-.22;if(step==5)offset=.22;}
+        else if(step<2){radius=250+step*60;offset=step==0?-.08:.08;}
+        else{radius=590+((step-2)/4)*85;offset=((step-2)%4-1.5)*.23;}
+        return position(type,branch,radius,offset);
+    }
+    public static double[] position(RpgClass type,int branch,double radius,double offset){
         if(radius==0)return new double[]{0,0};
         double angle=-Math.PI/2+branch*Math.PI*2/3;
         return switch(type){
@@ -24,6 +32,9 @@ final class SkillTreeLayouts {
             // A descending spine and two broad, upward sweeping wings.
             case AVIARIO -> branch==0?new double[]{Math.sin(offset)*radius,radius*.8}:
                 new double[]{(branch==1?-1:1)*(radius*.9+Math.sin(offset)*radius),-radius*.3-radius*radius/2600+Math.cos(offset)*35};
+            case ILUSIONISTA -> polar(radius,angle+offset+Math.sin(radius/90)*.3);
+            case HIDROMANTE -> new double[]{(branch-1)*radius*.72+Math.sin(radius/110+branch)*85+Math.sin(offset)*radius,-radius*.7};
+            case PIROMANTE -> polar(radius,angle+offset+Math.sin(radius/80+branch)*.18);
             default -> polar(radius,angle+offset);
         };
     }

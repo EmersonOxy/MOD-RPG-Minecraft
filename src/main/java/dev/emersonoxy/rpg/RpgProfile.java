@@ -54,7 +54,7 @@ public record RpgProfile(RpgClass rpgClass, int level, int xp, int kills, long a
     public boolean mainUnlocked(int slot) { return hasSkill(slot * 7 + 3); }
     public long readyAt(int slot) { return switch (slot) {case 0 -> abilityReadyAt; case 1 -> readySecond; case 2 -> readyThird; default -> throw new IllegalArgumentException("Habilidade inválida.");}; }
     public int abilityDuration() { return abilityDuration(0); }
-    public int abilityDuration(int slot) {return (int)Math.round(baseDuration(slot)*(1+.05*SkillTree.bonus(skills,1)));}
+    public int abilityDuration(int slot) {return (int)Math.round(baseDuration(slot)*(1+.05*SkillTree.bonus(skills,1))*RpgContent.durationMultiplier(rpgClass));}
     private int baseDuration(int slot) {
         return switch (rpgClass) {
             case GUERREIRO -> slot == 0 ? (mainUnlocked(0) ? 200 : 40) + (hasSkill(2) ? 20 : 0)
@@ -66,16 +66,21 @@ public record RpgProfile(RpgClass rpgClass, int level, int xp, int kills, long a
                 : slot == 1 ? (mainUnlocked(1) ? 200 : 60) + (hasSkill(11) ? 40 : 0)
                 : mainUnlocked(2) ? 160 : 60;
             case NECROMANTE -> slot==0?80:slot==1?(mainUnlocked(1)?600:300):240;
-            case AVIARIO -> slot==0?(mainUnlocked(0)?500:200)+(hasSkill(2)?60:0)+(hasSkill(4)?100:0)+(hasSkill(6)?200:0):slot==1?0:600;
+            case AVIARIO -> slot==0?(mainUnlocked(0)?300:160)+(hasSkill(2)?40:0)+(hasSkill(4)?80:0)+(hasSkill(6)?(int)(240*level/100.0):0):slot==1?0:600;
+            case ILUSIONISTA -> slot==0?(mainUnlocked(0)?240:120):slot==1?(mainUnlocked(1)?100:60):(mainUnlocked(2)?120:60)+(hasSkill(18)?40:0);
+            case HIDROMANTE -> slot==0?60:slot==1?(mainUnlocked(1)?80:40):(mainUnlocked(2)?300:120);
+            case PIROMANTE -> slot==0?200:slot==1?240:(mainUnlocked(2)?180:80)+(hasSkill(18)?60:0);
             case XAMA -> slot==0?(mainUnlocked(0)?300:100)+(hasSkill(4)?60:0):slot==1?(mainUnlocked(1)?200:100)+(hasSkill(9)?40:0)+(hasSkill(13)?100:0):(mainUnlocked(2)?300:160)+(hasSkill(18)?100:0);
             default -> 0;
         };
     }
     public int abilityCooldown() { return abilityCooldown(0); }
-    public int abilityCooldown(int slot) {return (int)Math.round(baseCooldown(slot)*Math.max(.4,1-.03*SkillTree.bonus(skills,3)));}
+    public int abilityCooldown(int slot) {return (int)Math.round(baseCooldown(slot)*Math.max(.4,1-.03*SkillTree.bonus(skills,3))*RpgContent.cooldownMultiplier(rpgClass)*RpgConfig.value(RpgConfig.COOLDOWN,1));}
     private int baseCooldown(int slot) {
         if(rpgClass==RpgClass.AVIARIO)return slot==0?abilityDuration(0)+200:slot==1?0:600;
-        if (!mainUnlocked(slot)) return 200;
+        if(rpgClass==RpgClass.HIDROMANTE&&slot==0)return 100;
+        if(rpgClass==RpgClass.PIROMANTE&&slot==1)return 120;
+        if (!mainUnlocked(slot)) return 240;
         if(rpgClass==RpgClass.XAMA)return new int[]{30,40,35}[slot]*20;
         return (slot == 0 ? 25 : slot == 1 ? rpgClass == RpgClass.MAGO ? 30 : (rpgClass == RpgClass.GUERREIRO || rpgClass == RpgClass.NECROMANTE) ? 40 : 35
             : rpgClass == RpgClass.MAGO ? 40 : 45) * 20;

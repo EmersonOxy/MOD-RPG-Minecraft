@@ -1,0 +1,417 @@
+{
+  "cooldown_multiplier": 1,
+  "damage_multiplier": 1,
+  "duration_multiplier": 1,
+  "label": "Necromante",
+  "mana_multiplier": 1,
+  "nodes": [
+    {
+      "description": "Dano das invocações +5%.",
+      "icon": "fermented_spider_eye",
+      "id": 0,
+      "title": "Pacto sombrio",
+      "x": 0,
+      "y": 0
+    },
+    {
+      "description": "Lança teia e invoca 1 aranha no alvo. Após perder o alvo, espera 4 s pelo próximo ataque do jogador.",
+      "icon": "string",
+      "id": 1,
+      "title": "Filhote aracnídeo",
+      "x": 18,
+      "y": -129
+    },
+    {
+      "description": "Aracnídeo inicial invoca +1 aranha.",
+      "icon": "spider_eye",
+      "id": 2,
+      "title": "Ninhada",
+      "x": 28,
+      "y": -188
+    },
+    {
+      "description": "Lança teia e invoca 3 aranhas que saltam no alvo. Recarga 25 s.",
+      "icon": "cobweb",
+      "id": 3,
+      "title": "Aracnídeo",
+      "x": -4,
+      "y": -370
+    },
+    {
+      "description": "Aracnídeo principal invoca +1 aranha.",
+      "icon": "cave_spider_spawn_egg",
+      "id": 4,
+      "title": "Colônia",
+      "x": -140,
+      "y": -422
+    },
+    {
+      "description": "Lentidão da teia +2 s.",
+      "icon": "white_wool",
+      "id": 5,
+      "title": "Fios persistentes",
+      "x": 53,
+      "y": -442
+    },
+    {
+      "description": "Aracnídeo principal invoca +1 aranha, até 5.",
+      "icon": "spider_spawn_egg",
+      "id": 6,
+      "title": "Matriarca",
+      "x": -75,
+      "y": -510
+    },
+    {
+      "description": "Vida das invocações +10%.",
+      "icon": "bone",
+      "id": 7,
+      "title": "Ossos firmes",
+      "x": 57,
+      "y": 40
+    },
+    {
+      "description": "Invoca 1 zumbi por 15 s; segue seus ataques e busca apenas hostis sozinho.",
+      "icon": "rotten_flesh",
+      "id": 8,
+      "title": "Servo morto",
+      "x": 103,
+      "y": 80
+    },
+    {
+      "description": "Rei dos Mortos inicial invoca +1 zumbi.",
+      "icon": "zombie_spawn_egg",
+      "id": 9,
+      "title": "Companhia pútrida",
+      "x": 149,
+      "y": 118
+    },
+    {
+      "description": "Invoca 1 esqueleto e 3 zumbis por 30 s. Seguem seus ataques; sozinhos, buscam hostis. Recarga 40 s.",
+      "icon": "skeleton_skull",
+      "id": 10,
+      "title": "Rei dos Mortos",
+      "x": 323,
+      "y": 181
+    },
+    {
+      "description": "Rei dos Mortos principal invoca +1 esqueleto.",
+      "icon": "skeleton_spawn_egg",
+      "id": 11,
+      "title": "Guarda óssea",
+      "x": 436,
+      "y": 90
+    },
+    {
+      "description": "Rei dos Mortos principal invoca +1 zumbi.",
+      "icon": "zombie_head",
+      "id": 12,
+      "title": "Horda",
+      "x": 356,
+      "y": 267
+    },
+    {
+      "description": "Rei dos Mortos principal invoca +1 esqueleto e +1 zumbi, até 3 e 5.",
+      "icon": "wither_skeleton_skull",
+      "id": 13,
+      "title": "Coroa dos mortos",
+      "x": 479,
+      "y": 190
+    },
+    {
+      "description": "Resistência a empurrão +10%.",
+      "icon": "blackstone",
+      "id": 14,
+      "title": "Sombra firme",
+      "x": -63,
+      "y": 30
+    },
+    {
+      "description": "Cega mobs próximos por 2 s e invoca 1 phantom para 1 mergulho.",
+      "icon": "phantom_membrane",
+      "id": 15,
+      "title": "Asa sombria",
+      "x": -120,
+      "y": 49
+    },
+    {
+      "description": "Cegueira inicial +1 s.",
+      "icon": "black_dye",
+      "id": 16,
+      "title": "Breve eclipse",
+      "x": -177,
+      "y": 69
+    },
+    {
+      "description": "Cega mobs em raio de 6 blocos por 4 s e invoca 3 phantoms, com 1 mergulho cada. Recarga 45 s.",
+      "icon": "phantom_spawn_egg",
+      "id": 17,
+      "title": "Céu Noturno",
+      "x": -318,
+      "y": 189
+    },
+    {
+      "description": "Raio de Céu Noturno +1 bloco.",
+      "icon": "ender_eye",
+      "id": 18,
+      "title": "Horizonte escuro",
+      "x": -296,
+      "y": 332
+    },
+    {
+      "description": "Dano dos phantoms +15%.",
+      "icon": "iron_sword",
+      "id": 19,
+      "title": "Mergulho cruel",
+      "x": -409,
+      "y": 175
+    },
+    {
+      "description": "Cegueira de Céu Noturno +2 s.",
+      "icon": "echo_shard",
+      "id": 20,
+      "title": "Noite profunda",
+      "x": -404,
+      "y": 320
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 21,
+      "title": "Preparação: Aracnídeo",
+      "x": 11,
+      "y": -250
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 22,
+      "title": "Domínio: Aracnídeo",
+      "x": 45,
+      "y": -307
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 23,
+      "title": "Potência I",
+      "x": -274,
+      "y": -523
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 24,
+      "title": "Persistência I",
+      "x": -147,
+      "y": -571
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 25,
+      "title": "Eficiência I",
+      "x": -13,
+      "y": -590
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 26,
+      "title": "Recuperação I",
+      "x": 122,
+      "y": -577
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 27,
+      "title": "Potência II",
+      "x": -266,
+      "y": -620
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 28,
+      "title": "Persistência II",
+      "x": -118,
+      "y": -665
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 29,
+      "title": "Eficiência II",
+      "x": 37,
+      "y": -674
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 30,
+      "title": "Recuperação II",
+      "x": 190,
+      "y": -648
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 31,
+      "title": "Preparação: Rei dos Mortos",
+      "x": 211,
+      "y": 134
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 32,
+      "title": "Domínio: Rei dos Mortos",
+      "x": 243,
+      "y": 192
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 33,
+      "title": "Potência I",
+      "x": 589,
+      "y": 24
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 34,
+      "title": "Persistência I",
+      "x": 568,
+      "y": 158
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 35,
+      "title": "Eficiência I",
+      "x": 517,
+      "y": 284
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 36,
+      "title": "Recuperação I",
+      "x": 439,
+      "y": 394
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 37,
+      "title": "Potência II",
+      "x": 670,
+      "y": 80
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 38,
+      "title": "Persistência II",
+      "x": 634,
+      "y": 230
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 39,
+      "title": "Eficiência II",
+      "x": 565,
+      "y": 369
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 40,
+      "title": "Recuperação II",
+      "x": 466,
+      "y": 488
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 41,
+      "title": "Preparação: Céu Noturno",
+      "x": -222,
+      "y": 115
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 42,
+      "title": "Domínio: Céu Noturno",
+      "x": -288,
+      "y": 115
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 43,
+      "title": "Potência I",
+      "x": -316,
+      "y": 498
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 44,
+      "title": "Persistência I",
+      "x": -421,
+      "y": 413
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 45,
+      "title": "Eficiência I",
+      "x": -504,
+      "y": 306
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 46,
+      "title": "Recuperação I",
+      "x": -561,
+      "y": 183
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 47,
+      "title": "Potência II",
+      "x": -404,
+      "y": 541
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 48,
+      "title": "Persistência II",
+      "x": -517,
+      "y": 434
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 49,
+      "title": "Eficiência II",
+      "x": -602,
+      "y": 305
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 50,
+      "title": "Recuperação II",
+      "x": -656,
+      "y": 160
+    }
+  ]
+}

@@ -1,12 +1,12 @@
-# Oxy RPG 0.22.0
+# Oxy RPG 0.26.0
 
-Minecraft **1.21.10**, NeoForge **21.10.64**, JDK **21**. Usa assets nativos do Minecraft; não exige outros mods.
+Minecraft **1.21.10**, NeoForge **21.10.64**, JDK **21**. Usa assets nativos do Minecraft e GeckoLib 5.3-alpha-3 para o selo animado.
 
 ## Interface e controles
 
 - **R** abre o menu, a árvore e o diário de missões.
 - **H** mostra/oculta o HUD. F1 oculta a interface, inclusive etiquetas.
-- **G**, **V** e **B** ativam os três ramos da classe, com recargas independentes.
+- **G**, **V** e **B** ativam os três ramos da classe, com recargas independentes. **C** usa o efeito exclusivo do item de classe.
 - No dash do arqueiro, segure uma direção de movimento (WASD) ao pressionar B. Sem direção, usa a mira.
 - Todas as teclas são remapeáveis em Opções > Controles.
 - As árvores usam ícones e molduras de conquistas. Arraste o fundo com o botão esquerdo para mover e use a roda para zoom; Centralizar volta ao nó selecionado.
@@ -39,7 +39,7 @@ Valores iniciais das habilidades principais, antes das melhorias:
 - Lança-chamas: jato por 3 s, alcance 6 blocos, queimadura 6 s; recarga 30 s.
 - Tremor: raio 4 blocos, duração 6 s; recarga 40 s.
 - Corte circular: raio 3 blocos, 8 pontos de dano, Força I por 10 s; recarga 25 s.
-- Vampirismo: duração 12 s, cura de 25% do dano aplicado; fome esvazia em cerca de 6 s sem ataques. Acertar inimigos recupera alimento com partículas de bife; recarga 40 s.
+- Vampirismo: duração 12 s, cura de 25% do dano aplicado; fome esvazia em cerca de 6 s sem ataques. Acertar inimigos consome fome; cura tem teto e intervalo mínimo; recarga 40 s.
 - Bastião: Resistência III, brilho e Lentidão I por 8 s, retaliação e reflexão de projéteis pela frente; recarga 45 s.
 - Flecha espectral: até três inimigos, 8 pontos de dano, brilho 10 s e lentidão 4 s; recarga 25 s.
 - Furtividade: invisibilidade 10 s e fumaça 2 s. Atacar encerra a furtividade; recarga 35 s.
@@ -1112,3 +1112,28 @@ sem testes automatizados ou abertura do Minecraft, conforme preferência do usu�
 ## 0.23.0 — telas e árvores por classe
 
 Treinamento, profissões, arsenal e configurações usam a moldura escura e dourada do menu RPG. Treinamento e profissões apresentam cartões separados; o arsenal vazio explica como iniciar a comparação. Cada classe tem uma silhueta própria na árvore: lâmina e guardas, espiral arcana, leque do arco, cadeias do necromante, raízes do xamã e asas do aviário. IDs, dependências, custos e progresso existentes foram preservados.
+
+## 0.24.0 — esquiva, parry e exploração
+
+- Esquiva universal com Alt esquerdo (remapeável): WASD escolhe a direção; sem movimento, segue a mira. Movimento no chão, com colisões normais, sem teleporte e 0,3 s de proteção contra ataques. Queda, lava e outros danos ambientais continuam ativos.
+- Barra inspirada na XP vanilla, em três segmentos acima da hotbar. Começa com uma carga; níveis 25 e 50 liberam a segunda e a terceira. Uma carga recarrega a cada 6 s, em sequência. Cargas parcialmente cheias não permitem uso. Modo teste tem gasto normal; debug é ilimitado. A energia normal é preservada ao sair e morrer.
+- Parry exclusivo de escudos: bloqueio entre os ticks 5 e 10 após levantar o escudo, respeitando a direção e ataques que atravessam escudos. Evita desgaste nesse bloqueio, desequilibra o atacante e abre 1,5 s para um contra-ataque corpo a corpo crítico. Um parry por segundo.
+- Acertos diretos do jogador: 5% de erro e 10% de crítico base (dano ×1,5). Sorte reduz erro em 0,1 ponto percentual por ponto, até 1%; aumenta crítico em 0,25 ponto percentual, até 35%. Críticos vanilla são preservados e não recebem multiplicador duplicado. Sangramento, frio periódico e retaliação não fazem novas rolagens. Erros exibem “Errou” em azul; críticos exibem o dano seguido de “Crítico”. Decisão e dano vêm do servidor.
+- Minimapa simples de superfície com norte, direção do jogador e coordenadas; M alterna visibilidade. Amostra somente chunks carregados, em lotes limitados. Não é um mapa de cavernas e não revela terreno pelo servidor. Esquiva e minimapa podem ser ocultados nas opções da HUD.
+- Vilas: espaçamento 34 → 26 chunks, mantendo separação 8, tipos de vila e biomas vanilla. A frequência real depende dos biomas. Aplica-se a terreno gerado após a atualização; áreas existentes são preservadas.
+- Baús vanilla de vilas retêm cada item com probabilidade de 60% (redução média de 40%). Atua na geração de loot ainda não aberto, sem alterar itens já obtidos, trocas ou recompensas de missões. Arquivos de worldgen e loot podem ser substituídos por datapacks.
+- Descrições de atributos e skills mostram benefícios e requisitos sem explicar detalhes internos da distribuição.
+
+Compilação: `build-windows.bat` (assemble). A validação dentro do jogo é feita pelo usuário.
+
+## 0.25.0 — integrações nativas do NeoForge
+
+Configurações de balanceamento no menu R → Ajustes, classes e missões por datapack, Data Maps de criaturas/armas, perfil real em Data Attachment com importação dos arquivos antigos, gerador de dados, seções de profiler e quatro GameTests. GeckoLib 5.3-alpha-3 adiciona o selo RPG animado (receita ou `/rpg selo`). O balanceamento padrão da 0.24.0 é mantido.
+
+Consulte [o guia de integrações](docs/INTEGRACOES_NEOFORGE.md) para arquivos, limites de customização, migração, comandos e execução opcional dos testes.
+
+## 0.26.0 — novas classes, balanceamento e equipamentos vinculados
+
+Ilusionista, Hidromante e Piromaníaco têm árvores de 51 nós e mecanismos próprios: enxame intangível, controle aquático, núcleos de magma, explosões encadeadas e calor. Voo do Aviário, cura do Guerreiro, bônus do Arqueiro e invocações do Necromante agora crescem de forma mais gradual. Todas as classes têm limitações explícitas na seleção.
+
+Equipamentos do kit são recuperados após morrer, com recarga de 60 s. Cada item principal tem um efeito acionado pela tecla C, configurável. Consulte [o guia da versão](docs/CLASSES_026.md) para detalhes e controles.

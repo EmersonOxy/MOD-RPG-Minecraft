@@ -8,7 +8,8 @@
     "EquipmentSlotMixin",
     "CreativeEquipmentMixin",
     "CreeperRadiusAccessor",
-    "AviaryFlightMixin"
+    "AviaryFlightMixin",
+    "SpecialistCollisionMixin"
   ],
   "client": [
     "ShoulderCameraMixin",

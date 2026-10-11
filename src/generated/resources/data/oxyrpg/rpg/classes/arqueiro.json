@@ -1,0 +1,417 @@
+{
+  "cooldown_multiplier": 1,
+  "damage_multiplier": 1,
+  "duration_multiplier": 1,
+  "label": "Arqueiro",
+  "mana_multiplier": 1,
+  "nodes": [
+    {
+      "description": "Dano de flechas +5%.",
+      "icon": "bow",
+      "id": 0,
+      "title": "Mira treinada",
+      "x": 0,
+      "y": 0
+    },
+    {
+      "description": "Dispara uma flecha inicial; flechas destacam o alvo por 2 s.",
+      "icon": "arrow",
+      "id": 1,
+      "title": "Marca breve",
+      "x": 86,
+      "y": -98
+    },
+    {
+      "description": "Destaque inicial +1 s.",
+      "icon": "glow_ink_sac",
+      "id": 2,
+      "title": "Rastro visível",
+      "x": 125,
+      "y": -143
+    },
+    {
+      "description": "flecha espectral atravessa até 3 inimigos, destaca por 10 s e causa lentidão por 4 s. Recarga 25 s.",
+      "icon": "spectral_arrow",
+      "id": 3,
+      "title": "Flecha espectral",
+      "x": 244,
+      "y": -278
+    },
+    {
+      "description": "Atravessa +1 inimigo.",
+      "icon": "crossbow",
+      "id": 4,
+      "title": "Perfuração",
+      "x": 214,
+      "y": -390
+    },
+    {
+      "description": "Brilho +2 s.",
+      "icon": "glowstone_dust",
+      "id": 5,
+      "title": "Marca persistente",
+      "x": 360,
+      "y": -262
+    },
+    {
+      "description": "Dano da flecha especial +25% e lentidão +2 s.",
+      "icon": "spyglass",
+      "id": 6,
+      "title": "Caçador espectral",
+      "x": 340,
+      "y": -387
+    },
+    {
+      "description": "Distância de detecção dos mobs -10%.",
+      "icon": "leather_boots",
+      "id": 7,
+      "title": "Passos leves",
+      "x": 70,
+      "y": 0
+    },
+    {
+      "description": "Agachar por 2 s concede camuflagem fraca; Ative para um breve sumiço.",
+      "icon": "ink_sac",
+      "id": 8,
+      "title": "Discrição",
+      "x": 130,
+      "y": 0
+    },
+    {
+      "description": "Distância de detecção -5% adicionais.",
+      "icon": "black_wool",
+      "id": 9,
+      "title": "Silêncio",
+      "x": 190,
+      "y": 0
+    },
+    {
+      "description": "jogador e equipamentos desaparecem por 10 s; fumaça por 2 s. Atacar encerra. Recarga 35 s.",
+      "icon": "ender_pearl",
+      "id": 10,
+      "title": "Furtividade",
+      "x": 370,
+      "y": 0
+    },
+    {
+      "description": "Invisibilidade +2 s.",
+      "icon": "phantom_membrane",
+      "id": 11,
+      "title": "Sumiço prolongado",
+      "x": 434,
+      "y": -97
+    },
+    {
+      "description": "Raio da fumaça +0,5 bloco.",
+      "icon": "campfire",
+      "id": 12,
+      "title": "Névoa densa",
+      "x": 434,
+      "y": 97
+    },
+    {
+      "description": "Primeiro ataque saindo da furtividade causa +75% de dano.",
+      "icon": "ender_eye",
+      "id": 13,
+      "title": "Ataque das sombras",
+      "x": 515,
+      "y": 0
+    },
+    {
+      "description": "Velocidade de movimento +3%.",
+      "icon": "sugar",
+      "id": 14,
+      "title": "Agilidade",
+      "x": 46,
+      "y": 53
+    },
+    {
+      "description": "Ataques pelas costas causam sangramento fraco por 2 s; Libera a arrancada inicial.",
+      "icon": "flint",
+      "id": 15,
+      "title": "Ferida leve",
+      "x": 86,
+      "y": 98
+    },
+    {
+      "description": "Sangramento inicial +1 s.",
+      "icon": "iron_sword",
+      "id": 16,
+      "title": "Corte profundo",
+      "x": 125,
+      "y": 143
+    },
+    {
+      "description": "dash de 5 blocos, velocidade e dano físico dobrado por 8 s. Ataques causam sangramento e lentidão. Recarga 45 s.",
+      "icon": "diamond_sword",
+      "id": 17,
+      "title": "Assassino",
+      "x": 244,
+      "y": 278
+    },
+    {
+      "description": "Dash +1 bloco.",
+      "icon": "rabbit_foot",
+      "id": 18,
+      "title": "Passo longo",
+      "x": 360,
+      "y": 262
+    },
+    {
+      "description": "Multiplicador de dano da principal +10%.",
+      "icon": "netherite_axe",
+      "id": 19,
+      "title": "Execução",
+      "x": 214,
+      "y": 390
+    },
+    {
+      "description": "Um segundo dash durante a ativação; fortalece sangramento.",
+      "icon": "feather",
+      "id": 20,
+      "title": "Passo duplo",
+      "x": 340,
+      "y": 387
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 21,
+      "title": "Preparação: Flecha espectral",
+      "x": 149,
+      "y": -200
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 22,
+      "title": "Domínio: Flecha espectral",
+      "x": 223,
+      "y": -216
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 23,
+      "title": "Potência I",
+      "x": 217,
+      "y": -549
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 24,
+      "title": "Persistência I",
+      "x": 336,
+      "y": -485
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 25,
+      "title": "Eficiência I",
+      "x": 438,
+      "y": -396
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 26,
+      "title": "Recuperação I",
+      "x": 516,
+      "y": -285
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 27,
+      "title": "Potência II",
+      "x": 248,
+      "y": -628
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 28,
+      "title": "Persistência II",
+      "x": 384,
+      "y": -555
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 29,
+      "title": "Eficiência II",
+      "x": 501,
+      "y": -453
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 30,
+      "title": "Recuperação II",
+      "x": 591,
+      "y": -327
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 31,
+      "title": "Preparação: Furtividade",
+      "x": 249,
+      "y": -20
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 32,
+      "title": "Domínio: Furtividade",
+      "x": 309,
+      "y": 25
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 33,
+      "title": "Potência I",
+      "x": 555,
+      "y": -200
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 34,
+      "title": "Persistência I",
+      "x": 586,
+      "y": -68
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 35,
+      "title": "Eficiência I",
+      "x": 586,
+      "y": 68
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 36,
+      "title": "Recuperação I",
+      "x": 555,
+      "y": 200
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 37,
+      "title": "Potência II",
+      "x": 635,
+      "y": -228
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 38,
+      "title": "Persistência II",
+      "x": 671,
+      "y": -77
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 39,
+      "title": "Eficiência II",
+      "x": 671,
+      "y": 77
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 40,
+      "title": "Recuperação II",
+      "x": 635,
+      "y": 228
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 41,
+      "title": "Preparação: Assassino",
+      "x": 179,
+      "y": 174
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 42,
+      "title": "Domínio: Assassino",
+      "x": 185,
+      "y": 249
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 43,
+      "title": "Potência I",
+      "x": 516,
+      "y": 285
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 44,
+      "title": "Persistência I",
+      "x": 438,
+      "y": 396
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 45,
+      "title": "Eficiência I",
+      "x": 336,
+      "y": 485
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 46,
+      "title": "Recuperação I",
+      "x": 217,
+      "y": 549
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 47,
+      "title": "Potência II",
+      "x": 591,
+      "y": 327
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 48,
+      "title": "Persistência II",
+      "x": 501,
+      "y": 453
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 49,
+      "title": "Eficiência II",
+      "x": 384,
+      "y": 555
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 50,
+      "title": "Recuperação II",
+      "x": 248,
+      "y": 628
+    }
+  ]
+}

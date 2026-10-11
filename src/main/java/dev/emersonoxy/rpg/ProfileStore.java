@@ -11,9 +11,19 @@ import java.util.UUID;
 /** One file per UUID, inside each world; never replaces unreadable profiles with defaults. */
 public final class ProfileStore {
     private final Path directory;
-    public ProfileStore(Path directory) { this.directory = directory; }
+    private final net.minecraft.server.level.ServerPlayer player;
+    public ProfileStore(Path directory) { this.directory = directory;this.player=null; }
 
+    public ProfileStore(net.minecraft.server.level.ServerPlayer player){this.directory=player.level().getServer().getWorldPath(net.minecraft.world.level.storage.LevelResource.ROOT).resolve("oxyrpg");this.player=player;}
     public RpgProfile load(UUID id) throws IOException {
+        if(player!=null){
+            if(!id.equals(player.getUUID()))throw new IOException("UUID não corresponde ao dono do perfil.");
+            var stored=player.getData(PlayerAttachments.PROFILE);if(stored.migrated())return stored.profile();
+            // Read through the old validator first. Unreadable profiles are never marked migrated.
+            var legacy=new ProfileStore(directory).load(id);
+            player.setData(PlayerAttachments.PROFILE,new PlayerAttachments.Stored(true,legacy));
+            return legacy;
+        }
         Path file = directory.resolve(id + ".properties");
         if (Files.notExists(file)) return RpgProfile.NEW;
         Properties data = new Properties();
@@ -29,6 +39,7 @@ public final class ProfileStore {
     }
 
     public void save(UUID id, RpgProfile profile) throws IOException {
+        if(player!=null){if(!id.equals(player.getUUID()))throw new IOException("UUID não corresponde ao dono do perfil.");player.setData(PlayerAttachments.PROFILE,new PlayerAttachments.Stored(true,profile));return;}
         Files.createDirectories(directory);
         Properties data = new Properties();
         data.setProperty("class", profile.rpgClass().name());

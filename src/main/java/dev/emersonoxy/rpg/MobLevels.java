@@ -20,7 +20,7 @@ public final class MobLevels {
     private MobLevels() {}
     public static int level(Mob mob) { return Math.clamp(mob.getPersistentData().getIntOr(KEY, 1), 1, 100); }
     public static void join(EntityJoinLevelEvent event) {
-        if (event.isCanceled() || RpgNecromancer.isSummon(event.getEntity()) || !(event.getLevel() instanceof ServerLevel world)
+        if (event.isCanceled() || RpgSpecialists.temporary(event.getEntity()) || RpgNecromancer.isSummon(event.getEntity()) || !(event.getLevel() instanceof ServerLevel world)
             || !(event.getEntity() instanceof Mob mob) || !(mob instanceof Enemy)) return;
         if (mob.getPersistentData().contains(KEY)) {balance(mob);EliteMobs.slow(mob);return;}
         int assigned = 1;
@@ -33,7 +33,7 @@ public final class MobLevels {
                 if (d < distance) { distance = d; closest = player; }
             }
             if (closest != null) try {
-                var profile = new ProfileStore(world.getServer().getWorldPath(LevelResource.ROOT).resolve("oxyrpg")).load(closest.getUUID());
+                var profile = new ProfileStore(closest).load(closest.getUUID());
                 int playerLevel = RpgDebug.testing(closest) ? RpgProfile.MAX_LEVEL : profile.level();
                 assigned = Math.clamp(playerLevel + mob.getRandom().nextInt(5) - 2, 1, 100);
             } catch (IOException e) { LoggerFactory.getLogger(MobLevels.class).warn("Não foi possível ler o nível para spawn RPG; usando nível 1", e); }
@@ -43,12 +43,12 @@ public final class MobLevels {
         balance(mob);
         if(!event.loadedFromDisk())EliteMobs.roll(mob);
     }
-    public static double healthFactor(int level){double n=level-1;return 1+n*.07+n*n*.0007;}
-    public static double damageFactor(int level){double n=level-1;return 1+n*.045+n*n*.00035;}
+    public static double healthFactor(int level){double n=level-1;return (1+n*.07+n*n*.0007)*RpgConfig.value(RpgConfig.MOB_HEALTH,1);}
+    public static double damageFactor(int level){double n=level-1;return (1+n*.045+n*n*.00035)*RpgConfig.value(RpgConfig.MOB_DAMAGE,1);}
     static void balance(Mob mob){
         float ratio=mob.getHealth()/Math.max(1,mob.getMaxHealth());
-        modifier(mob,Attributes.MAX_HEALTH,"mob_health",healthFactor(level(mob))-1);
-        modifier(mob,Attributes.ATTACK_DAMAGE,"mob_damage",damageFactor(level(mob))-1);
+        modifier(mob,Attributes.MAX_HEALTH,"mob_health",healthFactor(level(mob))*RpgDataMaps.mob(mob).health()-1);
+        modifier(mob,Attributes.ATTACK_DAMAGE,"mob_damage",damageFactor(level(mob))*RpgDataMaps.mob(mob).damage()-1);
         mob.setHealth(Math.min(mob.getMaxHealth(),ratio*mob.getMaxHealth()));
     }
     static void modifier(Mob mob,net.minecraft.core.Holder<net.minecraft.world.entity.ai.attributes.Attribute> key,String name,double amount){
@@ -57,7 +57,7 @@ public final class MobLevels {
     }
     public static void damage(net.neoforged.neoforge.event.entity.living.LivingDamageEvent.Pre event){
         if(event.getSource().getEntity() instanceof Mob mob&&mob instanceof Enemy&&!RpgNecromancer.isSummon(mob)
-            &&(event.getSource().is(net.minecraft.tags.DamageTypeTags.IS_PROJECTILE)||event.getSource().is(net.minecraft.tags.DamageTypeTags.IS_EXPLOSION)))event.setNewDamage(event.getNewDamage()*(float)damageFactor(level(mob)));
+            &&(event.getSource().is(net.minecraft.tags.DamageTypeTags.IS_PROJECTILE)||event.getSource().is(net.minecraft.tags.DamageTypeTags.IS_EXPLOSION)))event.setNewDamage(event.getNewDamage()*(float)(damageFactor(level(mob))*RpgDataMaps.mob(mob).damage()));
     }
     private static void equip(Mob mob,int level,ServerLevel world){
         if(level<10)return;

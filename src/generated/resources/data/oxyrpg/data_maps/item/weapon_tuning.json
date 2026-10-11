@@ -1,0 +1,8 @@
+{
+  "values": {
+    "#minecraft:swords": {
+      "critical_bonus": 0,
+      "damage": 1
+    }
+  }
+}

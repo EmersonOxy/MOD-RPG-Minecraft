@@ -21,7 +21,8 @@ public final class MeteorCrater {
         for(int x=-r;x<=r;x++)for(int z=-r;z<=r;z++)for(int y=0;y>=-depth;y--){double edge=(x*x+z*z)/(radius*radius)+(y*y)/(double)(depth*depth);if(edge<=1)positions.add(origin.offset(x,y,z));}
         positions.sort(Comparator.comparingDouble(pos->pos.distSqr(origin)));QUEUE.add(new Crater(p,positions,force,capstone));
     }
-    public static void tick(ServerTickEvent.Post event){
+    public static void tick(ServerTickEvent.Post event){RpgProfiler.run("crater",()->tickBody(event));}
+    private static void tickBody(ServerTickEvent.Post event){
         int checks=0,changes=0,entities=0,rounds=QUEUE.size();
         while(rounds-->0&&!QUEUE.isEmpty()&&checks<600&&changes<120){var c=QUEUE.removeFirst();int local=0;
             if(c.world.getServer()!=event.getServer())continue;

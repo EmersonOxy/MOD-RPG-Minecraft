@@ -1,0 +1,417 @@
+{
+  "cooldown_multiplier": 1,
+  "damage_multiplier": 1,
+  "duration_multiplier": 1,
+  "label": "Mago",
+  "mana_multiplier": 1,
+  "nodes": [
+    {
+      "description": "Frio recebido -10%; dano mágico contra alvos gelados +10%.",
+      "icon": "snowball",
+      "id": 0,
+      "title": "Afinidade glacial",
+      "x": 0,
+      "y": 0
+    },
+    {
+      "description": "Lança um fragmento de gelo fraco; Lentidão II por 3 s.",
+      "icon": "ice",
+      "id": 1,
+      "title": "Toque gelado",
+      "x": 21,
+      "y": -128
+    },
+    {
+      "description": "Lentidão inicial +1 s.",
+      "icon": "blue_ice",
+      "id": 2,
+      "title": "Frio crescente",
+      "x": 45,
+      "y": -185
+    },
+    {
+      "description": "cubo de gelo em área de 3 blocos; paralisia 3 s e frio 8 s. Recarga 25 s.",
+      "icon": "packed_ice",
+      "id": 3,
+      "title": "Bola de gelo",
+      "x": 165,
+      "y": -331
+    },
+    {
+      "description": "Área da Bola de gelo +0,5 bloco.",
+      "icon": "snow_block",
+      "id": 4,
+      "title": "Expansão glacial",
+      "x": 147,
+      "y": -420
+    },
+    {
+      "description": "Frio da Bola de gelo +2 s.",
+      "icon": "powder_snow_bucket",
+      "id": 5,
+      "title": "Gelo duradouro",
+      "x": 312,
+      "y": -318
+    },
+    {
+      "description": "Área +1 bloco adicional, paralisia +1 s e frio +2 s.",
+      "icon": "diamond",
+      "id": 6,
+      "title": "Nevasca",
+      "x": 309,
+      "y": -412
+    },
+    {
+      "description": "Dano mágico +5%.",
+      "icon": "blaze_powder",
+      "id": 7,
+      "title": "Calor interior",
+      "x": 57,
+      "y": 40
+    },
+    {
+      "description": "Libera uma faísca fraca; ataques mágicos queimam por 1 s, com intervalo.",
+      "icon": "flint_and_steel",
+      "id": 8,
+      "title": "Faísca",
+      "x": 101,
+      "y": 82
+    },
+    {
+      "description": "Queimadura inicial +1 s.",
+      "icon": "coal",
+      "id": 9,
+      "title": "Combustão",
+      "x": 138,
+      "y": 131
+    },
+    {
+      "description": "jato na mira por 3 s, alcance 6 blocos; queima por 6 s. Recarga 30 s.",
+      "icon": "fire_charge",
+      "id": 10,
+      "title": "Lança-chamas",
+      "x": 204,
+      "y": 309
+    },
+    {
+      "description": "Alcance do jato +1 bloco.",
+      "icon": "blaze_rod",
+      "id": 11,
+      "title": "Chama longa",
+      "x": 290,
+      "y": 337
+    },
+    {
+      "description": "Dano do jato +10%.",
+      "icon": "magma_cream",
+      "id": 12,
+      "title": "Fogo intenso",
+      "x": 119,
+      "y": 429
+    },
+    {
+      "description": "Jato mais amplo, alcance +1 bloco e queimadura +4 s.",
+      "icon": "magma_block",
+      "id": 13,
+      "title": "Cone infernal",
+      "x": 202,
+      "y": 474
+    },
+    {
+      "description": "Resistência a empurrão +10%.",
+      "icon": "stone",
+      "id": 14,
+      "title": "Sintonia terrestre",
+      "x": -63,
+      "y": 30
+    },
+    {
+      "description": "B gera um abalo fraco; impactos mágicos aplicam breve lentidão em área.",
+      "icon": "cobblestone",
+      "id": 15,
+      "title": "Abalo",
+      "x": -122,
+      "y": 46
+    },
+    {
+      "description": "Raio do abalo inicial +0,5 bloco.",
+      "icon": "gravel",
+      "id": 16,
+      "title": "Vibração",
+      "x": -182,
+      "y": 54
+    },
+    {
+      "description": "área de 4 blocos por 6 s, dano periódico, Lentidão II e desgaste de até 4 blocos naturais. Recarga 40 s.",
+      "icon": "deepslate",
+      "id": 17,
+      "title": "Tremor",
+      "x": -369,
+      "y": 23
+    },
+    {
+      "description": "Raio do Tremor +1 bloco.",
+      "icon": "obsidian",
+      "id": 18,
+      "title": "Epicentro",
+      "x": -437,
+      "y": 83
+    },
+    {
+      "description": "Duração do Tremor +2 s.",
+      "icon": "clock",
+      "id": 19,
+      "title": "Persistência sísmica",
+      "x": -431,
+      "y": -111
+    },
+    {
+      "description": "Após o Tremor, duas ondas menores causam dano e lentidão.",
+      "icon": "echo_shard",
+      "id": 20,
+      "title": "Réplicas",
+      "x": -511,
+      "y": -62
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 21,
+      "title": "Preparação: Bola de gelo",
+      "x": 58,
+      "y": -243
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 22,
+      "title": "Domínio: Bola de gelo",
+      "x": 140,
+      "y": -277
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 23,
+      "title": "Potência I",
+      "x": 226,
+      "y": -545
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 24,
+      "title": "Persistência I",
+      "x": 344,
+      "y": -479
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 25,
+      "title": "Eficiência I",
+      "x": 444,
+      "y": -388
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 26,
+      "title": "Recuperação I",
+      "x": 521,
+      "y": -277
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 27,
+      "title": "Potência II",
+      "x": 323,
+      "y": -593
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 28,
+      "title": "Persistência II",
+      "x": 450,
+      "y": -504
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 29,
+      "title": "Eficiência II",
+      "x": 552,
+      "y": -388
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 30,
+      "title": "Recuperação II",
+      "x": 626,
+      "y": -252
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 31,
+      "title": "Preparação: Lança-chamas",
+      "x": 182,
+      "y": 172
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 32,
+      "title": "Domínio: Lança-chamas",
+      "x": 170,
+      "y": 259
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 33,
+      "title": "Potência I",
+      "x": 359,
+      "y": 468
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 34,
+      "title": "Persistência I",
+      "x": 243,
+      "y": 538
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 35,
+      "title": "Eficiência I",
+      "x": 114,
+      "y": 579
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 36,
+      "title": "Recuperação I",
+      "x": -21,
+      "y": 590
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 37,
+      "title": "Potência II",
+      "x": 352,
+      "y": 576
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 38,
+      "title": "Persistência II",
+      "x": 211,
+      "y": 641
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 39,
+      "title": "Eficiência II",
+      "x": 60,
+      "y": 672
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 40,
+      "title": "Recuperação II",
+      "x": -95,
+      "y": 668
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 41,
+      "title": "Preparação: Tremor",
+      "x": -239,
+      "y": 72
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 42,
+      "title": "Domínio: Tremor",
+      "x": -310,
+      "y": 17
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 43,
+      "title": "Potência I",
+      "x": -585,
+      "y": 77
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 44,
+      "title": "Persistência I",
+      "x": -587,
+      "y": -58
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 45,
+      "title": "Eficiência I",
+      "x": -558,
+      "y": -191
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 46,
+      "title": "Recuperação I",
+      "x": -500,
+      "y": -313
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 47,
+      "title": "Potência II",
+      "x": -675,
+      "y": 17
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 48,
+      "title": "Persistência II",
+      "x": -661,
+      "y": -138
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 49,
+      "title": "Eficiência II",
+      "x": -612,
+      "y": -285
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 50,
+      "title": "Recuperação II",
+      "x": -531,
+      "y": -417
+    }
+  ]
+}

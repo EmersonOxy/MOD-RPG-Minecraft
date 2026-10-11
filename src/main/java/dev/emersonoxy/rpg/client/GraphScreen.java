@@ -61,7 +61,7 @@ public abstract class GraphScreen extends Screen {
             int color=owned(n.id)?n.major?RpgUi.GOLD:0xFF7AB7A6:available(n.id)?0xFF93BFEA:0xFF576477;
             if(n.id==selected)RpgUi.medallion(g,(int)n.x,(int)n.y,n.major?22:19,RpgUi.GOLD);
             RpgUi.medallion(g,(int)n.x,(int)n.y,n.major?18:14,color);
-            var icon=icons.computeIfAbsent(n.icon,k->new ItemStack(BuiltInRegistries.ITEM.getValue(ResourceLocation.withDefaultNamespace(k))));g.renderFakeItem(icon,(int)n.x-8,(int)n.y-8);
+            var icon=icons.computeIfAbsent(n.icon,k->new ItemStack(BuiltInRegistries.ITEM.getValue(ResourceLocation.parse(k))));g.renderFakeItem(icon,(int)n.x-8,(int)n.y-8);
         }
         g.pose().popMatrix();g.disableScissor();
         var n=nodes.get(selected);g.drawString(font,font.plainSubstrByWidth(n.title,panelWidth-20),left+10,bottom()+6,0xFFFFD580);

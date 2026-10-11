@@ -10,6 +10,26 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 public final class RpgNetwork {
     private RpgNetwork() {}
 
+    public record SpecialState(int phase,int ticks,float heat,int overheated,boolean waterwalk) implements CustomPacketPayload {
+        public static final Type<SpecialState> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath("oxyrpg","special"));
+        public static final StreamCodec<RegistryFriendlyByteBuf,SpecialState> CODEC=StreamCodec.of((b,v)->{b.writeVarInt(v.phase);b.writeVarInt(v.ticks);b.writeFloat(v.heat);b.writeVarInt(v.overheated);b.writeBoolean(v.waterwalk);},b->new SpecialState(b.readVarInt(),b.readVarInt(),b.readFloat(),b.readVarInt(),b.readBoolean()));
+        @Override public Type<SpecialState> type(){return TYPE;}
+    }
+    public record ContentState(String json) implements CustomPacketPayload {
+        public static final Type<ContentState> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath("oxyrpg","content"));
+        public static final StreamCodec<RegistryFriendlyByteBuf,ContentState> CODEC=StreamCodec.of((b,v)->b.writeUtf(v.json,262144),b->new ContentState(b.readUtf(262144)));
+        @Override public Type<ContentState> type(){return TYPE;}
+    }
+    public record EvasionState(int maximum,float energy,int recharge) implements CustomPacketPayload {
+        public static final Type<EvasionState> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath("oxyrpg","evasion"));
+        public static final StreamCodec<RegistryFriendlyByteBuf,EvasionState> CODEC=StreamCodec.of((b,v)->{b.writeVarInt(v.maximum);b.writeFloat(v.energy);b.writeVarInt(v.recharge);},b->new EvasionState(b.readVarInt(),b.readFloat(),b.readVarInt()));
+        @Override public Type<EvasionState> type(){return TYPE;}
+    }
+    public record CombatText(int entity,double x,double y,double z,String text,int color) implements CustomPacketPayload {
+        public static final Type<CombatText> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath("oxyrpg","combat_text"));
+        public static final StreamCodec<RegistryFriendlyByteBuf,CombatText> CODEC=StreamCodec.of((b,v)->{b.writeVarInt(v.entity);b.writeDouble(v.x);b.writeDouble(v.y);b.writeDouble(v.z);b.writeUtf(v.text,32);b.writeInt(v.color);},b->new CombatText(b.readVarInt(),b.readDouble(),b.readDouble(),b.readDouble(),b.readUtf(32),b.readInt()));
+        @Override public Type<CombatText> type(){return TYPE;}
+    }
     public record FlightState(int remaining,int boost,int meteor,boolean fast,float thrust) implements CustomPacketPayload {
         public FlightState(int remaining,int boost,int meteor,boolean fast){this(remaining,boost,meteor,fast,0);}
         public static final Type<FlightState> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath("oxyrpg","flight"));
@@ -121,7 +141,11 @@ public final class RpgNetwork {
         @Override public Type<EliteInfo> type(){return TYPE;}
     }
     public static void register(RegisterPayloadHandlersEvent event) {
-        var registrar = event.registrar("16");
+        var registrar = event.registrar("19");
+        registrar.playToClient(SpecialState.TYPE,SpecialState.CODEC);
+        registrar.playToClient(ContentState.TYPE,ContentState.CODEC);
+        registrar.playToClient(EvasionState.TYPE,EvasionState.CODEC);
+        registrar.playToClient(CombatText.TYPE,CombatText.CODEC);
         registrar.playToClient(EliteWarning.TYPE,EliteWarning.CODEC);
         registrar.playToClient(FlightState.TYPE,FlightState.CODEC);
         registrar.playToClient(DamageNumber.TYPE,DamageNumber.CODEC);
@@ -137,7 +161,7 @@ public final class RpgNetwork {
         registrar.playToClient(Resources.TYPE, Resources.CODEC);
         registrar.playToServer(Request.TYPE, Request.CODEC, (request, context) -> {
             if (context.player() instanceof ServerPlayer player){
-                if(request.action()==1||request.action()==5||request.action()==6||request.action()==8||request.action()==9)
+                if(request.action()==1||request.action()==5||request.action()==6||request.action()==8||request.action()==9||request.action()==16)
                     AbilityAim.cast(player,request.targetId(),new net.minecraft.world.phys.Vec3(request.aimX(),request.aimY(),request.aimZ()),()->OxyRpg.menuAction(player,request.action(),request.direction()));
                 else OxyRpg.menuAction(player,request.action(),request.direction());
             }

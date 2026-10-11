@@ -1,0 +1,417 @@
+{
+  "cooldown_multiplier": 1,
+  "damage_multiplier": 1,
+  "duration_multiplier": 1,
+  "label": "Ilusionista",
+  "mana_multiplier": 1,
+  "nodes": [
+    {
+      "description": "Ataques diretos -20%; ilusões distraem os inimigos.",
+      "icon": "glass",
+      "id": 0,
+      "title": "Espelhos frágeis",
+      "x": 0,
+      "y": 0
+    },
+    {
+      "description": "Duas cópias e aparência do alvo por 6 s.",
+      "icon": "ender_eye",
+      "id": 1,
+      "title": "Reflexo vivo",
+      "x": 38,
+      "y": -124
+    },
+    {
+      "description": "Cópias resistem a um golpe adicional.",
+      "icon": "glass_pane",
+      "id": 2,
+      "title": "Imitação firme",
+      "x": 48,
+      "y": -184
+    },
+    {
+      "description": "Duas cópias e aparência do alvo por 12 s.",
+      "icon": "amethyst_shard",
+      "id": 3,
+      "title": "Mímico",
+      "x": -91,
+      "y": -359
+    },
+    {
+      "description": "Uma cópia adicional.",
+      "icon": "quartz",
+      "id": 4,
+      "title": "Reflexo extra",
+      "x": -218,
+      "y": -388
+    },
+    {
+      "description": "Duração do Mímico +3 s.",
+      "icon": "clock",
+      "id": 5,
+      "title": "Ilusão duradoura",
+      "x": -32,
+      "y": -444
+    },
+    {
+      "description": "Mais uma cópia; ilusões causam mais dano.",
+      "icon": "nether_star",
+      "id": 6,
+      "title": "Salão de espelhos",
+      "x": -82,
+      "y": -508
+    },
+    {
+      "description": "Prepara o ramo de controle.",
+      "icon": "string",
+      "id": 7,
+      "title": "Fio invisível",
+      "x": 52,
+      "y": 47
+    },
+    {
+      "description": "Ergue e enfraquece o alvo por 3 s.",
+      "icon": "phantom_membrane",
+      "id": 8,
+      "title": "Suspensão",
+      "x": 89,
+      "y": 95
+    },
+    {
+      "description": "Controle causa mais dano.",
+      "icon": "fermented_spider_eye",
+      "id": 9,
+      "title": "Peso da dúvida",
+      "x": 135,
+      "y": 134
+    },
+    {
+      "description": "Suspende, enfraquece e fere o alvo; lentidão e desorientação ao redor.",
+      "icon": "ender_pearl",
+      "id": 10,
+      "title": "Leviosá",
+      "x": 356,
+      "y": 101
+    },
+    {
+      "description": "Área de desorientação ampliada.",
+      "icon": "echo_shard",
+      "id": 11,
+      "title": "Eco expansivo",
+      "x": 445,
+      "y": 5
+    },
+    {
+      "description": "Controle dura mais tempo.",
+      "icon": "spider_eye",
+      "id": 12,
+      "title": "Desorientação",
+      "x": 400,
+      "y": 194
+    },
+    {
+      "description": "Alvos controlados ficam mais vulneráveis.",
+      "icon": "anvil",
+      "id": 13,
+      "title": "Gravidade falsa",
+      "x": 481,
+      "y": 183
+    },
+    {
+      "description": "Prepara a forma de enxame.",
+      "icon": "black_wool",
+      "id": 14,
+      "title": "Fuga nas sombras",
+      "x": -67,
+      "y": 22
+    },
+    {
+      "description": "Forma intangível por 3 s, sem ataques ou interação.",
+      "icon": "bat_spawn_egg",
+      "id": 15,
+      "title": "Enxame fugaz",
+      "x": -127,
+      "y": 29
+    },
+    {
+      "description": "Enxame se move mais rapidamente.",
+      "icon": "feather",
+      "id": 16,
+      "title": "Asas noturnas",
+      "x": -183,
+      "y": 50
+    },
+    {
+      "description": "Enxame intangível por 6 s; atravessa obstáculos leves.",
+      "icon": "crying_obsidian",
+      "id": 17,
+      "title": "Corpo de Eclipse",
+      "x": -265,
+      "y": 258
+    },
+    {
+      "description": "Enxame +2 s.",
+      "icon": "clock",
+      "id": 18,
+      "title": "Noite prolongada",
+      "x": -227,
+      "y": 383
+    },
+    {
+      "description": "Pode atravessar portas, cercas e grades.",
+      "icon": "iron_bars",
+      "id": 19,
+      "title": "Entre frestas",
+      "x": -368,
+      "y": 250
+    },
+    {
+      "description": "Atravessa vidro e ganha mais velocidade.",
+      "icon": "tinted_glass",
+      "id": 20,
+      "title": "Eclipse total",
+      "x": -399,
+      "y": 325
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 21,
+      "title": "Preparação: Mímico",
+      "x": 7,
+      "y": -250
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 22,
+      "title": "Domínio: Mímico",
+      "x": -3,
+      "y": -310
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 23,
+      "title": "Potência I",
+      "x": -154,
+      "y": -570
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 24,
+      "title": "Persistência I",
+      "x": -20,
+      "y": -590
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 25,
+      "title": "Eficiência I",
+      "x": 115,
+      "y": -579
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 26,
+      "title": "Recuperação I",
+      "x": 244,
+      "y": -537
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 27,
+      "title": "Potência II",
+      "x": -43,
+      "y": -674
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 28,
+      "title": "Persistência II",
+      "x": 112,
+      "y": -666
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 29,
+      "title": "Eficiência II",
+      "x": 261,
+      "y": -623
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 30,
+      "title": "Recuperação II",
+      "x": 396,
+      "y": -547
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 31,
+      "title": "Preparação: Leviosá",
+      "x": 213,
+      "y": 131
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 32,
+      "title": "Domínio: Leviosá",
+      "x": 270,
+      "y": 152
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 33,
+      "title": "Potência I",
+      "x": 570,
+      "y": 151
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 34,
+      "title": "Persistência I",
+      "x": 521,
+      "y": 277
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 35,
+      "title": "Eficiência I",
+      "x": 444,
+      "y": 389
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 36,
+      "title": "Recuperação I",
+      "x": 344,
+      "y": 480
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 37,
+      "title": "Potência II",
+      "x": 605,
+      "y": 300
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 38,
+      "title": "Persistência II",
+      "x": 521,
+      "y": 430
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 39,
+      "title": "Eficiência II",
+      "x": 409,
+      "y": 537
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 40,
+      "title": "Recuperação II",
+      "x": 276,
+      "y": 616
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 41,
+      "title": "Preparação: Corpo de Eclipse",
+      "x": -220,
+      "y": 119
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 42,
+      "title": "Domínio: Corpo de Eclipse",
+      "x": -267,
+      "y": 158
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 43,
+      "title": "Potência I",
+      "x": -416,
+      "y": 418
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 44,
+      "title": "Persistência I",
+      "x": -501,
+      "y": 312
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 45,
+      "title": "Eficiência I",
+      "x": -559,
+      "y": 190
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 46,
+      "title": "Recuperação I",
+      "x": -587,
+      "y": 58
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 47,
+      "title": "Potência II",
+      "x": -562,
+      "y": 374
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 48,
+      "title": "Persistência II",
+      "x": -632,
+      "y": 236
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 49,
+      "title": "Eficiência II",
+      "x": -670,
+      "y": 86
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 50,
+      "title": "Recuperação II",
+      "x": -671,
+      "y": -69
+    }
+  ]
+}

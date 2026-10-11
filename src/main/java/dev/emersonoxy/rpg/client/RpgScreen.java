@@ -23,10 +23,11 @@ public final class RpgScreen extends Screen {
         addRenderableWidget(RpgUi.button(right,body+row,col,tile,"Diário de missões","Objetivos e recompensas",Items.WRITABLE_BOOK,0xFFE9C77C,b->{if(state!=null)minecraft.setScreen(new MissionScreen(this,state));}));
         addRenderableWidget(RpgUi.button(left+12,body+row*2,col,tile,"Trabalhos","Mineração e agricultura",Items.IRON_PICKAXE,0xFF88CBAF,b->minecraft.setScreen(new ProfessionsScreen(this,OxyRpgClient.professions()))));
         addRenderableWidget(RpgUi.button(right,body+row*2,col,tile,"Arsenal","Conheça seu equipamento",Items.IRON_SWORD,0xFF93BFEA,b->minecraft.setScreen(new ArsenalScreen(this))));
-        int bw=(w-32)/3,y=top+h-30;
+        int bw=(w-36)/4,y=top+h-30;
         addRenderableWidget(Button.builder(Component.literal("Câmera"),b->minecraft.setScreen(new CameraSettingsScreen(this))).bounds(left+12,y,bw,20).build());
         addRenderableWidget(Button.builder(Component.literal("Interface"),b->minecraft.setScreen(new HudSettingsScreen(this))).bounds(left+16+bw,y,bw,20).build());
-        addRenderableWidget(Button.builder(Component.literal("Fechar"),b->onClose()).bounds(left+20+2*bw,y,bw,20).build());
+        addRenderableWidget(Button.builder(Component.literal("Ajustes"),b->net.neoforged.fml.ModList.get().getModContainerById("oxyrpg").ifPresent(mod->minecraft.setScreen(new net.neoforged.neoforge.client.gui.ConfigurationScreen(mod,this)))).bounds(left+20+2*bw,y,bw,20).build());
+        addRenderableWidget(Button.builder(Component.literal("Fechar"),b->onClose()).bounds(left+24+3*bw,y,bw,20).build());
         if(minecraft.player!=null)minecraft.player.connection.send(new RpgNetwork.Request(0));updateButtons();
     }
     public void update(RpgNetwork.State value){state=value;updateButtons();}

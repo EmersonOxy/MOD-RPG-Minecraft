@@ -20,7 +20,7 @@ public final class ClassSelectionScreen extends Screen {
         int count=RpgClass.values().length-1,tabW=(w-28)/count;
         for(int i=1;i<RpgClass.values().length;i++)addRenderableWidget(new ClassTab(RpgClass.values()[i],left+14+(i-1)*tabW,top+53,tabW-4));
         int bw=(w-36)/3;
-        confirm=addRenderableWidget(RpgUi.button(left+12,top+h-32,bw,20,"Escolher classe","",Items.EMERALD,RpgUi.GOLD,v->{if(canChoose()){pending=100;minecraft.player.connection.send(new RpgNetwork.Request(selected==RpgClass.AVIARIO?11:selected==RpgClass.XAMA?10:selected==RpgClass.NECROMANTE?7:selected.ordinal()+1));}}));
+        confirm=addRenderableWidget(RpgUi.button(left+12,top+h-32,bw,20,"Escolher classe","",Items.EMERALD,RpgUi.GOLD,v->{if(canChoose()){pending=100;minecraft.player.connection.send(new RpgNetwork.Request(selected==RpgClass.PIROMANTE?15:selected==RpgClass.HIDROMANTE?14:selected==RpgClass.ILUSIONISTA?13:selected==RpgClass.AVIARIO?11:selected==RpgClass.XAMA?10:selected==RpgClass.NECROMANTE?7:selected.ordinal()+1));}}));
         addRenderableWidget(Button.builder(Component.literal("Ver árvore"),v->minecraft.setScreen(new SkillTreeScreen(this,state,selected))).bounds(left+18+bw,top+h-32,bw,20).build());
         addRenderableWidget(Button.builder(Component.literal("Voltar"),v->onClose()).bounds(left+24+2*bw,top+h-32,bw,20).build());
     }
@@ -41,7 +41,7 @@ public final class ClassSelectionScreen extends Screen {
         y+=(int)(16*scale)+14;g.drawCenteredString(font,Component.literal(selected.label()).withStyle(net.minecraft.ChatFormatting.BOLD),lx+leftW/2,y,accent);y+=18;
         y=text(g,role(selected),lx+8,y,leftW-16,RpgUi.TEXT)+15;
         g.drawString(font,"CONSIDERE",lx+8,y,RpgUi.GOLD);y+=14;
-        String limits=selected==RpgClass.AVIARIO?"Voo temporário. Impulsos gastam mana. Quedas ainda causam dano.":ClassRules.description(selected);
+        String limits=ClassRules.description(selected);
         y=text(g,limits,lx+8,y,leftW-16,RpgUi.MUTED)+12;
         int heroHeight=y+scroll-body;
         int sy=body+10-scroll;g.drawString(font,"HABILIDADES DA CLASSE",rx+8,sy,RpgUi.GOLD);sy+=20;
@@ -51,7 +51,7 @@ public final class ClassSelectionScreen extends Screen {
             String label=(selected==RpgClass.AVIARIO&&slot==1?"Passiva":keys[slot].getTranslatedKeyMessage().getString())+" • "+skill.title();
             var titleLines=font.split(Component.literal(label),wrap);var lines=font.split(Component.literal(summary(selected,slot)),wrap);int cardH=24+(titleLines.size()+lines.size())*11;
             g.fill(rx+4,sy,rx+rw-4,sy+cardH,0xFF242F3E);g.fill(rx+4,sy,rx+6,sy+cardH,accent);
-            var item=net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(net.minecraft.resources.ResourceLocation.withDefaultNamespace(skill.icon()));g.renderFakeItem(new ItemStack(item),rx+12,sy+11);
+            var item=net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(net.minecraft.resources.ResourceLocation.parse(skill.icon()));g.renderFakeItem(new ItemStack(item),rx+12,sy+11);
             int ty=sy+10;for(var line:titleLines){g.drawString(font,line,rx+34,ty,accent);ty+=11;}ty+=4;for(var line:lines){g.drawString(font,line,rx+34,ty,RpgUi.TEXT);ty+=11;}sy+=cardH+8;
         }
         contentHeight=Math.max(heroHeight,sy+scroll-body);g.disableScissor();
@@ -63,14 +63,18 @@ public final class ClassSelectionScreen extends Screen {
         ClassTab(RpgClass c,int x,int y,int w){super(x,y,w,43,Component.literal(c.label()),v->{selected=c;scroll=0;},DEFAULT_NARRATION);this.c=c;item=new ItemStack(icon(c));setTooltip(Tooltip.create(Component.literal(c.label()+": "+role(c))));}
         @Override protected void renderWidget(GuiGraphics g,int mx,int my,float partial){int color=accent(c);boolean chosen=c==selected;g.fill(getX(),getY(),getX()+getWidth(),getY()+getHeight(),chosen?0xFF303C4D:isHoveredOrFocused()?0xFF263142:0xFF1B2330);RpgUi.border(g,getX(),getY(),getWidth(),getHeight(),chosen||isHoveredOrFocused()?color:0xFF3B4658);g.renderFakeItem(item,getX()+getWidth()/2-8,getY()+5);g.drawCenteredString(font,font.plainSubstrByWidth(c.label(),getWidth()-6),getX()+getWidth()/2,getY()+29,chosen?color:RpgUi.TEXT);}
     }
-    static Item icon(RpgClass c){return switch(c){case GUERREIRO->Items.IRON_SWORD;case MAGO->Items.BLAZE_ROD;case ARQUEIRO->Items.BOW;case NECROMANTE->Items.BOOK;case XAMA->Items.AMETHYST_SHARD;case AVIARIO->Items.FEATHER;default->Items.PAPER;};}
-    static int accent(RpgClass c){return switch(c){case GUERREIRO->0xFFE49A7D;case MAGO->0xFF99C9F5;case ARQUEIRO->0xFFB7D48A;case NECROMANTE->0xFFC6A0E4;case XAMA->0xFF8DD8B5;case AVIARIO->0xFFF0D79F;default->RpgUi.GOLD;};}
-    public static String role(RpgClass c){return switch(c){case GUERREIRO->"A linha de frente. Domine o combate próximo, sustente-se com roubo de vida e resista aos inimigos.";case MAGO->"Controle o campo de batalha. Combine gelo, fogo e tremores para enfrentar grupos.";case ARQUEIRO->"Precisão e mobilidade. Ataque à distância, desapareça e reposicione-se rapidamente.";case NECROMANTE->"Comande suas invocações. Aranhas, mortos-vivos e phantoms lutam ao seu lado.";case XAMA->"Natureza e suporte. Combine raios, animais protetores, cura e poções.";case AVIARIO->"Domine os céus. Voe, controle sua descida e transforme o pouso em um impacto devastador.";default->"Escolha uma classe para começar sua jornada.";};}
+    static Item icon(RpgClass c){return switch(c){case GUERREIRO->Items.IRON_SWORD;case MAGO->Items.BLAZE_ROD;case ARQUEIRO->Items.BOW;case NECROMANTE->Items.BOOK;case XAMA->Items.AMETHYST_SHARD;case AVIARIO->Items.FEATHER;case ILUSIONISTA->Items.ENDER_EYE;case HIDROMANTE->Items.HEART_OF_THE_SEA;case PIROMANTE->Items.MAGMA_CREAM;default->Items.PAPER;};}
+    static int accent(RpgClass c){return switch(c){case GUERREIRO->0xFFE49A7D;case MAGO->0xFF99C9F5;case ARQUEIRO->0xFFB7D48A;case NECROMANTE->0xFFC6A0E4;case XAMA->0xFF8DD8B5;case AVIARIO->0xFFF0D79F;case ILUSIONISTA->0xFFCF9AF2;case HIDROMANTE->0xFF70DCEB;case PIROMANTE->0xFFFFAA62;default->RpgUi.GOLD;};}
+    public void contentChanged(){rebuildWidgets();}
+    public static String role(RpgClass c){return switch(c){case GUERREIRO->"A linha de frente. Domine o combate próximo, sustente-se com roubo de vida e resista aos inimigos.";case MAGO->"Controle o campo de batalha. Combine gelo, fogo e tremores para enfrentar grupos.";case ARQUEIRO->"Precisão e mobilidade. Ataque à distância, desapareça e reposicione-se rapidamente.";case NECROMANTE->"Comande suas invocações. Aranhas, mortos-vivos e phantoms lutam ao seu lado.";case XAMA->"Natureza e suporte. Combine raios, animais protetores, cura e poções.";case ILUSIONISTA->"Engane seus inimigos. Copie aparências, suspenda alvos e fuja como um enxame intangível.";case HIDROMANTE->"Domine a água. Explore as profundezas, lance jatos e caminhe sobre a superfície.";case PIROMANTE->"Prepare o terreno. Combine fogos, núcleos de magma e calor para assumir a forma da Fênix.";case AVIARIO->"Domine os céus. Voe, controle sua descida e transforme o pouso em um impacto devastador.";default->"Escolha uma classe para começar sua jornada.";};}
     private static String summary(RpgClass c,int slot){return switch(c){
         case GUERREIRO->new String[]{"Atinge inimigos ao redor e fortalece seus ataques.","Recupera vida ao causar dano, consumindo fome durante a ativação.","Assume uma postura defensiva com resistência e retaliação."}[slot];
         case MAGO->new String[]{"Projétil de gelo que paralisa e desacelera inimigos em área.","Canaliza um jato de fogo na direção da mira.","Cria ondas sísmicas que causam dano e desgastam o solo."}[slot];
         case ARQUEIRO->new String[]{"Flecha que atravessa inimigos, destaca os alvos e os desacelera.","Oculta o jogador e seus equipamentos; atacar encerra o efeito.","Avança rapidamente e fortalece ataques com sangramento."}[slot];
         case NECROMANTE->new String[]{"Lança teia e invoca aranhas para atacar o alvo.","Convoca esqueletos e zumbis que acompanham seus ataques.","Cega inimigos próximos e convoca phantoms para mergulhar sobre eles."}[slot];
         case XAMA->new String[]{"Ataques de punho chamam raios durante a ativação.","Invoca animais protetores e uma aura de cura e limpeza.","Com as mãos vazias, lança poções positivas ou negativas."}[slot];
+        case ILUSIONISTA->new String[]{"Copia o mob da mira: ilusões atraem ataques enquanto você assume sua aparência.","Suspende o alvo, enfraquece e causa dano; inimigos próximos ficam lentos e desorientados.","Vira um enxame imune a ataques comuns. Atravessa obstáculos leves, sem atacar ou interagir."}[slot];
+        case HIDROMANTE->new String[]{"Respira e trabalha debaixo da água. Reative para um impulso ou um salto para fora dela.","Jato giratório na mira com dano e empurrão; submerso, cria manifestações marinhas temporárias.","Caminha sobre a água. Ao ativar em contato com água, abre um espaço drenado e recupera vida."}[slot];
+        case PIROMANTE->new String[]{"Marca alvos com fogos encantados. Reative para detonar uma sequência de explosões.","Lança magma que adere ao alvo ou ao chão. Reative agachado para detonar núcleos e formar linhas ardentes.","Consome calor para assumir a Fênix: saltos explosivos, brasas e mobilidade na lava; termina em explosão."}[slot];
         case AVIARIO->new String[]{"Decole sem elytra e planeie. Reative para impulsos cada vez mais rápidos.","Receba 30% menos dano de queda. Agache ao cair para descer lentamente e reduzir dano de inimigos.","No ar, prepare um mergulho. Altura e velocidade ampliam a cratera e o dano ao pousar."}[slot];default->"";};}
 }

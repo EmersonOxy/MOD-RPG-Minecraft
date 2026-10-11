@@ -1,0 +1,417 @@
+{
+  "cooldown_multiplier": 1,
+  "damage_multiplier": 1,
+  "duration_multiplier": 1,
+  "label": "Piromaníaco",
+  "mana_multiplier": 1,
+  "nodes": [
+    {
+      "description": "Fogo e explosões geram calor; excesso causa superaquecimento.",
+      "icon": "blaze_powder",
+      "id": 0,
+      "title": "Caldeira viva",
+      "x": 0,
+      "y": 0
+    },
+    {
+      "description": "Marca inimigos próximos com fogos. Reative para detonar.",
+      "icon": "firework_rocket",
+      "id": 1,
+      "title": "Pavio encantado",
+      "x": 23,
+      "y": -128
+    },
+    {
+      "description": "Fogos duram mais.",
+      "icon": "string",
+      "id": 2,
+      "title": "Estopim longo",
+      "x": 24,
+      "y": -189
+    },
+    {
+      "description": "Fogos orbitam os alvos e explodem em sequência; queimaduras atraem mais fogos.",
+      "icon": "firework_star",
+      "id": 3,
+      "title": "Carnaval de Pólvora",
+      "x": -66,
+      "y": -364
+    },
+    {
+      "description": "Marca mais alvos.",
+      "icon": "gunpowder",
+      "id": 4,
+      "title": "Pólvora espalhada",
+      "x": -148,
+      "y": -420
+    },
+    {
+      "description": "Explosões lançam inimigos mais alto.",
+      "icon": "wind_charge",
+      "id": 5,
+      "title": "Explosão ascendente",
+      "x": 45,
+      "y": -443
+    },
+    {
+      "description": "Detonações propagam fogos para outros inimigos, com limite.",
+      "icon": "tnt",
+      "id": 6,
+      "title": "Festa sem fim",
+      "x": 14,
+      "y": -515
+    },
+    {
+      "description": "Prepara núcleos de magma.",
+      "icon": "magma_block",
+      "id": 7,
+      "title": "Pedra incandescente",
+      "x": 54,
+      "y": 45
+    },
+    {
+      "description": "Lança um núcleo que adere ao alvo ou ao chão. Reative agachado para detonar.",
+      "icon": "magma_cream",
+      "id": 8,
+      "title": "Gota de magma",
+      "x": 106,
+      "y": 75
+    },
+    {
+      "description": "Núcleos causam queimadura mais longa.",
+      "icon": "fire_charge",
+      "id": 9,
+      "title": "Calor aderente",
+      "x": 168,
+      "y": 88
+    },
+    {
+      "description": "Núcleos detonados criam linhas de fogo entre pontos próximos.",
+      "icon": "lava_bucket",
+      "id": 10,
+      "title": "Coração de Caldeira",
+      "x": 339,
+      "y": 149
+    },
+    {
+      "description": "Pode preparar mais núcleos.",
+      "icon": "cauldron",
+      "id": 11,
+      "title": "Reservatório",
+      "x": 418,
+      "y": 154
+    },
+    {
+      "description": "Linhas ficam ativas por mais tempo.",
+      "icon": "redstone",
+      "id": 12,
+      "title": "Fios ardentes",
+      "x": 312,
+      "y": 317
+    },
+    {
+      "description": "Núcleos e linhas causam mais dano.",
+      "icon": "netherite_scrap",
+      "id": 13,
+      "title": "Magma voraz",
+      "x": 398,
+      "y": 327
+    },
+    {
+      "description": "Prepara a transformação.",
+      "icon": "charcoal",
+      "id": 14,
+      "title": "Brasa ancestral",
+      "x": -62,
+      "y": 32
+    },
+    {
+      "description": "Consome 30 de calor: forma ígnea breve e salto explosivo.",
+      "icon": "blaze_rod",
+      "id": 15,
+      "title": "Asas de brasa",
+      "x": -107,
+      "y": 74
+    },
+    {
+      "description": "Saltos da Fênix causam mais dano.",
+      "icon": "feather",
+      "id": 16,
+      "title": "Penas ardentes",
+      "x": -146,
+      "y": 121
+    },
+    {
+      "description": "Imune a fogo; mobilidade na lava, saltos, rastro de brasas e explosão final.",
+      "icon": "totem_of_undying",
+      "id": 17,
+      "title": "Fênix de Cinzas",
+      "x": -331,
+      "y": 165
+    },
+    {
+      "description": "Fênix dura mais tempo.",
+      "icon": "clock",
+      "id": 18,
+      "title": "Cinzas persistentes",
+      "x": -374,
+      "y": 241
+    },
+    {
+      "description": "Água cria vapor que desorienta inimigos.",
+      "icon": "white_dye",
+      "id": 19,
+      "title": "Vapor escaldante",
+      "x": -441,
+      "y": 58
+    },
+    {
+      "description": "Explosão final consome núcleos próximos e fica mais forte.",
+      "icon": "nether_star",
+      "id": 20,
+      "title": "Renascimento explosivo",
+      "x": -480,
+      "y": 188
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 21,
+      "title": "Preparação: Carnaval de Pólvora",
+      "x": -19,
+      "y": -249
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 22,
+      "title": "Domínio: Carnaval de Pólvora",
+      "x": -13,
+      "y": -310
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 23,
+      "title": "Potência I",
+      "x": -109,
+      "y": -580
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 24,
+      "title": "Persistência I",
+      "x": 26,
+      "y": -589
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 25,
+      "title": "Eficiência I",
+      "x": 160,
+      "y": -568
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 26,
+      "title": "Recuperação I",
+      "x": 285,
+      "y": -516
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 27,
+      "title": "Potência II",
+      "x": -131,
+      "y": -662
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 28,
+      "title": "Persistência II",
+      "x": 24,
+      "y": -675
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 29,
+      "title": "Eficiência II",
+      "x": 177,
+      "y": -651
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 30,
+      "title": "Recuperação II",
+      "x": 321,
+      "y": -594
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 31,
+      "title": "Preparação: Coração de Caldeira",
+      "x": 239,
+      "y": 72
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 32,
+      "title": "Domínio: Coração de Caldeira",
+      "x": 282,
+      "y": 128
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 33,
+      "title": "Potência I",
+      "x": 557,
+      "y": 194
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 34,
+      "title": "Persistência I",
+      "x": 498,
+      "y": 316
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 35,
+      "title": "Eficiência I",
+      "x": 413,
+      "y": 421
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 36,
+      "title": "Recuperação I",
+      "x": 306,
+      "y": 504
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 37,
+      "title": "Potência II",
+      "x": 665,
+      "y": 118
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 38,
+      "title": "Persistência II",
+      "x": 620,
+      "y": 267
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 39,
+      "title": "Eficiência II",
+      "x": 543,
+      "y": 401
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 40,
+      "title": "Recuperação II",
+      "x": 437,
+      "y": 514
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 41,
+      "title": "Preparação: Fênix de Cinzas",
+      "x": -180,
+      "y": 174
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 42,
+      "title": "Domínio: Fênix de Cinzas",
+      "x": -270,
+      "y": 153
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 43,
+      "title": "Potência I",
+      "x": -385,
+      "y": 447
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 44,
+      "title": "Persistência I",
+      "x": -477,
+      "y": 347
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 45,
+      "title": "Eficiência I",
+      "x": -544,
+      "y": 230
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 46,
+      "title": "Recuperação I",
+      "x": -582,
+      "y": 100
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 47,
+      "title": "Potência II",
+      "x": -353,
+      "y": 576
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 48,
+      "title": "Persistência II",
+      "x": -474,
+      "y": 480
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 49,
+      "title": "Eficiência II",
+      "x": -571,
+      "y": 359
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 50,
+      "title": "Recuperação II",
+      "x": -638,
+      "y": 220
+    }
+  ]
+}

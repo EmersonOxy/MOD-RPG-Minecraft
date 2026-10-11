@@ -9,5 +9,5 @@ public record AttributeStats(int health, int damage, int luck, int armor, int ma
     public AttributeStats add(int id){return new AttributeStats(health+(id==0?1:0),damage+(id==1?1:0),luck+(id==2?1:0),armor+(id==3?1:0),mana+(id==4?1:0));}
     public int maxMana(){return 100+mana*5;}
     public static String label(int id){return switch(id){case 0->"Vida";case 1->"Dano";case 2->"Sorte";case 3->"Resistência";case 4->"Mana";default->"";};}
-    public static String benefit(int id){return switch(id){case 0->"+1 coração";case 1->"+2% de dano";case 2->"+0,2% de drop raro";case 3->"+0,5 de armadura";case 4->"+5 de mana máxima";default->"";};}
+    public static String benefit(int id){return switch(id){case 0->"+1 coração";case 1->"+2% de dano";case 2->"+0,2% drop raro; +0,25% crítico; -0,1% erro";case 3->"+0,5 de armadura";case 4->"+5 de mana máxima";default->"";};}
 }

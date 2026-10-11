@@ -14,7 +14,7 @@ public final class AbilityPreview {
     private static long built=-1;
     private AbilityPreview(){}
     public static void clear(){slot=-1;LINES.clear();built=-1;}
-    public static void press(int index){var mc=Minecraft.getInstance();CombatOptions.load();if(!CombatOptions.preview||EquipmentAccess.clientSelected()==RpgClass.AVIARIO){OxyRpgClient.cast(index);return;}slot=index;selectedClass=EquipmentAccess.clientSelected().ordinal();built=-1;}
+    public static void press(int index){var mc=Minecraft.getInstance();CombatOptions.load();if(!CombatOptions.preview||(EquipmentAccess.clientSelected()==RpgClass.AVIARIO||RpgSpecialists.handles(EquipmentAccess.clientSelected()))){OxyRpgClient.cast(index);return;}slot=index;selectedClass=EquipmentAccess.clientSelected().ordinal();built=-1;}
     public static void tick(){
         var mc=Minecraft.getInstance();if(slot<0)return;
         if(mc.player==null||mc.level==null||mc.screen!=null||!mc.player.isAlive()||mc.player.isSpectator()||selectedClass!=EquipmentAccess.clientSelected().ordinal()){clear();return;}

@@ -17,7 +17,8 @@ public final class QuestCatalog {
         new Quest("Perigo nas sombras", 175, List.of(target("spider", "Aranhas", 5, "spider_eye"), target("creeper", "Creepers", 2, "gunpowder")))
     );
     private QuestCatalog() {}
-    public static Quest quest(int stage) { return QUESTS.get(Math.floorMod(stage, QUESTS.size())); }
+    public static List<Quest> defaults(){return QUESTS;}
+    public static Quest quest(int stage) { return RpgContent.quest(stage,QUESTS); }
     public static boolean valid(int stage, int first, int second) {
         if (stage < 0 || first < 0 || second < 0) return false;
         var targets = quest(stage).targets();

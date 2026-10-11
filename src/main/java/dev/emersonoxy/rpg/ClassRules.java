@@ -22,6 +22,7 @@ public final class ClassRules {
         return stack.has(DataComponents.FOOD)&&(id.contains("beef")||id.contains("porkchop")||id.contains("mutton")||id.contains("chicken")||id.contains("rabbit")||id.contains("cod")||id.contains("salmon")||id.contains("tropical_fish")||id.contains("pufferfish")||id.equals("rotten_flesh"));
     }
     public static String denial(ServerPlayer p,ItemStack stack){
+        if(ClassRelics.recovering(p,stack))return "Item em recuperação após a morte: aguarde até 60 s.";
         if(ClassEquipment.gear(stack)&&!ClassEquipment.allowed(p,stack))return ClassEquipment.denial(p,stack);
         var c=selected(p);
         if(c==RpgClass.GUERREIRO&&ranged(stack))return "Guerreiros não usam arcos, bestas ou tridentes.";
@@ -52,15 +53,19 @@ public final class ClassRules {
         boolean day=c==RpgClass.NECROMANTE&&p.level().dimensionType().hasSkyLight()&&Math.floorMod(p.level().getDayTime(),24000)<12000;
         Professions.modifier(p,Attributes.MOVEMENT_SPEED,"class_day_slow",day?-.15:0,net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
         Professions.modifier(p,Attributes.MAX_HEALTH,"class_archer_health",c==RpgClass.ARQUEIRO?-4:0,net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_VALUE);
+        Professions.modifier(p,Attributes.MAX_HEALTH,"class_fragile",c==RpgClass.AVIARIO||c==RpgClass.ILUSIONISTA?-4:c==RpgClass.MAGO||c==RpgClass.PIROMANTE?-2:0,net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_VALUE);
         if(p.getHealth()>p.getMaxHealth())p.setHealth(p.getMaxHealth());
     }
     public static String description(RpgClass c){return switch(c){
         case GUERREIRO->"Sem armas de distância; fome adicional.";
         case ARQUEIRO->"Sem escudos; -2 corações de vida base.";
-        case MAGO->"+20% dano recebido de ataques corpo a corpo.";
+        case MAGO->"-1 coração de vida base; +20% dano recebido de ataques corpo a corpo.";
         case NECROMANTE->"-20% dano próprio; -15% velocidade de dia.";
-        case AVIARIO->"Voo temporário, proteção na queda e impacto ao pousar.";
-        case XAMA->"Não pode comer carne ou peixe.";
+        case AVIARIO->"-2 corações de vida base; +20% dano de projéteis no ar. Voo cresce com seu nível.";
+        case ILUSIONISTA->"-2 corações de vida base; ataques diretos causam 20% menos dano. Enxame não permite atacar nem interagir.";
+        case HIDROMANTE->"Fora da água, +15% dano de fogo e -10% dano causado quando não chove.";
+        case PIROMANTE->"-1 coração de vida base; +20% dano de frio. Água esfria a caldeira e reduz dano causado em 20%.";
+        case XAMA->"Não pode comer carne ou peixe; -10% dano de armas convencionais.";
         default->"Escolha uma classe para começar.";
     };}
 }

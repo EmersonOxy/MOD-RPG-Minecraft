@@ -20,13 +20,29 @@ public final class OxyRpg {
     public static final String MOD_ID = "oxyrpg";
     private static final Logger LOGGER = LoggerFactory.getLogger(OxyRpg.class);
 
-    public OxyRpg(net.neoforged.bus.api.IEventBus bus) {
+    public OxyRpg(net.neoforged.bus.api.IEventBus bus,net.neoforged.fml.ModContainer container) {
+        RpgConfig.register(container);PlayerAttachments.register(bus);RpgDataMaps.register(bus);RpgItems.register(bus);RpgGameTests.functions(bus);
+        bus.addListener(RpgDataGenerator::gather);bus.addListener(RpgGameTests::register);
+        NeoForge.EVENT_BUS.addListener(RpgContent::listeners);NeoForge.EVENT_BUS.addListener(RpgContent::sync);
+        bus.addListener(RpgContent::configReloaded);
         bus.addListener(RpgNetwork::register);
+        VillageLoot.register(bus);
+        NeoForge.EVENT_BUS.addListener(EventPriority.HIGHEST,RpgEvasion::incoming);
+        NeoForge.EVENT_BUS.addListener(EventPriority.LOW,CombatChances::incoming);
+        NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST,ShieldParry::block);
+        NeoForge.EVENT_BUS.addListener(RpgEvasion::tick);
+        NeoForge.EVENT_BUS.addListener(RpgEvasion::clonePlayer);
+        NeoForge.EVENT_BUS.addListener(RpgEvasion::logout);
+        NeoForge.EVENT_BUS.addListener(RpgEvasion::stop);
+        NeoForge.EVENT_BUS.addListener(ShieldParry::logout);
+        NeoForge.EVENT_BUS.addListener(ShieldParry::stop);
+        NeoForge.EVENT_BUS.addListener(CombatChances::stop);
         NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST,CombatFeedback::critical);
         NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST,CombatFeedback::damage);
         NeoForge.EVENT_BUS.addListener(CombatFeedback::logout);
         NeoForge.EVENT_BUS.addListener(CombatFeedback::stop);
         NeoForge.EVENT_BUS.addListener(OxyRpg::registerCommands);
+        NeoForge.EVENT_BUS.addListener(RpgDataMaps::resistance);
         NeoForge.EVENT_BUS.addListener(ClassRules::damage);
         NeoForge.EVENT_BUS.addListener(ClassRules::use);
         NeoForge.EVENT_BUS.addListener(ClassRules::rightClick);
@@ -50,6 +66,32 @@ public final class OxyRpg {
         NeoForge.EVENT_BUS.addListener(EliteAbilities::tick);
         NeoForge.EVENT_BUS.addListener(EliteAbilities::projectile);
         NeoForge.EVENT_BUS.addListener(EliteAbilities::arrowEffect);
+        NeoForge.EVENT_BUS.addListener(RpgSpecialists::tick);
+        NeoForge.EVENT_BUS.addListener(RpgSpecialists::projectile);
+        NeoForge.EVENT_BUS.addListener(FluidPockets::tick);
+        NeoForge.EVENT_BUS.addListener(FluidPockets::stop);
+        NeoForge.EVENT_BUS.addListener(FluidPockets::placed);
+        NeoForge.EVENT_BUS.addListener(RpgSpecialists::incoming);
+        NeoForge.EVENT_BUS.addListener(RpgSpecialists::damage);
+        NeoForge.EVENT_BUS.addListener(RpgSpecialists::damagePost);
+        NeoForge.EVENT_BUS.addListener(RpgSpecialists::targeting);
+        NeoForge.EVENT_BUS.addListener(RpgSpecialists::tracking);
+        NeoForge.EVENT_BUS.addListener(RpgSpecialists::attack);
+        NeoForge.EVENT_BUS.addListener(RpgSpecialists::rightItem);
+        NeoForge.EVENT_BUS.addListener(RpgSpecialists::rightBlock);
+        NeoForge.EVENT_BUS.addListener(RpgSpecialists::interact);
+        NeoForge.EVENT_BUS.addListener(RpgSpecialists::interactSpecific);
+        NeoForge.EVENT_BUS.addListener(RpgSpecialists::breakBlock);
+        NeoForge.EVENT_BUS.addListener(RpgSpecialists::join);
+        NeoForge.EVENT_BUS.addListener(RpgSpecialists::drops);
+        NeoForge.EVENT_BUS.addListener(RpgSpecialists::experience);
+        NeoForge.EVENT_BUS.addListener(RpgSpecialists::logout);
+        NeoForge.EVENT_BUS.addListener(RpgSpecialists::stop);
+        NeoForge.EVENT_BUS.addListener(ClassRelics::drops);
+        NeoForge.EVENT_BUS.addListener(ClassRelics::clonePlayer);
+        NeoForge.EVENT_BUS.addListener(ClassRelics::tick);
+        NeoForge.EVENT_BUS.addListener(ClassRelics::damage);
+        NeoForge.EVENT_BUS.addListener(ClassRelics::attack);
         NeoForge.EVENT_BUS.addListener(ClassEquipment::tick);
         NeoForge.EVENT_BUS.addListener(ClassEquipment::damage);
         NeoForge.EVENT_BUS.addListener(ClassEquipment::logout);
@@ -104,7 +146,7 @@ public final class OxyRpg {
     }
 
     private static ProfileStore store(ServerPlayer player) {
-        return new ProfileStore(player.level().getServer().getWorldPath(LevelResource.ROOT).resolve("oxyrpg"));
+        return new ProfileStore(player);
     }
 
     private static void tell(ServerPlayer player, String message) {
@@ -114,7 +156,12 @@ public final class OxyRpg {
 
     static void menuAction(ServerPlayer player, int requested, int direction) {
         switch (requested) {
-            case 0 -> sync(player, "");
+            case 0 -> {sync(player, "");RpgEvasion.sync(player);}
+            case 12 -> {if(!RpgSpecialists.intangible(player))RpgEvasion.use(player,direction);}
+            case 13 -> action(player,"classe",RpgClass.ILUSIONISTA);
+            case 14 -> action(player,"classe",RpgClass.HIDROMANTE);
+            case 15 -> action(player,"classe",RpgClass.PIROMANTE);
+            case 16 -> ClassRelics.use(player);
             case 1 -> castAbility(player, 0, direction);
             case 5 -> castAbility(player, 1, direction);
             case 6 -> castAbility(player, 2, direction);
@@ -139,6 +186,7 @@ public final class OxyRpg {
             RpgAbilities.updateProfile(player, RpgDebug.effective(player, profile));
             Professions.sync(player);
             RpgAbilities.syncGhost(player);
+            RpgSpecialists.sync(player);
             RpgAbilities.syncStatus(player);
             long cooldown = debug ? 0 : Math.max(0, RpgDebug.readyAt(player,profile,0) - player.level().getGameTime());
             net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(player,
@@ -157,7 +205,7 @@ public final class OxyRpg {
             RpgProfile profile = store.load(player.getUUID());
             if(!command.equals("classe"))profile=RpgDebug.effective(player,profile);
             switch (command) {
-                case "classes" -> tell(player, "Escolha uma classe: /rpg classe guerreiro, /rpg classe mago ou /rpg classe arqueiro ou /rpg classe necromante ou /rpg classe xama. A escolha é definitiva neste mundo.");
+                case "classes" -> tell(player, "Escolha sua classe no menu R, ou /rpg classe <nome>. Classes: guerreiro, mago, arqueiro, necromante, xama, aviario, ilusionista, hidromante e piromante. A escolha é definitiva neste mundo.");
                 case "classe" -> {
                     if(RpgDebug.testing(player))return testMode(player,selected,false);
                     RpgProfile next = profile.choose(selected);
@@ -172,7 +220,7 @@ public final class OxyRpg {
                     + ". Recompensa: " + QuestCatalog.quest(profile.questStage()).reward() + " XP. Caçada geral: " + (profile.kills() % 10) + "/10.");
                 default -> tell(player, profile.rpgClass().label() + " | Nível " + profile.level()
                     + " | XP " + profile.xp() + "/" + profile.xpToNextLevel()
-                    + " | /rpg classe guerreiro|mago|arqueiro|necromante|xama | /rpg habilidade | /rpg missao");
+                    + " | /rpg classe <nome> | /rpg habilidade | /rpg missao");
             }
             return Command.SINGLE_SUCCESS;
         } catch (IllegalStateException e) {
@@ -190,7 +238,8 @@ public final class OxyRpg {
             var real = store.load(player.getUUID());
             var effective = RpgDebug.effective(player, real);
             RpgAbilities.updateProfile(player, effective);
-            boolean debug = RpgDebug.unlimited(player), extra = RpgAbilities.extraDash(player, slot)||RpgAviary.boostAvailable(player,slot);
+            boolean debug = RpgDebug.unlimited(player), extra = RpgAbilities.extraDash(player, slot)||RpgAviary.boostAvailable(player,slot)||RpgSpecialists.extra(player,slot);
+            RpgSpecialists.validate(player,effective,slot);
             if(effective.rpgClass()==RpgClass.AVIARIO)RpgAviary.validate(player,slot);
             if (!effective.canUseAbility(slot)) { tell(player, "Aprenda o efeito inicial desse ramo na árvore de skills."); return 0; }
             if(effective.rpgClass()==RpgClass.XAMA&&slot==2&&(!player.getMainHandItem().isEmpty()||!player.getOffhandItem().isEmpty())){tell(player,"Especialista exige ambas as mãos vazias.");return 0;}
@@ -259,7 +308,7 @@ public final class OxyRpg {
             var real=store(player).load(player.getUUID());
             boolean entering=!RpgDebug.testing(player);
             RpgAbilities.clear(player);
-            if(off)RpgDebug.disable(player);else RpgDebug.test(player,real,choice);
+            if(off){RpgDebug.disable(player);RpgEvasion.endTesting(player);}else RpgDebug.test(player,real,choice);
             sync(player,"");
             Professions.refreshModifiers(player);
             if(!off&&entering){player.setHealth(player.getMaxHealth());player.getFoodData().setFoodLevel(20);}
@@ -307,6 +356,10 @@ public final class OxyRpg {
                 .executes(c -> action(c.getSource().getPlayerOrException(), "classe", selected)));
         }
         root.then(classes);
+        root.then(Commands.literal("selo").executes(c->{var p=c.getSource().getPlayerOrException();var item=new net.minecraft.world.item.ItemStack(RpgItems.SIGIL.get());if(!p.addItem(item))p.drop(item,false);return 1;}));
+        root.then(Commands.literal("desempenho").requires(Commands.hasPermission(2)).executes(c->{for(var line:RpgProfiler.report())c.getSource().sendSuccess(()->Component.literal(line),false);return 1;})
+            .then(Commands.literal("limpar").executes(c->{RpgProfiler.clear();return 1;})));
+        root.then(Commands.literal("exportarperfil").requires(Commands.hasPermission(2)).executes(c->{var p=c.getSource().getPlayerOrException();try{var profile=new ProfileStore(p).load(p.getUUID());new ProfileStore(p.level().getServer().getWorldPath(LevelResource.ROOT).resolve("oxyrpg/exports")).save(p.getUUID(),profile);tell(p,"Perfil exportado em oxyrpg/exports.");return 1;}catch(IOException e){c.getSource().sendFailure(Component.literal("Não foi possível exportar o perfil."));return 0;}}));
         root.then(Commands.literal("debug").requires(Commands.hasPermission(2))
             .executes(c -> { tell(c.getSource().getPlayerOrException(), "Debug: "
                 + (RpgDebug.unlimited(c.getSource().getPlayerOrException()) ? "ON" : "OFF") + ". Use /rpg debug on|off|limpar."); return 1; })
@@ -333,7 +386,7 @@ public final class OxyRpg {
     }
 
     private static void onEnemyDeath(LivingDeathEvent event) {
-        if (event.isCanceled() || !(event.getEntity() instanceof Enemy)||RpgNecromancer.isSummon(event.getEntity())) return;
+        if (event.isCanceled() || !(event.getEntity() instanceof Enemy)||RpgNecromancer.isSummon(event.getEntity())||RpgSpecialists.temporary(event.getEntity())) return;
         net.minecraft.world.entity.Entity credit = RpgNecromancer.owner(event.getSource());
         if (!(credit instanceof ServerPlayer)) credit = event.getEntity().getKillCredit();
         if (!(credit instanceof ServerPlayer player)) return;

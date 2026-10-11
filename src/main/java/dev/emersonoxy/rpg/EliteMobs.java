@@ -13,7 +13,7 @@ public final class EliteMobs {
     private EliteMobs(){}
     public static boolean elite(LivingEntity mob){return mob.getPersistentData().getBooleanOr(KEY,false);}
     public static void roll(Mob mob){
-        if(mob.getPersistentData().getBooleanOr("oxy_elite_child",false)||mob instanceof net.minecraft.world.entity.boss.wither.WitherBoss||mob instanceof net.minecraft.world.entity.boss.enderdragon.EnderDragon||mob.getRandom().nextFloat()>=.05f)return;
+        if(mob.getPersistentData().getBooleanOr("oxy_elite_child",false)||mob instanceof net.minecraft.world.entity.boss.wither.WitherBoss||mob instanceof net.minecraft.world.entity.boss.enderdragon.EnderDragon||mob.getRandom().nextFloat()>=RpgConfig.value(RpgConfig.ELITE_CHANCE,.05))return;
         double scale=2+mob.getRandom().nextFloat()*2;
         promote(mob,scale);
     }
@@ -22,8 +22,8 @@ public final class EliteMobs {
         scale=Math.clamp(scale,2,4);
         mob.getPersistentData().putBoolean(KEY,true);mob.getPersistentData().putDouble("oxy_elite_scale",scale);
         add(mob,Attributes.SCALE,"elite_scale",scale-1);
-        add(mob,Attributes.MAX_HEALTH,"elite_health",4+scale*1.5); // ×8 to ×11
-        add(mob,Attributes.ATTACK_DAMAGE,"elite_damage",.5+scale*.5); // ×2.5 to ×3.5
+        add(mob,Attributes.MAX_HEALTH,"elite_health",(5+scale*1.5)*RpgConfig.value(RpgConfig.ELITE_HEALTH,1)-1); // ×8 to ×11
+        add(mob,Attributes.ATTACK_DAMAGE,"elite_damage",(1.5+scale*.5)*RpgConfig.value(RpgConfig.ELITE_DAMAGE,1)-1); // ×2.5 to ×3.5
         slow(mob);
         mob.setHealth(mob.getMaxHealth());
     }
@@ -31,8 +31,8 @@ public final class EliteMobs {
     public static void slow(Mob mob){
         if(!elite(mob))return;double scale=Math.clamp(mob.getPersistentData().getDoubleOr("oxy_elite_scale",2),2,4);
         float ratio=mob.getHealth()/Math.max(1,mob.getMaxHealth());
-        MobLevels.modifier(mob,Attributes.MAX_HEALTH,"elite_health",4+scale*1.5);
-        MobLevels.modifier(mob,Attributes.ATTACK_DAMAGE,"elite_damage",.5+scale*.5);
+        MobLevels.modifier(mob,Attributes.MAX_HEALTH,"elite_health",(5+scale*1.5)*RpgConfig.value(RpgConfig.ELITE_HEALTH,1)-1);
+        MobLevels.modifier(mob,Attributes.ATTACK_DAMAGE,"elite_damage",(1.5+scale*.5)*RpgConfig.value(RpgConfig.ELITE_DAMAGE,1)-1);
         mob.setHealth(Math.min(mob.getMaxHealth(),ratio*mob.getMaxHealth()));
         double amount=-(.08+(scale-2)*.06);
         for(var attribute:java.util.List.of(Attributes.MOVEMENT_SPEED,Attributes.FLYING_SPEED)){
@@ -47,11 +47,11 @@ public final class EliteMobs {
             accessor.oxyrpg$setExplosionRadius((int)Math.round(data.getIntOr("oxy_elite_original_blast",3)*scale));
         }
     }
-    public static int xp(LivingEntity mob,int base){return elite(mob)?base*4:mob.getPersistentData().getBooleanOr("oxy_elite_child",false)?Math.max(1,base/2):base;}
+    public static int xp(LivingEntity mob,int base){return Math.max(0,Math.round((elite(mob)?base*4:mob.getPersistentData().getBooleanOr("oxy_elite_child",false)?Math.max(1,base/2):base)*RpgDataMaps.mob(mob).xp()));}
     public static void damage(LivingDamageEvent.Pre event){
         if(event.getSource().getEntity() instanceof LivingEntity mob&&elite(mob)
             &&(event.getSource().is(net.minecraft.tags.DamageTypeTags.IS_PROJECTILE)||event.getSource().is(net.minecraft.tags.DamageTypeTags.IS_EXPLOSION)))
-            event.setNewDamage(event.getNewDamage()*(float)(1.5+mob.getPersistentData().getDoubleOr("oxy_elite_scale",2)*.5));
+            event.setNewDamage(event.getNewDamage()*(float)((1.5+mob.getPersistentData().getDoubleOr("oxy_elite_scale",2)*.5)*RpgConfig.value(RpgConfig.ELITE_DAMAGE,1)));
     }
     public static void experience(LivingExperienceDropEvent event){if(elite(event.getEntity()))event.setDroppedExperience(event.getDroppedExperience()*3);}
     public static void reward(net.minecraft.server.level.ServerPlayer p,LivingEntity mob){

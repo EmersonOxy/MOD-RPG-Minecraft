@@ -1,0 +1,14 @@
+{
+  "values": {
+    "minecraft:skeleton": {
+      "damage": 1,
+      "health": 1,
+      "xp": 1
+    },
+    "minecraft:zombie": {
+      "damage": 1,
+      "health": 1,
+      "xp": 1
+    }
+  }
+}

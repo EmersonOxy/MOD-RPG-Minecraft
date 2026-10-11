@@ -1,0 +1,417 @@
+{
+  "cooldown_multiplier": 1,
+  "damage_multiplier": 1,
+  "duration_multiplier": 1,
+  "label": "Xamã",
+  "mana_multiplier": 1,
+  "nodes": [
+    {
+      "description": "Dano dos raios +5%.",
+      "icon": "copper_ingot",
+      "id": 0,
+      "title": "Carga somática",
+      "x": 0,
+      "y": 0
+    },
+    {
+      "description": "Ativa raios fracos nos ataques de punho por 5 s, com intervalo de 1,5 s.",
+      "icon": "lightning_rod",
+      "id": 1,
+      "title": "Estalos",
+      "x": -69,
+      "y": -75
+    },
+    {
+      "description": "Dano dos raios +1.",
+      "icon": "copper_block",
+      "id": 2,
+      "title": "Faísca intensa",
+      "x": -109,
+      "y": -110
+    },
+    {
+      "description": "ataques de punho chamam raios no inimigo a cada 1,5 s por 15 s, sem ferir o jogador. Recarga 30 s.",
+      "icon": "amethyst_shard",
+      "id": 3,
+      "title": "Deus Relâmpago",
+      "x": -280,
+      "y": -215
+    },
+    {
+      "description": "Duração de Deus Relâmpago +3 s.",
+      "icon": "clock",
+      "id": 4,
+      "title": "Tempestade longa",
+      "x": -466,
+      "y": -219
+    },
+    {
+      "description": "Dano dos raios +2.",
+      "icon": "diamond",
+      "id": 5,
+      "title": "Raio intenso",
+      "x": -272,
+      "y": -219
+    },
+    {
+      "description": "Um segundo hostil próximo recebe metade do dano elétrico.",
+      "icon": "end_rod",
+      "id": 6,
+      "title": "Raio encadeado",
+      "x": -454,
+      "y": -299
+    },
+    {
+      "description": "Vida dos animais invocados +10%.",
+      "icon": "lead",
+      "id": 7,
+      "title": "Laço vital",
+      "x": 55,
+      "y": -56
+    },
+    {
+      "description": "Invoca 1 animal, cura levemente e remove efeitos negativos por 5 s; fertiliza plantas.",
+      "icon": "bone_meal",
+      "id": 8,
+      "title": "Primeiros socorros",
+      "x": 53,
+      "y": -104
+    },
+    {
+      "description": "Aura de cura +2 s.",
+      "icon": "wheat",
+      "id": 9,
+      "title": "Aura persistente",
+      "x": 42,
+      "y": -152
+    },
+    {
+      "description": "3 animais protetores, aura de cura e limpeza por 10 s, com farinha de osso na área. Recarga 40 s.",
+      "icon": "wolf_spawn_egg",
+      "id": 10,
+      "title": "Doutor Animal",
+      "x": -18,
+      "y": -296
+    },
+    {
+      "description": "Raio de cura +1 bloco.",
+      "icon": "golden_apple",
+      "id": 11,
+      "title": "Círculo de cuidado",
+      "x": -138,
+      "y": -317
+    },
+    {
+      "description": "Cura por pulso +0,5 ponto de vida.",
+      "icon": "glistering_melon_slice",
+      "id": 12,
+      "title": "Cura reforçada",
+      "x": 57,
+      "y": -317
+    },
+    {
+      "description": "Invoca +1 animal; aura dura +5 s.",
+      "icon": "polar_bear_spawn_egg",
+      "id": 13,
+      "title": "Guardião da natureza",
+      "x": -53,
+      "y": -412
+    },
+    {
+      "description": "Resistência a empurrão +10%.",
+      "icon": "moss_block",
+      "id": 14,
+      "title": "Foco terrestre",
+      "x": 94,
+      "y": -41
+    },
+    {
+      "description": "Abre Especialista por 8 s: mãos vazias, esquerdo negativo e direito positivo. Poções fracas e aleatórias.",
+      "icon": "glass_bottle",
+      "id": 15,
+      "title": "Misturas básicas",
+      "x": 125,
+      "y": -75
+    },
+    {
+      "description": "Intervalo entre poções reduzido de 1 s para 0,75 s.",
+      "icon": "brewing_stand",
+      "id": 16,
+      "title": "Preparo rápido",
+      "x": 155,
+      "y": -110
+    },
+    {
+      "description": "modo de poções por 15 s, esquerdo negativo e direito positivo, ambas as mãos vazias. Recarga 35 s.",
+      "icon": "splash_potion",
+      "id": 17,
+      "title": "Especialista",
+      "x": 261,
+      "y": -215
+    },
+    {
+      "description": "Duração do modo +5 s.",
+      "icon": "bundle",
+      "id": 18,
+      "title": "Bolsa de misturas",
+      "x": 228,
+      "y": -219
+    },
+    {
+      "description": "Efeitos não instantâneos das poções principais +5 s.",
+      "icon": "dragon_breath",
+      "id": 19,
+      "title": "Essência duradoura",
+      "x": 422,
+      "y": -219
+    },
+    {
+      "description": "Custo de mana por poção -1.",
+      "icon": "cauldron",
+      "id": 20,
+      "title": "Destilação econômica",
+      "x": 396,
+      "y": -299
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 21,
+      "title": "Preparação: Deus Relâmpago",
+      "x": -178,
+      "y": -137
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 22,
+      "title": "Domínio: Deus Relâmpago",
+      "x": -190,
+      "y": -170
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 23,
+      "title": "Potência I",
+      "x": -740,
+      "y": -261
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 24,
+      "title": "Persistência I",
+      "x": -608,
+      "y": -315
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 25,
+      "title": "Eficiência I",
+      "x": -473,
+      "y": -315
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 26,
+      "title": "Recuperação I",
+      "x": -341,
+      "y": -261
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 27,
+      "title": "Potência II",
+      "x": -856,
+      "y": -298
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 28,
+      "title": "Persistência II",
+      "x": -705,
+      "y": -360
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 29,
+      "title": "Eficiência II",
+      "x": -550,
+      "y": -360
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 30,
+      "title": "Recuperação II",
+      "x": -399,
+      "y": -298
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 31,
+      "title": "Preparação: Doutor Animal",
+      "x": 5,
+      "y": -192
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 32,
+      "title": "Domínio: Doutor Animal",
+      "x": 29,
+      "y": -238
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 33,
+      "title": "Potência I",
+      "x": -253,
+      "y": -391
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 34,
+      "title": "Persistência I",
+      "x": -121,
+      "y": -445
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 35,
+      "title": "Eficiência I",
+      "x": 14,
+      "y": -445
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 36,
+      "title": "Recuperação I",
+      "x": 146,
+      "y": -391
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 37,
+      "title": "Potência II",
+      "x": -267,
+      "y": -447
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 38,
+      "title": "Persistência II",
+      "x": -116,
+      "y": -509
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 39,
+      "title": "Eficiência II",
+      "x": 39,
+      "y": -509
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 40,
+      "title": "Recuperação II",
+      "x": 189,
+      "y": -447
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 41,
+      "title": "Preparação: Especialista",
+      "x": 165,
+      "y": -137
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 42,
+      "title": "Domínio: Especialista",
+      "x": 244,
+      "y": -170
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 43,
+      "title": "Potência I",
+      "x": 283,
+      "y": -261
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 44,
+      "title": "Persistência I",
+      "x": 415,
+      "y": -315
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 45,
+      "title": "Eficiência I",
+      "x": 550,
+      "y": -315
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 46,
+      "title": "Recuperação I",
+      "x": 682,
+      "y": -261
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 47,
+      "title": "Potência II",
+      "x": 357,
+      "y": -298
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 48,
+      "title": "Persistência II",
+      "x": 508,
+      "y": -360
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 49,
+      "title": "Eficiência II",
+      "x": 663,
+      "y": -360
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 50,
+      "title": "Recuperação II",
+      "x": 814,
+      "y": -298
+    }
+  ]
+}

@@ -20,7 +20,7 @@ public final class RpgDebug {
     private static final AttributeStats MAX_ATTRIBUTES=new AttributeStats(ALL_ATTRIBUTE_NODES,ALL_ATTRIBUTE_NODES,ALL_ATTRIBUTE_NODES,ALL_ATTRIBUTE_NODES,ALL_ATTRIBUTE_NODES);
     private RpgDebug() {}
     public static boolean enabled(ServerPlayer player) { return SKILLS.containsKey(player.getUUID()); }
-    public static void enable(ServerPlayer player, RpgProfile profile) { TEST_CLASSES.remove(player.getUUID());TEST_COOLDOWNS.remove(player.getUUID());RpgResources.endTesting(player);SKILLS.put(player.getUUID(), profile.skills()); }
+    public static void enable(ServerPlayer player, RpgProfile profile) { TEST_CLASSES.remove(player.getUUID());TEST_COOLDOWNS.remove(player.getUUID());RpgResources.endTesting(player);RpgEvasion.endTesting(player);SKILLS.put(player.getUUID(), profile.skills()); }
     public static boolean testing(ServerPlayer p){return TEST_CLASSES.containsKey(p.getUUID());}
     public static boolean professionOverride(ServerPlayer p,int area){return testing(p)||area==2&&ARSENAL.contains(p.getUUID());}
     public static boolean equipmentOverride(ServerPlayer p){return testing(p)||ARSENAL.contains(p.getUUID());}
@@ -31,7 +31,7 @@ public final class RpgDebug {
         var selected=choice!=null?choice:TEST_CLASSES.getOrDefault(p.getUUID(),real.rpgClass()==RpgClass.NONE?RpgClass.GUERREIRO:real.rpgClass());
         TEST_CLASSES.put(p.getUUID(),selected);SKILLS.put(p.getUUID(),SkillTree.PAID_MASK);
     }
-    public static void disable(ServerPlayer player) {var id=player.getUUID();SKILLS.remove(id);TEST_CLASSES.remove(id);TEST_COOLDOWNS.remove(id);ARSENAL.remove(id);RpgResources.endTesting(player);}
+    public static void disable(ServerPlayer player) {var id=player.getUUID();SKILLS.remove(id);TEST_CLASSES.remove(id);TEST_COOLDOWNS.remove(id);ARSENAL.remove(id);RpgResources.endTesting(player);RpgEvasion.endTesting(player);}
     public static void clearSkills(ServerPlayer player) { if (enabled(player)&&!testing(player)) SKILLS.put(player.getUUID(), 0L); }
     public static RpgProfile effective(ServerPlayer player, RpgProfile real) {
         var selected=TEST_CLASSES.getOrDefault(player.getUUID(),real.rpgClass());

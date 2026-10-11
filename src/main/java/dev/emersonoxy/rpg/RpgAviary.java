@@ -39,7 +39,7 @@ public final class RpgAviary {
     public static void activate(ServerPlayer p,RpgProfile profile,int slot){
         var f=FLIGHTS.computeIfAbsent(p.getUUID(),id->new Flight());long now=p.level().getGameTime();f.dimension=p.level().dimension();f.cast=profile;
         if(slot==0){
-            if(f.until>now){f.lastBoost=now;f.thrust=Math.min(5.2,Math.max(profile.hasSkill(6)?3.8:3.3,Math.max(p.getKnownMovement().length(),f.thrust)+1.2));p.setDeltaMovement(p.getLookAngle().scale(f.thrust));p.hurtMarked=true;f.boostUntil=Math.min(f.until,now+(profile.mainUnlocked(0)?80:40)+(profile.hasSkill(5)?20:0));}
+            if(f.until>now){f.lastBoost=now;f.thrust=Math.min(maximumSpeed(profile),Math.max(.75+.5*profile.level()/100.0,Math.max(p.getKnownMovement().length(),f.thrust)+.15+.45*profile.level()/100.0));p.setDeltaMovement(p.getLookAngle().scale(f.thrust));p.hurtMarked=true;f.boostUntil=Math.min(f.until,now+(profile.mainUnlocked(0)?40:20)+(profile.hasSkill(5)?20:0));}
             else{f.thrust=0;f.total=profile.abilityDuration(0);f.until=now+f.total;f.launched=false;f.launchAt=now;p.stopFallFlying();p.setDeltaMovement(p.getDeltaMovement().x,1.25,p.getDeltaMovement().z);p.hurtMarked=true;ClassJourney.advance(p,0,1);}
             p.level().playSound(null,p.blockPosition(),SoundEvents.FIREWORK_ROCKET_LAUNCH,SoundSource.PLAYERS,.7f,1.2f);
         }else{
@@ -48,6 +48,7 @@ public final class RpgAviary {
         }
         sync(p,f);
     }
+    private static double maximumSpeed(RpgProfile p){double progression=p.level()/100.0;return 1.05+2.15*progression+(p.hasSkill(6)?.6*progression:0);}
     private static void sync(ServerPlayer p,Flight f){long now=p.level().getGameTime();PacketDistributor.sendToPlayer(p,new RpgNetwork.FlightState((int)Math.max(0,f.until-now),(int)Math.max(0,f.boostUntil-now),(int)Math.max(0,f.meteorUntil-now),f.cast!=null&&f.cast.hasSkill(6),(float)f.thrust));}
     public static int remaining(ServerPlayer p,int slot){var f=FLIGHTS.get(p.getUUID());if(f==null)return 0;return slot==0?(int)Math.max(0,f.until-p.level().getGameTime()):slot==2?(int)Math.max(0,f.meteorUntil-p.level().getGameTime()):0;}
     public static void tick(EntityTickEvent.Pre event){
@@ -56,7 +57,11 @@ public final class RpgAviary {
             if(!player.isLocalPlayer())return;var tag=player.getPersistentData();
             if(tag.getIntOr("oxy_meteor_until",0)>player.tickCount&&!player.onGround())player.setDeltaMovement(player.getDeltaMovement().multiply(.96,1,.96).add(0,-.12,0).with(net.minecraft.core.Direction.Axis.Y,Math.max(-3,player.getDeltaMovement().y-.12)));
             else if(tag.getIntOr("oxy_boost_until",0)>player.tickCount&&canFly(player)){
-                var direction=player.getLookAngle();double speed=Math.clamp(tag.getFloatOr("oxy_flight_thrust",3.3f),3.3,5.2);player.setDeltaMovement(player.getDeltaMovement().scale(.72).add(direction.scale(speed*.28)));
+                var direction=player.getLookAngle();double speed=Math.clamp(tag.getFloatOr("oxy_flight_thrust",.8f),.35,3.8);player.setDeltaMovement(player.getDeltaMovement().scale(.72).add(direction.scale(speed*.28)));
+            }
+            if(canFly(player)){
+                double progression=EquipmentAccess.clientLevel()/100.0,ceiling=1.05+2.15*progression+(tag.getBooleanOr("oxy_fast_flight",false)?.6*progression:0);
+                var movement=player.getDeltaMovement();if(movement.length()>ceiling)player.setDeltaMovement(movement.normalize().scale(ceiling));
             }
             return;
         }

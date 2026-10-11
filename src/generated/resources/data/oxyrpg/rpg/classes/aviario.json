@@ -1,0 +1,417 @@
+{
+  "cooldown_multiplier": 1,
+  "damage_multiplier": 1,
+  "duration_multiplier": 1,
+  "label": "Aviário",
+  "mana_multiplier": 1,
+  "nodes": [
+    {
+      "description": "Dano de queda -30%.",
+      "icon": "feather",
+      "id": 0,
+      "title": "Instinto das alturas",
+      "x": 0,
+      "y": 0
+    },
+    {
+      "description": "Voo inicial por 8 s. Impulso breve com velocidade limitada pelo nível.",
+      "icon": "firework_rocket",
+      "id": 1,
+      "title": "Salto alado",
+      "x": 0,
+      "y": 104
+    },
+    {
+      "description": "Voo +2 s.",
+      "icon": "phantom_membrane",
+      "id": 2,
+      "title": "Asas firmes",
+      "x": 0,
+      "y": 152
+    },
+    {
+      "description": "Voo por 15 s. Impulsos gastam 8 MP; velocidade cresce com nível e melhorias.",
+      "icon": "elytra",
+      "id": 3,
+      "title": "Decolagem",
+      "x": 0,
+      "y": 296
+    },
+    {
+      "description": "Voo +4 s.",
+      "icon": "clock",
+      "id": 4,
+      "title": "Fôlego aéreo",
+      "x": -97,
+      "y": 356
+    },
+    {
+      "description": "Impulso +1 s.",
+      "icon": "wind_charge",
+      "id": 5,
+      "title": "Corrente ascendente",
+      "x": 97,
+      "y": 356
+    },
+    {
+      "description": "Voo e velocidade adicionais crescem com o nível.",
+      "icon": "nether_star",
+      "id": 6,
+      "title": "Senhor dos céus",
+      "x": 0,
+      "y": 412
+    },
+    {
+      "description": "Dano de queda -30%.",
+      "icon": "white_wool",
+      "id": 7,
+      "title": "Penas leves",
+      "x": -63,
+      "y": 12
+    },
+    {
+      "description": "Passiva: queda recebida -30%; agache ao cair para descer lentamente.",
+      "icon": "feather",
+      "id": 8,
+      "title": "Pluma protetora",
+      "x": -117,
+      "y": -10
+    },
+    {
+      "description": "Enquanto desce agachado, dano de inimigos -10%.",
+      "icon": "white_carpet",
+      "id": 9,
+      "title": "Ar amortecido",
+      "x": -171,
+      "y": -36
+    },
+    {
+      "description": "Passiva: queda recebida -30%. Agache ao cair: queda lenta e dano de inimigos -25%.",
+      "icon": "chicken_spawn_egg",
+      "id": 10,
+      "title": "Peso pena",
+      "x": -333,
+      "y": -129
+    },
+    {
+      "description": "Descida agachada mais lenta.",
+      "icon": "breeze_rod",
+      "id": 11,
+      "title": "Brisa gentil",
+      "x": -303,
+      "y": -176
+    },
+    {
+      "description": "Redução de dano durante a descida +10%.",
+      "icon": "leather_chestplate",
+      "id": 12,
+      "title": "Manto de penas",
+      "x": -498,
+      "y": -176
+    },
+    {
+      "description": "Redução de dano durante a descida +10%.",
+      "icon": "totem_of_undying",
+      "id": 13,
+      "title": "Corpo etéreo",
+      "x": -463,
+      "y": -222
+    },
+    {
+      "description": "Impactos causam +5% de dano.",
+      "icon": "stone",
+      "id": 14,
+      "title": "Massa concentrada",
+      "x": 63,
+      "y": 12
+    },
+    {
+      "description": "No ar: prepara impacto menor ao pousar, sem destruir blocos.",
+      "icon": "anvil",
+      "id": 15,
+      "title": "Queda ofensiva",
+      "x": 117,
+      "y": -10
+    },
+    {
+      "description": "Dano do impacto +15%.",
+      "icon": "iron_block",
+      "id": 16,
+      "title": "Peso crescente",
+      "x": 171,
+      "y": -36
+    },
+    {
+      "description": "No ar: mergulha e explode ao pousar. Altura e velocidade ampliam dano e raio; destrói e arremessa blocos.",
+      "icon": "magma_block",
+      "id": 17,
+      "title": "Impacto Meteoro",
+      "x": 333,
+      "y": -129
+    },
+    {
+      "description": "Raio do impacto +1 bloco.",
+      "icon": "tnt",
+      "id": 18,
+      "title": "Cratera ampla",
+      "x": 303,
+      "y": -176
+    },
+    {
+      "description": "Dano do impacto +20%.",
+      "icon": "obsidian",
+      "id": 19,
+      "title": "Núcleo denso",
+      "x": 498,
+      "y": -176
+    },
+    {
+      "description": "Raio +1 bloco e mais detritos arremessados.",
+      "icon": "netherite_block",
+      "id": 20,
+      "title": "Cataclismo",
+      "x": 464,
+      "y": -222
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 21,
+      "title": "Preparação: Decolagem",
+      "x": -20,
+      "y": 200
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 22,
+      "title": "Domínio: Decolagem",
+      "x": 25,
+      "y": 248
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 23,
+      "title": "Potência I",
+      "x": -200,
+      "y": 472
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 24,
+      "title": "Persistência I",
+      "x": -68,
+      "y": 472
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 25,
+      "title": "Eficiência I",
+      "x": 68,
+      "y": 472
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 26,
+      "title": "Recuperação I",
+      "x": 200,
+      "y": 472
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 27,
+      "title": "Potência II",
+      "x": -228,
+      "y": 540
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 28,
+      "title": "Persistência II",
+      "x": -77,
+      "y": 540
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 29,
+      "title": "Eficiência II",
+      "x": 77,
+      "y": 540
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 30,
+      "title": "Recuperação II",
+      "x": 228,
+      "y": 540
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 31,
+      "title": "Preparação: Peso pena",
+      "x": -205,
+      "y": -64
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 32,
+      "title": "Domínio: Peso pena",
+      "x": -304,
+      "y": -95
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 33,
+      "title": "Potência I",
+      "x": -331,
+      "y": -278
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 34,
+      "title": "Persistência I",
+      "x": -463,
+      "y": -276
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 35,
+      "title": "Eficiência I",
+      "x": -599,
+      "y": -276
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 36,
+      "title": "Recuperação I",
+      "x": -731,
+      "y": -278
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 37,
+      "title": "Potência II",
+      "x": -379,
+      "y": -345
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 38,
+      "title": "Persistência II",
+      "x": -530,
+      "y": -343
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 39,
+      "title": "Eficiência II",
+      "x": -685,
+      "y": -343
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 40,
+      "title": "Recuperação II",
+      "x": -836,
+      "y": -345
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 41,
+      "title": "Preparação: Impacto Meteoro",
+      "x": 205,
+      "y": -64
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 42,
+      "title": "Domínio: Impacto Meteoro",
+      "x": 304,
+      "y": -95
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 43,
+      "title": "Potência I",
+      "x": 331,
+      "y": -278
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 44,
+      "title": "Persistência I",
+      "x": 463,
+      "y": -276
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 45,
+      "title": "Eficiência I",
+      "x": 599,
+      "y": -276
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 46,
+      "title": "Recuperação I",
+      "x": 731,
+      "y": -278
+    },
+    {
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword",
+      "id": 47,
+      "title": "Potência II",
+      "x": 379,
+      "y": -345
+    },
+    {
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock",
+      "id": 48,
+      "title": "Persistência II",
+      "x": 530,
+      "y": -343
+    },
+    {
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli",
+      "id": 49,
+      "title": "Eficiência II",
+      "x": 685,
+      "y": -343
+    },
+    {
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard",
+      "id": 50,
+      "title": "Recuperação II",
+      "x": 836,
+      "y": -345
+    }
+  ]
+}

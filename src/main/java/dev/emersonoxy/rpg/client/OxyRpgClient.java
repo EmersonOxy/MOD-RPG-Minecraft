@@ -34,6 +34,9 @@ public final class OxyRpgClient {
         ALL_KEYS.add(mapping);return mapping;
     }
     public static final KeyMapping COMPARE_EQUIPMENT=key("compare_equipment",GLFW.GLFW_KEY_LEFT_SHIFT,net.neoforged.neoforge.client.settings.KeyConflictContext.GUI);
+    public static final KeyMapping CLASS_RELIC=key("class_relic",GLFW.GLFW_KEY_C);
+    public static final KeyMapping DODGE=key("dodge",GLFW.GLFW_KEY_LEFT_ALT);
+    public static final KeyMapping MINIMAP=key("minimap",GLFW.GLFW_KEY_M);
     public static final KeyMapping HUD_OPTIONS=key("hud_options",GLFW.GLFW_KEY_UNKNOWN);
     public static final KeyMapping REVEAL_HUD=key("reveal_hud",GLFW.GLFW_KEY_UNKNOWN);
     public static final KeyMapping MOVEMENT_MODE=key("movement_mode",GLFW.GLFW_KEY_UNKNOWN);
@@ -69,7 +72,8 @@ public final class OxyRpgClient {
     private static ClientLevel trackedLevel;
     private static int refreshTicks;
 
-    public OxyRpgClient(IEventBus bus) {
+    public OxyRpgClient(IEventBus bus,net.neoforged.fml.ModContainer container) {
+        container.registerExtensionPoint(net.neoforged.neoforge.client.gui.IConfigScreenFactory.class,net.neoforged.neoforge.client.gui.ConfigurationScreen::new);
         if(Boolean.getBoolean("oxyrpg.cameraQA"))NeoForge.EVENT_BUS.addListener(CameraClientQA::tick);
         bus.addListener(OxyRpgClient::registerKeys);
         bus.addListener(OxyRpgClient::registerPayloads);
@@ -97,6 +101,7 @@ public final class OxyRpgClient {
             var mc=Minecraft.getInstance();if(resourceState!=null&&hudState!=null&&hudState.rpgClass()!=0&&DynamicHud.alpha(DynamicHud.Part.MANA)>0&&!mc.options.hideGui&&mc.gameMode.canHurtPlayer())mc.gui.leftHeight+=10;
         });
         event.registerAbove(net.neoforged.neoforge.client.gui.VanillaGuiLayers.PLAYER_HEALTH,ResourceLocation.fromNamespaceAndPath("oxyrpg","mana"),(g,d)->renderMana(g));
+        event.registerAboveAll(ResourceLocation.fromNamespaceAndPath("oxyrpg","exploration"),(g,d)->{EvasionHud.render(g);SimpleMinimap.render(g);});
         event.registerAboveAll(ResourceLocation.fromNamespaceAndPath("oxyrpg","combat_feedback"),(g,d)->{AbilityPreview.render(g);EliteWarnings.render(g);DamageNumbers.render(g);});
         event.registerAboveAll(ResourceLocation.fromNamespaceAndPath("oxyrpg", "hud"), (graphics, delta) -> renderHud(graphics));
         event.registerAboveAll(ResourceLocation.fromNamespaceAndPath("oxyrpg", "shoulder_crosshair"),(g,d)->{
@@ -123,6 +128,9 @@ public final class OxyRpgClient {
         
     }
     private static void registerPayloads(RegisterClientPayloadHandlersEvent event) {
+        event.register(RpgNetwork.ContentState.TYPE,(value,context)->{dev.emersonoxy.rpg.RpgContent.receive(value.json());var screen=Minecraft.getInstance().screen;if(screen instanceof SkillTreeScreen tree)tree.loadNodes();if(screen instanceof ClassSelectionScreen classes)classes.contentChanged();});
+        event.register(RpgNetwork.EvasionState.TYPE,(value,context)->EvasionHud.receive(value));
+        event.register(RpgNetwork.CombatText.TYPE,(value,context)->DamageNumbers.receiveText(value));
         event.register(RpgNetwork.EliteWarning.TYPE,(value,context)->EliteWarnings.receive(value));
         event.register(RpgNetwork.FlightState.TYPE,(value,context)->{
             var p=Minecraft.getInstance().player;if(p==null)return;var tag=p.getPersistentData();
@@ -145,6 +153,7 @@ public final class OxyRpgClient {
             var mc=Minecraft.getInstance();long time=mc.level==null?0:mc.level.getGameTime();
             for(int slot=0;slot<3;slot++){effectUntil[slot]=value.remaining(slot)==-1?Long.MAX_VALUE:time+value.remaining(slot);effectTotal[slot]=value.total(slot);effectPhase[slot]=value.phase(slot);}
         });
+        event.register(RpgNetwork.SpecialState.TYPE,(value,context)->SpecialistHud.receive(value));
         event.register(RpgNetwork.Ghost.TYPE, (ghost, context) -> EnemyNameplates.ghost(ghost.entityId(), ghost.ticks()));
         event.register(RpgNetwork.State.TYPE, (state, context) -> {
             var mc = Minecraft.getInstance();
@@ -157,7 +166,7 @@ public final class OxyRpgClient {
                 cooldownTotal[slot]=new dev.emersonoxy.rpg.RpgProfile(RpgClass.values()[state.rpgClass()],100,0,0,0,state.skills()).abilityCooldown(slot);
                 int node=slot*7+(state.hasSkill(slot*7+3)?3:1);
                 var icon=dev.emersonoxy.rpg.SkillTree.nodes(RpgClass.values()[state.rpgClass()]).get(node).icon();
-                var item=net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(ResourceLocation.withDefaultNamespace(icon));
+                var item=net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(ResourceLocation.parse(icon));
                 skillIcons[slot]=new net.minecraft.world.item.ItemStack(item==null?net.minecraft.world.item.Items.BOOK:item);
             }
             for (int slot = 0; slot < 3; slot++) hudReadyAt[slot] = (mc.level == null ? 0 : mc.level.getGameTime()) + state.cooldown(slot);
@@ -170,7 +179,7 @@ public final class OxyRpgClient {
     private static void tick(ClientTickEvent.Post event) {
         var mc = Minecraft.getInstance();
         if (mc.player != trackedPlayer || mc.level != trackedLevel) {
-            DamageNumbers.clear();EliteWarnings.clear();AbilityPreview.clear();journeyState=null;ShoulderCamera.reset();TargetLock.clear();MovementFacing.reset();DynamicHud.reset(); trackedPlayer = mc.player;
+            EvasionHud.clear();SimpleMinimap.clear();DamageNumbers.clear();EliteWarnings.clear();AbilityPreview.clear();journeyState=null;ShoulderCamera.reset();TargetLock.clear();MovementFacing.reset();DynamicHud.reset(); trackedPlayer = mc.player;
             trackedLevel = mc.level;
             hudState = null;resourceState=null;professionState=null;
             dev.emersonoxy.rpg.EquipmentAccess.resetClient();
@@ -188,6 +197,13 @@ public final class OxyRpgClient {
         while(LOCK_TARGET.consumeClick())if(mc.player!=null&&mc.screen==null)TargetLock.toggle();
         while(NEXT_TARGET.consumeClick())if(mc.player!=null&&mc.screen==null)TargetLock.cycle();
         for(int i=0;i<CAMERA_POSITION.length;i++)while(CAMERA_POSITION[i].consumeClick())if(mc.player!=null&&mc.screen==null)ShoulderCamera.adjust(i/2,i%2==0?.1:-.1);
+        while(DODGE.consumeClick())if(mc.player!=null&&mc.screen==null){
+            int side=(mc.options.keyRight.isDown()?1:0)-(mc.options.keyLeft.isDown()?1:0),forward=(mc.options.keyUp.isDown()?1:0)-(mc.options.keyDown.isDown()?1:0);
+            int direction=side==0&&forward==0?0:Math.floorMod((int)Math.round(Math.atan2(side,forward)/(Math.PI/4)),8);
+            mc.player.connection.send(new RpgNetwork.Request(12,direction));DynamicHud.signal(DynamicHud.Part.EVASION);
+        }
+        while(MINIMAP.consumeClick())if(mc.player!=null&&mc.screen==null)DynamicHud.toggle(DynamicHud.Part.MINIMAP);
+        SimpleMinimap.tick();
         TargetLock.tick();
         DynamicHud.tick();
         while(HUD_OPTIONS.consumeClick())if(mc.player!=null&&mc.screen==null)mc.setScreen(new HudSettingsScreen(null));
@@ -203,12 +219,14 @@ public final class OxyRpgClient {
         while (OPEN_MENU.consumeClick()) {
             if (mc.player != null && mc.screen == null) mc.setScreen(new RpgScreen());
         }
+        while(CLASS_RELIC.consumeClick())if(mc.player!=null&&mc.screen==null)mc.player.connection.send(aimedRequest(16,0));
         AbilityPreview.tick();
     }
 
     private static void renderHud(GuiGraphics g) {
         var mc=Minecraft.getInstance();
         if(DynamicHud.mode()==DynamicHud.Mode.HIDDEN||mc.options.hideGui||mc.player==null||mc.level==null||mc.screen!=null||hudState==null)return;
+        SpecialistHud.render(g);
         renderAbilityIcons(g);
         renderDynamicPanels(g);
     }

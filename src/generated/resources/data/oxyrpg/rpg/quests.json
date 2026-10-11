@@ -1,0 +1,80 @@
+[
+  {
+    "reward": 100,
+    "targets": [
+      {
+        "amount": 5,
+        "icon": "rotten_flesh",
+        "label": "Zumbis",
+        "mob": "minecraft:zombie"
+      }
+    ],
+    "title": "Vigília noturna"
+  },
+  {
+    "reward": 150,
+    "targets": [
+      {
+        "amount": 4,
+        "icon": "bone",
+        "label": "Esqueletos",
+        "mob": "minecraft:skeleton"
+      },
+      {
+        "amount": 3,
+        "icon": "string",
+        "label": "Aranhas",
+        "mob": "minecraft:spider"
+      }
+    ],
+    "title": "Ossos e teias"
+  },
+  {
+    "reward": 150,
+    "targets": [
+      {
+        "amount": 3,
+        "icon": "gunpowder",
+        "label": "Creepers",
+        "mob": "minecraft:creeper"
+      }
+    ],
+    "title": "Caça explosiva"
+  },
+  {
+    "reward": 200,
+    "targets": [
+      {
+        "amount": 4,
+        "icon": "rotten_flesh",
+        "label": "Zumbis",
+        "mob": "minecraft:zombie"
+      },
+      {
+        "amount": 4,
+        "icon": "bone",
+        "label": "Esqueletos",
+        "mob": "minecraft:skeleton"
+      }
+    ],
+    "title": "Patrulha da noite"
+  },
+  {
+    "reward": 175,
+    "targets": [
+      {
+        "amount": 5,
+        "icon": "spider_eye",
+        "label": "Aranhas",
+        "mob": "minecraft:spider"
+      },
+      {
+        "amount": 2,
+        "icon": "gunpowder",
+        "label": "Creepers",
+        "mob": "minecraft:creeper"
+      }
+    ],
+    "title": "Perigo nas sombras"
+  }
+]

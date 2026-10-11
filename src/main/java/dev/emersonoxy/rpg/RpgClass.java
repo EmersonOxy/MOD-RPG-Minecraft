@@ -1,10 +1,11 @@
 package dev.emersonoxy.rpg;
 
 public enum RpgClass {
-    NONE("Sem classe"), GUERREIRO("Guerreiro"), MAGO("Mago"), ARQUEIRO("Arqueiro"), NECROMANTE("Necromante"), XAMA("Xamã"), AVIARIO("Aviário");
+    NONE("Sem classe"), GUERREIRO("Guerreiro"), MAGO("Mago"), ARQUEIRO("Arqueiro"), NECROMANTE("Necromante"), XAMA("Xamã"), AVIARIO("Aviário"), ILUSIONISTA("Ilusionista"), HIDROMANTE("Hidromante"), PIROMANTE("Piromaníaco");
     private final String label;
     RpgClass(String label) { this.label = label; }
-    public String label() { return label; }
+    public String defaultLabel(){return label;}
+    public String label() { return RpgContent.label(this,label); }
 }
 
 

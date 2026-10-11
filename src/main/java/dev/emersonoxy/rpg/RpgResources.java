@@ -52,19 +52,23 @@ public final class RpgResources {
         if(old!=null)value.removeModifier(id);
         if(amount!=0)value.addTransientModifier(new AttributeModifier(id,amount,AttributeModifier.Operation.ADD_VALUE));
     }
-    public static int cost(RpgProfile profile,int slot,boolean extra){return (int)Math.ceil(baseCost(profile,slot,extra)*Math.max(.4,1-.03*SkillTree.bonus(profile.skills(),2)));}
+    public static int cost(RpgProfile profile,int slot,boolean extra){return (int)Math.ceil(baseCost(profile,slot,extra)*RpgContent.manaMultiplier(profile.rpgClass())*RpgConfig.value(RpgConfig.MANA_COST,1)*Math.max(.4,1-.03*SkillTree.bonus(profile.skills(),2)));}
     private static int baseCost(RpgProfile profile,int slot,boolean extra){
-        if(extra)return 5;
+        if(extra)return profile.rpgClass()==RpgClass.AVIARIO?8:profile.rpgClass()==RpgClass.PIROMANTE&&slot==1?10:4;
         return switch(profile.rpgClass()){
             case MAGO->profile.mainUnlocked(slot)?new int[]{20,30,35}[slot]:new int[]{8,8,10}[slot];
             case GUERREIRO->slot==0&&!profile.mainUnlocked(0)?0:new int[]{12,20,25}[slot];
             case ARQUEIRO->profile.mainUnlocked(slot)?new int[]{12,20,15}[slot]:new int[]{5,8,5}[slot];
             case NECROMANTE->profile.mainUnlocked(slot)?new int[]{20,40,35}[slot]:new int[]{10,15,15}[slot];
             case AVIARIO->slot==1?0:slot==0?20:30;
+            case ILUSIONISTA->profile.mainUnlocked(slot)?new int[]{28,24,35}[slot]:new int[]{14,12,18}[slot];
+            case HIDROMANTE->new int[]{8,24,25}[slot];
+            case PIROMANTE->profile.mainUnlocked(slot)?new int[]{20,16,35}[slot]:new int[]{10,10,20}[slot];
             case XAMA->profile.mainUnlocked(slot)?new int[]{20,35,20}[slot]:new int[]{8,15,10}[slot];
             default->0;
         };
     }
+    public static float currentMana(ServerPlayer p){return pool(p).mana;}
     public static boolean affordable(ServerPlayer p,int cost){return RpgDebug.unlimited(p)||pool(p).mana>=cost;}
     public static void spend(ServerPlayer p,int cost){
         var a=pool(p);if(!RpgDebug.unlimited(p)){a.mana=Math.max(0,a.mana-cost);if(cost>0)a.cast=now(p);save(p);}sync(p);
@@ -84,6 +88,7 @@ public final class RpgResources {
     public static void damage(LivingDamageEvent.Pre event){
         var p=RpgNecromancer.owner(event.getSource());
         if(p!=null){
+            event.setNewDamage(event.getNewDamage()*(float)(RpgConfig.value(RpgConfig.PLAYER_DAMAGE,1)*RpgContent.damageMultiplier(RpgAbilities.profile(p).rpgClass())*(event.getSource().getDirectEntity()==p?RpgDataMaps.weapon(p.getMainHandItem()).damage():1)));
             event.setNewDamage(event.getNewDamage()*(1+.03f*SkillTree.bonus(RpgAbilities.profile(p).skills(),0)));
             var a=RpgDebug.testing(p)?pool(p):POOLS.get(p.getUUID());if(a!=null)event.setNewDamage(event.getNewDamage()*(1+RpgDebug.attributes(p,a.profile.attributes()).damage()*.02f));
         }
