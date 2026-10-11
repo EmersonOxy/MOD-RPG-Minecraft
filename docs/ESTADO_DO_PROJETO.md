@@ -1,8 +1,12 @@
-# Estado do Oxy RPG — revisão 0.42.0
+# Estado do Oxy RPG — revisão 0.42.1
 
 Revisão registrada em 11/10/2026. Minecraft 1.21.10, NeoForge 21.10.64, JDK 21, protocolo de rede 29. Este registro substitui descrições antigas do README. Os documentos numerados são históricos de cada entrega.
 
 A revisão inventariou fontes Java, registros, eventos, mixins, telas, recursos JSON, geração de dados, integração e persistência. Código das áreas alteradas foi inspecionado em detalhe. Inventário de arquivos e hashes: [INVENTARIO_CODIGO_040.json](INVENTARIO_CODIGO_040.json). Não equivale a validação integral dentro do jogo nem a auditoria de segurança.
+
+## Correção 0.42.1
+
+Corrigida a seleção ambígua de `renderBatched` no mixin de vegetação. O relatório enviado identificou `Invalid descriptor` na inicialização. O hook agora aponta para a assinatura exata do NeoForge com `Function`, preservando a vegetação reativa. [Diagnóstico e validação](CORRECOES_0421.md). Protocolo 29 preservado.
 
 ## Entrega 0.42
 

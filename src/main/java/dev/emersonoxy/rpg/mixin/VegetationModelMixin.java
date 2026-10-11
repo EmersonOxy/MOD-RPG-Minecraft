@@ -14,6 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 /** Cosmetic substitution only; collision, drops, saves and server block states are untouched. */
 @Mixin(BlockRenderDispatcher.class)
 abstract class VegetationModelMixin {
-    @Inject(method="renderBatched",at=@At("HEAD"),cancellable=true)
+    // NeoForge has a second overload with VertexConsumer; select only the buffer-lookup overload.
+    @Inject(method="renderBatched(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/BlockAndTintGetter;Lcom/mojang/blaze3d/vertex/PoseStack;Ljava/util/function/Function;ZLjava/util/List;)V",at=@At("HEAD"),cancellable=true)
     private void oxyBend(BlockState state,BlockPos pos,BlockAndTintGetter level,PoseStack pose,Function<ChunkSectionLayer,VertexConsumer> buffer,boolean sides,List<BlockModelPart> parts,CallbackInfo ci){if(dev.emersonoxy.rpg.client.VegetationMotion.dynamic(pos,state))ci.cancel();}
 }

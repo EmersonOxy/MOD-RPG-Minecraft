@@ -1,8 +1,8 @@
-# Oxy RPG 0.42.0
+# Oxy RPG 0.42.1
 
 Mod RPG para Minecraft **1.21.10**, NeoForge **21.10.64**, JDK **21**.
 
-Nove classes, progressão até nível 100, árvores de habilidades e atributos com zoom/arraste, trabalhos, arsenal, missões, criaturas por nível, elites, mana, esquiva e parry.
+Dez classes, progressão até nível 100, árvores de habilidades e atributos com zoom/arraste, trabalhos, arsenal, missões, criaturas por nível, elites, mana, esquiva e parry.
 
 A 0.33.0 acrescenta mapa local de cavernas, painéis independentes da HUD, corrida em inventários/baús, tema comum para missões/trocas, bússola e avisos de região. Inclui nove itens, slots de anéis/colar, patrulhas de saqueadores com recompensas e estruturas mais frequentes.
 
@@ -23,6 +23,8 @@ A 0.42 adiciona Vampiresco, cores de dano por condição, HUD compacto das skill
 A 0.41 adiciona sangramento persistente, bandagens para estancar, chances por arma e instala Fresh Animations original com EMF/ETF na instância local. [Funcionamento e versões](docs/SANGRAMENTO_ANIMACOES_041.md).
 
 A 0.40 remove tetos próprios de sangue/manchas, processa grandes respingos em lotes e preserva caches separados de superfície/pisos do minimapa. [Mudanças e evidências dos prints](docs/CORRECOES_040.md).
+
+A 0.42.1 corrige a falha de inicialização do hook de vegetação: seleção explícita da sobrecarga NeoForge de `renderBatched`. [Diagnóstico e verificação](docs/CORRECOES_0421.md).
 
 ## Controles
 
