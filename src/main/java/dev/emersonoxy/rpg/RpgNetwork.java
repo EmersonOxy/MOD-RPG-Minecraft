@@ -30,6 +30,11 @@ public final class RpgNetwork {
         public static final StreamCodec<RegistryFriendlyByteBuf,ImpactFx> CODEC=StreamCodec.of((b,v)->{b.writeDouble(v.x);b.writeDouble(v.y);b.writeDouble(v.z);b.writeFloat(v.radius);b.writeVarInt(v.kind);},b->new ImpactFx(b.readDouble(),b.readDouble(),b.readDouble(),b.readFloat(),b.readVarInt()));
         @Override public Type<ImpactFx> type(){return TYPE;}
     }
+    public record EntityMotion(int entity,int kind,int ticks) implements CustomPacketPayload {
+        public static final Type<EntityMotion> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath("oxyrpg","entity_motion"));
+        public static final StreamCodec<RegistryFriendlyByteBuf,EntityMotion> CODEC=StreamCodec.of((b,v)->{b.writeVarInt(v.entity);b.writeVarInt(v.kind);b.writeVarInt(v.ticks);},b->new EntityMotion(b.readVarInt(),b.readVarInt(),b.readVarInt()));
+        @Override public Type<EntityMotion> type(){return TYPE;}
+    }
     public record VampireState(boolean bat,int twilight,int bats) implements CustomPacketPayload {
         public static final Type<VampireState> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath("oxyrpg","vampire"));
         public static final StreamCodec<RegistryFriendlyByteBuf,VampireState> CODEC=StreamCodec.of((b,v)->{b.writeBoolean(v.bat);b.writeVarInt(v.twilight);b.writeVarInt(v.bats);},b->new VampireState(b.readBoolean(),b.readVarInt(),b.readVarInt()));
@@ -168,11 +173,12 @@ public final class RpgNetwork {
         @Override public Type<EliteInfo> type(){return TYPE;}
     }
     public static void register(RegisterPayloadHandlersEvent event) {
-        var registrar = event.registrar("29");
+        var registrar = event.registrar("30");
         registrar.playToClient(BloodFx.TYPE,BloodFx.CODEC);
         registrar.playToClient(ImpactFx.TYPE,ImpactFx.CODEC);
         registrar.playToClient(CastFx.TYPE,CastFx.CODEC);
         registrar.playToClient(DebugState.TYPE,DebugState.CODEC);
+        registrar.playToClient(EntityMotion.TYPE,EntityMotion.CODEC);
         registrar.playToClient(VampireState.TYPE,VampireState.CODEC);
         registrar.playToClient(SpecialState.TYPE,SpecialState.CODEC);
         registrar.playToClient(ContentState.TYPE,ContentState.CODEC);

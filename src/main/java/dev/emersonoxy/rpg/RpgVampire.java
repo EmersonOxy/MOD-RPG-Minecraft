@@ -28,8 +28,8 @@ public final class RpgVampire {
     private static boolean ownEffect;
     private static final TagKey<DamageType> SPELLS=TagKey.create(Registries.DAMAGE_TYPE,ResourceLocation.fromNamespaceAndPath("oxyrpg","spells"));
     private static final class State {
-        final ServerPlayer p;final ServerLevel world;RpgProfile profile;long thirst,twilight,swarm,nextFeed,bondUntil,healUntil;float healing;UUID bond;Bat form;final List<Bat> bats=new ArrayList<>();boolean mayfly,flying;
-        State(ServerPlayer p,RpgProfile s){this.p=p;world=p.level();profile=s;}
+        final ServerPlayer p;final ServerLevel world;RpgProfile profile;long thirst,twilight,swarm,nextFeed,bondUntil,healUntil;float healing;UUID bond;final List<Bat> bats=new ArrayList<>();boolean mayfly,flying;Vec3 safe;
+        State(ServerPlayer p,RpgProfile s){this.p=p;world=p.level();profile=s;safe=p.position();}
     }
     private RpgVampire(){}
     public static boolean proxy(Entity e){return e!=null&&e.getPersistentData().getBooleanOr("oxy_vampire_proxy",false);}
@@ -44,16 +44,15 @@ public final class RpgVampire {
     public static void activate(ServerPlayer p,RpgProfile s,int slot){
         var c=state(p,s);long now=c.world.getGameTime();
         if(slot==0){c.thirst=now+s.abilityDuration(0);c.bond=null;}
-        else if(slot==1){if(bat(p)){returnHuman(c,true);return;}c.mayfly=p.getAbilities().mayfly;c.flying=p.getAbilities().flying;p.getPersistentData().putBoolean("oxy_vampire_original_mayfly",c.mayfly);p.getPersistentData().putBoolean("oxy_vampire_original_flying",c.flying);p.closeContainer();c.form=spawn(c,p.position().add(0,.6,0));
-            if(c.form!=null){c.form.setInvulnerable(true);c.form.getPersistentData().putBoolean("oxy_vampire_form",true);c.form.setCustomName(net.minecraft.network.chat.Component.literal("oxy_vampire_form"));c.form.setCustomNameVisible(false);}p.getPersistentData().putBoolean("oxy_vampire_bat",true);p.getAbilities().mayfly=true;p.getAbilities().flying=true;p.onUpdateAbilities();ghost(p,72000);sync(c);}
+        else if(slot==1){if(bat(p)){returnHuman(c,true);return;}c.mayfly=p.getAbilities().mayfly;c.flying=p.getAbilities().flying;p.getPersistentData().putBoolean("oxy_vampire_original_mayfly",c.mayfly);p.getPersistentData().putBoolean("oxy_vampire_original_flying",c.flying);p.closeContainer();p.getPersistentData().putBoolean("oxy_vampire_bat",true);p.refreshDimensions();PacketDistributor.sendToPlayersTrackingEntityAndSelf(p,new RpgNetwork.EntityMotion(p.getId(),3,0));p.getAbilities().mayfly=true;p.getAbilities().flying=true;p.onUpdateAbilities();ghost(p,72000);sync(c);}
         else {c.twilight=now+s.abilityDuration(2);p.getPersistentData().putLong("oxy_vampire_twilight",c.twilight);effect(p,MobEffects.STRENGTH,s.abilityDuration(2),s.mainUnlocked(2)?1:0);effect(p,MobEffects.SPEED,s.abilityDuration(2),s.hasSkill(18)?1:0);effect(p,MobEffects.HASTE,s.abilityDuration(2),s.hasSkill(19)?1:0);sync(c);}
         ClassJourney.advance(p,slot,1);
     }
-    private static Bat spawn(State c,Vec3 at){var b=EntityType.BAT.create(c.world,EntitySpawnReason.TRIGGERED);if(b==null)return null;b.setPos(at);b.setResting(false);b.setNoAi(true);b.setNoGravity(true);b.noPhysics=true;b.setHealth(3+(c.profile.hasSkill(12)?2:0));b.getPersistentData().putBoolean("oxy_vampire_proxy",true);c.world.addFreshEntity(b);return b;}
+    private static Bat spawn(State c,Vec3 at){var b=EntityType.BAT.create(c.world,EntitySpawnReason.TRIGGERED);if(b==null)return null;b.setPos(at);b.setResting(false);b.setNoAi(true);b.setNoGravity(true);b.noPhysics=true;b.setHealth(3+(c.profile.hasSkill(12)?2:0));b.getPersistentData().putBoolean("oxy_vampire_proxy",true);b.getPersistentData().putString("oxy_vampire_owner",c.p.getUUID().toString());c.world.addFreshEntity(b);return b;}
     private static void ghost(ServerPlayer p,int ticks){var v=new RpgNetwork.Ghost(p.getId(),ticks);PacketDistributor.sendToPlayersTrackingEntityAndSelf(p,v);}
     private static void sync(State c){PacketDistributor.sendToPlayer(c.p,new RpgNetwork.VampireState(bat(c.p),(int)Math.max(0,c.twilight-c.world.getGameTime()),c.bats.size()));}
     public static void syncStatus(ServerPlayer p){var c=STATES.get(p.getUUID());if(c==null){PacketDistributor.sendToPlayer(p,new RpgNetwork.VampireState(false,0,0));PacketDistributor.sendToPlayer(p,new RpgNetwork.AbilityStatus(0,0,0,0,0,0,0,0,0));return;}sync(c);long now=c.world.getGameTime();var s=c.profile;PacketDistributor.sendToPlayer(p,new RpgNetwork.AbilityStatus((int)Math.max(0,c.thirst-now),bat(p)?-1:(int)Math.max(0,c.swarm-now),(int)Math.max(0,c.twilight-now),s.abilityDuration(0),160,s.abilityDuration(2),c.thirst>now?5:0,bat(p)||c.swarm>now?6:0,c.twilight>now?5:0));}
-    private static void returnHuman(State c,boolean swarm){var p=c.p;if(c.form!=null){c.form.discard();c.form=null;}p.getPersistentData().remove("oxy_vampire_bat");p.getAbilities().mayfly=p.isCreative()||p.isSpectator()||c.mayfly;p.getAbilities().flying=p.getAbilities().mayfly&&c.flying;p.onUpdateAbilities();p.getPersistentData().remove("oxy_vampire_original_mayfly");p.getPersistentData().remove("oxy_vampire_original_flying");p.fallDistance=0;p.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING,40,0));ghost(p,0);
+    private static void returnHuman(State c,boolean swarm){var p=c.p;p.getPersistentData().remove("oxy_vampire_bat");p.refreshDimensions();if(p.isAlive()&&p.level()==c.world&&!p.level().noCollision(p,p.getBoundingBox()))p.teleportTo(c.safe.x,c.safe.y,c.safe.z);PacketDistributor.sendToPlayersTrackingEntityAndSelf(p,new RpgNetwork.EntityMotion(p.getId(),4,0));p.getAbilities().mayfly=p.isCreative()||p.isSpectator()||c.mayfly;p.getAbilities().flying=p.getAbilities().mayfly&&c.flying;p.onUpdateAbilities();p.getPersistentData().remove("oxy_vampire_original_mayfly");p.getPersistentData().remove("oxy_vampire_original_flying");p.fallDistance=0;p.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING,40,0));ghost(p,0);
         if(swarm){c.bats.forEach(Entity::discard);c.bats.clear();c.swarm=c.world.getGameTime()+160+(c.profile.hasSkill(13)?80:0);for(int i=0;i<(c.profile.mainUnlocked(1)?4:2)+(c.profile.hasSkill(11)?2:0);i++){var b=spawn(c,p.position().add(0,1,0));if(b!=null)c.bats.add(b);}}sync(c);}
     private static void effect(Player p,net.minecraft.core.Holder<MobEffect> effect,int ticks,int amp){ownEffect=true;try{p.addEffect(new MobEffectInstance(effect,ticks,amp,false,false));}finally{ownEffect=false;}}
     public static void tick(EntityTickEvent.Post event){
@@ -62,7 +61,7 @@ public final class RpgVampire {
         if(!(e instanceof ServerPlayer p))return;var s=RpgAbilities.profile(p);
         if(s.rpgClass()!=RpgClass.VAMPIRESCO||!p.isAlive()){if(STATES.containsKey(p.getUUID()))clear(p);return;}var c=state(p,s);
         if(bat(p)&&!s.canUseAbility(1))returnHuman(c,false);
-        if(bat(p)){p.fallDistance=0;if(c.form!=null){c.form.setPos(p.position().add(0,1.15,0));c.form.setYRot(p.getYRot());}if(p.tickCount%20==0&&!RpgDebug.unlimited(p)){if(!RpgResources.affordable(p,1))returnHuman(c,true);else RpgResources.spend(p,1);}}
+        if(bat(p)){p.fallDistance=0;if(p.tickCount%10==0&&c.world.noCollision(p,new net.minecraft.world.phys.AABB(p.getX()-.3,p.getY(),p.getZ()-.3,p.getX()+.3,p.getY()+1.8,p.getZ()+.3)))c.safe=p.position();if(p.tickCount%20==0&&!RpgDebug.unlimited(p)){if(!RpgResources.affordable(p,1))returnHuman(c,true);else RpgResources.spend(p,1);}}
         c.bats.removeIf(b->!b.isAlive()||b.isRemoved());if(c.swarm<=now&&!c.bats.isEmpty()){c.bats.forEach(Entity::discard);c.bats.clear();}
         for(int i=0;i<c.bats.size();i++){double a=now*.13+i*Math.PI*2/c.bats.size();c.bats.get(i).setPos(p.getX()+Math.cos(a)*1.1,p.getY()+1+Math.sin(a*1.5)*.25,p.getZ()+Math.sin(a)*1.1);}
         if(p.tickCount%20!=0)return;
@@ -88,7 +87,7 @@ public final class RpgVampire {
         else {float heal=Math.min(4,event.getNewDamage()*.15f+.5f+s.level()*.01f);p.heal(heal);c.healing=Math.min(p.getMaxHealth()*(s.hasSkill(5)?.25f:.15f),4+s.level()*.04f);c.healUntil=now+s.abilityDuration(0);c.bond=target.getUUID();c.bondUntil=c.thirst;Bleeding.apply(target,p,s.mainUnlocked(0)?1:0);}
     }
     public static void incoming(LivingIncomingDamageEvent event){
-        var source=event.getSource();if(source.getEntity()!=null&&ROOTS.getOrDefault(source.getEntity().getUUID(),0L)>event.getEntity().level().getGameTime()){event.setCanceled(true);return;}
+        var source=event.getSource();if(ownBat(event.getEntity(),source.getEntity())){event.setCanceled(true);return;}if(source.getEntity()!=null&&ROOTS.getOrDefault(source.getEntity().getUUID(),0L)>event.getEntity().level().getGameTime()){event.setCanceled(true);return;}
         if(!(event.getEntity() instanceof ServerPlayer p))return;var c=STATES.get(p.getUUID());if(c==null)return;
         if(twilight(p)){if(source.is(SPELLS)){event.setCanceled(true);return;}event.setAmount(event.getAmount()*1.25f);}
     }
@@ -99,7 +98,10 @@ public final class RpgVampire {
     }
     public static void applicable(MobEffectEvent.Applicable event){if(!ownEffect&&event.getEntity() instanceof Player p&&twilight(p)&&!event.getEffectInstance().getEffect().is(Bleeding.EFFECT.getKey()))event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);}
     public static void useItem(LivingEntityUseItemEvent.Start event){if(event.getEntity() instanceof ServerPlayer p&&(bat(p)||RpgAbilities.profile(p).rpgClass()==RpgClass.VAMPIRESCO&&event.getItem().has(net.minecraft.core.component.DataComponents.FOOD)))event.setCanceled(true);}
-    public static void attack(AttackEntityEvent e){if(bat(e.getEntity()))e.setCanceled(true);}
+    public static void attack(AttackEntityEvent e){if(bat(e.getEntity())||ownBat(e.getTarget(),e.getEntity()))e.setCanceled(true);}
+    private static boolean ownBat(Entity target,Entity owner){return proxy(target)&&owner!=null&&target.getPersistentData().getStringOr("oxy_vampire_owner","").equals(owner.getUUID().toString());}
+    public static void join(net.neoforged.neoforge.event.entity.EntityJoinLevelEvent e){if(!e.getLevel().isClientSide()&&e.loadedFromDisk()&&proxy(e.getEntity()))e.setCanceled(true);}
+
     public static void rightItem(PlayerInteractEvent.RightClickItem e){if(bat(e.getEntity()))e.setCanceled(true);}
     public static void rightBlock(PlayerInteractEvent.RightClickBlock e){if(bat(e.getEntity()))e.setCanceled(true);}
     public static void interact(PlayerInteractEvent.EntityInteract e){if(bat(e.getEntity()))e.setCanceled(true);else if(!e.isCanceled()&&feed(e,e.getTarget())){e.setCanceled(true);e.setCancellationResult(net.minecraft.world.InteractionResult.SUCCESS);}}
@@ -123,8 +125,8 @@ public final class RpgVampire {
         return false;
     }
     public static void breaking(net.neoforged.neoforge.event.level.BlockEvent.BreakEvent e){if(bat(e.getPlayer()))e.setCanceled(true);}
-    public static void tracking(PlayerEvent.StartTracking e){if(e.getEntity() instanceof ServerPlayer viewer){if(e.getTarget() instanceof Player p&&bat(p))PacketDistributor.sendToPlayer(viewer,new RpgNetwork.Ghost(p.getId(),72000));else if(proxy(e.getTarget()))PacketDistributor.sendToPlayer(viewer,new RpgNetwork.MobLevel(e.getTarget().getId(),-2));}}
-    public static void clear(ServerPlayer p){var c=STATES.remove(p.getUUID());if(c!=null){if(bat(p))returnHuman(c,false);c.bats.forEach(Entity::discard);}if(c==null&&bat(p)){p.getAbilities().mayfly=p.isCreative()||p.isSpectator()||p.getPersistentData().getBooleanOr("oxy_vampire_original_mayfly",false);p.getAbilities().flying=p.getAbilities().mayfly&&p.getPersistentData().getBooleanOr("oxy_vampire_original_flying",false);p.onUpdateAbilities();ghost(p,0);}p.getPersistentData().remove("oxy_vampire_original_mayfly");p.getPersistentData().remove("oxy_vampire_original_flying");p.getPersistentData().remove("oxy_vampire_bat");p.getPersistentData().remove("oxy_vampire_twilight");
+    public static void tracking(PlayerEvent.StartTracking e){if(e.getEntity() instanceof ServerPlayer viewer){if(e.getTarget() instanceof Player p&&bat(p)){PacketDistributor.sendToPlayer(viewer,new RpgNetwork.Ghost(p.getId(),72000));PacketDistributor.sendToPlayer(viewer,new RpgNetwork.EntityMotion(p.getId(),3,0));}else if(proxy(e.getTarget()))PacketDistributor.sendToPlayer(viewer,new RpgNetwork.MobLevel(e.getTarget().getId(),-2));}}
+    public static void clear(ServerPlayer p){var c=STATES.remove(p.getUUID());if(c!=null){if(bat(p))returnHuman(c,false);c.bats.forEach(Entity::discard);}if(c==null&&bat(p)){p.getAbilities().mayfly=p.isCreative()||p.isSpectator()||p.getPersistentData().getBooleanOr("oxy_vampire_original_mayfly",false);p.getAbilities().flying=p.getAbilities().mayfly&&p.getPersistentData().getBooleanOr("oxy_vampire_original_flying",false);p.onUpdateAbilities();ghost(p,0);}p.getPersistentData().remove("oxy_vampire_original_mayfly");p.getPersistentData().remove("oxy_vampire_original_flying");p.getPersistentData().remove("oxy_vampire_bat");p.getPersistentData().remove("oxy_vampire_twilight");p.refreshDimensions();PacketDistributor.sendToPlayersTrackingEntityAndSelf(p,new RpgNetwork.EntityMotion(p.getId(),4,0));
         if(c!=null){p.removeEffect(MobEffects.STRENGTH);p.removeEffect(MobEffects.SPEED);p.removeEffect(MobEffects.HASTE);p.removeEffect(MobEffects.WEAKNESS);p.removeEffect(MobEffects.NIGHT_VISION);}
         Professions.modifier(p,Attributes.MOVEMENT_SPEED,"vampire_trail",0,AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);if(c!=null)PacketDistributor.sendToPlayer(p,new RpgNetwork.VampireState(false,0,0));}
     public static void logout(PlayerEvent.PlayerLoggedOutEvent e){if(e.getEntity() instanceof ServerPlayer p)clear(p);}

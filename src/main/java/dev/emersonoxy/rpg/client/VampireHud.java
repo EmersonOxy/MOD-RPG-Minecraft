@@ -5,7 +5,7 @@ import net.minecraft.client.gui.GuiGraphics;
 /** The vanilla food value remains the server resource; only its presentation changes. */
 public final class VampireHud {
     private VampireHud(){}
-    public static void receive(RpgNetwork.VampireState state){var mc=Minecraft.getInstance();if(mc.player==null||mc.level==null)return;var tag=mc.player.getPersistentData();tag.putBoolean("oxy_vampire_bat",state.bat());tag.putLong("oxy_vampire_twilight",mc.level.getGameTime()+state.twilight());}
+    public static void receive(RpgNetwork.VampireState state){var mc=Minecraft.getInstance();if(mc.player==null||mc.level==null)return;var tag=mc.player.getPersistentData();boolean changed=dev.emersonoxy.rpg.RpgVampire.bat(mc.player)!=state.bat();tag.putBoolean("oxy_vampire_bat",state.bat());if(changed)mc.player.refreshDimensions();tag.putLong("oxy_vampire_twilight",mc.level.getGameTime()+state.twilight());}
     public static void prey(GuiGraphics g){
         var mc=Minecraft.getInstance();if(mc.player==null||mc.screen!=null||mc.options.hideGui||DynamicHud.mode()==DynamicHud.Mode.HIDDEN||!mc.player.getPersistentData().getBooleanOr("oxy_vampire_class",false)||dev.emersonoxy.rpg.RpgVampire.bat(mc.player)||mc.player.getFoodData().getFoodLevel()>=20||mc.player.isShiftKeyDown()||!(mc.hitResult instanceof net.minecraft.world.phys.EntityHitResult hit)||!dev.emersonoxy.rpg.RpgVampire.prey(hit.getEntity())||mc.player.distanceToSqr(hit.getEntity())>9)return;
         var projected=CameraProjection.project(hit.getEntity().getEyePosition().add(0,.35,0));if(!WorldLines.onScreen(projected))return;

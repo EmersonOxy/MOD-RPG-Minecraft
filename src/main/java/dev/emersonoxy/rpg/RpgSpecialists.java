@@ -31,7 +31,7 @@ public final class RpgSpecialists {
         final ServerPlayer player;final ServerLevel world;RpgProfile profile;
         final long[] until=new long[3];final List<Mob> copies=new ArrayList<>(),bats=new ArrayList<>(),sea=new ArrayList<>();
         final List<Core> cores=new ArrayList<>();final LinkedHashMap<UUID,Integer> fireworks=new LinkedHashMap<>();final List<Line> lines=new ArrayList<>();final List<Vec3> embers=new ArrayList<>();
-        Mob disguise,levitated;Vec3 safe,jet;long nextExplosion,nextMagma,nextBoost,overheated,heated;int chain;float heat;boolean ending,ground;
+        Mob disguise,levitated;Vec3 safe,jet;long nextExplosion,nextMagma,nextBoost,overheated,heated,fireLanding;int chain;float heat;boolean ending,ground,launchAir;
         Cast(ServerPlayer p,RpgProfile s){player=p;world=p.level();profile=s;safe=p.position();heat=RpgDebug.unlimited(p)?100:0;}
     }
     private static final class Core {Vec3 position;UUID target;long expires;Core(Vec3 p,UUID target,long expires){position=p;this.target=target;this.expires=expires;}}
@@ -91,7 +91,7 @@ public final class RpgSpecialists {
             case PIROMANTE -> {
                 if(slot==0){c.fireworks.clear();c.nextExplosion=0;for(var mob:near(c,p.position(),s.hasSkill(4)?7:5)){c.fireworks.put(mob.getUUID(),mob.isOnFire()&&s.mainUnlocked(0)?2:1);if(c.fireworks.size()>=(s.hasSkill(4)?8:5))break;}if(c.fireworks.isEmpty())c.until[0]=0;heat(c,8);}
                 else if(slot==1){launchMagma(c,now);}
-                else{c.heat=Math.max(0,c.heat-30);p.setDeltaMovement(p.getDeltaMovement().add(0,.7,0));p.hurtMarked=true;ClassJourney.advance(p,2,1);}
+                else{c.heat=Math.max(0,c.heat-30);c.fireLanding=now+s.abilityDuration(2)+200;c.launchAir=false;p.fallDistance=0;p.setDeltaMovement(p.getDeltaMovement().add(0,.7,0));p.hurtMarked=true;ClassJourney.advance(p,2,1);}
             }
             default -> {}
         }
@@ -123,12 +123,12 @@ public final class RpgSpecialists {
     }
     private static void detonate(Cast c,boolean finish){
         long now=c.world.getGameTime();int count=Math.min(8,c.cores.size());
-        for(int i=0;i<count;i++){var a=c.cores.get(i);explosion(c,a.position,2.5,c.profile.hasSkill(13)?8:6,false);if(c.profile.mainUnlocked(1))for(int j=i+1;j<count;j++){var b=c.cores.get(j);if(a.position.distanceToSqr(b.position)<=100)c.lines.add(new Line(a.position,b.position,now+(c.profile.hasSkill(12)?100:60)));}}
+        for(int i=0;i<count;i++){var a=c.cores.get(i);explosion(c,a.position,2.5,c.profile.hasSkill(13)?8:6,false);PyroTerrain.impact(c.player,a.position,c.profile.mainUnlocked(1));if(c.profile.mainUnlocked(1))for(int j=i+1;j<count;j++){var b=c.cores.get(j);if(a.position.distanceToSqr(b.position)<=100)c.lines.add(new Line(a.position,b.position,now+(c.profile.hasSkill(12)?100:60)));}}
         c.cores.clear();c.nextMagma=now+10;if(!finish)heat(c,5);
     }
     public static void projectile(net.neoforged.neoforge.event.entity.ProjectileImpactEvent e){
         var shot=e.getEntity();var data=SHOTS.remove(shot.getUUID());if(data==null)return;
-        var c=CASTS.get(data.player().getUUID());if(c!=null&&c.world==shot.level()){int max=c.profile.hasSkill(11)?6:3;if(c.cores.size()>=max)c.cores.remove(0);UUID target=e.getRayTraceResult() instanceof EntityHitResult hit&&hit.getEntity() instanceof Mob mob&&RpgAbilities.attackable(mob)?mob.getUUID():null;var point=e.getRayTraceResult().getLocation();c.cores.add(new Core(point,target,c.world.getGameTime()+240));if(target!=null){var mob=(Mob)c.world.getEntity(target);hit(c,mob,2);mob.igniteForSeconds(c.profile.hasSkill(9)?5:3);}SkillEffects.impact(c.world,point,1.2,1);sync(c.player);}
+        var c=CASTS.get(data.player().getUUID());if(c!=null&&c.world==shot.level()){var impact=e.getRayTraceResult().getLocation();explosion(c,impact,c.profile.mainUnlocked(1)?3:2,c.profile.mainUnlocked(1)?6:4,false);PyroTerrain.impact(c.player,impact,c.profile.mainUnlocked(1));int max=c.profile.hasSkill(11)?6:3;if(c.cores.size()>=max)c.cores.remove(0);UUID target=e.getRayTraceResult() instanceof EntityHitResult hit&&hit.getEntity() instanceof Mob mob&&RpgAbilities.attackable(mob)?mob.getUUID():null;var point=e.getRayTraceResult().getLocation();c.cores.add(new Core(point,target,c.world.getGameTime()+240));if(target!=null){var mob=(Mob)c.world.getEntity(target);hit(c,mob,2);mob.igniteForSeconds(c.profile.hasSkill(9)?5:3);}SkillEffects.impact(c.world,point,1.2,1);sync(c.player);}
         shot.discard();e.setCanceled(true);
     }
     public static void tick(EntityTickEvent.Post e){
@@ -145,6 +145,7 @@ public final class RpgSpecialists {
         }
         if(p.tickCount%20==0)Professions.modifier(p,net.minecraft.world.entity.ai.attributes.Attributes.WATER_MOVEMENT_EFFICIENCY,"hydro_swim",s.rpgClass()==RpgClass.HIDROMANTE&&s.hasSkill(2)?(s.mainUnlocked(0)?.5:.2)+(s.hasSkill(6)?.2:0):0,net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_VALUE);
         if(c==null)return;long now=c.world.getGameTime();
+        if(c.fireLanding>now){p.fallDistance=0;if(!p.onGround())c.launchAir=true;else if(c.launchAir){c.fireLanding=0;c.launchAir=false;}}
         if(c.profile.rpgClass()==RpgClass.ILUSIONISTA)illusionTick(c,now);
         else if(c.profile.rpgClass()==RpgClass.HIDROMANTE){if(c.until[1]>now&&p.tickCount%5==0)jet(c);if(c.until[1]<=now)discard(c.sea);}
         else fireTick(c,now);
@@ -171,10 +172,11 @@ public final class RpgSpecialists {
     }
     private static void finishEclipse(Cast c){var p=c.player;p.setNoGravity(false);p.fallDistance=0;Professions.modifier(p,net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED,"eclipse_speed",0,net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);p.getPersistentData().remove("oxy_eclipse");p.getPersistentData().remove("oxy_phase_tier");if(!c.world.noCollision(p,p.getBoundingBox()))p.teleportTo(c.safe.x,c.safe.y,c.safe.z);discard(c.bats);ghost(p,c.until[0]>c.world.getGameTime()?(int)(c.until[0]-c.world.getGameTime()):0);}
     private static void jet(Cast c){
-        var start=c.player.getEyePosition();var direction=c.jet==null?c.player.getLookAngle():c.jet;double range=c.profile.hasSkill(11)?14:10;var end=c.world.clip(new ClipContext(start,start.add(direction.scale(range)),ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,c.player)).getLocation();
-        for(double d=.3;d<start.distanceTo(end);d+=.5){var at=start.add(direction.scale(d));double angle=c.world.getGameTime()*.3+d*2;c.world.sendParticles(ParticleTypes.SPLASH,at.x+Math.cos(angle)*.3,at.y+Math.sin(angle)*.3,at.z,2,.04,.04,.04,0);}
-        boolean counted=false;for(var mob:near(c,start.lerp(end,.5),range/2+2))if(mob.getBoundingBox().inflate(.65).clip(start,end).isPresent()){hit(c,mob,c.profile.mainUnlocked(1)?2.5f:1.5f);if(c.player.tickCount%20==0)SkillEffects.impact(c.world,mob.position(),1.4,2);mob.push(direction.x*(c.profile.hasSkill(12)?.55:.3),.06,direction.z*(c.profile.hasSkill(12)?.55:.3));counted=true;}if(counted)ClassJourney.advance(c.player,1,1);
+        var start=c.player.getEyePosition();var direction=c.jet==null?c.player.getLookAngle():c.jet;double range=(c.profile.mainUnlocked(1)?22:16)+(c.profile.hasSkill(11)?6:0);var end=c.world.clip(new ClipContext(start,start.add(direction.scale(range)),ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,c.player)).getLocation();
+        for(double d=.65;d<start.distanceTo(end);d+=1.15){var at=start.add(direction.scale(d));c.world.sendParticles(RpgParticles.WATER_PULSE.get(),at.x,at.y,at.z,0,direction.x,direction.y,direction.z,1);c.world.sendParticles(ParticleTypes.BUBBLE,at.x,at.y,at.z,1,.07,.07,.07,0);}
+        boolean counted=false;for(var mob:near(c,start.lerp(end,.5),range/2+2))if(mob.getBoundingBox().inflate(.65).clip(start,end).isPresent()){hit(c,mob,c.profile.mainUnlocked(1)?2.5f:1.5f);mob.push(direction.x*(c.profile.hasSkill(12)?.55:.3),.06,direction.z*(c.profile.hasSkill(12)?.55:.3));counted=true;}if(counted)ClassJourney.advance(c.player,1,1);
     }
+
     private static void fireTick(Cast c,long now){
         var p=c.player;
         if(p.tickCount%20==0){if(!p.isInWaterOrRain()&&c.profile.hasSkill(0))heat(c,Math.min(3,near(c,p.position(),12).stream().filter(Mob::isOnFire).count()));if(p.isInWaterOrRain())c.heat=Math.max(0,c.heat-8);else if(now>c.heated+80)c.heat=Math.max(0,c.heat-2);}
@@ -188,12 +190,13 @@ public final class RpgSpecialists {
         if(c.until[2]>now){
             effect(p,MobEffects.FIRE_RESISTANCE,4,0);if(p.isInLava()){var intent=p.getLastClientMoveIntent();double swim=c.profile.mainUnlocked(2)?.2:.12;p.setDeltaMovement(p.getDeltaMovement().scale(.65).add(intent.scale(swim)).add(0,p.isShiftKeyDown()?-.08:p.getLastClientInput().jump()?.16:.02,0));p.hurtMarked=true;}
             Professions.modifier(p,net.minecraft.world.entity.ai.attributes.Attributes.JUMP_STRENGTH,"phoenix_jump",.25,net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_VALUE);
-            if(!p.onGround()&&c.ground&&p.getKnownMovement().y>.1&&now>=c.nextBoost){c.nextBoost=now+20;p.setDeltaMovement(p.getDeltaMovement().add(0,.7,0));p.hurtMarked=true;explosion(c,p.position(),2,c.profile.hasSkill(16)?4:2,false);}
+            if(!p.onGround()&&c.ground&&p.getKnownMovement().y>.1&&now>=c.nextBoost){c.nextBoost=now+20;c.fireLanding=now+200;c.launchAir=false;p.fallDistance=0;p.setDeltaMovement(p.getDeltaMovement().add(0,.7,0));p.hurtMarked=true;explosion(c,p.position(),2,c.profile.hasSkill(16)?4:2,false);}
             if(p.tickCount%5==0){var at=p.position();c.embers.add(at);if(c.embers.size()>24)c.embers.remove(0);for(int side:new int[]{-1,1})for(int i=1;i<5;i++)c.world.sendParticles(ParticleTypes.FLAME,p.getX()+side*i*.25,p.getY()+1.1+i*.1,p.getZ(),1,0,0,0,0);}
             if(p.tickCount%10==0){for(var at:c.embers){c.world.sendParticles(ParticleTypes.SMALL_FLAME,at.x,at.y+.1,at.z,1,0,0,0,0);for(var mob:near(c,at,.8)){hit(c,mob,1);mob.igniteForSeconds(2);}}if(p.isInWater()&&c.profile.hasSkill(19)){c.world.sendParticles(ParticleTypes.CLOUD,p.getX(),p.getY()+1,p.getZ(),12,1,1,1,.03);for(var mob:near(c,p.position(),4))effect(mob,MobEffects.WEAKNESS,30,0);FluidPockets.drain(p,p.blockPosition(),1,40);}}
             c.ground=p.onGround();c.ending=true;
         }else if(c.ending){Professions.modifier(p,net.minecraft.world.entity.ai.attributes.Attributes.JUMP_STRENGTH,"phoenix_jump",0,net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_VALUE);c.ending=false;float damage=4+(c.profile.hasSkill(20)?Math.min(6,c.cores.size()):0);explosion(c,p.position(),3,damage,false);if(c.profile.hasSkill(20))detonate(c,true);c.embers.clear();}
     }
+    public static void fall(LivingFallEvent e){if(e.getEntity() instanceof ServerPlayer p){var c=CASTS.get(p.getUUID());if(c!=null&&c.profile.rpgClass()==RpgClass.PIROMANTE&&c.fireLanding>p.level().getGameTime())e.setCanceled(true);}}
     public static void incoming(LivingIncomingDamageEvent e){
         if(temporary(e.getEntity())){if(e.getEntity().isInvulnerable()||e.getSource().getEntity() instanceof Player)e.setCanceled(true);return;}
         if(e.getEntity() instanceof ServerPlayer p&&intangible(p)&&!e.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY)){e.setCanceled(true);return;}

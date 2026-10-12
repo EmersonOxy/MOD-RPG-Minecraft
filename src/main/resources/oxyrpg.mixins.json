@@ -16,7 +16,8 @@
     "DebugItemCooldownMixin",
     "AviaryPoseMixin",
     "PoisonDamageMixin",
-    "VampirePotionMixin"
+    "VampirePotionMixin",
+    "VampireDimensionsMixin"
   ],
   "client": [
     "ShoulderCameraMixin",

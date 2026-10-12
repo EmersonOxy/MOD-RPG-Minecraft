@@ -14,6 +14,7 @@ public final class RpgParticles {
     public static final Supplier<SimpleParticleType> IMPACT=TYPES.register("impact",()->new SimpleParticleType(false));
     public static final Supplier<SimpleParticleType> LEAF=TYPES.register("ambient_leaf",()->new SimpleParticleType(false));
     public static final Supplier<SimpleParticleType> WAKE=TYPES.register("water_wake",()->new SimpleParticleType(false));
+    public static final Supplier<SimpleParticleType> WATER_PULSE=TYPES.register("water_pulse",()->new SimpleParticleType(false));
     private RpgParticles(){}
     public static void register(IEventBus bus){TYPES.register(bus);}
 }

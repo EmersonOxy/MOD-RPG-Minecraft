@@ -7,7 +7,7 @@ import net.minecraft.world.level.block.Blocks;
 /** Small sampling budgets in already loaded chunks; no terrain generation or network traffic. */
 public final class AmbientWorld {
     private AmbientWorld(){}
-    public static void tick(){AmbientOptions.load();VegetationMotion.tick();var mc=Minecraft.getInstance();if(mc.level==null||mc.player==null||mc.isPaused())return;var level=mc.level;var p=mc.player;long now=level.getGameTime();
+    public static void tick(){AmbientOptions.load();EntityMotionVisuals.tick();VegetationMotion.tick();var mc=Minecraft.getInstance();if(mc.level==null||mc.player==null||mc.isPaused())return;var level=mc.level;var p=mc.player;long now=level.getGameTime();
         if(AmbientOptions.leaves&&now%4==0&&mc.options.particles().get()!=net.minecraft.server.level.ParticleStatus.MINIMAL){
             for(int sample=0;sample<3;sample++){int x=p.getBlockX()+level.random.nextInt(25)-12,z=p.getBlockZ()+level.random.nextInt(25)-12;
                 for(int y=p.getBlockY()+24;y>p.getBlockY()-3;y--){var pos=new BlockPos(x,y,z);if(!level.hasChunkAt(pos))break;var s=level.getBlockState(pos);if(!s.is(BlockTags.LEAVES)||level.getBlockState(pos.below()).is(BlockTags.LEAVES))continue;

@@ -55,6 +55,6 @@ public final class VegetationMotion {
     }
     public static void render(RenderLevelStageEvent.AfterEntities event){List<Draw> draws=event.getLevelRenderState().getRenderData(DRAW);if(draws==null||draws.isEmpty())return;var mc=Minecraft.getInstance();if(mc.level==null)return;var pose=event.getPoseStack();
         for(var d:draws){pose.pushPose();pose.translate(d.relative.x+.5,d.relative.y-(d.upper?1:0),d.relative.z+.5);pose.mulPose(new org.joml.Quaternionf().rotationAxis(d.weight*.28f,(float)d.dz,0,(float)-d.dx));pose.scale(1,1-d.weight*.82f,1);pose.translate(-.5,d.upper?1:0,-.5);
-            mc.getBlockRenderer().getModelRenderer().tesselateBlock(mc.level,d.parts,d.state,d.pos,pose,type->BUFFER.getBuffer(net.neoforged.neoforge.client.RenderTypeHelper.getEntityRenderType(type)),false,OverlayTexture.NO_OVERLAY);pose.popPose();}BUFFER.endBatch();
+            mc.getBlockRenderer().getModelRenderer().tesselateBlock(mc.level,d.parts,d.state,d.pos,pose,type->BUFFER.getBuffer(net.neoforged.neoforge.client.RenderTypeHelper.getMovingBlockRenderType(type)),false,OverlayTexture.NO_OVERLAY);pose.popPose();}BUFFER.endBatch();
     }
 }

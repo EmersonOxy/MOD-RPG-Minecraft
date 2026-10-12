@@ -80,7 +80,7 @@ public final class OxyRpgClient {
         if(Boolean.getBoolean("oxyrpg.cameraQA"))NeoForge.EVENT_BUS.addListener(CameraClientQA::tick);
         bus.addListener(OxyRpgClient::registerKeys);
         bus.addListener(OxyRpgClient::registerPayloads);
-        bus.addListener(OxyRpgClient::registerHud);bus.addListener(CombatParticle::register);bus.addListener(AmbientLeaf::register);bus.addListener(WaterWake::register);
+        bus.addListener(OxyRpgClient::registerHud);bus.addListener(CombatParticle::register);bus.addListener(AmbientLeaf::register);bus.addListener(WaterWake::register);bus.addListener(WaterPulse::register);
         NeoForge.EVENT_BUS.addListener(VegetationMotion::extract);NeoForge.EVENT_BUS.addListener(VegetationMotion::render);
         NeoForge.EVENT_BUS.addListener(OxyRpgClient::tick);NeoForge.EVENT_BUS.addListener(VillagerClient::init);NeoForge.EVENT_BUS.addListener(InventoryMovement::opening); NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderHandEvent event)->{if(ShoulderCamera.hideHands())event.setCanceled(true);});
         NeoForge.EVENT_BUS.addListener(DynamicHud::beforeLayer);
@@ -162,6 +162,7 @@ public final class OxyRpgClient {
         event.register(RpgNetwork.CastFx.TYPE,(value,context)->ClassCastEffects.receive(value));
         event.register(RpgNetwork.BloodFx.TYPE,(value,context)->ParticleFx.blood(value));
         event.register(RpgNetwork.ImpactFx.TYPE,(value,context)->SkillEffectsRenderer.receive(value));
+        event.register(RpgNetwork.EntityMotion.TYPE,(value,context)->EntityMotionVisuals.receive(value));
         event.register(RpgNetwork.VampireState.TYPE,(value,context)->VampireHud.receive(value));
         event.register(RpgNetwork.SpecialState.TYPE,(value,context)->SpecialistHud.receive(value));
         event.register(RpgNetwork.Ghost.TYPE, (ghost, context) -> {EnemyNameplates.ghost(ghost.entityId(), ghost.ticks());if(ghost.ticks()<=0)ClassCastEffects.cancel(ghost.entityId());});
@@ -261,18 +262,18 @@ public final class OxyRpgClient {
     }
     private static void renderAbilityIcons(GuiGraphics g) {
         var mc=Minecraft.getInstance();var state=hudState;if(state==null||state.rpgClass()==0||mc.level==null)return;
-        int start=g.guiWidth()/2-50,y=g.guiHeight()-Math.max(118,mc.gui.leftHeight+62);var keys=new KeyMapping[]{USE_ABILITY,SECOND_ABILITY,THIRD_ABILITY};
-        for(int slot=0;slot<3;slot++){float alpha=DynamicHud.alpha(DynamicHud.ability(slot));if(alpha<=0)continue;HudOpacity.begin(alpha);int x=start+slot*36;
+        boolean dock=g.guiWidth()>=390;int start=dock?g.guiWidth()/2-190:g.guiWidth()/2-44,y=dock?g.guiHeight()-37:g.guiHeight()-Math.max(102,mc.gui.leftHeight+52);var keys=new KeyMapping[]{USE_ABILITY,SECOND_ABILITY,THIRD_ABILITY};
+        for(int slot=0;slot<3;slot++){float alpha=DynamicHud.alpha(DynamicHud.ability(slot));if(alpha<=0)continue;HudOpacity.begin(alpha);int x=start+slot*30;
             long remaining=effectUntil[slot]==Long.MAX_VALUE?Long.MAX_VALUE:Math.max(0,effectUntil[slot]-mc.level.getGameTime()),cooldown=Math.max(0,hudReadyAt[slot]-mc.level.getGameTime());boolean available=state.canUse(slot),active=remaining>0;
             int accent=ClassSelectionScreen.accent(RpgClass.values()[state.rpgClass()]),ink=!available?0xFF586473:active?0xFFF6E4AA:cooldown>0?0xFF8392A2:accent;
-            g.fill(x,y,x+28,y+28,0xC5101720);RpgUi.border(g,x,y,28,28,ink);
-            if(cooldown>0&&!active){int cover=(int)(26*Math.clamp((float)cooldown/Math.max(1,cooldownTotal[slot]),0,1));g.fill(x+1,y+1,x+27,y+1+cover,0xB0253140);}
-            SkillGlyphs.draw(g,RpgClass.values()[state.rpgClass()],slot,x+5,y+5,19,0xFF05090E);SkillGlyphs.draw(g,RpgClass.values()[state.rpgClass()],slot,x+4,y+4,19,ink);
-            String key=mc.font.plainSubstrByWidth(keys[slot].getTranslatedKeyMessage().getString(),24);g.pose().pushMatrix();g.pose().translate(x+14,y-9);g.pose().scale(.8f,.8f);g.drawString(mc.font,key,-mc.font.width(key)/2,0,0xFFEADCC0);g.pose().popMatrix();
-            float fill=active?(remaining==Long.MAX_VALUE?1:Math.clamp((float)remaining/Math.max(1,effectTotal[slot]),0,1)):1-Math.clamp((float)cooldown/Math.max(1,cooldownTotal[slot]),0,1);
-            g.fill(x+1,y+29,x+27,y+31,0xFF283644);g.fill(x+1,y+29,x+1+(int)(26*fill),y+31,ink);
+            g.fill(x-1,y-1,x+27,y+27,0xAA080C12);g.fill(x,y,x+26,y+26,0xE8202935);RpgUi.border(g,x,y,26,26,0xFF566173);g.fill(x+1,y+1,x+25,y+2,ink);g.fill(x+1,y+24,x+25,y+25,0xFF111823);
+            if(skillIcons[slot]!=null&&!skillIcons[slot].isEmpty())g.renderFakeItem(skillIcons[slot],x+5,y+5);
+            if(!available)g.fill(x+2,y+2,x+24,y+24,0xBA101720);
+            else if(cooldown>0&&!active){int cover=(int)(22*Math.clamp((float)cooldown/Math.max(1,cooldownTotal[slot]),0,1));g.fill(x+2,y+24-cover,x+24,y+24,0xB0081018);}
+            if(active){g.fill(x+1,y+24,x+25,y+26,ink);}else if(available&&cooldown==0){g.fill(x+2,y+25,x+24,y+26,accent);}
+            String key=mc.font.plainSubstrByWidth(keys[slot].getTranslatedKeyMessage().getString(),26);g.pose().pushMatrix();g.pose().translate(x+13,y+29);g.pose().scale(.75f,.75f);g.drawString(mc.font,key,-mc.font.width(key)/2,0,0xFFEADCC0);g.pose().popMatrix();
             String time=!available?"×":cooldown>0&&!active?((cooldown+19)/20)+"":active&&remaining!=Long.MAX_VALUE?((remaining+19)/20)+"":"";
-            if(!time.isEmpty()){g.pose().pushMatrix();g.pose().translate(x+14,y+33);g.pose().scale(.8f,.8f);g.drawString(mc.font,time,-mc.font.width(time)/2,0,ink);g.pose().popMatrix();}
+            if(!time.isEmpty()){g.pose().pushMatrix();g.pose().translate(x+13,y-10);g.pose().scale(.85f,.85f);g.drawString(mc.font,time,-mc.font.width(time)/2,0,ink);g.pose().popMatrix();}
             HudOpacity.end();
         }
     }

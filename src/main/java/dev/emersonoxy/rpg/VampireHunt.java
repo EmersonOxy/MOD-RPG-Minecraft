@@ -15,6 +15,7 @@ import net.neoforged.neoforge.event.tick.EntityTickEvent;
 /** Existing AI remains in charge; fear supplies navigation intent, never immobilization. */
 public final class VampireHunt {
     public static final ResourceKey<DamageType> BITE=ResourceKey.create(Registries.DAMAGE_TYPE,ResourceLocation.fromNamespaceAndPath("oxyrpg","vampire_bite"));
+    private static final ResourceLocation FEAR=ResourceLocation.fromNamespaceAndPath("oxyrpg","vampire_fear_speed");
     private VampireHunt(){}
     public static boolean night(ServerLevel w){return w.dimensionType().hasSkyLight()&&Math.floorMod(w.getDayTime(),24000)>=12000;}
     public static boolean afraid(Villager v){return v.getPersistentData().getLongOr("oxy_vampire_fear",0)>v.level().getGameTime();}
@@ -23,19 +24,21 @@ public final class VampireHunt {
         if(m instanceof Enemy){m.setTarget(vampire);m.setLastHurtByMob(vampire);return;}
         var away=m.position().subtract(vampire.position()).multiply(1,0,1);
         if(away.lengthSqr()<.01)away=new net.minecraft.world.phys.Vec3(1,0,0);away=away.normalize();
-        var to=m.position().add(away.scale(7));if(m instanceof PathfinderMob walker){var safe=net.minecraft.world.entity.ai.util.DefaultRandomPos.getPosAway(walker,12,5,vampire.position());if(safe!=null)to=safe;}
+        var to=m.position().add(away.scale(5));if(m instanceof PathfinderMob walker){var safe=net.minecraft.world.entity.ai.util.DefaultRandomPos.getPosAway(walker,8,3,vampire.position());if(safe!=null)to=safe;}
         if(m instanceof Villager v){
+            var speed=v.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED);if(speed!=null&&!speed.hasModifier(FEAR))speed.addTransientModifier(new net.minecraft.world.entity.ai.attributes.AttributeModifier(FEAR,-.3,net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
             if(v.isSleeping())v.stopSleeping();v.getPersistentData().putLong("oxy_vampire_fear",v.level().getGameTime()+60);
             if(v.getTradingPlayer()!=null){var trader=v.getTradingPlayer();v.setTradingPlayer(null);trader.closeContainer();}
             VillagerQuests.frighten(v);
             v.getBrain().setMemory(MemoryModuleType.NEAREST_HOSTILE,vampire);
             v.getBrain().eraseMemory(MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE);
-            v.getBrain().setMemory(MemoryModuleType.WALK_TARGET,new WalkTarget(new BlockPosTracker(BlockPos.containing(to)),1.35f,1));
+            v.getBrain().setMemory(MemoryModuleType.WALK_TARGET,new WalkTarget(new BlockPosTracker(BlockPos.containing(to)),0.65f,1));
         }
-        m.getNavigation().moveTo(to.x,to.y,to.z,1.35);
+        m.getNavigation().moveTo(to.x,to.y,to.z,.65);
     }
     public static void tick(EntityTickEvent.Post event){
         if(!(event.getEntity() instanceof Mob m)||!(m.level() instanceof ServerLevel w)||!m.isAlive()||m.tickCount%10!=0||RpgVampire.proxy(m)||RpgNecromancer.isSummon(m)||RpgSpecialists.temporary(m))return;
+        if(m instanceof Villager v&&!afraid(v)){var speed=v.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED);if(speed!=null)speed.removeModifier(FEAR);}
         boolean wounded=m.hasEffect(Bleeding.EFFECT);
         if(wounded&&Bleeding.owner(m) instanceof ServerPlayer vampire&&vampire.isAlive()&&vampire.level()==w&&RpgAbilities.profile(vampire).rpgClass()==RpgClass.VAMPIRESCO&&m.distanceToSqr(vampire)<256)threaten(m,vampire);
         if(m instanceof Villager&&night(w))for(var p:w.players())if(p.isAlive()&&!p.isSpectator()&&m.distanceToSqr(p)<64&&RpgAbilities.profile(p).rpgClass()==RpgClass.VAMPIRESCO){threaten(m,p);break;}

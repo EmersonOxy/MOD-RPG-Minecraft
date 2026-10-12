@@ -46,6 +46,7 @@ public final class RpgNecromancer {
         Minion(Mob mob,Group g,int strikes,int index){this.mob=mob;group=g;this.strikes=strikes;next=g.world.getGameTime()+20+index*12;}
     }
     private RpgNecromancer(){}
+    public static boolean necromancy(Entity entity){var unit=MINIONS.get(entity.getUUID());return unit!=null&&unit.group.profile.rpgClass()==RpgClass.NECROMANTE;}
     public static boolean isSummon(Entity entity){return entity!=null&&entity.getPersistentData().contains(OWNER);}
     public static ServerPlayer owner(DamageSource source){
         if(source.getEntity() instanceof ServerPlayer player)return player;

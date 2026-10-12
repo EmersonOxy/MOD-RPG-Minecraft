@@ -18,12 +18,13 @@ import org.slf4j.LoggerFactory;
 public final class MobLevels {
     private static final String KEY = "oxy_level";
     private MobLevels() {}
+    private static boolean eligible(Mob mob){return mob instanceof Enemy||mob instanceof net.minecraft.world.entity.animal.IronGolem||mob instanceof net.minecraft.world.entity.animal.SnowGolem;}
     public static int level(Mob mob) { return Math.clamp(mob.getPersistentData().getIntOr(KEY, 1), 1, 100); }
     public static void join(EntityJoinLevelEvent event) {
         if (event.isCanceled() || RpgSpecialists.temporary(event.getEntity()) || RpgNecromancer.isSummon(event.getEntity()) || !(event.getLevel() instanceof ServerLevel world)
-            || !(event.getEntity() instanceof Mob mob) || !(mob instanceof Enemy)) return;
+            || !(event.getEntity() instanceof Mob mob) || !eligible(mob)) return;
         if (mob.getPersistentData().contains(KEY)) {balance(mob);EliteMobs.slow(mob);return;}
-        int assigned = 1;
+        int assigned = mob instanceof net.minecraft.world.entity.animal.IronGolem?15:mob instanceof net.minecraft.world.entity.animal.SnowGolem?8:1;
         if (!event.loadedFromDisk()) {
             ServerPlayer closest = null;
             double distance = 128 * 128;
@@ -35,13 +36,13 @@ public final class MobLevels {
             if (closest != null) try {
                 var profile = new ProfileStore(closest).load(closest.getUUID());
                 int playerLevel = RpgDebug.effective(closest,profile).level();
-                assigned = Math.clamp(playerLevel + mob.getRandom().nextInt(5) - 2, 1, 100);
+                assigned = Math.max(assigned,Math.clamp(playerLevel + mob.getRandom().nextInt(5) - 2, 1, 100));
             } catch (IOException e) { LoggerFactory.getLogger(MobLevels.class).warn("Não foi possível ler o nível para spawn RPG; usando nível 1", e); }
         }
         mob.getPersistentData().putInt(KEY, assigned);
         if(!event.loadedFromDisk())equip(mob,assigned,world);
         balance(mob);
-        if(!event.loadedFromDisk())EliteMobs.roll(mob);
+        if(!event.loadedFromDisk()){if(mob instanceof Enemy)EliteMobs.roll(mob);}
     }
     public static double healthFactor(int level){double n=level-1;return (1+n*.07+n*n*.0007)*RpgConfig.value(RpgConfig.MOB_HEALTH,1);}
     public static double damageFactor(int level){double n=level-1;return (1+n*.045+n*n*.00035)*RpgConfig.value(RpgConfig.MOB_DAMAGE,1);}
@@ -56,7 +57,7 @@ public final class MobLevels {
         if(old!=null&&old.amount()==amount)return;if(old!=null)attr.removeModifier(id);if(amount!=0)attr.addPermanentModifier(new AttributeModifier(id,amount,AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
     }
     public static void damage(net.neoforged.neoforge.event.entity.living.LivingDamageEvent.Pre event){
-        if(event.getSource().getEntity() instanceof Mob mob&&mob instanceof Enemy&&!RpgNecromancer.isSummon(mob)&&!RpgSpecialists.temporary(mob)
+        if(event.getSource().getEntity() instanceof Mob mob&&eligible(mob)&&!RpgNecromancer.isSummon(mob)&&!RpgSpecialists.temporary(mob)
             &&(event.getSource().is(net.minecraft.tags.DamageTypeTags.IS_PROJECTILE)||event.getSource().is(net.minecraft.tags.DamageTypeTags.IS_EXPLOSION)))event.setNewDamage(event.getNewDamage()*(float)(damageFactor(level(mob))*RpgDataMaps.mob(mob).damage()));
     }
     private static void equip(Mob mob,int level,ServerLevel world){
@@ -110,7 +111,7 @@ public final class MobLevels {
         return net.minecraft.world.item.enchantment.EnchantmentHelper.enchantItem(mob.getRandom(),item,Math.min(30,5+level/3),world.registryAccess(),java.util.Optional.of(allowed));
     }
     public static void tracking(PlayerEvent.StartTracking event) {
-        if (event.getEntity() instanceof ServerPlayer player && event.getTarget() instanceof Mob mob && mob instanceof Enemy&&!RpgNecromancer.isSummon(mob)&&!RpgSpecialists.temporary(mob)){
+        if (event.getEntity() instanceof ServerPlayer player && event.getTarget() instanceof Mob mob && eligible(mob)&&!RpgNecromancer.isSummon(mob)&&!RpgSpecialists.temporary(mob)){
             PacketDistributor.sendToPlayer(player, new RpgNetwork.MobLevel(mob.getId(), level(mob)+(EliteMobs.elite(mob)?1000:0)));
             if(EliteMobs.elite(mob))PacketDistributor.sendToPlayer(player,new RpgNetwork.EliteInfo(mob.getId(),EliteAbilities.title(mob)));
         }

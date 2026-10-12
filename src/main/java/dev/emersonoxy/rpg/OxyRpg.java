@@ -27,7 +27,7 @@ public final class OxyRpg {
         bus.addListener(RpgContent::configReloaded);
         bus.addListener(RpgNetwork::register);
         VillageLoot.register(bus);
-        NeoForge.EVENT_BUS.addListener(RpgVampire::tick);NeoForge.EVENT_BUS.addListener(VampireHunt::tick);NeoForge.EVENT_BUS.addListener(RpgVampire::damage);NeoForge.EVENT_BUS.addListener(RpgVampire::hit);
+        NeoForge.EVENT_BUS.addListener(EntityMotions::join);NeoForge.EVENT_BUS.addListener(EntityMotions::tracking);NeoForge.EVENT_BUS.addListener(EntityMotions::attack);NeoForge.EVENT_BUS.addListener(RpgVampire::join);NeoForge.EVENT_BUS.addListener(RpgVampire::tick);NeoForge.EVENT_BUS.addListener(VampireHunt::tick);NeoForge.EVENT_BUS.addListener(RpgVampire::damage);NeoForge.EVENT_BUS.addListener(RpgVampire::hit);
         NeoForge.EVENT_BUS.addListener(EventPriority.HIGH,RpgVampire::incoming);NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST,RpgVampire::shield);NeoForge.EVENT_BUS.addListener(RpgVampire::applicable);NeoForge.EVENT_BUS.addListener(RpgVampire::useItem);
         NeoForge.EVENT_BUS.addListener(RpgVampire::attack);NeoForge.EVENT_BUS.addListener(RpgVampire::rightItem);NeoForge.EVENT_BUS.addListener(RpgVampire::rightBlock);NeoForge.EVENT_BUS.addListener(EventPriority.HIGHEST,RpgVampire::interact);NeoForge.EVENT_BUS.addListener(EventPriority.HIGHEST,RpgVampire::specific);NeoForge.EVENT_BUS.addListener(RpgVampire::breaking);
         NeoForge.EVENT_BUS.addListener(RpgVampire::tracking);NeoForge.EVENT_BUS.addListener(RpgVampire::logout);NeoForge.EVENT_BUS.addListener(RpgVampire::stop);
@@ -82,7 +82,7 @@ public final class OxyRpg {
         NeoForge.EVENT_BUS.addListener(FluidPockets::tick);
         NeoForge.EVENT_BUS.addListener(FluidPockets::stop);
         NeoForge.EVENT_BUS.addListener(FluidPockets::placed);
-        NeoForge.EVENT_BUS.addListener(RpgSpecialists::incoming);
+        NeoForge.EVENT_BUS.addListener(RpgSpecialists::fall);NeoForge.EVENT_BUS.addListener(RpgSpecialists::incoming);
         NeoForge.EVENT_BUS.addListener(RpgSpecialists::damage);
         NeoForge.EVENT_BUS.addListener(RpgSpecialists::damagePost);
         NeoForge.EVENT_BUS.addListener(RpgSpecialists::targeting);

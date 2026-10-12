@@ -1,8 +1,12 @@
-# Estado do Oxy RPG — revisão 0.43.0
+# Estado do Oxy RPG — revisão 0.44.0
 
-Revisão registrada em 11/10/2026. Minecraft 1.21.10, NeoForge 21.10.64, JDK 21, protocolo de rede 29. Este registro substitui descrições antigas do README. Os documentos numerados são históricos de cada entrega.
+Revisão registrada em 11/10/2026. Minecraft 1.21.10, NeoForge 21.10.64, JDK 21, protocolo de rede 30. Este registro substitui descrições antigas do README. Os documentos numerados são históricos de cada entrega.
 
 A revisão inventariou fontes Java, registros, eventos, mixins, telas, recursos JSON, geração de dados, integração e persistência. Código das áreas alteradas foi inspecionado em detalhe. Inventário de arquivos e hashes: [INVENTARIO_CODIGO_040.json](INVENTARIO_CODIGO_040.json). Não equivale a validação integral dentro do jogo nem a auditoria de segurança.
+
+## Entrega 0.44
+
+Forma de morcego renderizada diretamente no lugar do avatar, caixa 0,7×0,85 e olho 0,55; escolta protegida do próprio dono. Fuga de aldeões reduzida. Proteção de queda dos impulsos da Fênix. Canhão aquático de anéis, magma com dano em área/cratera/terreno convertido, grama em pipeline de blocos, slots coloridos na HUD. Iron/Snow Golems ganham nível, vida/dano; animações cosméticas de surgimento e reação ao golpe reutilizam os modelos existentes. Protocolo 30 pelo novo payload EntityMotion; cliente/servidor devem usar a mesma versão. [Diagnóstico e validação](CORRECOES_044.md).
 
 ## Entrega 0.43
 

@@ -56,7 +56,7 @@ public final class EnemyNameplates {
     }
     private static boolean visible(Mob mob) {
         var mc=Minecraft.getInstance();
-        if(mc.level==null||mc.player==null||mc.options.hideGui||DynamicHud.mode()==DynamicHud.Mode.HIDDEN||!mob.isAlive()||mob.isInvisible()||COSMETIC.contains(mob.getId()))return false;
+        if(mc.level==null||mc.player==null||mc.options.hideGui||DynamicHud.mode()==DynamicHud.Mode.HIDDEN||!mob.isAlive()||mob.isInvisible()||COSMETIC.contains(mob.getId())||dev.emersonoxy.rpg.RpgVampire.proxy(mob))return false;
         var camera=mc.gameRenderer.getMainCamera();
         var start=camera.getPosition();var end=mob.getEyePosition();
         var relative=end.subtract(start);
@@ -75,7 +75,7 @@ public final class EnemyNameplates {
     }
     public static void register(RegisterRenderStateModifiersEvent event) {
         event.registerEntityModifier(new TypeToken<EntityRenderer<Entity, EntityRenderState>>() {}, (entity, state) -> {
-            if(entity instanceof net.minecraft.world.entity.ambient.Bat&&entity.getCustomName()!=null&&entity.getCustomName().getString().equals("oxy_vampire_form")&&state instanceof net.minecraft.client.renderer.entity.state.LivingEntityRenderState living)living.scale*=2.2f;
+            EntityMotionVisuals.extract(entity,state);
             state.setRenderData(HIDDEN, entity instanceof Player && hidden(entity.getId()));
             state.setRenderData(PLATE, null);
             if (!(entity instanceof Mob mob)) return;
@@ -124,6 +124,7 @@ public final class EnemyNameplates {
         out.addVertex(pose.pose(),x2,y1,z).setColor(color);
     }
     public static void player(RenderPlayerEvent.Pre event) {
+        if(EntityMotionVisuals.morph(event))return;
         if (Boolean.TRUE.equals(event.getRenderState().getRenderData(HIDDEN))) event.setCanceled(true);
     }
     public static void hand(RenderHandEvent event) {
