@@ -18,7 +18,9 @@
     "PoisonDamageMixin",
     "VampirePotionMixin",
     "VampireDimensionsMixin",
-    "CompanionPushMixin"
+    "CompanionPushMixin",
+    "NativeProjectileAimMixin",
+    "NativeCrossbowAimMixin"
   ],
   "client": [
     "ShoulderCameraMixin",
@@ -40,7 +42,8 @@
     "VegetationModelMixin",
     "MerchantLayoutMixin",
     "TerralithWorldInvoker",
-    "TerralithWorldTabMixin"
+    "TerralithWorldTabMixin",
+    "NativeAimInputMixin"
   ],
   "injectors": {
     "defaultRequire": 1

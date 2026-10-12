@@ -123,5 +123,9 @@
   "item.oxyrpg.relic_vampiresco": "Presa Noturna",
   "death.attack.oxyrpg.vampire_bite": "%1$s foi drenado por %2$s",
   "death.attack.oxyrpg.vampire_bite.player": "%1$s foi drenado por %2$s",
-  "entity.oxyrpg.village_guard": "Guarda da aldeia"
+  "entity.oxyrpg.village_guard": "Guarda da aldeia",
+  "itemGroup.oxyrpg.equipment": "Oxy RPG — Equipamentos",
+  "itemGroup.oxyrpg.supplies": "Oxy RPG — Consumíveis",
+  "itemGroup.oxyrpg.complements": "Complementos — Itens",
+  "item.oxyrpg.village_guard_spawn_egg": "Invocar guarda da aldeia"
 }

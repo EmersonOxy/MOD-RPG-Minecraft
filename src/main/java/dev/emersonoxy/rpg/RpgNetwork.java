@@ -202,6 +202,7 @@ public final class RpgNetwork {
             if (context.player() instanceof ServerPlayer player){
                 if(request.action()==1||request.action()==5||request.action()==6||request.action()==8||request.action()==9||request.action()==16)
                     AbilityAim.cast(player,request.targetId(),new net.minecraft.world.phys.Vec3(request.aimX(),request.aimY(),request.aimZ()),()->OxyRpg.menuAction(player,request.action(),request.direction()));
+                else if(request.action()==18)AbilityAim.receive(player,new net.minecraft.world.phys.Vec3(request.aimX(),request.aimY(),request.aimZ()));
                 else if(request.action()>=300&&request.action()<=308)VillagerQuests.action(player,request.action(),request.direction(),request.targetId());
                 else OxyRpg.menuAction(player,request.action(),request.direction());
             }

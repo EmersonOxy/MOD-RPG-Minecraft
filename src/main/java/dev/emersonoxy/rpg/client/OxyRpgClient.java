@@ -79,7 +79,7 @@ public final class OxyRpgClient {
         container.registerExtensionPoint(net.neoforged.neoforge.client.gui.IConfigScreenFactory.class,net.neoforged.neoforge.client.gui.ConfigurationScreen::new);
         if(Boolean.getBoolean("oxyrpg.cameraQA"))NeoForge.EVENT_BUS.addListener(CameraClientQA::tick);
         bus.addListener((net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterRenderers e)->e.registerEntityRenderer(dev.emersonoxy.rpg.VillageGuards.GUARD.get(),VillageGuardRenderer::new));
-        if(net.neoforged.fml.ModList.get().isLoaded("player_animation_library"))DodgeAnimation.register();
+        bus.addListener((net.neoforged.fml.event.lifecycle.FMLClientSetupEvent e)->e.enqueueWork(()->{if(net.neoforged.fml.ModList.get().isLoaded("player_animation_library"))DodgeAnimation.register();}));
         bus.addListener(OxyRpgClient::registerKeys);
         bus.addListener(OxyRpgClient::registerPayloads);
         bus.addListener(OxyRpgClient::registerHud);bus.addListener(CombatParticle::register);bus.addListener(AmbientLeaf::register);bus.addListener(WaterWake::register);bus.addListener(WaterPulse::register);
@@ -235,10 +235,11 @@ public final class OxyRpgClient {
         while (OPEN_MENU.consumeClick()) {
             if (mc.player != null && mc.screen == null) mc.setScreen(new RpgScreen());
         }
-        SpecialistHud.tick();
+        LiveAim.tick();SpecialistHud.tick();
         AbilityPreview.tick();
     }
 
+    public static boolean liveChannel(){var mc=Minecraft.getInstance();return mc.level!=null&&hudState!=null&&(hudState.rpgClass()==dev.emersonoxy.rpg.RpgClass.HIDROMANTE.ordinal())&&effectUntil[1]>mc.level.getGameTime();}
     private static void renderHud(GuiGraphics g) {
         var mc=Minecraft.getInstance();
         if(mc.options.hideGui||mc.getDebugOverlay().showDebugScreen()||mc.player==null||mc.level==null||mc.screen!=null||hudState==null)return;

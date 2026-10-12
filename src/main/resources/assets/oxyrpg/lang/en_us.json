@@ -123,5 +123,9 @@
   "item.oxyrpg.relic_vampiresco": "Night Fang",
   "death.attack.oxyrpg.vampire_bite": "%1$s was drained by %2$s",
   "death.attack.oxyrpg.vampire_bite.player": "%1$s was drained by %2$s",
-  "entity.oxyrpg.village_guard": "Village Guard"
+  "entity.oxyrpg.village_guard": "Village Guard",
+  "itemGroup.oxyrpg.equipment": "Oxy RPG — Equipment",
+  "itemGroup.oxyrpg.supplies": "Oxy RPG — Supplies",
+  "itemGroup.oxyrpg.complements": "Complement Mods — Items",
+  "item.oxyrpg.village_guard_spawn_egg": "Village Guard Spawn Egg"
 }

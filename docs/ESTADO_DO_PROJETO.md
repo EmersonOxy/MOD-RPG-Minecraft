@@ -134,3 +134,7 @@ Correções e limites registrados em CORRECOES_045.md; pesquisa de todos os link
 ## 0.46.0 — NPCs e complementos
 
 39 contratos de profissão, três de defesa para guardas próprios, trocas + missões em painel lateral, diálogo curto, Better Combat/PAL/Cloth Config, Terralith opcional por mundo e visuais Combat Roll separados. Protocolo 31. Regras e limites: NPCS_E_INTEGRACOES_046.md; hashes: INTEGRACOES_046.json. Footsteps não instalado por falta de release NeoForge 1.21.10 nas consultas pesquisadas.
+
+## 0.47.0 — Mira, esquiva e criativo
+
+Canhão acompanha mira durante canalização; arco/tridente/flechas de besta recebem ponto validado da câmera ao disparar. Abas próprias de equipamento/consumíveis e itens externos separados do vanilla. Ovo de guarda e centro de patrulha para invocação manual. OxyRollVisuals 1.1 corrige metadados recusados no log, e PAL registrado na etapa de setup do cliente. Better Combat mantido; Epic Fight sem release oficial NeoForge 1.21.10 nas fontes consultadas. Compilação assemble concluída, sem abrir jogo ou executar testes. Detalhes: CORRECOES_047.md; instalação: INSTALACAO_047.json.

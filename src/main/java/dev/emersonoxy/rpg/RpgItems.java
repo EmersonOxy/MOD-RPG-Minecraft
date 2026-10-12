@@ -3,6 +3,7 @@ package dev.emersonoxy.rpg;
 import net.neoforged.neoforge.registries.*;
 public final class RpgItems {
     private static final DeferredRegister.Items ITEMS=DeferredRegister.createItems(OxyRpg.MOD_ID);
+    public static final DeferredItem<net.minecraft.world.item.SpawnEggItem> GUARD_EGG=ITEMS.registerItem("village_guard_spawn_egg",net.minecraft.world.item.SpawnEggItem::new,p->p.spawnEgg(VillageGuards.GUARD.get()).component(net.minecraft.core.component.DataComponents.ITEM_MODEL,net.minecraft.resources.ResourceLocation.withDefaultNamespace("villager_spawn_egg")));
     public static final DeferredItem<AnimatedSigilItem> SIGIL=ITEMS.registerItem("sigil",AnimatedSigilItem::new,properties->properties.stacksTo(1));
     public static final DeferredItem<ManaPotionItem> MANA_POTION=manaPotion("mana_potion",35);
     public static final DeferredItem<ManaPotionItem> GREATER_MANA_POTION=manaPotion("greater_mana_potion",80);
@@ -27,10 +28,7 @@ public final class RpgItems {
     private static final java.util.Map<RpgClass,DeferredItem<? extends net.minecraft.world.item.Item>> RELICS=new java.util.EnumMap<>(RpgClass.class);
     static {for(var c:RpgClass.values())if(c!=RpgClass.NONE){String name="relic_"+c.name().toLowerCase(java.util.Locale.ROOT);RELICS.put(c,c==RpgClass.ARQUEIRO?ITEMS.registerItem(name,ClassRelicItem.HunterBow::new,p->p.stacksTo(1).durability(384)):ITEMS.registerItem(name,ClassRelicItem::new,p->p.stacksTo(1)));}}
     public static net.minecraft.world.item.Item relic(RpgClass c){return RELICS.get(c).get();}
-    private static void creative(net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent event){
-        if(event.getTabKey()==net.minecraft.world.item.CreativeModeTabs.FOOD_AND_DRINKS){event.accept(MANA_POTION);event.accept(GREATER_MANA_POTION);event.accept(SUPERIOR_MANA_POTION);event.accept(BANDAGE);event.accept(ANTIDOTE);}
-        if(event.getTabKey()==net.minecraft.world.item.CreativeModeTabs.COMBAT){for(var item:java.util.List.of(FROSTBLADE,EMBERBLADE,TRAIL_BOOTS,FOCUS_RING,VIGOR_RING,WARD_AMULET,WANDERER_AMULET))event.accept(item);}
-    }
+    public static java.util.List<net.minecraft.world.item.Item> relics(){return RELICS.values().stream().map(v->(net.minecraft.world.item.Item)v.get()).toList();}
     private RpgItems(){}
-    public static void register(net.neoforged.bus.api.IEventBus bus){ITEMS.register(bus);bus.addListener(RpgItems::creative);}
+    public static void register(net.neoforged.bus.api.IEventBus bus){ITEMS.register(bus);CreativeGroups.register(bus);}
 }

@@ -7,8 +7,9 @@ import net.minecraft.world.level.Level;
 /** A separate, persistent villager-bodied guard; existing residents are never converted. */
 public final class VillageGuard extends Villager {
     private int strike;
-    public VillageGuard(EntityType<? extends Villager> type,Level level){super(type,level);setPersistenceRequired();}
+    public VillageGuard(EntityType<? extends Villager> type,Level level){super(type,level);setPersistenceRequired();setCustomName(net.minecraft.network.chat.Component.literal("Guarda da aldeia"));setCustomNameVisible(true);setItemSlot(EquipmentSlot.MAINHAND,new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.IRON_SWORD));}
     @Override protected void customServerAiStep(ServerLevel level){
+        var data=getPersistentData();if(!data.contains("oxy_guard_x")){data.putDouble("oxy_guard_x",getX());data.putDouble("oxy_guard_y",getY());data.putDouble("oxy_guard_z",getZ());}
         if(VillagerQuests.conversing(this)){getNavigation().stop();setDeltaMovement(0,getDeltaMovement().y,0);return;}
         if(tickCount%10==0){var enemies=level.getEntitiesOfClass(Mob.class,getBoundingBox().inflate(16),m->m instanceof Enemy&&m.isAlive()&&!RpgNecromancer.isSummon(m)&&!RpgSpecialists.temporary(m));
             var tag=getPersistentData();var home=new net.minecraft.world.phys.Vec3(tag.getDoubleOr("oxy_guard_x",getX()),tag.getDoubleOr("oxy_guard_y",getY()),tag.getDoubleOr("oxy_guard_z",getZ()));

@@ -21,7 +21,7 @@ public final class OxyRpg {
     private static final Logger LOGGER = LoggerFactory.getLogger(OxyRpg.class);
 
     public OxyRpg(net.neoforged.bus.api.IEventBus bus,net.neoforged.fml.ModContainer container) {
-        VillageGuards.register(bus);RpgConfig.register(container);PlayerAttachments.register(bus);RpgDataMaps.register(bus);RpgItems.register(bus);RpgParticles.register(bus);Bleeding.register(bus);RpgGameTests.functions(bus);
+        NeoForge.EVENT_BUS.addListener(AbilityAim::logout);NeoForge.EVENT_BUS.addListener(AbilityAim::stop);VillageGuards.register(bus);RpgConfig.register(container);PlayerAttachments.register(bus);RpgDataMaps.register(bus);RpgItems.register(bus);RpgParticles.register(bus);Bleeding.register(bus);RpgGameTests.functions(bus);
         bus.addListener(RpgDataGenerator::gather);bus.addListener(RpgGameTests::register);
         NeoForge.EVENT_BUS.addListener(RpgContent::listeners);NeoForge.EVENT_BUS.addListener(RpgContent::sync);
         bus.addListener(RpgContent::configReloaded);

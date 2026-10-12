@@ -13,7 +13,19 @@ import net.minecraft.world.phys.Vec3;
  * there is no homing, automatic attack or direct damage to the chosen target. */
 public final class AbilityAim {
     private static final ThreadLocal<Vec3> POINT=new ThreadLocal<>();
-    public static Vec3 direction(ServerPlayer p){var point=POINT.get();return point==null?p.getLookAngle():point.subtract(p.getEyePosition()).normalize();}
+    private record Hint(Vec3 point,long tick,net.minecraft.server.level.ServerLevel level){}
+    private static final java.util.Map<java.util.UUID,Hint> LIVE=new java.util.HashMap<>();
+    public static void receive(ServerPlayer p,Vec3 point){var valid=validatedPoint(p,point);if(valid!=null)LIVE.put(p.getUUID(),new Hint(valid,p.level().getGameTime(),p.level()));}
+    private static Vec3 live(ServerPlayer p){var hint=LIVE.get(p.getUUID());return hint!=null&&hint.level()==p.level()&&p.level().getGameTime()-hint.tick()<=10?hint.point():null;}
+    public static void logout(net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent e){LIVE.remove(e.getEntity().getUUID());}
+    public static void stop(net.neoforged.neoforge.event.server.ServerStoppedEvent e){LIVE.clear();}
+    public static boolean nativeShot(Projectile shot,ServerPlayer p,float speed,float spread,float yawOffset){
+        var point=live(p);if(point==null||!(shot instanceof net.minecraft.world.entity.projectile.AbstractArrow)||speed<=0)return false;
+        var aim=point.subtract(shot.position());if(aim.lengthSqr()<.001)return false;
+        if(!shot.isNoGravity()){double time=Math.min(24/speed,aim.length()/speed);aim=aim.add(0,.025*time*time,0);}
+        aim=aim.normalize().yRot((float)Math.toRadians(-yawOffset));shot.shoot(aim.x,aim.y,aim.z,speed,spread);return true;
+    }
+    public static Vec3 direction(ServerPlayer p){var point=POINT.get();if(point==null)point=live(p);return point==null?p.getLookAngle():point.subtract(p.getEyePosition()).normalize();}
     private static Vec3 validatedPoint(ServerPlayer p,Vec3 point){
         if(!Double.isFinite(point.x)||!Double.isFinite(point.y)||!Double.isFinite(point.z)||!p.isAlive()||p.isSpectator())return null;
         var delta=point.subtract(p.getEyePosition());
@@ -23,7 +35,7 @@ public final class AbilityAim {
     private static final ThreadLocal<Mob> TARGET=new ThreadLocal<>();
     private AbilityAim(){}
     public static void cast(ServerPlayer player,int targetId,Vec3 point,Runnable action){
-        var previousPoint=POINT.get();var validatedPoint=validatedPoint(player,point);if(validatedPoint==null)POINT.remove();else POINT.set(validatedPoint);
+        var previousPoint=POINT.get();var validatedPoint=validatedPoint(player,point);if(validatedPoint==null)POINT.remove();else{POINT.set(validatedPoint);LIVE.put(player.getUUID(),new Hint(validatedPoint,player.level().getGameTime(),player.level()));}
         var previous=TARGET.get();var target=validated(player,targetId);
         if(target==null)TARGET.remove();else TARGET.set(target);
         try{action.run();}finally{if(previousPoint==null)POINT.remove();else POINT.set(previousPoint);if(previous==null)TARGET.remove();else TARGET.set(previous);}
