@@ -1,0 +1,2471 @@
+{
+  "version": "0.50.1",
+  "protocol": 34,
+  "date": "2026-10-12",
+  "scope": "Inventário de arquivos versionados/novos não ignorados, hashes e sintaxe JSON; revisão detalhada dos caminhos alterados de debug, persistência, permissão, seleção de classes, kit e sincronização. Não implica revisão funcional integral de todos os arquivos.",
+  "files_count": 488,
+  "json_files_parsed": 192,
+  "classes": 12,
+  "class_nodes": 612,
+  "build": "build-windows.bat assemble successful",
+  "automated_tests_run": false,
+  "game_launched": false,
+  "game_validation": false,
+  "installed_jar_sha256": "57BB1A99075B5534D18BB69857BB1C161C429FDAFF87B5081F3BF7AE40F36B43",
+  "preserved_complement_jars": 16,
+  "installation_receipt": "docs/INSTALACAO_0501.md",
+  "native_contracts": [
+    "MinecraftServer.isSingleplayerOwner(NameAndId)",
+    "NameAndId(GameProfile)",
+    "AttachmentType.builder().serialize(MapCodec).copyOnDeath()",
+    "PlayerEvent.PlayerLoggedInEvent/Clone/PlayerRespawnEvent/PlayerLoggedOutEvent",
+    "CustomPacketPayload debug_state codec protocol 34"
+  ],
+  "screenshots_reviewed": [
+    "2026-10-12_17.33.58.png",
+    "2026-10-12_17.34.06.png",
+    "2026-10-12_17.34.46.png"
+  ],
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 153,
+      "sha256": "CC57CF2AD44F17B1937CBEA7AFF1782D61758D2F1AB479F9BC5436491047A86F"
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 621,
+      "sha256": "C64053B6DA4FD3EC5DFD570A3D750ECB96058DD5761ACD8D868DFCF62406325D"
+    },
+    {
+      "path": "AGENTS.md",
+      "bytes": 1050,
+      "sha256": "292513BB9DF7752F9725FE135F18CBEBECBAEC2E74D2DEE1A288F86A5AD507E3"
+    },
+    {
+      "path": "README.md",
+      "bytes": 9526,
+      "sha256": "FEE407096285BADBDF7FE9AC73368953A73386D9F483D3DFAE1CDE15C2A5D97E"
+    },
+    {
+      "path": "build-windows.bat",
+      "bytes": 698,
+      "sha256": "66DC2F1ECFF4CB43B98186534C2B547A6BD3DD3E9C55D7185DE88581FA160579"
+    },
+    {
+      "path": "build.gradle",
+      "bytes": 10379,
+      "sha256": "8E536293C2AD35FF7C4884CA647A480FAA9C5D5AD8EA402448B92E3211A3B128"
+    },
+    {
+      "path": "docs/ANIMACOES_EXTERNAS_039.md",
+      "bytes": 3329,
+      "sha256": "26E590472F3D1C2605A48EEE40437BBB9DBE4B23A724A6A42E15E51EFCA3F76F"
+    },
+    {
+      "path": "docs/ANIMACOES_PACOTE_041.json",
+      "bytes": 2427,
+      "sha256": "A26F78B9A7C0C5EF44FBF629164761B42D9244BAA97AAA3F71A37EEACC80E022"
+    },
+    {
+      "path": "docs/ANIMACOES_PACOTE_043.json",
+      "bytes": 966,
+      "sha256": "D7EB3B6880FAA9E5062A60846AC2B908F7524E9F1EA534A51EEF8F211A0EA95A"
+    },
+    {
+      "path": "docs/CATALOGO_CLASSES_050.md",
+      "bytes": 65745,
+      "sha256": "61366B89B2A6F95AB30718F9FC472D78399CC56FF54424C771EFDFCEC3531B37"
+    },
+    {
+      "path": "docs/CLASSES_026.md",
+      "bytes": 7354,
+      "sha256": "BFC969466E774AD85046C78E0DBFA0F4FE60846F1799EB66BA1206F064C11D7E"
+    },
+    {
+      "path": "docs/COMBATE_E_ANIMACOES_036.md",
+      "bytes": 6959,
+      "sha256": "9B7BC60E5FF2F2E6CF8F4B69DBB9E8B546DB17E22B7144A851B7CECB6599DB6F"
+    },
+    {
+      "path": "docs/CORRECOES_027.md",
+      "bytes": 2494,
+      "sha256": "CB8D78AA609562ED31586B276FAD53D6D2208BDA20078C2FDF4586B8C57E40FD"
+    },
+    {
+      "path": "docs/CORRECOES_0281.md",
+      "bytes": 1302,
+      "sha256": "81C7C457EC8D514183CCE1A511F31D0EAF84E91DEEDBB5A1DD93D9DC063893E8"
+    },
+    {
+      "path": "docs/CORRECOES_0282.md",
+      "bytes": 1121,
+      "sha256": "4FA6B11FAB4563BA9F588914A0CF602F19968B41094DDC8DCFB53EA3D0C852A0"
+    },
+    {
+      "path": "docs/CORRECOES_030.md",
+      "bytes": 2416,
+      "sha256": "6AE1495E5919759089E326343F38A293D5633AB97FB083BCB87AD3E3D1BA8C1C"
+    },
+    {
+      "path": "docs/CORRECOES_034.md",
+      "bytes": 4509,
+      "sha256": "1CECA19CD3279C3934E47248E4A1C244E58A703CAB2760F5897353D0CDB94D58"
+    },
+    {
+      "path": "docs/CORRECOES_039.md",
+      "bytes": 4886,
+      "sha256": "FEF7EE7AB4D28E1C3F6207F1B8DF1C004D223B4EC875DD23D12D79A278D61A96"
+    },
+    {
+      "path": "docs/CORRECOES_040.md",
+      "bytes": 5350,
+      "sha256": "4B673CB84907333C0ABA6C128F1F0C683A46407CF6C3132EC4FF9DA8A540C4BB"
+    },
+    {
+      "path": "docs/CORRECOES_0411.md",
+      "bytes": 2949,
+      "sha256": "2256C3976834DC596529600D5EC041AFBAD827B35C6F35DA612D685B1729CBC9"
+    },
+    {
+      "path": "docs/CORRECOES_0421.md",
+      "bytes": 1237,
+      "sha256": "B0DF4E42159D596F41B468C12DE2C411B55640E8870268D1BDAF5BE56A9699D7"
+    },
+    {
+      "path": "docs/CORRECOES_043.md",
+      "bytes": 5528,
+      "sha256": "DE2062CB2D223DF3EB7D06F1A529FBCE5119076019E0878D6CDA9A036F9CC4F3"
+    },
+    {
+      "path": "docs/CORRECOES_044.md",
+      "bytes": 7080,
+      "sha256": "E710774187278DEE306DA619162A2DE538A0BE6BC98FC8058BFC0BCB91C8F3CB"
+    },
+    {
+      "path": "docs/CORRECOES_045.md",
+      "bytes": 4066,
+      "sha256": "65A65358785F717DA71E25F04A421E3FCC391AB1BBA139792733D5D8D2AFB605"
+    },
+    {
+      "path": "docs/CORRECOES_047.md",
+      "bytes": 5289,
+      "sha256": "EB8D4A0826FFDF66386A56D43B239FE4CEFC10E8375FE645499AE5319490F105"
+    },
+    {
+      "path": "docs/CORRECOES_048.md",
+      "bytes": 7996,
+      "sha256": "97C9E7011C4A466FCC679CB15293B3030A52D46E73B5B546D86DCF601A824EE3"
+    },
+    {
+      "path": "docs/CORRECOES_049.md",
+      "bytes": 6630,
+      "sha256": "1817CB274468A9F7ED08B5F250481BB7F83CC23B3E2F253FA7DFE1D275B864AD"
+    },
+    {
+      "path": "docs/CORRECOES_050.md",
+      "bytes": 7586,
+      "sha256": "366FAF36C663AA2FF729683782998B6B2DD9011EDD52493A26715F715C3552C6"
+    },
+    {
+      "path": "docs/CORRECOES_0501.md",
+      "bytes": 4431,
+      "sha256": "05B3EA2C971815946885250BA34E0891D2BC64B3EBCADFDB1430C75E861EA951"
+    },
+    {
+      "path": "docs/DEBUG_037.md",
+      "bytes": 5819,
+      "sha256": "9753AE656217B274453F211EE5768EBD8461EB39EFF1179FC20582D547008110"
+    },
+    {
+      "path": "docs/DESEMPENHO_035.md",
+      "bytes": 6242,
+      "sha256": "E296A9A720DA74B22DD37B89EF823FDFF3043D4C217DB7C9D1ECA04A96B3C6DA"
+    },
+    {
+      "path": "docs/ESTADO_DO_PROJETO.md",
+      "bytes": 20601,
+      "sha256": "5F395DE2606EF53A12C4A9240F37A0111A5615B88F87AED9B920C502F922DEB4"
+    },
+    {
+      "path": "docs/ESTRUTURAS_033.json",
+      "bytes": 1900,
+      "sha256": "461C1384EC849D24F43B0223E490CEC1ACBB47970AF90F85CB699603E7271B30"
+    },
+    {
+      "path": "docs/EXPLORACAO_033.md",
+      "bytes": 6892,
+      "sha256": "A94B54D8454B9D476A6BAA7F0F413653E2932024D51A56388131A70473766AF7"
+    },
+    {
+      "path": "docs/INSTALACAO_033.json",
+      "bytes": 844,
+      "sha256": "846C92A6293A6D30371A553B9A2EF8BD5E3255CA74AE60A6CFE00E727A298DC8"
+    },
+    {
+      "path": "docs/INSTALACAO_034.json",
+      "bytes": 420,
+      "sha256": "6B5A88D56D6B10D0311B02736C11BC185F3275E89F297AF28DA75220B8A2F836"
+    },
+    {
+      "path": "docs/INSTALACAO_035.json",
+      "bytes": 2211,
+      "sha256": "DDB18B31EABBF4FF6ADAF0133C10AC3EBBCDFCA4DD2975306ED9666C1839BDAC"
+    },
+    {
+      "path": "docs/INSTALACAO_036.json",
+      "bytes": 2033,
+      "sha256": "7BAFDF4A103403B706256E0604873B10E2BC79D4D0B6F6D5F122A366893A3766"
+    },
+    {
+      "path": "docs/INSTALACAO_037.json",
+      "bytes": 2033,
+      "sha256": "A7523528CAE19BCB5D1C8BA002B39FD0911DCB4CAA835FCADA03E55345FFA298"
+    },
+    {
+      "path": "docs/INSTALACAO_038.json",
+      "bytes": 2033,
+      "sha256": "188EADEEB99F030C55821869CE48CEA6927A015FE0A023CADFE48A6F90A42002"
+    },
+    {
+      "path": "docs/INSTALACAO_039.json",
+      "bytes": 2076,
+      "sha256": "D0635A34F85470997ABE1F7BD6C6A2D29ECA8D6E2A44E990C501C48BACA71969"
+    },
+    {
+      "path": "docs/INSTALACAO_040.json",
+      "bytes": 2076,
+      "sha256": "B5E0262A6D9003FFB480C2EC2130212FF2739309487F3AF0B6CEA814A8364196"
+    },
+    {
+      "path": "docs/INSTALACAO_041.json",
+      "bytes": 6664,
+      "sha256": "51F240B17B8771B3007863A26D357FFC99531763431DD680093968342A1AA21D"
+    },
+    {
+      "path": "docs/INSTALACAO_0411.json",
+      "bytes": 4332,
+      "sha256": "0774DBE1F66AE1D4E3E71A7C0160349DDCD4711076E9337063239540FDBE37B4"
+    },
+    {
+      "path": "docs/INSTALACAO_042.json",
+      "bytes": 7041,
+      "sha256": "9E78A4B3962FFE58AE7CAF1993D4772BBC2DC1153535D8BA6506BF5A61D51306"
+    },
+    {
+      "path": "docs/INSTALACAO_0421.json",
+      "bytes": 4355,
+      "sha256": "ADA0C8B3FF78D8A0811B9AF7C80CD9F0B18691A0D19DCF768379D5A29BAE12C7"
+    },
+    {
+      "path": "docs/INSTALACAO_043.json",
+      "bytes": 5583,
+      "sha256": "6B8D61A54C5F12CFE845C23CC9C48B2080F15666A9733F1716B7A0D0587854E0"
+    },
+    {
+      "path": "docs/INSTALACAO_044.json",
+      "bytes": 4775,
+      "sha256": "F8D25BF860C6A7655E14140DAC0AC385FFD318CEADFBD48FC042EF8B4DCC8B10"
+    },
+    {
+      "path": "docs/INSTALACAO_045.json",
+      "bytes": 654,
+      "sha256": "F3CE5911A59D5826F7A2BC47716C08BB317104B7578DACE3203B297E19F77F83"
+    },
+    {
+      "path": "docs/INSTALACAO_046.json",
+      "bytes": 961,
+      "sha256": "9AACAABF63860F83F6750C0BD6B62859B5C2B873B62B7CB88EED8FA1901FBCED"
+    },
+    {
+      "path": "docs/INSTALACAO_047.json",
+      "bytes": 2898,
+      "sha256": "FFF60C1FEDB280E7E8E24E245534645B7188F106BB45D16052511248A5D0092C"
+    },
+    {
+      "path": "docs/INSTALACAO_048.json",
+      "bytes": 3856,
+      "sha256": "70132246C4B3C60973CF002F09BCA76C6FEF5E242C8083DFA1C3ED70532DF6D1"
+    },
+    {
+      "path": "docs/INSTALACAO_049.json",
+      "bytes": 3153,
+      "sha256": "C50CEB2F8114C85A39B8A3CD86A11DCEA3CD559D4194705CD28D9C0A6C64A41C"
+    },
+    {
+      "path": "docs/INSTALACAO_050.md",
+      "bytes": 1098,
+      "sha256": "17F93DAA6C15B13F18BB1D3CD19A7D6A3B37D34D21A4575075C115ED502E3EE4"
+    },
+    {
+      "path": "docs/INSTALACAO_0501.md",
+      "bytes": 1130,
+      "sha256": "B6C11887A19B056564FEBB5DD3EAAAFD27D97F00B79A1D8A14379ECA0D0798BA"
+    },
+    {
+      "path": "docs/INTEGRACOES_046.json",
+      "bytes": 1992,
+      "sha256": "55F7AA34F6ED7CD2A4DA8E7C8E9F60D8FD342F1D0925F978355D488719B2876F"
+    },
+    {
+      "path": "docs/INTEGRACOES_047.json",
+      "bytes": 2421,
+      "sha256": "B41EBE41F9092C90523EC813296F7DE9DDE53B96139BE7F8C0AAA6C656DF6B39"
+    },
+    {
+      "path": "docs/INTEGRACOES_048.json",
+      "bytes": 1071,
+      "sha256": "34390E87A24466531FAF95596B0F6A547500C6223E80433071105CC2D2A87266"
+    },
+    {
+      "path": "docs/INTEGRACOES_NEOFORGE.md",
+      "bytes": 7143,
+      "sha256": "9FE97BDB2E2E1AB36FC51A38BE05A50D1BF0188AC5AB8A1552AF9934E43FDC12"
+    },
+    {
+      "path": "docs/INTERFACE_032.md",
+      "bytes": 1545,
+      "sha256": "6BE4E4F90BAE4D0C673E87B8C6BF5835F736CFAE1DE2582947D98E5ACDDEC238"
+    },
+    {
+      "path": "docs/INTERFACE_EFEITOS_028.md",
+      "bytes": 1683,
+      "sha256": "1529B281C0DC0B7F85045444FA3BA98DAA24AF428F4DA29A84083E6217CB6A2F"
+    },
+    {
+      "path": "docs/INVENTARIO_CODIGO_032.json",
+      "bytes": 41277,
+      "sha256": "8A739C9F6789F6F820E3815BA840EE92E4C561D3465B67309CB9887FF4D81F30"
+    },
+    {
+      "path": "docs/INVENTARIO_CODIGO_033.json",
+      "bytes": 53895,
+      "sha256": "B21BEAE7CD8CE0D100A33ACF38FF53E4D85995DAB08F0C12C18E00985E4A6AD9"
+    },
+    {
+      "path": "docs/INVENTARIO_CODIGO_034.json",
+      "bytes": 35922,
+      "sha256": "39B8BA8615E5C1CA1F7341D66B8A64C53945683C18BE4724832753CAF6A5BB7E"
+    },
+    {
+      "path": "docs/INVENTARIO_CODIGO_035.json",
+      "bytes": 40982,
+      "sha256": "70A6F4EFEC7619B4192291761F79B3DA663F5C42193477CE7F4CE3759120C7BC"
+    },
+    {
+      "path": "docs/INVENTARIO_CODIGO_036.json",
+      "bytes": 40966,
+      "sha256": "54C54B730F2EF73B7F57EC9D61EEF7EE15A51F3DC6C8602521807D29D851B027"
+    },
+    {
+      "path": "docs/INVENTARIO_CODIGO_037.json",
+      "bytes": 41923,
+      "sha256": "D58F7469ED21228CC2556BDE8922CA5083245975225D5ADB7BD626DBBD1E7F9B"
+    },
+    {
+      "path": "docs/INVENTARIO_CODIGO_038.json",
+      "bytes": 43147,
+      "sha256": "0398907AC17F566BF5FEA18CCC8E1FF48096902ED04E4FBA82368D870234CB5A"
+    },
+    {
+      "path": "docs/INVENTARIO_CODIGO_039.json",
+      "bytes": 43793,
+      "sha256": "DB907BE365B419F53723E3E92CC4D004F0C54C018EE3396C238DA23CD82C8EF0"
+    },
+    {
+      "path": "docs/INVENTARIO_CODIGO_040.json",
+      "bytes": 43793,
+      "sha256": "2B6EB869CE657FB93BB2DA9E071D14BFF932569B7E9144A4D1397C7097E5A0BD"
+    },
+    {
+      "path": "docs/INVENTARIO_CODIGO_041.json",
+      "bytes": 45251,
+      "sha256": "4F5FCC5BDBD350EAEA8EE2E39594D4AEA6D9CBEBC64917D316FC131CF4E3998B"
+    },
+    {
+      "path": "docs/INVENTARIO_CODIGO_042.json",
+      "bytes": 48413,
+      "sha256": "DF21FF0463E6C843668D3F67E0B13951FD70A065A2BC3327951E712334111800"
+    },
+    {
+      "path": "docs/MINIMAPA_031.md",
+      "bytes": 1782,
+      "sha256": "4765B9F5A51B470DEEE5032632E951A2DC861B4EFFD56C80E18F99AE5EC3C230"
+    },
+    {
+      "path": "docs/NPCS_E_INTEGRACOES_046.md",
+      "bytes": 8716,
+      "sha256": "B671C18523E07B7A91CD58827EA56C140F293082828F76CB793CAB425FD383C6"
+    },
+    {
+      "path": "docs/OTIMIZACOES_035.json",
+      "bytes": 1389,
+      "sha256": "3E08546AC2BFF64A21F3D26C05EF9DAC7A0FAE852995EB679E69EC7B6FC50FBA"
+    },
+    {
+      "path": "docs/PARTICULAS_038.md",
+      "bytes": 4867,
+      "sha256": "397031674A3154509A6FC1F59255D0706A7EC438E44BF3E90E8D82BFD92DDDE8"
+    },
+    {
+      "path": "docs/REFERENCIAS_045.md",
+      "bytes": 4987,
+      "sha256": "6488371B360859B81599904FB0AA40010DA58B5AEE051AFC205A01DFB774ECA1"
+    },
+    {
+      "path": "docs/REFERENCIAS_E_IDEIAS_033.md",
+      "bytes": 3544,
+      "sha256": "178DB092A8A25B1B759D69EE1D5F6A6F709E55F1071495169F716971E93C87EA"
+    },
+    {
+      "path": "docs/REVISAO_ARQUIVOS_035.json",
+      "bytes": 57182,
+      "sha256": "C4C6202F469CE563E7118392295ACAD704390A852D9B28C67CFC480ACA4F8FF5"
+    },
+    {
+      "path": "docs/REVISAO_ARQUIVOS_036.json",
+      "bytes": 58254,
+      "sha256": "86507B6382C7BB8A6BD44336FD21DDC8358B1F9B65FCE3BEB6B99E41EF3D1AE5"
+    },
+    {
+      "path": "docs/REVISAO_ARQUIVOS_037.json",
+      "bytes": 59510,
+      "sha256": "7961CA0B4A62FDF86A5740F477AF4228FBB19C485C7A3711D64C8EE8BFC38AA4"
+    },
+    {
+      "path": "docs/REVISAO_ARQUIVOS_038.json",
+      "bytes": 61641,
+      "sha256": "F247BBEA4F970FB891427CEB93CA78F7D5C74904B6BFF0789F76198EB9F83468"
+    },
+    {
+      "path": "docs/REVISAO_ARQUIVOS_039.json",
+      "bytes": 62980,
+      "sha256": "6E914E850AFB05675E1ACFD82CC626409F2EBE786F4D11AF9023412698C468FB"
+    },
+    {
+      "path": "docs/REVISAO_ARQUIVOS_040.json",
+      "bytes": 63649,
+      "sha256": "29D4127F5AB2BD3DAA1F57D1F40AA208CCEB5E72D2D6CA05B97DD4511A7B142C"
+    },
+    {
+      "path": "docs/REVISAO_ARQUIVOS_041.json",
+      "bytes": 66364,
+      "sha256": "4B30864219F47718CD5ECD4E017B3B289BD3077EE86357C3DEC75A11575DE4B9"
+    },
+    {
+      "path": "docs/REVISAO_ARQUIVOS_0411.json",
+      "bytes": 66922,
+      "sha256": "585BC4637AC33E9DED5F85732B024E9EDF763B413A8582035614FB0FF31356F4"
+    },
+    {
+      "path": "docs/REVISAO_ARQUIVOS_042.json",
+      "bytes": 71651,
+      "sha256": "73A121A52E51DF0B6E5A7A975BC3D08F503A771E380AC48E0FF00D88CFD817F5"
+    },
+    {
+      "path": "docs/REVISAO_ARQUIVOS_043.json",
+      "bytes": 72456,
+      "sha256": "C00AAAFD370F2FDC2498175409BE79BFB7C8881B0210CC6398F0561B63FEF26C"
+    },
+    {
+      "path": "docs/REVISAO_ARQUIVOS_044.json",
+      "bytes": 74180,
+      "sha256": "03BFCE59C5BA93BAAFB2CCB0A0307926BB85D3B5DF1901EBBE98FF340888C57E"
+    },
+    {
+      "path": "docs/REVISAO_ARQUIVOS_045.json",
+      "bytes": 74840,
+      "sha256": "1A964810C005B9E27A206E956CDD387BD8918880BFE2F4496EBA1FED06F3B8CA"
+    },
+    {
+      "path": "docs/REVISAO_ARQUIVOS_046.json",
+      "bytes": 77500,
+      "sha256": "028A4AA1BB68BAF9177E81D932CC4D11026AF405C45B40DE7DF324D82FD45505"
+    },
+    {
+      "path": "docs/REVISAO_ARQUIVOS_047.json",
+      "bytes": 79784,
+      "sha256": "61A094BBFC86303C4A9EF9A1AB477547B49522E32A13DCD2E0A050D8ED8CA966"
+    },
+    {
+      "path": "docs/REVISAO_ARQUIVOS_048.json",
+      "bytes": 81161,
+      "sha256": "EF480B136CDAC28FEF25C939D5FFA2CC819A5220569E1AD5F02F7AB9F86C6D95"
+    },
+    {
+      "path": "docs/REVISAO_ARQUIVOS_049.json",
+      "bytes": 83321,
+      "sha256": "1B140400BC0D19A7AC24B2B729690F5760271E386A3795F1DFE581E86DBEF579"
+    },
+    {
+      "path": "docs/REVISAO_ARQUIVOS_050.json",
+      "bytes": 94010,
+      "sha256": "48BEFEE47A905B8BA4EA8AC52849076EED5E83A9768BA7A7BBC45C730FE0DBBB"
+    },
+    {
+      "path": "docs/SANGRAMENTO_ANIMACOES_041.md",
+      "bytes": 4226,
+      "sha256": "67A2A741F46474289F8BF81AD5627919AC60FDDF39A4A4ABAA5B970D6723DC15"
+    },
+    {
+      "path": "docs/VAMPIRESCO_AMBIENTE_042.md",
+      "bytes": 8772,
+      "sha256": "575FED012FB42910BDF64CFBF87EAC56960744EAFA34F85768102EB10D297416"
+    },
+    {
+      "path": "docs/VOO_ACROBATICO_029.md",
+      "bytes": 1579,
+      "sha256": "FFC727500D0F64509FF4BF17238E801CB1063C774BFA4832F72A36F944FCDB26"
+    },
+    {
+      "path": "gradle.properties",
+      "bytes": 1953,
+      "sha256": "BB7BCF83B12C78A678DCD61F862606A6CA84484915C091F853D3688C93680BBA"
+    },
+    {
+      "path": "gradle/wrapper/gradle-wrapper.jar",
+      "bytes": 43764,
+      "sha256": "7D3A4AC4DE1C32B59BC6A4EB8ECB8E612CCD0CF1AE1E99F66902DA64DF296172"
+    },
+    {
+      "path": "gradle/wrapper/gradle-wrapper.properties",
+      "bytes": 349,
+      "sha256": "6CFE4262A5189AF7A0D40A90CA8CFB6488C6C3ED8CF902723585191E34FF2ABF"
+    },
+    {
+      "path": "gradlew",
+      "bytes": 8984,
+      "sha256": "28D2C82E7F9CCA986EE8DA10BA939CF9260D682F73936B2B6D2545E35360CE7B"
+    },
+    {
+      "path": "gradlew.bat",
+      "bytes": 2937,
+      "sha256": "1D297E00BD21DE3ACE22B4D7F2DE1F9DFA858883D66BBF7C1CCBECCCEC8F4F3B"
+    },
+    {
+      "path": "integrations/barrel-roll/LICENSE",
+      "bytes": 35821,
+      "sha256": "81CBAE84A29CE7E770BF2BC7B178E50BDA0CE8DE6067ABA661B0BC7B05B562F8"
+    },
+    {
+      "path": "integrations/barrel-roll/README.md",
+      "bytes": 974,
+      "sha256": "308CDF3C8BA4286CB0505D67D0B45BE2C6F8E6A309C93FDDD0117C573A30CF07"
+    },
+    {
+      "path": "integrations/barrel-roll/neoforge-1.21.10.patch",
+      "bytes": 24551,
+      "sha256": "768E80E8EA12FF6E30356D76AF7CEA88CA2F96F0F11C808E7F872DECB479B4B1"
+    },
+    {
+      "path": "integrations/yacl/README.md",
+      "bytes": 688,
+      "sha256": "B00842F5C6D96CDE8D12A0C1AB5320D44F8BA2A8680F6FF8A4BF10FC8401174D"
+    },
+    {
+      "path": "scripts/generate-class-catalog.py",
+      "bytes": 15384,
+      "sha256": "56E2D6A072ED184813D2BAEC138F5199C887D982AA8328029DF2AF7B2EE9CFA3"
+    },
+    {
+      "path": "scripts/generate-fire-pulse.py",
+      "bytes": 1345,
+      "sha256": "D50355E35A71E6CD63D612092CDE9D9AF9F9100C9CF974AEFFD7027C2F921AE9"
+    },
+    {
+      "path": "scripts/test-progression.sh",
+      "bytes": 673,
+      "sha256": "C99A42024CA3DDEA21B91A52467AFE8AEBDAF3E93A0B75B6C2475C753D8FE935"
+    },
+    {
+      "path": "settings.gradle",
+      "bytes": 171,
+      "sha256": "FE5410A4F8375AD1D0CEB4D3739CF1C3DDB67EE303A98511E6DD379A29377E54"
+    },
+    {
+      "path": "src/generated/resources/data/oxyrpg/data_maps/entity_type/mob_tuning.json",
+      "bytes": 205,
+      "sha256": "78C9FE5C88B98237D4C21B0C9BEA9E94F60C8544E732F374BF7896D1F981D745"
+    },
+    {
+      "path": "src/generated/resources/data/oxyrpg/data_maps/item/weapon_tuning.json",
+      "bytes": 575,
+      "sha256": "F489D01F67E373ABF2E6F7D560AA29FF1928187CDB6085862AD859A6E54E108C"
+    },
+    {
+      "path": "src/generated/resources/data/oxyrpg/recipe/sigil.json",
+      "bytes": 276,
+      "sha256": "B34D678584DAEF3A137F008FA1F4023ED780C6C0E8FB727E2B00EA9304D5B536"
+    },
+    {
+      "path": "src/generated/resources/data/oxyrpg/rpg/classes/arqueiro.json",
+      "bytes": 8168,
+      "sha256": "D3E1C65843350B44CBE7C0AC523775081F9EE56563975BAF1EAB87246F3D013A"
+    },
+    {
+      "path": "src/generated/resources/data/oxyrpg/rpg/classes/arqueiro_novo.json",
+      "bytes": 8295,
+      "sha256": "EFF617D6AD256E7A162C7D2E0F9D7DED26F6C978429FF68925DAF0E57BAF3850"
+    },
+    {
+      "path": "src/generated/resources/data/oxyrpg/rpg/classes/aviario.json",
+      "bytes": 9825,
+      "sha256": "FDC01EA65C4AC0D7F720831B56BE2D74142B10E8A9B68E10D3BBB0C2DD5EB538"
+    },
+    {
+      "path": "src/generated/resources/data/oxyrpg/rpg/classes/deus_trovao.json",
+      "bytes": 8487,
+      "sha256": "F6526C7C3E43ADF080B1034806886EB42AEF3D5BB661E7A37472E4AE40B6FE7D"
+    },
+    {
+      "path": "src/generated/resources/data/oxyrpg/rpg/classes/guerreiro.json",
+      "bytes": 9824,
+      "sha256": "4E871C9F2A1E8859C7B175BF55A59B25E4712F1D7FFA5AFD2419BB8A818A2E0C"
+    },
+    {
+      "path": "src/generated/resources/data/oxyrpg/rpg/classes/hidromante.json",
+      "bytes": 9787,
+      "sha256": "26408F850A834FF4E0EA97EA9CDB6A747F751BABBDB4D7E5A3D847CA41CBBB77"
+    },
+    {
+      "path": "src/generated/resources/data/oxyrpg/rpg/classes/ilusionista.json",
+      "bytes": 9653,
+      "sha256": "6E7DB9716555C6704AB7C78F6BFBB21699DB9058A8A1B11B563BE468FD55A5AA"
+    },
+    {
+      "path": "src/generated/resources/data/oxyrpg/rpg/classes/mago.json",
+      "bytes": 9783,
+      "sha256": "35A6B762049DCB383027B849AE3989C2E3D4F3C93B521A950F3C17AB9BA6F614"
+    },
+    {
+      "path": "src/generated/resources/data/oxyrpg/rpg/classes/necromante.json",
+      "bytes": 9912,
+      "sha256": "9B69C9ADBBF80598D30349878F0D4EE8434C38AAA8CD2D06E79FEB51E19E8BB3"
+    },
+    {
+      "path": "src/generated/resources/data/oxyrpg/rpg/classes/piromante.json",
+      "bytes": 9902,
+      "sha256": "249CAEB2F8C2852C1CD688C814E7B8420CE9D9AA6267E93933ADBC9EBBC593CB"
+    },
+    {
+      "path": "src/generated/resources/data/oxyrpg/rpg/classes/vampiresco.json",
+      "bytes": 8358,
+      "sha256": "03E425B6D079B157B77A4EC075D29279ABED4EE904EA086FDA96C0BA8E49A596"
+    },
+    {
+      "path": "src/generated/resources/data/oxyrpg/rpg/classes/xama.json",
+      "bytes": 9999,
+      "sha256": "BC136A5CB3C063F2C65BF23A6E3153A084762AF3FDFDDDB44956AAC67A847F28"
+    },
+    {
+      "path": "src/generated/resources/data/oxyrpg/rpg/quests.json",
+      "bytes": 1533,
+      "sha256": "367F3E53A753BD6809142C5869E8427D147466DB429760320DAC8A10F76E41A0"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/AbilityAim.java",
+      "bytes": 6967,
+      "sha256": "B45CD4ADE407F1D4C9594003EFACE80CD1049C1870138922A9EC8300331CCDAB"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/AdvancedClasses.java",
+      "bytes": 18790,
+      "sha256": "66D5794A8E3342523B2E266EA0211B44BA4A55DC4F023FF3B8B1FD0627806F45"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/AdvancedTrees.java",
+      "bytes": 4998,
+      "sha256": "5D6BE90A054615CE4ABDF4D6676DCB8499B988A780AB9B8571A8E23137133DEF"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/AdventureItems.java",
+      "bytes": 7323,
+      "sha256": "223B6761DE6F7B9720D36AE6AE6420DB21BA517D26E31B9833A590433068C24B"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/AnimatedSigilItem.java",
+      "bytes": 1773,
+      "sha256": "358F9BB34429447DE179F38D907282BE14FAC6B9DAED6460A97370EB76974975"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/AttributeStats.java",
+      "bytes": 1328,
+      "sha256": "C36E9B8B95B2587C87D330CEF42AE25E1CF5D503EC80BFE153AD40EE66E01E71"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/AttributeTree.java",
+      "bytes": 1910,
+      "sha256": "A0B98840E5DA4B85C2A7147AB88C21F79D699E157FD48A00704610887E81A9ED"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/AviaryCarry.java",
+      "bytes": 3953,
+      "sha256": "3CEEE18584180E7A1C85416A00950D0F4A85D0A24D9E01BA51DD18693790AE71"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/Bleeding.java",
+      "bytes": 5819,
+      "sha256": "722A02EDF982E13DE16DEFDCA890435BE9723F739DE568329166063E0427B5AD"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/ClassEquipment.java",
+      "bytes": 19771,
+      "sha256": "EC19FB6D7215D2C1778A17DB642AFA8D67E50D9680000095B7E6DFCE41D85DCE"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/ClassJourney.java",
+      "bytes": 5864,
+      "sha256": "1BD882D9B326A91C026B6A56085EDE1B7850CAEEB332DA9F877E3B0837A4E1A5"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/ClassRelicItem.java",
+      "bytes": 1576,
+      "sha256": "1EA98E2F88EC59708A2D102B273F80C2706C9F519EEC731642AC6443C4C19221"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/ClassRelics.java",
+      "bytes": 10834,
+      "sha256": "9BE93C3E317D0080E28F35F58B38723152BB25FF26040DDA7A822D266259D17D"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/ClassRules.java",
+      "bytes": 7079,
+      "sha256": "72879E18FC094821CAC858C591360DE368B8BECA8DEC24B1C9C4BB25D033758E"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/CombatChances.java",
+      "bytes": 3395,
+      "sha256": "10B790A2D48BDD420B7E26298FD0A0C40ADD1B43328B32D685CAEA4ADA7A3569"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/CombatFeedback.java",
+      "bytes": 3975,
+      "sha256": "348EEEA659404F93D22EFFDA0C1D7F329201C308B33E355A7FEC0114AACFDB1D"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/CombatParticles.java",
+      "bytes": 2381,
+      "sha256": "C31A04C8D27321D09AF00397BEEF5B9E44AB1D584EE49957CF3B1BD74000A7C7"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/CombatTactics.java",
+      "bytes": 5712,
+      "sha256": "24682C8D99F4E6D4A18BAC331D06B7E272555DEB19D611F60CFD38109297C8DE"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/ComplementCompat.java",
+      "bytes": 966,
+      "sha256": "47C349ABBA116EBA6F547E6C4F2F295E712099FA1387F68EC7FF71C714E1AD72"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/ConditionDamage.java",
+      "bytes": 1216,
+      "sha256": "67B7579E846CB57B6A06173B90BC15CF9EA720ADA4E206636105BD1E01199E85"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/CreativeGroups.java",
+      "bytes": 2862,
+      "sha256": "C092A974CF3B78838DBA068EA8E6E2F1845E16CFCC9439973657DF059A3CF05C"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/DebugControls.java",
+      "bytes": 6572,
+      "sha256": "2E155FD6294836EDC2ADDBBC13227D85146CA40653C91440FD1DF1E30509E41D"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/DebugSettings.java",
+      "bytes": 2058,
+      "sha256": "B203989342205FC46802C09F24C8E38D704F7BB3D05F292C46FC81018A8DFC53"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/EliteAbilities.java",
+      "bytes": 14623,
+      "sha256": "95D98593F591CE183390D6D9155E375411B38C2149621FFC8C605E72B12437F9"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/EliteAffixes.java",
+      "bytes": 5228,
+      "sha256": "FA5830A6AC03832D2C58FAEFFE6407D73FF8294B70E2B6F2F2ADA6B8D207286A"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/EliteMobs.java",
+      "bytes": 5119,
+      "sha256": "A9660FB4F125E27FA1C41D5AB220800CC7859BCE846338C6404D47CBD51857B3"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/EntityMotions.java",
+      "bytes": 2460,
+      "sha256": "A67C1266DC77D7A8D18E55618CEAE48C7AC60D1C500231EAC586463A852A497C"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/EquipmentAccess.java",
+      "bytes": 1966,
+      "sha256": "B5D2D4A4B80F76B2D955F8D3E010CE4AF8B9CA4F9C20024D9D21E0AA8FC92B5F"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/FluidPockets.java",
+      "bytes": 4387,
+      "sha256": "9BB4740D4A5AD2BF2A02F28BB3F0B9AE932392CA2C4029661D70C23C13A55339"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/ManaPotionItem.java",
+      "bytes": 1815,
+      "sha256": "48BE65A3714015696D12BF420471114A5221392093C86E5C218871AA1CA7E965"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/MeteorCrater.java",
+      "bytes": 3618,
+      "sha256": "96D883E6427BD0153EE97B655485C445DF886F34A943DCA0C399B3E0F4BC03AE"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/MimicAppearance.java",
+      "bytes": 1164,
+      "sha256": "66BB6517A4040883AAE1E166AB07533A186374E3B9363D584EB49A8B7E8D3D12"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/MobLevels.java",
+      "bytes": 9678,
+      "sha256": "377206F7E6EFAECA605A6250D4BFF91B905AA774F88040F44D56F0CDD40BEBD3"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/MobLoot.java",
+      "bytes": 2757,
+      "sha256": "B8681D2CE88C44DBBEE7107065F690C8838E4E8B0E8B4F7D93ECB9258E7F86B3"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/NpcContracts.java",
+      "bytes": 14213,
+      "sha256": "BF207DC893447C7105AA57306F79B0DA21E3F28AC502F2632429915B7A69255C"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/OxyRpg.java",
+      "bytes": 33491,
+      "sha256": "DAAC06057D5BEA036126F9C902E67387ACF1B8EA338167DBF7B71D3EEB40A3E2"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/PlayerAttachments.java",
+      "bytes": 2802,
+      "sha256": "E01A4A03957A92FC58C73FE92B3BF9FDDDA4CA82F715DD7D45CC9C4EBA6C375A"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/ProfessionStore.java",
+      "bytes": 4257,
+      "sha256": "123660D0FE2ACC31F4894406EB3B947E6D83EEDB0E51021CA691955757F98498"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/Professions.java",
+      "bytes": 13618,
+      "sha256": "A045CEB1736E1641709B89B981B526D16F9828D300A81ACC404DE9334955DDFE"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/ProfileStore.java",
+      "bytes": 5507,
+      "sha256": "0A1461D4DF4CDFB9ADC01B77CBE83707398D008CB4530D163F165C995B5524C3"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/ProgressionEffects.java",
+      "bytes": 1532,
+      "sha256": "B2B7BB4C3637D09BAC6E27669841B8600D345D3504178226BA03C84DBDF035AA"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/PyroTerrain.java",
+      "bytes": 1906,
+      "sha256": "151500593B7369FDC14264EA0A114D2F9F10A36EA35A2E92B377B8B7D6E8C743"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/QuestCatalog.java",
+      "bytes": 2220,
+      "sha256": "49809FAC521CABDBDC83AAED5DB84A668F33422711D784ED6C68C200A47237CC"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/RaiderPatrols.java",
+      "bytes": 6860,
+      "sha256": "8E7EA118C37CFB49B69B2D072D340102A8540E0574EFB3AE12483B904F903F11"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/RpgAbilities.java",
+      "bytes": 35645,
+      "sha256": "9E0929FEFE57E506596497FB53AC7982196D8B2FC8385939DDCE9B84892372DD"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/RpgAviary.java",
+      "bytes": 17348,
+      "sha256": "B436AF524AFC91871DE8DC873FC99602F60A6D9F7B42C45E2382582E08185B0E"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/RpgClass.java",
+      "bytes": 716,
+      "sha256": "CF977156B4EA2DDCDF4C190B4B706F7329C8985F578916C187BB983641CB31A7"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/RpgConfig.java",
+      "bytes": 3792,
+      "sha256": "9F00826863A755C14859A9EC133B838DC1BD3FA2700058F6EA8B6881FDC5F6EF"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/RpgContent.java",
+      "bytes": 8181,
+      "sha256": "6E40FC988CA5C7FBC6AF6FB5642E8A81F5E60AD92D5ED4FFA977D441B37D6833"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/RpgDataGenerator.java",
+      "bytes": 3361,
+      "sha256": "A0798B78853083023E03A8CCAD721E60DC6C76898BFD8674E81BB56EF3BAE750"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/RpgDataMaps.java",
+      "bytes": 3701,
+      "sha256": "D6AC697008B9158B079B999CAC02334E648CEB35C59CCCEAC044351CE9696EC2"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/RpgDebug.java",
+      "bytes": 10868,
+      "sha256": "5B95B2584EBBE31D06EE653B2EFF36A14A90946BB242369670FF2200E58C0D9D"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/RpgEvasion.java",
+      "bytes": 7087,
+      "sha256": "B6202680852109AFCDAFE232640ED3E8C8FE82101DE337FD524264D8D0EC5098"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/RpgGameTests.java",
+      "bytes": 6145,
+      "sha256": "FAF4DE5F8971392A5BEE547104D536B211452A19C01F23E8F4389F4700430F86"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/RpgItems.java",
+      "bytes": 5015,
+      "sha256": "A1955EF4F3C6ED028B5652E8DB99590E4B8368D4D6D7DDDDECB6A2236ED5710C"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/RpgNecromancer.java",
+      "bytes": 23124,
+      "sha256": "FF6429B7A1A692D0D29D1FBD55E35E87C8B8CAFBF61E55875B77BF95A87821A1"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/RpgNetwork.java",
+      "bytes": 25477,
+      "sha256": "5D4A349B9E528EFCE6615843230320F5F83DC100DB22B0F57F166A0DFD55F899"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/RpgParticles.java",
+      "bytes": 1529,
+      "sha256": "B6E5B6360921509B52B915EC76C6C639D8E35BC2C1956F53567194F8254497E3"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/RpgProfile.java",
+      "bytes": 12189,
+      "sha256": "9C3CCE56FB7970532CADDC115968DA518BD02956EE5EFC15AC76FD23B8CF52D2"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/RpgProfiler.java",
+      "bytes": 1305,
+      "sha256": "AAA9B9EA81DF137A832CE702E64F212A89B47997322BAB3D691FC0384883F73A"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/RpgResources.java",
+      "bytes": 9575,
+      "sha256": "B4483E3A0B06E6BE0086A61FA0F6E16EFF770BEC9AC27024168EACF6B1466B4A"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/RpgShaman.java",
+      "bytes": 7217,
+      "sha256": "EA2482FD7BFF7DF0E6B69CA4CE059F54AA241EA695FC251D7A45B2DBAF182931"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/RpgSpecialists.java",
+      "bytes": 34315,
+      "sha256": "06CEC39C566936B5989CEB2CE22DA27BFECC4C2381028D73BC28B7859FD8F3D9"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/RpgVampire.java",
+      "bytes": 19398,
+      "sha256": "3A4F5EA37BD1C7F74E5DE782E36D4D4904DB5D7C28BDA42C96C959A2597BB036"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/ShieldParry.java",
+      "bytes": 2509,
+      "sha256": "43434EF9C0B4828635B35B0BF9F364D185FA6D61481AB7508A4A9BF278E2CDBA"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/SkillEffects.java",
+      "bytes": 937,
+      "sha256": "5905A87DFBE3CA0708F9C58AB6F321D907F1713D49D5EEF236B91FE2219742A6"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/SkillTree.java",
+      "bytes": 16883,
+      "sha256": "204ED9EBECA2963F6B2B5E4B9B89699AB2028B24BBF9A5293FFB69F682E0B78A"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/SkillTreeLayouts.java",
+      "bytes": 4089,
+      "sha256": "8FB679D05D39476137950751EC28F0D66DABEC84A180D4DFEA15327003F1B23D"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/SpecialistTrees.java",
+      "bytes": 8559,
+      "sha256": "4888A426ECCD34C49E4496B18AB468EDFEB6C801BC9AB36D1506EC983A672857"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/TemporaryBlocks.java",
+      "bytes": 7010,
+      "sha256": "3327FABB4E88208E4968EB77C90D89872AFD0CEB9752FED576E1F2388D25D54F"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/VampireHunt.java",
+      "bytes": 8316,
+      "sha256": "C73F3CFA9570381E46159A6F5EECBDE4FEAC60D43CB85B45586EF3920CE3958F"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/VillageGuard.java",
+      "bytes": 2430,
+      "sha256": "900056E6D9CA30629ED262D96B3B2BB10A5CAB026D008CCAD0F2C12B9D48DE5A"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/VillageGuards.java",
+      "bytes": 2700,
+      "sha256": "CB9197DBC21DB50443366065D08F2D1D3CFA4184C53B09B1A791B06E2389262C"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/VillageLoot.java",
+      "bytes": 2035,
+      "sha256": "8450F3A0F881E3CBFB3DBBEA045950CA4199C807F3F9DACEF5008E854B49CE24"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/VillagerQuests.java",
+      "bytes": 16644,
+      "sha256": "DB43676CF665B1B478A3B9221EA0380E561EF9D67BAF1538198FC642B2883E58"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/AbilityPreview.java",
+      "bytes": 5797,
+      "sha256": "09411C175C97EBF498A32ED1B5027B2F6B5ECB03BC6F67789C11AA7B148558EC"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/AdventureCatalogScreen.java",
+      "bytes": 3006,
+      "sha256": "691D4F99AC3B79241A034F76A85ECA5C75A2361138F419A99D4E81A3E821FC6A"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/AmbientLeaf.java",
+      "bytes": 1934,
+      "sha256": "1F7A26B01F2499246318CA92355BED25E2A411ADDB206FE0EAC85C10D9BBF7FB"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/AmbientOptions.java",
+      "bytes": 1298,
+      "sha256": "343A278AB8062F5C565B8C604D7BD96ACA367692F7DF4552EB164251D64377BC"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/AmbientSettingsScreen.java",
+      "bytes": 1598,
+      "sha256": "BE3D2E5439BC679CFCC93C55ED85AEE20EF3F5B90BCED4637F63A3C03BB4B2D6"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/AmbientWorld.java",
+      "bytes": 2604,
+      "sha256": "93B84C8C577624F44F0C44389F1B4A3BCBB0B607563A6D608059D0B4A66EABF2"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/ArsenalScreen.java",
+      "bytes": 7047,
+      "sha256": "3067BA8396716FC2C7B49C8F860250D4EF04EEE1105274678EA7797C8D34E1B1"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/AttributesScreen.java",
+      "bytes": 1747,
+      "sha256": "AE9ACB8A66A2897F1DDD7A2014E67034BA44B3F6B4A18D0FB9881F70EED3360E"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/BarrelRollCompat.java",
+      "bytes": 2441,
+      "sha256": "33643653E6DAC5F18104C454ECA0549236FF3343366A7E808BA59544EC8BDC03"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/CameraAim.java",
+      "bytes": 2229,
+      "sha256": "F97C54C9FDEE78AAD8C0576A7620F18F5E60658328ECDD684EA7B7E0E0AACAA8"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/CameraClientQA.java",
+      "bytes": 6653,
+      "sha256": "FF6E674CA5A10BA97352BEFB0C7A5AB542CA6C3530B1FF22E7FC90C2BC1EAC35"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/CameraMotion.java",
+      "bytes": 1352,
+      "sha256": "6AF8F02362C4D5B501E525D313E7D4AF0606A4A912D6B6F10244DA464677CFB9"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/CameraProjection.java",
+      "bytes": 989,
+      "sha256": "86996E439212D37B6DE17D227393E4C48FF42A2C6C9BC08DDF587057852A1222"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/CameraSettingsScreen.java",
+      "bytes": 3614,
+      "sha256": "1F16E4E869F1693ABF13B6A52873225ACB7F8B1A633A9939F41FDB71EB8921C7"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/ClassCastEffects.java",
+      "bytes": 8332,
+      "sha256": "4197FA3FC01BE16A5C70A3D619890838B83E61A2B255627B43F2330DCF63A1EB"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/ClassJourneyScreen.java",
+      "bytes": 2862,
+      "sha256": "5A1208463F54FC83EFE096BDDCAF6ED932F8123B27CA0815FA62F9901A33BBC0"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/ClassSelectionScreen.java",
+      "bytes": 14100,
+      "sha256": "39239E6702FE03778E62604CBCB3B8F8508A6BC9AB4B8F78456C05D930329E0F"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/CombatOptions.java",
+      "bytes": 3226,
+      "sha256": "DC93C5B6B3A89B3C2D5C1E9D2791DF64841268838D624D9B1D3B31AA4A7EF1C3"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/CombatParticle.java",
+      "bytes": 8539,
+      "sha256": "3838F000E6CA167B2F56649903A9F5AB81732DF3622525DF0B0250AA98B3BDCA"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/CombatSettingsScreen.java",
+      "bytes": 2578,
+      "sha256": "E7BAA2B7BF7EC83463CE97EACCF8C99DA9319FD6275D0801A91499455A462BE7"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/CombatVisualSettingsScreen.java",
+      "bytes": 3491,
+      "sha256": "BB08C03109D934D419C3883DED78C2A954F6CB96EC340541FF375BDDDE6434E5"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/DamageNumbers.java",
+      "bytes": 5580,
+      "sha256": "F5ECF58DACECD7BDEEBD912CE21656C8659C42CB913CF07481A8EC40375879F3"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/DebugScreen.java",
+      "bytes": 4961,
+      "sha256": "70E28AB386C1E8AE56AA41B35D5A871D6565B70700A230891D687F1A0358E15E"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/DisguiseVisuals.java",
+      "bytes": 4607,
+      "sha256": "B0D8CD738E01D421C5593CC62814D9A0656E88C1DACE3753B27070CC0E88BEDA"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/DodgeAnimation.java",
+      "bytes": 1600,
+      "sha256": "25487ACACF9DACEDB4A72BDBAF8AE1B0C9F62AFA80039DD66E9B65BA99B94F24"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/DynamicHud.java",
+      "bytes": 9173,
+      "sha256": "8D90FD5E020CA6D8B23EEBDBEFD897940C9F2775D01EF4B18F0CCDB530146B85"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/ElectricArcs.java",
+      "bytes": 1066,
+      "sha256": "05EED38FE1F53BFD848B9A92CA5616F6F87373BF013240456EEFE5C193DC7BD5"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/EliteWarnings.java",
+      "bytes": 3083,
+      "sha256": "60C5D7A616C87F698462ADE01F123689B4C9A6CB4F26925C135AC02847DB90AF"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/EmfCombatBridge.java",
+      "bytes": 1117,
+      "sha256": "F26F56B56CE58BC793F3C368A3B60A6DCF53E5AB9723EBE78506F3BB53C0DAC6"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/EnemyNameplates.java",
+      "bytes": 9748,
+      "sha256": "AC88946C5D7073ED2AFBB6357F348F00AD12A9377C1AF5F8B01350785A477765"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/EntityMotionVisuals.java",
+      "bytes": 5331,
+      "sha256": "72A09B4294BF18A304994B57841ED63375BE2784B4901B886CDF0660D531AC3A"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/EquipmentComparison.java",
+      "bytes": 3342,
+      "sha256": "5495B2FC440D076962D6D7C9242C99F5385CF25FAFC3E7B6B5B8D768CF70858A"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/EquipmentTooltip.java",
+      "bytes": 8230,
+      "sha256": "1EFB9F938930596DF2FE96EB8B199D04E1D15A742FE6C3A746CF63ED757A481A"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/EvasionHud.java",
+      "bytes": 2281,
+      "sha256": "84D0F7156B7A011A68DDD44D64A412965C210CC44396DF3E374D642692C1A254"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/ExplorationHud.java",
+      "bytes": 5209,
+      "sha256": "84CEF8DBD882984218AC178D8DCEFA15667634CD31E293CE9FF815BCDCCCBC3C"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/ExplorationSettingsScreen.java",
+      "bytes": 1612,
+      "sha256": "916A6A5492748EB689926BBAADE706A14DBB61B25E17A769CAB4FB39A37E8E27"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/GraphScreen.java",
+      "bytes": 7456,
+      "sha256": "AA31570E2123A37E62CAF89EC0933E4801E08E4CF8621458D7A27C262334BCBC"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/HudOpacity.java",
+      "bytes": 1315,
+      "sha256": "D2F7C1EFB6C74D3DC4B39C5FCE0BA305BCC2FC1C4E6572AB479884F3FFFDC070"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/HudSettingsScreen.java",
+      "bytes": 3129,
+      "sha256": "82C5EF915DFCCAB31B5518480787680CDAE7702B61EE8CE8B88439B3F2AA4AC3"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/InventoryMovement.java",
+      "bytes": 3426,
+      "sha256": "70AB02FB830BB503A6CD3D869286402152F427E5AF0BAD8368B22414C5AF56BF"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/InventorySettingsScreen.java",
+      "bytes": 1493,
+      "sha256": "1116D642E2FEB6ADC7ABA855CBE16426097C6FEC6C7EA64B15757EEF93317D07"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/LiveAim.java",
+      "bytes": 758,
+      "sha256": "7C4C74B47893A5BB93595E4A6092BE16F194E77913204161E62AFBF41CE8D247"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/MerchantTheme.java",
+      "bytes": 1297,
+      "sha256": "F3226EDC4693DCBFCAF0B801445D84087CD48E9BFFEA99408F77BCD96FF9084A"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/MinimapOptions.java",
+      "bytes": 3281,
+      "sha256": "F339B0DF354B551484512441A7CA4BE6DFF9AC131BBA0A796B5480842D9113BA"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/MinimapPositionScreen.java",
+      "bytes": 2418,
+      "sha256": "819F1A58808285027B11A16E614798CAAA27D9D4D1717C39FADB43E121259865"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/MinimapSettingsScreen.java",
+      "bytes": 4838,
+      "sha256": "BCFCD5D91B1CF541A80CFC7B3F1A9BEA168FFD284442CC2B661103912A26EA5E"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/MissionScreen.java",
+      "bytes": 5287,
+      "sha256": "EA04950A485672764358E25303B3ED0C40798A1B23B41EBB3D5D407AB94D667E"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/MovementFacing.java",
+      "bytes": 2809,
+      "sha256": "5BBF0978C5BBFE26795E2FC0BD8A0C08F02153BA23D8E7AE2AC86991F8C128A2"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/OutsideClick.java",
+      "bytes": 2249,
+      "sha256": "E5679624541B454A740BE8543D0272A244E7C7965922A65A5FF58939C2847C19"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/OxyRpgClient.java",
+      "bytes": 31017,
+      "sha256": "F187E7541C902C0901B5EAFAE6533F837114A253E4710251A764189670039CE8"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/ParticleFx.java",
+      "bytes": 6056,
+      "sha256": "1815233C5DB2743C7F17777D24361E7A6BB03D29CE4EECA1033BA83D0CB27FAC"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/ProfessionsScreen.java",
+      "bytes": 4145,
+      "sha256": "AD1191609C30EEB905630B2881119477E2AC5B66C57C2F580BEF29A570506D92"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/RpgScreen.java",
+      "bytes": 5712,
+      "sha256": "95253F5E16F6C2E7A320D961D9A5D6E4973CA75235C4564DD5A7F045470AFA68"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/RpgSlider.java",
+      "bytes": 605,
+      "sha256": "A8D2BB0DF6C6F074AB2288D2536AE58688C65CDB8616CE9BD9C84E1E208DDDE1"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/RpgUi.java",
+      "bytes": 5195,
+      "sha256": "9A2F4F734E19DF316E701AA71FE280D5732A355A1B5A1A9FD31366DB9BF842B3"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/ShoulderCamera.java",
+      "bytes": 11792,
+      "sha256": "6888CFCABA28CF61DE82701CCA05B4B50D6F9439A5ECD5CA09ECA4D1FED6D139"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/SigilRenderer.java",
+      "bytes": 918,
+      "sha256": "8F0E82F0FD2C7BEC8026FEFA23738D9AFC72A53AACE9701304820E22854C6486"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/SimpleMinimap.java",
+      "bytes": 13485,
+      "sha256": "480FC5A5ADB86AD0883D5D4E6AAB8BDE250B462AA171FA0C8489D01274A99085"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/SkillEffectsRenderer.java",
+      "bytes": 1879,
+      "sha256": "AFAAA3CC9AA6A3E831EA9D218A45414F42DA9E9CC1B1E57C3A909F4993EBE5FC"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/SkillGlyphs.java",
+      "bytes": 6140,
+      "sha256": "68636BC15F73BF8912B7AE14BFD4F9200846D6F486C980714AEDA03FD297CDE0"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/SkillTreeScreen.java",
+      "bytes": 3220,
+      "sha256": "AEF7C9F63A4D595EC0C26DACD44B4F5B06ECE6DBCFB01E2CBC78BD1287827930"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/SpecialistHud.java",
+      "bytes": 2421,
+      "sha256": "0CE7A54D8F36A94AFC438113D46E64A8413FD0AE6EBC5670F96897D9B70FEF46"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/TargetLock.java",
+      "bytes": 6433,
+      "sha256": "6C4FC54D35E4D6087583607982D8ECC5EA3658410851A16AC35EAF7342A3BD4A"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/TerralithChoice.java",
+      "bytes": 2636,
+      "sha256": "CB3CD2920B795D70970E198A7E9D22D5E77B272BF52AC7A980DB2B0791DAF101"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/UiTransitions.java",
+      "bytes": 366,
+      "sha256": "ECAE1CFF1DF5ED6775C8977FD26A08F8E1604F57EC1FA2079331B9D20DE90157"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/VampireHud.java",
+      "bytes": 2645,
+      "sha256": "48022FB7F882AF5E27C6ED9500E9F7BAEF4719DBD5B8FE0035BF6C2CDACAACAE"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/VanillaTheme.java",
+      "bytes": 1581,
+      "sha256": "8DD9A180E1D989D4058007B9B4155A786972BC804CEA4311BB5AD6F6352336F0"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/VegetationMotion.java",
+      "bytes": 6600,
+      "sha256": "2380FDD4FF4EC127A9367875C6FC726B604207051F2E18B506B4C9EB60A1ACD7"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/VillageGuardRenderer.java",
+      "bytes": 616,
+      "sha256": "2CDFA1667C26C6F7657637D97B82437A1682613BDDBAC8D788783823232BE208"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/VillagerClient.java",
+      "bytes": 3460,
+      "sha256": "D8FB1796F41CA34ECB89EBE38AECF0F8533C9AD24AABE1328C8360BC7EAC3C4D"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/VillagerDialogueScreen.java",
+      "bytes": 2774,
+      "sha256": "36A786BB1DCE82009CB6B7FBB4B68373F3896B91D1A05A89BFCC4E8E9589C586"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/VillagerPanel.java",
+      "bytes": 6090,
+      "sha256": "E828C6172192CF823BD2655DDA8B757294F0E91CB39D5965E83A4DBEBC481DDB"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/WaterPulse.java",
+      "bytes": 1931,
+      "sha256": "1E10C81BF857FBD32A2DC548A3BA4D62B4B3D364A6FCF1B05F53540C5759357C"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/WaterWake.java",
+      "bytes": 2528,
+      "sha256": "275E8C3054E0AD3A1B1BCC88E962140D4C7E0CD0A808E97119645236CD447244"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/client/WorldLines.java",
+      "bytes": 2587,
+      "sha256": "887CBAFF3739461B4E400AD70437DC5BB764CCA649293AE04677F0097BB44830"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/ArmorSlotMixin.java",
+      "bytes": 848,
+      "sha256": "3165CF0EB1B627621D084F0533D529A8D7C277AA688E34EB4CABF209DD194D24"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/AviaryCarryMixin.java",
+      "bytes": 818,
+      "sha256": "1C02600E219E2760EE1D8B794F3DF8AFA40A3E7442D0C4813B77CFABBC974983"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/AviaryCrouchMixin.java",
+      "bytes": 946,
+      "sha256": "C1E0ADD4BFEA6E3833E3ED8A5896129F0952BCD5AD9F18DA11BAB56FA0B475A8"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/AviaryFlightMixin.java",
+      "bytes": 1636,
+      "sha256": "E6C708B1109E3C4FC4790A0AE9676F2BF3DC03E28DA8C8B00F3A7687700961CB"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/AviaryPoseMixin.java",
+      "bytes": 1041,
+      "sha256": "60B0AB052BC58C27069563BA71378C8E88D0841F65448A7D5E60C32BDAD8DAB9"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/CameraEyeAccessor.java",
+      "bytes": 327,
+      "sha256": "883F278D828336C5BC1AE0671C170DCA3BF2A6BC3FE383918D431B93CFF123E6"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/CameraPickMixin.java",
+      "bytes": 479,
+      "sha256": "0836080043A683041BE029F8662159B136D4313AFE8B1813C4889BFC032A9734"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/ClassCastAnimationMixin.java",
+      "bytes": 886,
+      "sha256": "5C5A6B06A791A67999561D0FF94EC7F762EDEED6F3FD620BC443CFA9B197FBF6"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/CompanionPushMixin.java",
+      "bytes": 879,
+      "sha256": "E053F4386773AE36C56DE26D27019C012E285B92B84C3B2B96CD819CC5F59A7F"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/CreativeEquipmentMixin.java",
+      "bytes": 1196,
+      "sha256": "140C03D4EEDA2BD2716E822E251E3BCF243E7DCFA89378DE530BC594EB85B1D9"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/CreeperRadiusAccessor.java",
+      "bytes": 415,
+      "sha256": "7472C59FA683FD4C9874A6B6EB54C1146378A4F8CD30A01AC98664F5BE9A25F2"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/DebugItemCooldownMixin.java",
+      "bytes": 1022,
+      "sha256": "579D3C4658FEAA0AFDEC4EF7B03956B7AE011216080C3A3277F4304BD16FC0A7"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/DisguiseTargetMixin.java",
+      "bytes": 845,
+      "sha256": "99C018136F8B27E07767DDB7128CAF4CAD37242E7F6CD98B15024988E45C9F14"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/EquipmentSlotMixin.java",
+      "bytes": 867,
+      "sha256": "187A921F8FA171EC3692564877ADC99657D82FBD4008FB391E828D4B8633E0EE"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/EvasionMovementMixin.java",
+      "bytes": 628,
+      "sha256": "B8F04D35A47CE29CAB9870C77508B947A2652BACBCBEBA162148FD933065D619"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/FreeMovementSprintMixin.java",
+      "bytes": 642,
+      "sha256": "9C92EFB9AC509A9E2902E081D25A1BA4209ED8BCEF1237FCB1373B733743C517"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/HudGraphicsMixin.java",
+      "bytes": 1235,
+      "sha256": "FD34647D9A3054BB10EFF9C3CBB863C442386D9B3F6A425730B561AC6747DB35"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/HudItemRendererMixin.java",
+      "bytes": 984,
+      "sha256": "D40574376F8338C7666A24595008C5BC74A57C8D4A0D7D256F410EF60D149988"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/HudItemStateMixin.java",
+      "bytes": 565,
+      "sha256": "B4B4D558608C568DA5C641743619FC01B6C2ED09F1C89AC640F4C29CC5FDD8B0"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/HudOversizedItemMixin.java",
+      "bytes": 1225,
+      "sha256": "210AFADD08C60936984C9359666BFB0164A10527064B4BCC001A096988C3CCF2"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/InventoryMovementMixin.java",
+      "bytes": 804,
+      "sha256": "337A0210E1D12600D511F6FB532C945A3A8C20381DEE0B6E7D7B8C81407EA474"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/MerchantCoordinatesMixin.java",
+      "bytes": 1029,
+      "sha256": "2B44B77A6EF959ECBD52B52D69615437BC04612DBFCA533485296B115BA79450"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/MerchantLayoutMixin.java",
+      "bytes": 679,
+      "sha256": "86D66A86EC83603241743DB13F103D99BE87776D42C9943B2675F389D0D76018"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/MerchantThemeMixin.java",
+      "bytes": 1160,
+      "sha256": "C396DE96D5217195A0EF63F1481284EFC0878CCC14712E5F1049897E4A43EA5C"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/MovementPauseMixin.java",
+      "bytes": 521,
+      "sha256": "8A65EB785D8AB121895F1D4D97A61F28912032F6FEB743D33FAE53E271E8C318"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/NativeAimInputMixin.java",
+      "bytes": 964,
+      "sha256": "ADBA40367B0C89911169BB2F53A4FBFB83E97E0701FD0B81E86C10BDDE06D75D"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/NativeCrossbowAimMixin.java",
+      "bytes": 968,
+      "sha256": "10318ED294A767BE906ED92415E555D9E506F71A59DF5A5B96815D03B54093E4"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/NativeProjectileAimMixin.java",
+      "bytes": 858,
+      "sha256": "F52EDD12C26819CBFB215BA0C73F9B6903BB87FED74FC8BEABE308028802F61E"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/PoisonDamageMixin.java",
+      "bytes": 813,
+      "sha256": "35707884D5ACEE898F0085F4CC0A69DD477BD63DEFE38CCD02AD5FFE8AB7F065"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/RpgButtonThemeMixin.java",
+      "bytes": 756,
+      "sha256": "39973ACB06B8C599FDEA19F81B130C42ACF9D2EE1CE064029AC902C1038ADBDA"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/RpgConfigSectionThemeMixin.java",
+      "bytes": 499,
+      "sha256": "B8ED16B70C0B1FBAD805F210A49DE9526E6CFD90876405197410860B678B4551"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/RpgConfigThemeMixin.java",
+      "bytes": 402,
+      "sha256": "29DDE119A0ACF9605E2B3217D1423DB8A6E7967CA4DF3EEB0B9E0AFE151FCE45"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/RpgSliderThemeMixin.java",
+      "bytes": 795,
+      "sha256": "68DF0A9310A12838CB4124B09CC19D23EE954217DF94B3DED9A8A8720A9DAC77"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/ShoulderBobMixin.java",
+      "bytes": 1199,
+      "sha256": "3344841431E8F5E2FA1C2FB00834CC0AE81B54E64126360790EB7F35D9590FA3"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/ShoulderCameraMixin.java",
+      "bytes": 1419,
+      "sha256": "8F5983D6DB17C262DDD7E083056557C6ECE2F5A6E77045CDD5A0DD9D3849EB55"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/SpecialistCollisionMixin.java",
+      "bytes": 2131,
+      "sha256": "CE78A68F6E9AA98FF2647F9BEA1EF6C4DB7566E32E10BDD843DADC510C9F75F2"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/TargetLockMouseMixin.java",
+      "bytes": 558,
+      "sha256": "67E0534C5C5DDF169CC95EDE808C5B4C7265FE611913A73684C52B1209BBFE2C"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/TerralithWorldInvoker.java",
+      "bytes": 750,
+      "sha256": "1D639A517E7D0F2C36E3FC11C117225328D479593ADE6DEE0DA5DEABD36F70DB"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/TerralithWorldTabMixin.java",
+      "bytes": 1235,
+      "sha256": "102DEEB9EEDB6A3132A50468FBD9245C9F527D1F68288D368E4466A9797DA2A9"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/ThunderSwimMixin.java",
+      "bytes": 569,
+      "sha256": "DDC22D0D44E0C8D7E002CD37ED9616C2D5032FE96542B8362A08705ADB8D179C"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/VampireDimensionsMixin.java",
+      "bytes": 813,
+      "sha256": "E47247DACAF9152D87A0E2F5D9B45180F8984AF85CB9AD2475BF71BA584171C3"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/VampirePotionMixin.java",
+      "bytes": 982,
+      "sha256": "8690244E7A4BC547800B93D278E7748CFFAE0208C3B24B08C079624DF76B1DCC"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/VegetationModelMixin.java",
+      "bytes": 1480,
+      "sha256": "03B70F569B4F94D829170BFB454D8C697B313C2CFEAD82D1A101CD3D54EEA2EB"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/VillagerConversationMixin.java",
+      "bytes": 797,
+      "sha256": "349FA6AD0958A58E032197FF868AE4704D7CF95C36655ECC154504F09FF14B50"
+    },
+    {
+      "path": "src/main/java/dev/emersonoxy/rpg/mixin/VillagerTradeInvoker.java",
+      "bytes": 379,
+      "sha256": "DCE10678971E9AE0C6A8D737AFF8580E918B11C03B497A18E012AAFED368A211"
+    },
+    {
+      "path": "src/main/resources/assets/minecraft/atlases/mob_effects.json",
+      "bytes": 180,
+      "sha256": "40F98083E1C03D4968C4A92A2792A5DBC9A35E1C3FCFFC36F7A3D7E3B122A20A"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/geckolib/animations/sigil.animation.json",
+      "bytes": 984,
+      "sha256": "4DA4FCE2FA5F05F623CF00D0A299A38AB9290CF979CDAF93A2C1B3FCD8AEAE64"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/geckolib/models/sigil.geo.json",
+      "bytes": 2970,
+      "sha256": "DBD983388344C390F8D59725E017D7ECD666B4AD2001829412038FCF89388C49"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/items/antidote.json",
+      "bytes": 204,
+      "sha256": "0D8F28400D54084E9D3B65C602AFF0D9573431193DD7D5430FA4402FFCD93A76"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/items/bandage.json",
+      "bytes": 94,
+      "sha256": "C1C5AA4AF4B21074CD08ED6B8FF804AC9AF289782FF35F358D2E2E77AE6D1DA2"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/items/emberblade.json",
+      "bytes": 210,
+      "sha256": "CF773DA52B41356EAA8CA5D06F83351B5FA4C7DA22653CF0B8EE9F91183FE2F1"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/items/focus_ring.json",
+      "bytes": 103,
+      "sha256": "9732C0ED34470F2169A2EB82AAB95419BFCDC76FF77C71690CB50B45E72FDCC9"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/items/frostblade.json",
+      "bytes": 207,
+      "sha256": "7459A260527D708DE0848230E5FD023C1B617D1B97B651B5CDE832938959D0E3"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/items/greater_mana_potion.json",
+      "bytes": 204,
+      "sha256": "25AE84D375FBA3C67FB0030832453094D5C1B85F676736E4EC0E739FF9E3D93D"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/items/mana_potion.json",
+      "bytes": 204,
+      "sha256": "381126119BAF71F1F1DFFF0463FF6C1BFD274C625CB07780084BF56FAC2B0E40"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/items/relic_arqueiro.json",
+      "bytes": 99,
+      "sha256": "D78F0ADC4FF548FC72923F5C115807093EF1FB94D41C6F63DF76A699CB2DF90D"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/items/relic_arqueiro_novo.json",
+      "bytes": 92,
+      "sha256": "60671E2B6126BC4146D81C82FEBAD50C3AA69BF649428AA34026FDBC1235BCF6"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/items/relic_aviario.json",
+      "bytes": 96,
+      "sha256": "C0ABCDDF58BA2448AB8721C125FFCF159D4DCEF8E9257A0C594226109015336D"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/items/relic_deus_trovao.json",
+      "bytes": 102,
+      "sha256": "D9E5142E8593115893CB6222C250A75906F3CB420345E60E9B042868D566D290"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/items/relic_guerreiro.json",
+      "bytes": 101,
+      "sha256": "F31D76DD0E37DB7E60500C9F7B9C113C48BE7CD9EB666F7693FDAEC5D3A7DB8F"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/items/relic_hidromante.json",
+      "bytes": 105,
+      "sha256": "38EDDE92399B68457C45075B790E34CEF84A820B62E9CF591000A1F62F7C1FCB"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/items/relic_ilusionista.json",
+      "bytes": 103,
+      "sha256": "9732C0ED34470F2169A2EB82AAB95419BFCDC76FF77C71690CB50B45E72FDCC9"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/items/relic_mago.json",
+      "bytes": 98,
+      "sha256": "A829964F3698CF32909453F377EA410372EEF373D2637B761633951CBA6CB95B"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/items/relic_necromante.json",
+      "bytes": 93,
+      "sha256": "8A4DCB079958CEED812A68C16632314AAD5865A44A942979FA7024C49915B4BF"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/items/relic_piromante.json",
+      "bytes": 100,
+      "sha256": "11ECBA0483428347F518CA292E3F7DCC86D514CB462FEAC57AE50F5AF8514675"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/items/relic_vampiresco.json",
+      "bytes": 94,
+      "sha256": "C727C18B43C784E7D1C407BDC3279747B401AA040420E7D5AD6E5CE6ADDF0CCE"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/items/relic_xama.json",
+      "bytes": 105,
+      "sha256": "8CF4228ED17F6D1754786B468A7368F40FFE1EDCA3ED819E2E94E33402D2B8D3"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/items/sigil.json",
+      "bytes": 151,
+      "sha256": "6B345953CF209ED86DA1CF1BB79CCDA7CAEE08D8AADCCB7A50C27C88AF7B49E7"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/items/superior_mana_potion.json",
+      "bytes": 204,
+      "sha256": "13FD85EB647C523DF471D15B6D80348CA3ABD1083DAC2F7A3096C75F752EE2DE"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/items/trail_boots.json",
+      "bytes": 99,
+      "sha256": "653B88CFD0BDFFA0999E32CB9CC116403A2498CADC02F07C95C4DE5A5422D024"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/items/vigor_ring.json",
+      "bytes": 100,
+      "sha256": "2718D05F191FAEEF1FB679F0AD736A790770C2897263E6675F25F19A3A420295"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/items/village_guard_spawn_egg.json",
+      "bytes": 101,
+      "sha256": "1AA500F161315C1C5D7DAD764B9B1C46E474AB923C0EC19435CFB86729E5F225"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/items/wanderer_amulet.json",
+      "bytes": 100,
+      "sha256": "0F01BBAB447A5A6619EDCF90032F8CD19A52A9BC30A29526E1DB56449FC9F638"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/items/ward_amulet.json",
+      "bytes": 99,
+      "sha256": "5CF57B46C52AD8642485CA82937C77CF10E4C0E2A881C804CAB8AA7A0FF9C52E"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/lang/en_us.json",
+      "bytes": 7431,
+      "sha256": "D00B2048344645D6F95923082B860A4CB87B8A0A75DE152854BFC3D6650316A7"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/lang/pt_br.json",
+      "bytes": 8565,
+      "sha256": "39004DBFF2A6DBD59A36BFFFF04A0C4F660D11BEE86203EA6F2B68DB9CE49E35"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/models/item/bandage.json",
+      "bytes": 4220,
+      "sha256": "62A9C1A6D915BD8E3F89954939C9AD8E1C4CBF0FB4C294B5A6BA7E5B7C51BC8A"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/models/item/emberblade.json",
+      "bytes": 4811,
+      "sha256": "EA3CFE7C513EEC7BBA7E044EFFD801F3D9437DCEA5B1EF31B377794442F13AD5"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/models/item/focus_ring.json",
+      "bytes": 4748,
+      "sha256": "9F25F85D0DED689B072DB528E11C51B720E33948ECCC8785E9B46357DE2323A8"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/models/item/frostblade.json",
+      "bytes": 4817,
+      "sha256": "8CACA96BC28EC7C1D817FF3B3861DABA2C627321F733E178DC3F10CB23EE8D2C"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/models/item/mana_potion.json",
+      "bytes": 156,
+      "sha256": "8A590C09C696E8BACB528785733C4C66006E8EC8A11A5DBF0D7BE86530823AB8"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/models/item/sigil.json",
+      "bytes": 841,
+      "sha256": "B72985620FA35ED2EBA0D17F05AAD15B888CA3C3B06952BD223ADD3E7CE64CCC"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/models/item/vigor_ring.json",
+      "bytes": 4748,
+      "sha256": "D7C17D2E00FD9E43143464F716DD764F5D51E846035B7B96DD1B10AED50C92F1"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/models/item/wanderer_amulet.json",
+      "bytes": 5819,
+      "sha256": "B203158FF194AD7D43B16C5ACF3F3A75B84428F58F3AA0BC92751952C504831B"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/models/item/ward_amulet.json",
+      "bytes": 5823,
+      "sha256": "06F7182D1AB14C0550834CF8DECB6D5A87374315F2D5177E69048025F27B3FE8"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/particles/ambient_leaf.json",
+      "bytes": 329,
+      "sha256": "4C8C71AD0EFCCB7E7AA0C29D4EB7C3B7BCAA2A4105811B05526ED6023A71BC88"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/particles/blood.json",
+      "bytes": 55,
+      "sha256": "422ED8FCF969DE967FB77FB45A584759FCCBFB219D4BEEF18060BEFF5E0F47F3"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/particles/fire_pulse.json",
+      "bytes": 374,
+      "sha256": "9D3EDC9C5F006E5EA805E0FBFEB27E508ADCBF4483F3F6B88FF3691B4A593AD5"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/particles/impact.json",
+      "bytes": 58,
+      "sha256": "4A7490F41893D1D62CD0443E810AF2D3DE6488436636DCC30758448EFC2595D9"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/particles/smoke.json",
+      "bytes": 251,
+      "sha256": "470DBDB890C68BE5FAAFC6F2B669476CE66A115B75B45BBDAE9662DEEDBE84E0"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/particles/water_pulse.json",
+      "bytes": 438,
+      "sha256": "23E4297092DA7054249C5DD339EE70F05CA6399C1ABA031CA14197548B2F28B0"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/particles/water_wake.json",
+      "bytes": 55,
+      "sha256": "422ED8FCF969DE967FB77FB45A584759FCCBFB219D4BEEF18060BEFF5E0F47F3"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/textures/item/sigil.png",
+      "bytes": 205,
+      "sha256": "FB454EF15ACFF8D45D45221DA6A9E250F42A0A6ECFF5E0E62F5D93F2E52EB518"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/textures/particle/fire_ring_0.png",
+      "bytes": 118,
+      "sha256": "D96582F8654A2887D5FA8520CB80B6092CFD85C673AC2994F51E8BA976C9D38C"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/textures/particle/fire_ring_1.png",
+      "bytes": 127,
+      "sha256": "5DF5B05EF368BEBA6CE076586C96F8F4C18C42A603A9EF2154D43CD42DE23DF5"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/textures/particle/fire_ring_10.png",
+      "bytes": 176,
+      "sha256": "17FD67B0D545090E7AE1D0D0C3D02B9222EFE1EFD1C93BFBBA40898170C95169"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/textures/particle/fire_ring_11.png",
+      "bytes": 192,
+      "sha256": "E3683E3E8AF70FC5DB3EB6238678DF88CC421BF095CE82EF89E3F8E2CC8411F7"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/textures/particle/fire_ring_12.png",
+      "bytes": 197,
+      "sha256": "87A49E56585CC83BDC39084BA28FC5CCB5DC192B1E3F92FA6180A4A806015A4E"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/textures/particle/fire_ring_13.png",
+      "bytes": 211,
+      "sha256": "FEF09879EEB113AF0F05FCE024D7C2FB885CC59B3A0F43D13880B813871AF497"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/textures/particle/fire_ring_14.png",
+      "bytes": 202,
+      "sha256": "A411AB05771AA1A22B1C4C172CA6BA666803E7115C7236A522B1506C3E6F7223"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/textures/particle/fire_ring_15.png",
+      "bytes": 197,
+      "sha256": "3C5F6336CC973484DC081E3A7F3787735200437FDFFBB98EDE8FDF349FFED5ED"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/textures/particle/fire_ring_2.png",
+      "bytes": 121,
+      "sha256": "19CA99EBAFB7B7DB4C6AC62EE1019424097D7C2BD8190FCF31ACF9602D59ECAF"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/textures/particle/fire_ring_3.png",
+      "bytes": 129,
+      "sha256": "B2C8BE5F520C0BA18E8695601ABF3784A4978689AB22CE1D8DA80C9433F0AC27"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/textures/particle/fire_ring_4.png",
+      "bytes": 142,
+      "sha256": "1284B706A0C4081DE33D3ED77107F234895396122F59EB7CC210B80A460F14BC"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/textures/particle/fire_ring_5.png",
+      "bytes": 146,
+      "sha256": "97890ABFC3B5E78632C17FF70E080EE580C98328D687767293992827DEEDF5A3"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/textures/particle/fire_ring_6.png",
+      "bytes": 165,
+      "sha256": "F1D4A62F863329AEFABD114784813DDD6502FD4B4CFF9B189C2E2A9095720FC9"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/textures/particle/fire_ring_7.png",
+      "bytes": 179,
+      "sha256": "CDEB824B91029993ED3D2AB0103F78CF138DBDC0743BD233D0B0E582CA76F16B"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/textures/particle/fire_ring_8.png",
+      "bytes": 161,
+      "sha256": "525FFB511F373C8DD04A1F4415F234588101544430C04F6F96907FEA09D8B60B"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/textures/particle/fire_ring_9.png",
+      "bytes": 169,
+      "sha256": "52AB49E3A9D3D170C19A283F29C611EA4D177D81CC1F6DB5F1A66E47EF405E1C"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/vector/particles/fire_ring_0.svg",
+      "bytes": 1417,
+      "sha256": "55DDE7319AD4976A992CE63E8F4EE2C60463A6A3B8D414B46344B73392B573A2"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/vector/particles/fire_ring_1.svg",
+      "bytes": 2737,
+      "sha256": "45DF3761FD2B279666CC1DE9593D4A3F87E5DDBE0D14E19F11A32FAF9BDE05DF"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/vector/particles/fire_ring_10.svg",
+      "bytes": 8469,
+      "sha256": "ADBD5560D1A8C21A4C597433D9B011857A3C2D2E3079EFCCAE31E91EDD80FC6A"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/vector/particles/fire_ring_11.svg",
+      "bytes": 9773,
+      "sha256": "6E1F42E63C9C68471B533C1754320D6E71DD6A39DBD3B37EE6FDB56175728107"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/vector/particles/fire_ring_12.svg",
+      "bytes": 10029,
+      "sha256": "862814A437A37B256B2AF714171FD51B0DF45744D714C3D01AC14DB4977D5069"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/vector/particles/fire_ring_13.svg",
+      "bytes": 11593,
+      "sha256": "6F0666E2E6193816D677C92114C40B1BE2D0E92939C7700E6C281193BF385716"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/vector/particles/fire_ring_14.svg",
+      "bytes": 11849,
+      "sha256": "DA38E104A878692D166A23C4D927B8128218A7AE37D8933A74E78DF57E45C4BF"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/vector/particles/fire_ring_15.svg",
+      "bytes": 12105,
+      "sha256": "7FC5EB07BBF61D41125874827D13B0404D389863BBCE877F4934076C0592C05D"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/vector/particles/fire_ring_2.svg",
+      "bytes": 3001,
+      "sha256": "35C7BE75D7AA22FC9A7DAEC4F3E00682DD0C4F07BEB3A2209F1B63F2DE2751DA"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/vector/particles/fire_ring_3.svg",
+      "bytes": 3793,
+      "sha256": "E15B60A5E1E3E16870B5E08A28B5831AAEE08257332F8D531F88B3C44B111F7C"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/vector/particles/fire_ring_4.svg",
+      "bytes": 4585,
+      "sha256": "8A932A62BC38E70C60C755CB6473E7E158FE6F535AE2FA1B0227673B31933AC9"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/vector/particles/fire_ring_5.svg",
+      "bytes": 4841,
+      "sha256": "751EC92F7B33AE004C7AE33F36725DC4085767A5D9DE3A2500EC1B001C80D5AC"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/vector/particles/fire_ring_6.svg",
+      "bytes": 6145,
+      "sha256": "F9DDC6EC4834863F31D3165E4984B692036C539B943413F069DB16ECD1D9F803"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/vector/particles/fire_ring_7.svg",
+      "bytes": 7181,
+      "sha256": "B6C4B642B896A8CE602464C0960EFE29E5F93F55F3455D8AFCC60E0D77817F03"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/vector/particles/fire_ring_8.svg",
+      "bytes": 7433,
+      "sha256": "92E405F23BC3BCA88133786A957849B321C4B457E385094DD19A7B6D09BA45BE"
+    },
+    {
+      "path": "src/main/resources/assets/oxyrpg/vector/particles/fire_ring_9.svg",
+      "bytes": 8213,
+      "sha256": "156C381E2136C701A01EF0C5357B992DF1604ED3752783A75F9BBD4C50B1C0F9"
+    },
+    {
+      "path": "src/main/resources/data/curios/tags/item/necklace.json",
+      "bytes": 104,
+      "sha256": "3F7A4755A4E09B348FBAB67080384E12D1F5875F5BA5C3A38ABD70142DA500C1"
+    },
+    {
+      "path": "src/main/resources/data/curios/tags/item/oxy_relic.json",
+      "bytes": 67,
+      "sha256": "82C70290C789D6EBF191A040EFABFFD8090D1FBF1CB5BA425CEA16B3A89FEC78"
+    },
+    {
+      "path": "src/main/resources/data/curios/tags/item/ring.json",
+      "bytes": 98,
+      "sha256": "933D62968B635CB52338B755C555730F0F542E9524270F6B0BBC4B9680EFCBBE"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/tags/damage_type/bypasses_armor.json",
+      "bytes": 70,
+      "sha256": "51E2AB6E8F6EE0A8F3203A18FE6F53840EF7183C996FE15082A59AA85A54E535"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/tags/damage_type/bypasses_cooldown.json",
+      "bytes": 70,
+      "sha256": "51E2AB6E8F6EE0A8F3203A18FE6F53840EF7183C996FE15082A59AA85A54E535"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/tags/damage_type/bypasses_shield.json",
+      "bytes": 70,
+      "sha256": "51E2AB6E8F6EE0A8F3203A18FE6F53840EF7183C996FE15082A59AA85A54E535"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/tags/damage_type/is_fire.json",
+      "bytes": 46,
+      "sha256": "D642DE1EF9B5F7A0E5EB193F00F1083C65C81CEDFFB1E2D11F4B64643A6DB904"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/tags/damage_type/no_anger.json",
+      "bytes": 70,
+      "sha256": "51E2AB6E8F6EE0A8F3203A18FE6F53840EF7183C996FE15082A59AA85A54E535"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/tags/damage_type/no_impact.json",
+      "bytes": 70,
+      "sha256": "51E2AB6E8F6EE0A8F3203A18FE6F53840EF7183C996FE15082A59AA85A54E535"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/tags/damage_type/no_knockback.json",
+      "bytes": 70,
+      "sha256": "51E2AB6E8F6EE0A8F3203A18FE6F53840EF7183C996FE15082A59AA85A54E535"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/tags/item/enchantable/bow.json",
+      "bytes": 76,
+      "sha256": "54A321DD92E9B4EAB7F5716BE7B5C5F13EC39D4258364703B4D0C743C99C779A"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/tags/item/enchantable/sword.json",
+      "bytes": 129,
+      "sha256": "3A320EA7F2BD865E52DF5C797CCBBB97C916910F15A91E52C24C633D895C03CD"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/tags/item/enchantable/weapon.json",
+      "bytes": 129,
+      "sha256": "3A320EA7F2BD865E52DF5C797CCBBB97C916910F15A91E52C24C633D895C03CD"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/tags/item/swords.json",
+      "bytes": 129,
+      "sha256": "3A320EA7F2BD865E52DF5C797CCBBB97C916910F15A91E52C24C633D895C03CD"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/worldgen/structure/village_desert.json",
+      "bytes": 428,
+      "sha256": "1050972DA524EAE26EB577B40394ED948613A248455D6366825D37435984FDB0"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/worldgen/structure/village_plains.json",
+      "bytes": 428,
+      "sha256": "CEF5D21B519BE91DF02D87C72C1D49447030DB913CD76DE974682BB896C3F10C"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/worldgen/structure/village_savanna.json",
+      "bytes": 430,
+      "sha256": "E5DF8683C82DD4C07663558BC2C37DBD72DF2E97709C0AC1AF0F8F97FB9BF3A0"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/worldgen/structure/village_snowy.json",
+      "bytes": 426,
+      "sha256": "DF6F94427E68468DE3CEC244A83EBA52EA6E7152B93879C29BADF683EE583885"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/worldgen/structure/village_taiga.json",
+      "bytes": 426,
+      "sha256": "21C59C03C5FE07B0A946CF227C9900D29A38691FDEA30E473566128692BE59BB"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/worldgen/structure_set/ancient_cities.json",
+      "bytes": 237,
+      "sha256": "D4376238AF4BDB522A6058DA5B161DC304B7DFC40D243F7D27A3A48DB82797C4"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/worldgen/structure_set/desert_pyramids.json",
+      "bytes": 239,
+      "sha256": "06AAB7F8C025BA9A49DEDA22C5396F1D209CCDA4127D8F51920A87BCCA420C2C"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/worldgen/structure_set/end_cities.json",
+      "bytes": 268,
+      "sha256": "2BB7E217EACC9C06E9949E42D60532B09DAC7808FBDEF6AC25B808A7A3120720"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/worldgen/structure_set/igloos.json",
+      "bytes": 230,
+      "sha256": "631C8637C01182B309EA631D687EBB3E85DB384A20DE63649BF78525E6BAB2D9"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/worldgen/structure_set/jungle_temples.json",
+      "bytes": 239,
+      "sha256": "2AAED7A2DC652B2357B8632BA6B76B2B5496A3AFD187AB1709D34290BCFAAE22"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/worldgen/structure_set/mineshafts.json",
+      "bytes": 385,
+      "sha256": "6A7F4E5A99D63FD3EB79D5D4B56E0F156ED5943F58CEAE41BE9A1A2C5B163D18"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/worldgen/structure_set/nether_complexes.json",
+      "bytes": 316,
+      "sha256": "E1CC5ACBB46F28B8703A342C852FE4090D23F5ADA2CFE9B69889EEBCEA46C4E3"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/worldgen/structure_set/ocean_monuments.json",
+      "bytes": 267,
+      "sha256": "7E28BD6131E6F0B4A5BE696514A9D9FC919CD362E21F768FBCB8AF11D5079F80"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/worldgen/structure_set/pillager_outposts.json",
+      "bytes": 417,
+      "sha256": "73C8E2E55BCF9C6EA3B217F7B9F7669B1F84BCCBEF15B9566AFCBEDB693EB655"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/worldgen/structure_set/ruined_portals.json",
+      "bytes": 767,
+      "sha256": "1BD6B21F594CEE601519D0701A7238C4966B1AA7957355A85744205CA27EA5DE"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/worldgen/structure_set/shipwrecks.json",
+      "bytes": 320,
+      "sha256": "9B62F96D807E604CBCE88D8D76CE546FC571C05717EB6C0FDDB06755DC225B87"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/worldgen/structure_set/swamp_huts.json",
+      "bytes": 234,
+      "sha256": "AD46B4A685FE6AAAFFB367FBFC3B0136ACC6C2137AA913E5D627F74700A495F2"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/worldgen/structure_set/trail_ruins.json",
+      "bytes": 236,
+      "sha256": "848658D7A5B5351A8A4F51637B84042B0BEE63CECB305A249B5CD370E44B3D2B"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/worldgen/structure_set/trial_chambers.json",
+      "bytes": 240,
+      "sha256": "9750BCE594C17431AB87AB0B917B8D047F0546DA2C974807D2DFA16B5839313F"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/worldgen/structure_set/villages.json",
+      "bytes": 566,
+      "sha256": "B04BF207F44692DC192678C5DD1AD4E4E2BF3DC44B9632E25E9511820E9CA970"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/worldgen/structure_set/woodland_mansions.json",
+      "bytes": 267,
+      "sha256": "A6645031CDBFA30BC6D89FE9FF6FAEBE50808FDE5087757EC1DC1EBFE46E7F25"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/worldgen/template_pool/village/desert/houses.json",
+      "bytes": 9303,
+      "sha256": "DB1A805CBBD059F7F06FCDCE95C79A48D595A2BD42E727D664F1BE37CDF9E452"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/worldgen/template_pool/village/plains/houses.json",
+      "bytes": 11481,
+      "sha256": "4493650A3EC88553DBA515961C15ACE5A522340E1FCD63386BA74DB2BFB526C2"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/worldgen/template_pool/village/savanna/houses.json",
+      "bytes": 10282,
+      "sha256": "790E770AA3AC105285F8E784BEC65BBDB87B37D04323523FA60BD8BA1BF87A89"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/worldgen/template_pool/village/snowy/houses.json",
+      "bytes": 9894,
+      "sha256": "86146717BF57A68DABE7FD09484EC48F315160CFEEC7650C37EC7A673FBCAEF7"
+    },
+    {
+      "path": "src/main/resources/data/minecraft/worldgen/template_pool/village/taiga/houses.json",
+      "bytes": 8748,
+      "sha256": "855D92073D67CB8D774EC25427AD5702A1D01C9ED39EB5EE5EA2906D91ECB5D2"
+    },
+    {
+      "path": "src/main/resources/data/neoforge/loot_modifiers/global_loot_modifiers.json",
+      "bytes": 75,
+      "sha256": "1052BD7FD070FBE02FF543EA00BE1F79E1D2A5529C2B2A71FD2019C6B9CA31DB"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/advancement/recipes/misc/antidote.json",
+      "bytes": 585,
+      "sha256": "17BCDADB867A41AB0C66F14E611B6A2543A2C1F82E6D3F4A76812910B19D7994"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/advancement/recipes/misc/bandage.json",
+      "bytes": 578,
+      "sha256": "3AC673CE2E5FDADF55C14A35C977D1E777F4E159570544E02DF1479214CCCDDA"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/advancement/recipes/misc/greater_mana_potion.json",
+      "bytes": 611,
+      "sha256": "A78E4A1FB3B82CF0EF8C58AD2214007B7F149A92D9CF8BF23F5D96AF94CE5C81"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/advancement/recipes/misc/mana_potion.json",
+      "bytes": 586,
+      "sha256": "458D207C825416B4A9D8C4C6BF8685CED44FB24E5A4221E4026624D14B29F59E"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/advancement/recipes/misc/sigil.json",
+      "bytes": 599,
+      "sha256": "D4ECC5D463873C493632BA115E0D83217201B415336DC186EB3FE0277D199C38"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/advancement/recipes/misc/superior_mana_potion.json",
+      "bytes": 613,
+      "sha256": "77752CF8EB7BE598029DCDE64B4393B30D914DA43DE21B29EBCF61CD54CF3D4D"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/advancement/recipes/misc/trail_boots.json",
+      "bytes": 591,
+      "sha256": "50F86E435D870F6059CCC7B612E3A19D4B33571B2FB0B6750BAA770524C673E6"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/curios/entities/player.json",
+      "bytes": 119,
+      "sha256": "45BF03ECBA6CA92D6708547475BE1AE6DD08946E5752C78C42C28D12BEE143E5"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/curios/slots/necklace.json",
+      "bytes": 125,
+      "sha256": "0DA26E4A59CEC491B25FD7A4E9CEEF65E35938F0D75B4C35D912A8670F8C94D0"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/curios/slots/oxy_relic.json",
+      "bytes": 122,
+      "sha256": "AE7842D786FDDF1C86D586F297B7DDC317F174EA3941F5313CC4E5C581CFF902"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/curios/slots/ring.json",
+      "bytes": 121,
+      "sha256": "1414D6AFD7FE0D389A197428A3366E914A008E40BAC31903E0B6C344BDC54EAE"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/damage_type/bleeding.json",
+      "bytes": 84,
+      "sha256": "8608119490FACB4DDC5BDD412F687E20D8632853254D5478219132832264F3B0"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/damage_type/ember.json",
+      "bytes": 69,
+      "sha256": "208660E6A872CB7CF70AC6F382B2F8005CA833B1FDE09BFDA9F4C1136064A7F0"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/damage_type/illusion.json",
+      "bytes": 72,
+      "sha256": "BF39BA1C6E50393A986ECAA44137A5627A25A6F7573F8ACFF73AD03AB62DA114"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/damage_type/pressure.json",
+      "bytes": 72,
+      "sha256": "29D01FB53D130517D314226DC5473CC5D06ADE605B6A7D5E4F87ACED8D56DF2F"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/damage_type/vampire_bite.json",
+      "bytes": 73,
+      "sha256": "83BBB0997147B6E7A89BF20C2F3C2C07A3361017F677B185B5A08E09BC850A8B"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/loot_modifiers/village_loot.json",
+      "bytes": 81,
+      "sha256": "04D9FB7955416287D8B23ACB37DED08FAD590114AC8AB5AFF1E45D96FEDBB532"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/neoforge/biome_modifier/forest_leaf_litter.json",
+      "bytes": 254,
+      "sha256": "17F8B24D86D344AFFA32725E77063629F1E7E6188129623DA9633ACBB053402D"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/recipe/antidote.json",
+      "bytes": 315,
+      "sha256": "7CAED8CC79D35F314109D23ED2FC668B3C62D30BFAA13467E7A923808554B97C"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/recipe/bandage.json",
+      "bytes": 267,
+      "sha256": "E4D782018A9A100A79A8A4A04FFFC57534B631B13C8C4FCCDF926BC2D37FE87B"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/recipe/greater_mana_potion.json",
+      "bytes": 234,
+      "sha256": "B52E7A831847CCBD3C41E97219C6721EBB35937E7AAED58FFA5798B6DE3B0036"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/recipe/mana_potion.json",
+      "bytes": 252,
+      "sha256": "B451EDDC3A88553B70951CE3D62C39F6BEA417A21B7FB2E285647F0E6A9B5B72"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/recipe/superior_mana_potion.json",
+      "bytes": 274,
+      "sha256": "2843D74B4368B57018CE46AEBE86F3502F245458C10211031DA42FE363DA3049"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/recipe/trail_boots.json",
+      "bytes": 277,
+      "sha256": "AF202581D8504209647AA1FF893B91321D23DEB45F8B22968AAB12D5B9E5D121"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/structure/test_arena.nbt",
+      "bytes": 225,
+      "sha256": "8B5D5411DC62BDAA2FDD35AA12835EB536FCF461E83EFA7CD2C1C03564D0A770"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/structure/village/ruins.nbt",
+      "bytes": 7027,
+      "sha256": "14246835E3AAA3FCD0F1E4AA333A5DE6810FF1E6A0001DCBA3D1C94964B7D341"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/structure/village/watchtower.nbt",
+      "bytes": 7058,
+      "sha256": "D8E0B12FD327551B244FB79A6AF2CE5D5B49A821AF184EEA6BDDC062AF0F9853"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/structure/village/waystation.nbt",
+      "bytes": 7068,
+      "sha256": "E68E35B4723502DAC0D901D0FF390971FCFE7E897D6EBAE537445B7657205811"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/tags/block/phase_barriers.json",
+      "bytes": 499,
+      "sha256": "22DF2BAB14F44F5728C21ADAB87DB5897A3BE8439F5CB90008A95A3FEF74BD90"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/tags/block/phase_glass.json",
+      "bytes": 266,
+      "sha256": "1DCCC75FAED49DD2B24E5DA4CBF9B5836DCE22A9715056A3ABAA54C41E819AE4"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/tags/block/phase_light.json",
+      "bytes": 268,
+      "sha256": "FDA54892C19AEC239D830FED2EECD7B2DE9176BCDC9AB269DDB108852F53B2B1"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/tags/damage_type/spells.json",
+      "bytes": 204,
+      "sha256": "9C17F126062D862873AC1335454C6CECD75B8A963D0E63950B623C7CA652C336"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/tags/item/light_armor.json",
+      "bytes": 206,
+      "sha256": "293C1CF62FF05161203E67326ABC937ED0BCF4AC4D0CFB0FB5F62601FB797545"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/weapon_attributes/relic_arqueiro.json",
+      "bytes": 34,
+      "sha256": "4EEC5C30A1853411B1F6E03CE35835AB456F53F067935C6807A4D4CD10BDCEEC"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/weapon_attributes/relic_guerreiro.json",
+      "bytes": 40,
+      "sha256": "89AA7816F83B492359C9BBA584A1FE0929148FC14C9E15AE93DF80727A42F9BE"
+    },
+    {
+      "path": "src/main/resources/data/oxyrpg/worldgen/placed_feature/forest_leaf_litter.json",
+      "bytes": 341,
+      "sha256": "7BBD852F6EC62583F787BF7AF6D8C00B270BEB9AC1EDB534271B3F193732ADEE"
+    },
+    {
+      "path": "src/main/resources/data/structory/worldgen/template_pool/harvest/well_bottoms.json",
+      "bytes": 322,
+      "sha256": "142B24D3C31082D321AE82104DA3CB7A81333B2FCEFBF3A698E5948BA65B6226"
+    },
+    {
+      "path": "src/main/resources/oxyrpg.mixins.json",
+      "bytes": 1502,
+      "sha256": "AD361622F674AE37BE9894321200B7DF4BF6CD753C7DD7DC4E064043D1C76169"
+    },
+    {
+      "path": "src/main/templates/META-INF/neoforge.mods.toml",
+      "bytes": 4372,
+      "sha256": "CB320BA321DC6BAA1411663668B7ADE78F6EE20CD1BF360A0CF54A831070F589"
+    },
+    {
+      "path": "src/test/java/dev/emersonoxy/rpg/CameraMotionTest.java",
+      "bytes": 2929,
+      "sha256": "8030BDD72011D58FD43EC13BC4F75E393B644C79D904A14F8829D08C5921BA05"
+    },
+    {
+      "path": "src/test/java/dev/emersonoxy/rpg/ProgressionJUnitTest.java",
+      "bytes": 229,
+      "sha256": "D337CC7F19E96A496DC16D73F16E4F530D706DE359665C60F0A34AD08A5CF3BC"
+    },
+    {
+      "path": "src/test/java/dev/emersonoxy/rpg/ProgressionTest.java",
+      "bytes": 2565,
+      "sha256": "9B7D95B069F23F682C5586943B291586D217395B23BBFA96C5B336E4287BA030"
+    },
+    {
+      "path": "src/test/java/dev/emersonoxy/rpg/RpgNetworkTest.java",
+      "bytes": 2154,
+      "sha256": "A0B3ECBFA6AB7D643B4E5F06E3CA301A7F0BB5752C6077A94BF7D70CDD54B397"
+    },
+    {
+      "path": "src/test/java/dev/emersonoxy/rpg/SkillTreeTest.java",
+      "bytes": 5100,
+      "sha256": "9AC2EF91C6A26532E9023B8AB52C82844A56E09308DDDB00643A5043995EB223"
+    },
+    {
+      "path": "tools/generate_village_annexes.py",
+      "bytes": 3424,
+      "sha256": "E140B59B7D55B9A6B68FCE0D2BF2A942C7B4ECB7DDC5A2463FC34FF9EFC233A5"
+    }
+  ]
+}

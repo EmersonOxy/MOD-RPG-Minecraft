@@ -9,11 +9,12 @@ import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
-/** Operator-only controls. All progression overrides live exclusively in the debug session. */
+/** Authorized development controls, persisted separately from normal progression. */
 public final class DebugControls {
     private DebugControls(){}
     public static LiteralArgumentBuilder<CommandSourceStack> commands(){
-        var root=Commands.literal("debug").requires(Commands.hasPermission(2)).executes(c->status(c.getSource().getPlayerOrException()));
+        var root=Commands.literal("debug").requires(DebugControls::allowed).executes(c->{var p=c.getSource().getPlayerOrException();OxyRpg.sync(p,"");return status(p);});
+        root.then(Commands.literal("ajuda").executes(c->help(c.getSource().getPlayerOrException())));
         root.then(Commands.literal("on").executes(c->OxyRpg.debug(c.getSource().getPlayerOrException(),1)));
         root.then(Commands.literal("off").executes(c->OxyRpg.debug(c.getSource().getPlayerOrException(),0)));
         root.then(Commands.literal("limpar").executes(c->OxyRpg.debug(c.getSource().getPlayerOrException(),2)));
@@ -26,6 +27,7 @@ public final class DebugControls {
             .then(Commands.literal("descer").then(Commands.argument("quantidade",IntegerArgumentType.integer(1,99)).executes(c->changeLevel(c.getSource().getPlayerOrException(),-IntegerArgumentType.getInteger(c,"quantidade"))))));
         var classes=Commands.literal("classe");for(var type:RpgClass.values())if(type!=RpgClass.NONE)
             classes.then(Commands.literal(type.command()).executes(c->choose(c.getSource().getPlayerOrException(),type)));
+        classes.then(Commands.literal("arqueiro_novo").executes(c->choose(c.getSource().getPlayerOrException(),RpgClass.ARQUEIRO_NOVO)));
         root.then(classes);
         root.then(Commands.literal("cooldowns")
             .then(Commands.literal("on").executes(c->modify(c.getSource().getPlayerOrException(),p->RpgDebug.cooldowns(p,true),false)))
@@ -47,14 +49,15 @@ public final class DebugControls {
     private static int changeLevel(ServerPlayer p,int amount){return modify(p,x->RpgDebug.level(x,RpgAbilities.profile(x).level()+amount),true);}
     public static int choose(ServerPlayer p,RpgClass type){return modify(p,x->RpgDebug.choose(x,type),true);}
     private static int modify(ServerPlayer p,Consumer<ServerPlayer> action,boolean clear){
-        if(!RpgDebug.debugging(p)){p.sendSystemMessage(Component.literal("[Oxy RPG] Ative /rpg debug on primeiro. /rpg teste mantém custos normais."));return 0;}
+        if(!RpgDebug.debugging(p)){Professions.notify(p,"Ative o debug primeiro. O modo teste mantém custos normais.");return 0;}
         try{new ProfileStore(p).load(p.getUUID());action.accept(p);if(clear)RpgAbilities.clear(p);OxyRpg.sync(p,"");Professions.refreshModifiers(p);return status(p);}
-        catch(IOException|IllegalStateException e){p.sendSystemMessage(Component.literal("[Oxy RPG] "+e.getMessage()));return 0;}
+        catch(IOException|IllegalStateException e){Professions.notify(p,e.getMessage());return 0;}
     }
-    private static int arsenal(ServerPlayer p,boolean on){RpgDebug.arsenal(p,on);OxyRpg.sync(p,"");Professions.refreshModifiers(p);p.sendSystemMessage(Component.literal("[Oxy RPG] Arsenal temporário: "+(on?"nível 20":"nível salvo")+"."));return 1;}
+    private static int arsenal(ServerPlayer p,boolean on){RpgDebug.arsenal(p,on);OxyRpg.sync(p,"");Professions.refreshModifiers(p);Professions.notify(p,"Arsenal: "+(on?"nível 20":"nível salvo")+".");return 1;}
+    public static boolean allowed(CommandSourceStack source){return Commands.hasPermission(2).test(source)||source.getEntity() instanceof ServerPlayer p&&RpgDebug.allowed(p);}
     private static int status(ServerPlayer p){
-        OxyRpg.sync(p,"");String mode=RpgDebug.testing(p)?"TESTE":RpgDebug.debugging(p)?"DEBUG ON":"DEBUG OFF";
-        p.sendSystemMessage(Component.literal("[Oxy RPG] "+mode+" | Nível "+RpgAbilities.profile(p).level()+" | Recargas "+(RpgDebug.cooldownsDisabled(p)?"OFF":"ON")+" | Recursos "+(RpgDebug.unlimited(p)?"ilimitados":"normais")+". Painel: R > Debug."));
-        p.sendSystemMessage(Component.literal("/rpg debug skills todas | nivel 1–100 | nivel subir/descer N | classe <nome> | cooldowns on/off/limpar | recursos normais/ilimitados | atributos maximos/normais | tudo | recuperar | off"));return 1;
+        String mode=RpgDebug.testing(p)?"TESTE":RpgDebug.debugging(p)?"DEBUG ON":"DEBUG OFF";
+        Professions.notify(p,mode+" • Nível "+RpgAbilities.profile(p).level()+" • Recargas "+(RpgDebug.cooldownsDisabled(p)?"OFF":"ON")+" • Recursos "+(RpgDebug.unlimited(p)?"ilimitados":"normais"));return 1;
     }
+    private static int help(ServerPlayer p){p.sendSystemMessage(Component.literal("/rpg debug on/off | skills todas/limpar | nivel 1–100 | nivel subir/descer N | classe <nome> | cooldowns on/off/limpar | recursos normais/ilimitados | atributos maximos/normais | arsenal on/off | tudo | recuperar"));return 1;}
 }

@@ -29,15 +29,15 @@ public final class DebugScreen extends Screen {
         cooldowns=control(1,120,"Recargas",()->command("cooldowns "+(state()!=null&&state().cooldowns()?"off":"on")));
         attributes=control(0,146,"Atributos",()->command("atributos "+(state()!=null&&state().attributes()?"normais":"maximos")));
         arsenal=control(1,146,"Arsenal",()->command("arsenal "+(state()!=null&&state().arsenal()?"off":"on")));
-        control(0,172,"Trocar de classe",()->{var s=state();if(s!=null){int next=s.rpgClass()%(RpgClass.values().length-1)+1;command("classe "+RpgClass.values()[next].name().toLowerCase(java.util.Locale.ROOT));}});
+        control(0,172,"Escolher classe",()->{var value=OxyRpgClient.state();if(value!=null)minecraft.setScreen(new ClassSelectionScreen(this,value));});
         control(1,172,"Limpar recargas das skills",()->command("cooldowns limpar"));
         control(0,198,"Maximizar tudo",()->command("tudo"));control(1,198,"Recuperar vida / mana",()->command("recuperar"));
         control(0,224,"Limpar skills temporárias",()->command("skills limpar"));button(1,224,"Voltar",this::onClose);
         if(minecraft.player!=null)minecraft.player.connection.send(new RpgNetwork.Request(0));tick();
     }
     @Override public void tick(){
-        if(minecraft.player==null||minecraft.level==null){onClose();return;}var s=state();boolean active=s!=null&&s.mode()==1;
-        controls.forEach(b->b.active=active);mode.active=minecraft.player.hasPermissions(2);mode.setMessage(Component.literal(active?"Desativar debug":"Ativar debug completo"));
+        if(minecraft.player==null||minecraft.level==null){onClose();return;}var s=state();boolean active=s!=null&&s.allowed()&&s.mode()==1;
+        controls.forEach(b->b.active=active);mode.active=s!=null&&s.allowed();mode.setMessage(Component.literal(active?"Desativar debug":"Ativar debug completo"));
         skills.setMessage(Component.literal(s!=null&&s.allSkills()?"Skills: todas liberadas":"Liberar todas as skills"));
         resources.setMessage(Component.literal("Recursos: "+(s!=null&&s.resources()?"ilimitados":"normais")));
         cooldowns.setMessage(Component.literal("Recargas: "+(s!=null&&s.cooldowns()?"ativas":"desligadas")));
@@ -49,6 +49,6 @@ public final class DebugScreen extends Screen {
         RpgUi.panel(g,x,y,w,h);g.drawCenteredString(font,title,width/2,y+row(12),RpgUi.GOLD);var s=state();
         String text=s==null?"Carregando…":(s.mode()==1?"DEBUG":s.mode()==2?"TESTE":"NORMAL")+" • "+RpgClass.values()[s.rpgClass()].label()+" • Nível "+s.level();
         g.drawCenteredString(font,font.plainSubstrByWidth(text,w-24),width/2,y+row(40),RpgUi.TEXT);
-        g.drawCenteredString(font,"Progressão temporária; sair restaura o perfil salvo.",width/2,y+row(255),RpgUi.MUTED);super.render(g,mx,my,dt);
+        g.drawCenteredString(font,"Opções salvas neste mundo • perfil normal preservado.",width/2,y+row(255),RpgUi.MUTED);super.render(g,mx,my,dt);
     }
 }

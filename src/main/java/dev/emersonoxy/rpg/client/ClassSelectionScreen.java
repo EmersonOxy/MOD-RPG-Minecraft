@@ -10,11 +10,11 @@ import net.minecraft.world.item.*;
 
 /** Class identity with an embedded owo component selector and native detail cards. */
 public final class ClassSelectionScreen extends Screen {
-    private final RpgScreen parent;private RpgNetwork.State state;private RpgClass selected;
+    private final Screen parent;private RpgNetwork.State state;private RpgClass selected;
     private int left,top,w,h,scroll,ticks,pending,contentHeight;private Button confirm;
     private io.wispforest.owo.ui.core.OwoUIAdapter<io.wispforest.owo.ui.container.FlowLayout> selector;
     private long opened,changed;
-    public ClassSelectionScreen(RpgScreen parent,RpgNetwork.State state){super(Component.literal("Escolha seu caminho"));this.parent=parent;this.state=state;selected=state.rpgClass()==0?RpgClass.GUERREIRO:RpgClass.values()[state.rpgClass()];}
+    public ClassSelectionScreen(Screen parent,RpgNetwork.State state){super(Component.literal("Escolha seu caminho"));this.parent=parent;this.state=state;selected=state.rpgClass()==0?RpgClass.GUERREIRO:RpgClass.values()[state.rpgClass()];}
     @Override public boolean isPauseScreen(){return false;}
     @Override public void onClose(){minecraft.setScreen(parent);}
     @Override protected void init(){
@@ -36,7 +36,7 @@ public final class ClassSelectionScreen extends Screen {
         }
         selector.inflateAndMount();
         int bw=(w-36)/3;
-        confirm=addRenderableWidget(RpgUi.button(left+12,top+h-32,bw,20,"Escolher classe","",Items.EMERALD,RpgUi.GOLD,v->{if(canChoose()){pending=100;minecraft.player.connection.send(new RpgNetwork.Request(selected==RpgClass.VAMPIRESCO?17:selected==RpgClass.PIROMANTE?15:selected==RpgClass.HIDROMANTE?14:selected==RpgClass.ILUSIONISTA?13:selected==RpgClass.AVIARIO?11:selected==RpgClass.XAMA?10:selected==RpgClass.NECROMANTE?7:selected.ordinal()+1));}}));
+        confirm=addRenderableWidget(RpgUi.button(left+12,top+h-32,bw,20,"Escolher classe","",Items.EMERALD,RpgUi.GOLD,v->{if(canChoose()){pending=100;minecraft.player.connection.send(new RpgNetwork.Request(21,selected.ordinal()));}}));
         addRenderableWidget(Button.builder(Component.literal("Ver árvore"),v->minecraft.setScreen(new SkillTreeScreen(this,state,selected))).bounds(left+18+bw,top+h-32,bw,20).build());
         addRenderableWidget(Button.builder(Component.literal("Voltar"),v->onClose()).bounds(left+24+2*bw,top+h-32,bw,20).build());
         // The full-screen adapter must follow the footer in the native hit-test order.
@@ -44,7 +44,7 @@ public final class ClassSelectionScreen extends Screen {
         addRenderableWidget(selector);
     }
     private boolean canChoose(){return pending==0&&(state.rpgClass()==0||state.testing()||state.debug())&&selected.ordinal()!=state.rpgClass();}
-    public void update(RpgNetwork.State value){boolean done=pending>0&&value.rpgClass()==selected.ordinal();state=value;pending=0;parent.update(value);if(done)onClose();}
+    public void update(RpgNetwork.State value){boolean done=pending>0&&value.rpgClass()==selected.ordinal();state=value;pending=0;if(parent instanceof RpgScreen screen)screen.update(value);if(done)onClose();}
     @Override public void tick(){if(minecraft.player==null||minecraft.level==null){onClose();return;}if(pending>0)pending--;if(++ticks%40==0)minecraft.player.connection.send(new RpgNetwork.Request(0));}
     private int viewport(){return h-154;}
     @Override public boolean mouseScrolled(double x,double y,double sx,double sy){if(x>left+12&&x<left+w-12&&y>top+107&&y<top+h-43){scroll=Math.clamp(scroll-(int)(sy*24),0,Math.max(0,contentHeight-viewport()));return true;}return super.mouseScrolled(x,y,sx,sy);}

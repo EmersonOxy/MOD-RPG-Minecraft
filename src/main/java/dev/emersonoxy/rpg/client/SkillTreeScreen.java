@@ -22,9 +22,10 @@ public final class SkillTreeScreen extends GraphScreen {
     private boolean own(){return state.rpgClass()==viewed.ordinal();}
     @Override protected boolean owned(int id){return own()&&state.hasSkill(id);}
     private int points(){return Math.max(0,state.level()/2-Long.bitCount(state.skills()));}
-    @Override protected boolean available(int id){return own()&&id>=2&&!owned(id)&&(state.debug()||points()>0&&state.level()>=SkillTree.requiredLevel(id))&&((state.skills()|SkillTree.FREE_MASK)&SkillTree.parents(id))==SkillTree.parents(id);}
-    @Override protected String budget(){return state.testing()?"TESTE • tudo liberado":state.debug()?"DEBUG":points()+" pontos • arraste / roda: zoom";}
-    @Override protected String status(int id){return !own()?"Prévia de outra classe.":owned(id)?"Aprendido.":available(id)?"Disponível por 1 ponto.":"Requer conexão • Nv. "+SkillTree.requiredLevel(id)+" • 1 ponto";}
+    @Override protected boolean available(int id){return own()&&id>=2&&!owned(id)&&(state.debug()||points()>0&&state.level()>=SkillTree.requiredLevel(id)&&((state.skills()|SkillTree.FREE_MASK)&SkillTree.parents(id))==SkillTree.parents(id));}
+    @Override protected String budget(){return state.testing()?"TESTE • tudo liberado":state.debug()?"DEBUG • liberação livre":points()+" pontos • arraste / roda: zoom";}
+    @Override protected String status(int id){return !own()?"Prévia de outra classe.":owned(id)?"Aprendido.":available(id)?state.debug()?"Liberar no debug; pré-requisitos incluídos.":"Disponível por 1 ponto.":"Requer conexão • Nv. "+SkillTree.requiredLevel(id)+" • 1 ponto";}
     @Override protected void purchase(int id){minecraft.player.connection.send(new RpgNetwork.Request(100+id));}
+    @Override protected String purchaseLabel(){return state.debug()?"Liberar skill no debug":super.purchaseLabel();}
     public void update(RpgNetwork.State value){state=value;waiting=0;}
 }

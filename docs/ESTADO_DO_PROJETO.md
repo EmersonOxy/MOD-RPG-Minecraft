@@ -1,8 +1,16 @@
-# Estado do Oxy RPG — revisão 0.49.0
+# Estado do Oxy RPG — revisão 0.50.1
 
-Revisão registrada em 12/10/2026. Minecraft 1.21.10, NeoForge 21.10.64, JDK 21, protocolo de rede 32. Este registro substitui descrições antigas do README. Os documentos numerados são históricos de cada entrega.
+Revisão registrada em 12/10/2026. Minecraft 1.21.10, NeoForge 21.10.64, JDK 21, protocolo de rede 34. Os documentos numerados são históricos de cada entrega.
 
-A revisão inventariou fontes Java, registros, eventos, mixins, telas, recursos JSON, geração de dados, integração e persistência. Código das áreas alteradas foi inspecionado em detalhe. Inventário atual de arquivos e hashes: [REVISAO_ARQUIVOS_049.json](REVISAO_ARQUIVOS_049.json). O registro desta entrega distingue inventário do projeto e revisão detalhada dos caminhos alterados. Não equivale a validação integral dentro do jogo nem a auditoria de segurança.
+A revisão inventariou fontes Java, registros, eventos, mixins, telas, recursos JSON, geração de dados, integração e persistência. Código das áreas alteradas foi inspecionado em detalhe. Inventário atual de arquivos e hashes: [REVISAO_ARQUIVOS_0501.json](REVISAO_ARQUIVOS_0501.json). O registro distingue inventário do projeto e revisão detalhada dos caminhos alterados. Não equivale a validação integral dentro do jogo nem a auditoria de segurança.
+
+## Correção 0.50.1
+
+Debug persistente por jogador/mundo com attachment próprio, restauração no login/respawn e separação do perfil normal. Menu usa seletor completo e operação de rede única para as doze classes. Corrige IDs das duas classes novas, comandos do Assassino/Arqueiro, permissão do dono do mundo local, árvore sem custo/requisitos no debug e equipamento da classe efetiva. Ajustes exibem aviso discreto; lista de comandos apenas em `/rpg debug ajuda`. [Causas e validação pendente](CORRECOES_0501.md). [Instalação e backup](INSTALACAO_0501.md).
+
+## Entrega 0.50
+
+Arqueiro antigo migrado para Assassino preservando identificador; novo Arqueiro e Deus do Trovão integrados às árvores, habilidades, itens e interfaces. São doze classes e 612 nós. Inclui transporte de criaturas pelo Aviário, pouso controlado, câmera suave, disfarces com variantes/vida, conexões entre marcas de sangue e revisão de guardas/golens. [Implementação](CORRECOES_050.md). [Catálogo completo](CATALOGO_CLASSES_050.md).
 
 ## Entrega 0.49
 

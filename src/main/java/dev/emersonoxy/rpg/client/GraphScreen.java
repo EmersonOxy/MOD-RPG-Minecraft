@@ -28,6 +28,7 @@ public abstract class GraphScreen extends Screen {
     protected abstract String budget();
     protected abstract String status(int id);
     protected abstract void purchase(int id);
+    protected String purchaseLabel(){return "Aprender • 1 ponto";}
     protected void tabs(){}
     @Override public boolean isPauseScreen(){return false;}
     @Override public void onClose(){minecraft.setScreen(parent);}
@@ -68,7 +69,7 @@ public abstract class GraphScreen extends Screen {
         var n=nodes.get(selected);g.drawString(font,font.plainSubstrByWidth(n.title,panelWidth-20),left+10,bottom()+6,0xFFFFD580);
         var description=font.split(Component.literal(n.description),panelWidth-20);for(int i=0;i<Math.min(3,description.size());i++)g.drawString(font,description.get(i),left+10,bottom()+18+i*10,0xFFE2E8EC);
         g.drawString(font,font.plainSubstrByWidth(waiting>0?"Aguardando servidor…":status(selected),panelWidth-20),left+10,top+panelHeight-42,0xFFAACCCC);
-        learn.active=waiting==0&&available(selected);super.render(g,mx,my,partial);
+        learn.setMessage(Component.literal(purchaseLabel()));learn.active=waiting==0&&available(selected);super.render(g,mx,my,partial);
         int hovered=canvas(mx,my)&&!dragging?hit(mx,my):-1;if(hovered>=0){var h=nodes.get(hovered);var lines=new java.util.ArrayList<net.minecraft.util.FormattedCharSequence>();int wrap=Math.min(260,width-32);
             lines.addAll(font.split(Component.literal(h.title).withStyle(net.minecraft.ChatFormatting.GOLD,net.minecraft.ChatFormatting.BOLD),wrap));
             lines.add(net.minecraft.util.FormattedCharSequence.EMPTY);lines.addAll(font.split(Component.literal(h.description),wrap));

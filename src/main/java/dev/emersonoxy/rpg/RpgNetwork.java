@@ -10,9 +10,9 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 public final class RpgNetwork {
     private RpgNetwork() {}
 
-    public record DebugState(int mode,int level,int rpgClass,boolean allSkills,boolean cooldowns,boolean resources,boolean attributes,boolean arsenal) implements CustomPacketPayload {
+    public record DebugState(int mode,int level,int rpgClass,boolean allSkills,boolean cooldowns,boolean resources,boolean attributes,boolean arsenal,boolean allowed) implements CustomPacketPayload {
         public static final Type<DebugState> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath("oxyrpg","debug_state"));
-        public static final StreamCodec<RegistryFriendlyByteBuf,DebugState> CODEC=StreamCodec.of((b,v)->{b.writeVarInt(v.mode);b.writeVarInt(v.level);b.writeVarInt(v.rpgClass);b.writeBoolean(v.allSkills);b.writeBoolean(v.cooldowns);b.writeBoolean(v.resources);b.writeBoolean(v.attributes);b.writeBoolean(v.arsenal);},b->new DebugState(b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readBoolean(),b.readBoolean(),b.readBoolean(),b.readBoolean(),b.readBoolean()));
+        public static final StreamCodec<RegistryFriendlyByteBuf,DebugState> CODEC=StreamCodec.of((b,v)->{b.writeVarInt(v.mode);b.writeVarInt(v.level);b.writeVarInt(v.rpgClass);b.writeBoolean(v.allSkills);b.writeBoolean(v.cooldowns);b.writeBoolean(v.resources);b.writeBoolean(v.attributes);b.writeBoolean(v.arsenal);b.writeBoolean(v.allowed);},b->new DebugState(b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readBoolean(),b.readBoolean(),b.readBoolean(),b.readBoolean(),b.readBoolean(),b.readBoolean()));
         @Override public Type<DebugState> type(){return TYPE;}
     }
     public record BloodFx(double x,double y,double z,float dx,float dy,float dz,float damage) implements CustomPacketPayload {
@@ -194,7 +194,7 @@ public final class RpgNetwork {
         @Override public Type<ElectricArc> type(){return TYPE;}
     }
     public static void register(RegisterPayloadHandlersEvent event) {
-        var registrar = event.registrar("33");
+        var registrar = event.registrar("34");
         registrar.playToClient(BloodFx.TYPE,BloodFx.CODEC);
         registrar.playToClient(ImpactFx.TYPE,ImpactFx.CODEC);
         registrar.playToClient(CastFx.TYPE,CastFx.CODEC);

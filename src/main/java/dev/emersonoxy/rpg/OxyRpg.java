@@ -155,6 +155,7 @@ public final class OxyRpg {
         NeoForge.EVENT_BUS.addListener(RpgAbilities::logout);
         NeoForge.EVENT_BUS.addListener(RpgAbilities::stop);
         NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, RpgAbilities::onImpact);
+        NeoForge.EVENT_BUS.addListener(RpgDebug::onLogin);NeoForge.EVENT_BUS.addListener(RpgDebug::onClone);NeoForge.EVENT_BUS.addListener(RpgDebug::onRespawn);
         NeoForge.EVENT_BUS.addListener(RpgDebug::onLogout);
         NeoForge.EVENT_BUS.addListener(RpgDebug::onStop);
     }
@@ -171,6 +172,7 @@ public final class OxyRpg {
     static void menuAction(ServerPlayer player, int requested, int direction) {
         switch (requested) {
             case 0 -> {sync(player, "");RpgEvasion.sync(player);}
+            case 21 -> {if(direction>0&&direction<RpgClass.values().length)action(player,"classe",RpgClass.values()[direction]);}
             case 12 -> {if(!RpgSpecialists.intangible(player)&&!RpgVampire.bat(player))RpgEvasion.use(player,direction);}
             case 13 -> action(player,"classe",RpgClass.ILUSIONISTA);
             case 14 -> action(player,"classe",RpgClass.HIDROMANTE);
@@ -196,9 +198,9 @@ public final class OxyRpg {
             RpgProfile profile = store(player).load(player.getUUID());
             var effective=RpgDebug.effective(player,profile);
             boolean debug=RpgDebug.debugging(player),noCooldown=RpgDebug.cooldownsDisabled(player);
+            RpgAbilities.updateProfile(player,effective);
             ClassEquipment.onProfile(player,profile);
             RpgResources.update(player,profile);RpgResources.sync(player);
-            RpgAbilities.updateProfile(player, RpgDebug.effective(player, profile));
             Professions.sync(player);
             RpgAbilities.syncGhost(player);
             RpgSpecialists.sync(player);
@@ -221,7 +223,7 @@ public final class OxyRpg {
             RpgProfile profile = store.load(player.getUUID());
             if(!command.equals("classe"))profile=RpgDebug.effective(player,profile);
             switch (command) {
-                case "classes" -> tell(player, "Escolha sua classe no menu R, ou /rpg classe <nome>. Classes: guerreiro, mago, arqueiro, necromante, xama, aviario, ilusionista, hidromante, piromante e vampiresco. A escolha é definitiva neste mundo.");
+                case "classes" -> tell(player, "Escolha sua classe no menu R, ou /rpg classe <nome>. Classes: guerreiro, mago, assassino, arqueiro, necromante, xama, aviario, ilusionista, hidromante, piromante, vampiresco e deus_trovao. A escolha é definitiva neste mundo.");
                 case "classe" -> {
                     if(RpgDebug.testing(player))return testMode(player,selected,false);
                     if(RpgDebug.debugging(player))return DebugControls.choose(player,selected);
@@ -345,7 +347,7 @@ public final class OxyRpg {
                     RpgAbilities.clear(player);
             } else RpgDebug.disable(player);
             RpgAbilities.clear(player);
-            tell(player, mode == 1 ? "DEBUG ON: nível 100, todas as skills liberadas, recursos ilimitados e recargas desligadas. Configure em R > Debug ou /rpg debug. Tudo temporário."
+            tell(player, mode == 1 ? "DEBUG ON: nível 100, todas as skills liberadas, recursos ilimitados e recargas desligadas. Configure em R > Debug ou /rpg debug. Opções salvas neste mundo; perfil normal preservado."
                 : mode == 2 ? "DEBUG: árvore temporária limpa para testar outra combinação."
                 : "DEBUG OFF: skills e recarga normais restauradas.");
             sync(player,"");Professions.refreshModifiers(player);
@@ -373,18 +375,20 @@ public final class OxyRpg {
             if (selected != RpgClass.NONE) classes.then(Commands.literal(selected.command())
                 .executes(c -> action(c.getSource().getPlayerOrException(), "classe", selected)));
         }
+        classes.then(Commands.literal("arqueiro_novo").executes(c->action(c.getSource().getPlayerOrException(),"classe",RpgClass.ARQUEIRO_NOVO)));
         root.then(classes);
         root.then(Commands.literal("selo").executes(c->{var p=c.getSource().getPlayerOrException();var item=new net.minecraft.world.item.ItemStack(RpgItems.SIGIL.get());if(!p.addItem(item))p.drop(item,false);return 1;}));
         root.then(Commands.literal("desempenho").requires(Commands.hasPermission(2)).executes(c->{for(var line:RpgProfiler.report())c.getSource().sendSuccess(()->Component.literal(line),false);return 1;})
             .then(Commands.literal("limpar").executes(c->{RpgProfiler.clear();return 1;})));
         root.then(Commands.literal("exportarperfil").requires(Commands.hasPermission(2)).executes(c->{var p=c.getSource().getPlayerOrException();try{var profile=new ProfileStore(p).load(p.getUUID());new ProfileStore(p.level().getServer().getWorldPath(LevelResource.ROOT).resolve("oxyrpg/exports")).save(p.getUUID(),profile);tell(p,"Perfil exportado em oxyrpg/exports.");return 1;}catch(IOException e){c.getSource().sendFailure(Component.literal("Não foi possível exportar o perfil."));return 0;}}));
         root.then(DebugControls.commands());
-        var tests=Commands.literal("teste").requires(Commands.hasPermission(2))
+        var tests=Commands.literal("teste").requires(DebugControls::allowed)
             .executes(c->testMode(c.getSource().getPlayerOrException(),null,false))
             .then(Commands.literal("on").executes(c->testMode(c.getSource().getPlayerOrException(),null,false)))
             .then(Commands.literal("off").executes(c->testMode(c.getSource().getPlayerOrException(),null,true)));
-        for(var choice:RpgClass.values())if(choice!=RpgClass.NONE)tests.then(Commands.literal(choice.name().toLowerCase(java.util.Locale.ROOT))
+        for(var choice:RpgClass.values())if(choice!=RpgClass.NONE)tests.then(Commands.literal(choice.command())
             .executes(c->testMode(c.getSource().getPlayerOrException(),choice,false)));
+        tests.then(Commands.literal("arqueiro_novo").executes(c->testMode(c.getSource().getPlayerOrException(),RpgClass.ARQUEIRO_NOVO,false)));
         root.then(tests);
         root.then(Commands.literal("elite").requires(Commands.hasPermission(2))
             .executes(c->{EliteAbilities.force(c.getSource().getPlayerOrException(),3);return 1;})

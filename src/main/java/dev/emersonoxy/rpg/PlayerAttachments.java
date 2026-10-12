@@ -21,6 +21,7 @@ public final class PlayerAttachments {
     }
     private static final DeferredRegister<AttachmentType<?>> TYPES=DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES,OxyRpg.MOD_ID);
     public static final Supplier<AttachmentType<Stored>> PROFILE=TYPES.register("profile",()->AttachmentType.builder(()->new Stored(false,RpgProfile.NEW)).serialize(Stored.CODEC).copyOnDeath().build());
+    public static final Supplier<AttachmentType<DebugSettings>> DEBUG_SETTINGS=TYPES.register("debug_settings",()->AttachmentType.builder(()->DebugSettings.OFF).serialize(DebugSettings.CODEC).copyOnDeath().build());
     private PlayerAttachments(){}
     public static void register(net.neoforged.bus.api.IEventBus bus){TYPES.register(bus);}
 }
