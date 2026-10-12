@@ -22,8 +22,8 @@
     "NativeProjectileAimMixin",
     "NativeCrossbowAimMixin",
     "EvasionMovementMixin",
-    "AviaryCarryMixin",
-    "ThunderSwimMixin"
+    "ThunderSwimMixin",
+    "GuidedArrowInvoker"
   ],
   "client": [
     "ShoulderCameraMixin",
@@ -43,6 +43,7 @@
     "ClassCastAnimationMixin",
     "AviaryCrouchMixin",
     "VegetationModelMixin",
+    "SodiumVegetationMixin",
     "MerchantLayoutMixin",
     "TerralithWorldInvoker",
     "TerralithWorldTabMixin",

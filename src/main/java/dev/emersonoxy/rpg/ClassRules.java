@@ -70,7 +70,7 @@ public final class ClassRules {
         case AVIARIO->"-2 corações de vida base; +20% dano de projéteis no ar. Voo cresce com seu nível.";
         case ILUSIONISTA->"-2 corações de vida base; ataques diretos causam 20% menos dano. Enxame não permite atacar nem interagir.";
         case HIDROMANTE->"Fora da água, +15% dano de fogo e -10% dano causado quando não chove.";
-        case VAMPIRESCO->"O sol fere, a chuva causa dano leve e o dia enfraquece. Comida comum não sacia a sede; alimente-se de criaturas pacíficas. Twilight aumenta o dano recebido.";
+        case VAMPIRESCO->"O sol fere e o dia enfraquece; a chuva protege do sol. Comida comum não sacia a sede; alimente-se de criaturas pacíficas. Twilight aumenta o dano recebido.";
         case PIROMANTE->"-1 coração de vida base; +20% dano de frio. Água esfria a caldeira e reduz dano causado em 20%.";
         case XAMA->"Não pode comer carne ou peixe; -10% dano de armas convencionais.";
         default->"Escolha uma classe para começar.";

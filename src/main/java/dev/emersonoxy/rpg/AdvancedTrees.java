@@ -25,10 +25,10 @@ public final class AdvancedTrees {
             {"Caçada implacável","Por 10 s: velocidade, superpulo e esquivas livres. Ao mirar ou marcar uma criatura, flechas perseguem o alvo e causam lentidão.","spyglass"},
             {"Caçada prolongada","Caçada dura mais 2 s; lentidão dos disparos guiados dura 6 s.","clock"},
             {"Setas velozes","Velocidade dos disparos guiados aumenta de 3,4 para 4 blocos/tick.","wind_charge"},
-            {"Caçador aéreo","Superpulo III e lentidão II nos disparos guiados.","elytra"}
+            {"Caçador aéreo","Superpulo V e lentidão II nos disparos guiados.","elytra"}
         };
         case DEUS_TROVAO -> new String[][] {
-            {"Condutor vivo","Após correr por 3 s no chão, ganha 15% de velocidade até interromper a corrida.","lightning_rod"},
+            {"Condutor vivo","Após correr por 3 s, ganha 75% de velocidade; aumenta até 125% após 8 s. Saltos mantêm a corrida.","lightning_rod"},
             {"Salto elétrico","Teleporte de até 5 blocos na mira; raio causa 3 de dano em raio de 1,5 bloco.","ender_pearl"},
             {"Choque de chegada","Criaturas atingidas no teleporte recebem lentidão por 2 s.","glowstone_dust"},
             {"Descida do trovão","Teleporte de até 12 blocos; raio causa 6 de dano em raio de 3 blocos.","lightning_rod"},
@@ -43,12 +43,12 @@ public final class AdvancedTrees {
             {"Canalização persistente","Corrente dura mais 2 s.","clock"},
             {"Tempestade encadeada","Corrente salta para mais 2 criaturas próximas.","diamond_block"},
             {"Punhos carregados","Preparação para a tempestade de punhos.","iron_ingot"},
-            {"Pulso de tempestade","Por 3 s ganha velocidade, sobe blocos e aplica choque com as mãos vazias; o raio salta para outra criatura.","quartz"},
+            {"Pulso de tempestade","Por 3 s ganha 90% de velocidade, superpulo, sobe blocos e aplica choque com as mãos vazias; o raio salta para outra criatura.","quartz"},
             {"Pulso duradouro","Pulso de tempestade dura mais 1 s.","lapis_lazuli"},
-            {"Avatar do trovão","Por 8 s: velocidade +40%, subida automática e choque nos punhos com até 3 saltos entre criaturas. Exige ambas as mãos vazias para o choque.","nether_star"},
+            {"Avatar do trovão","Por 8 s: velocidade +180%, superpulo, subida automática e choque nos punhos com até 3 saltos entre criaturas. Exige ambas as mãos vazias para o choque.","nether_star"},
             {"Avatar persistente","Avatar dura mais 2 s.","clock"},
-            {"Velocidade divina","Velocidade do Avatar ganha mais 15 pontos percentuais.","sugar"},
-            {"Escalada elétrica","Altura de passo durante o Avatar aumenta mais 0,5 bloco.","smooth_stone"}
+            {"Velocidade divina","Velocidade do Avatar ganha mais 50 pontos percentuais.","sugar"},
+            {"Escalada elétrica","Altura de passo durante o Avatar aumenta mais 0,5 bloco; superpulo fica mais forte.","smooth_stone"}
         };
         default -> throw new IllegalArgumentException("Classe sem árvore avançada");
     };}

@@ -16,7 +16,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 public final class RpgEvasion {
     public static final int RECHARGE=120;
     private static final Map<UUID,Pool> POOLS=new HashMap<>(),TEST_POOLS=new HashMap<>();
-    private static final class Pool {float energy;int maximum;long last,dodge,lastUse=-100,motionUntil;Vec3 origin;Pool(int maximum,long now){this.maximum=maximum;energy=maximum;last=now;}}
+    private static final class Pool {float energy;int maximum;long last,dodge,lastUse=-100,motionUntil;Vec3 origin,direction;Pool(int maximum,long now){this.maximum=maximum;energy=maximum;last=now;}}
     private RpgEvasion(){}
     public static int maximum(ServerPlayer p){int level=RpgAbilities.profile(p).level();return RpgConfig.charges(level);}
     private static Pool pool(ServerPlayer p){
@@ -41,19 +41,28 @@ public final class RpgEvasion {
         if(!p.level().noCollision(p,p.getBoundingBox().move(dir.scale(.5))))return;
         if(!free&&!RpgDebug.cooldownsDisabled(p))a.energy=Math.max(0,a.energy-1);a.lastUse=now;a.dodge=now+6;
         PacketDistributor.sendToPlayersTrackingEntityAndSelf(p,new RpgNetwork.EntityMotion(p.getId(),6,Math.floorMod(direction,8)));
-        a.origin=p.position();a.motionUntil=now+13;PacketDistributor.sendToPlayer(p,new RpgNetwork.EvasionMotion(p.getX(),p.getY(),p.getZ(),13));
-        p.stopUsingItem();p.setDeltaMovement(dir.scale(.95).add(0,.08,0));p.hasImpulse=true;p.hurtMarked=true;
+        a.origin=p.position();a.direction=dir;a.motionUntil=now+13;PacketDistributor.sendToPlayer(p,new RpgNetwork.EvasionMotion(p.getX(),p.getY(),p.getZ(),13));
+        p.stopUsingItem();p.setDeltaMovement(dir.scale(.08).add(0,.08,0));p.hasImpulse=true;p.hurtMarked=true;
         p.connection.send(new ClientboundSetEntityMotionPacket(p));
         ((net.minecraft.server.level.ServerLevel)p.level()).playSound(null,p.blockPosition(),net.minecraft.sounds.SoundEvents.PLAYER_ATTACK_SWEEP,net.minecraft.sounds.SoundSource.PLAYERS,.45f,1.35f);
         if(free)ClassJourney.advance(p,2,1);save(p,a);sync(p,a);
     }
     public static Vec3 movement(net.minecraft.world.entity.player.Player p,Vec3 move){
-        Vec3 origin;
-        if(p instanceof ServerPlayer server){var pools=RpgDebug.enabled(server)?TEST_POOLS:POOLS;var pool=pools.get(p.getUUID());if(pool==null||pool.origin==null||p.level().getGameTime()>=pool.motionUntil)return move;origin=pool.origin;}
-        else{if(!p.isLocalPlayer())return move;var tag=p.getPersistentData();if(tag.getIntOr("oxy_dodge_motion_until",0)<=p.tickCount)return move;origin=new Vec3(tag.getDoubleOr("oxy_dodge_x",p.getX()),tag.getDoubleOr("oxy_dodge_y",p.getY()),tag.getDoubleOr("oxy_dodge_z",p.getZ()));}
-        var end=p.position().add(move).subtract(origin);double distance=end.horizontalDistance();if(distance<=3)return move;
-        var limited=origin.add(end.x*3/distance,end.y,end.z*3/distance).subtract(p.position());
-        p.setDeltaMovement(0,p.getDeltaMovement().y,0);return limited;
+        Vec3 origin,direction;double remaining;
+        if(p instanceof ServerPlayer server){
+            var pool=(RpgDebug.enabled(server)?TEST_POOLS:POOLS).get(p.getUUID());
+            if(pool==null||pool.origin==null||p.level().getGameTime()>=pool.motionUntil)return move;
+            origin=pool.origin;direction=pool.direction;remaining=pool.motionUntil-p.level().getGameTime();
+        }else{
+            if(!p.isLocalPlayer())return move;var tag=p.getPersistentData();remaining=tag.getIntOr("oxy_dodge_motion_until",0)-p.tickCount;
+            if(remaining<=0)return move;
+            origin=new Vec3(tag.getDoubleOr("oxy_dodge_x",p.getX()),tag.getDoubleOr("oxy_dodge_y",p.getY()),tag.getDoubleOr("oxy_dodge_z",p.getZ()));
+            direction=new Vec3(tag.getDoubleOr("oxy_dodge_dx",0),0,tag.getDoubleOr("oxy_dodge_dz",1));
+        }
+        double t=Math.clamp((14-remaining)/13,0,1);
+        double travel=3*(t-Math.sin(2*Math.PI*t)/(2*Math.PI));
+        var desired=origin.add(direction.scale(travel));
+        return new Vec3(desired.x-p.getX(),move.y,desired.z-p.getZ());
     }
     public static void incoming(LivingIncomingDamageEvent event){if(Bleeding.damage(event.getSource()))return;
         if(!(event.getEntity() instanceof ServerPlayer p))return;var a=pool(p);var source=event.getSource();

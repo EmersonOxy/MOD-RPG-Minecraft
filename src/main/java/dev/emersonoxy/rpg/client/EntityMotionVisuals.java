@@ -19,7 +19,8 @@ public final class EntityMotionVisuals {
     private static void world(){var w=Minecraft.getInstance().level;if(w!=world){world=w;FORMS.clear();MOTIONS.clear();DUMMIES.clear();}}
     public static void receive(RpgNetwork.EntityMotion p){world();var mc=Minecraft.getInstance();if(mc.level==null)return;
         if(p.kind()==3||p.kind()==4){if(p.kind()==3)FORMS.add(p.entity());else{FORMS.remove(p.entity());DUMMIES.remove(p.entity());}var entity=mc.level.getEntity(p.entity());if(entity!=null){entity.getPersistentData().putBoolean("oxy_vampire_bat",p.kind()==3);entity.refreshDimensions();}return;}
-        if(p.kind()==6){var entity=mc.level.getEntity(p.entity());if(entity instanceof net.minecraft.world.entity.Avatar avatar&&net.neoforged.fml.ModList.get().isLoaded("player_animation_library"))DodgeAnimation.play(avatar);MOTIONS.put(p.entity(),new Motion(mc.level.getGameTime()+13,13,6,Math.floorMod(p.ticks(),8)));return;}
+        if(p.kind()==6){var entity=mc.level.getEntity(p.entity());
+            if(entity==mc.player){var dir=new net.minecraft.world.phys.Vec3(0,0,1).yRot((float)Math.toRadians(-entity.getYRot())).yRot((float)(-Math.floorMod(p.ticks(),8)*Math.PI/4));entity.getPersistentData().putDouble("oxy_dodge_dx",dir.x);entity.getPersistentData().putDouble("oxy_dodge_dz",dir.z);}if(entity instanceof net.minecraft.world.entity.Avatar avatar&&net.neoforged.fml.ModList.get().isLoaded("player_animation_library"))DodgeAnimation.play(avatar);MOTIONS.put(p.entity(),new Motion(mc.level.getGameTime()+13,13,6,Math.floorMod(p.ticks(),8)));return;}
         var active=MOTIONS.get(p.entity());if(p.kind()==2&&active!=null&&(active.kind==1||active.kind==5)&&active.until>mc.level.getGameTime())return;
         if(MOTIONS.size()>=2048)MOTIONS.remove(MOTIONS.keySet().iterator().next());
         MOTIONS.put(p.entity(),new Motion(mc.level.getGameTime()+Math.clamp(p.ticks(),0,40),Math.clamp(p.ticks(),1,40),p.kind(),0));

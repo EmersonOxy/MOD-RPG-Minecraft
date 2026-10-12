@@ -114,7 +114,7 @@ public final class OxyRpg {
         NeoForge.EVENT_BUS.addListener(RpgAviary::tick);
         NeoForge.EVENT_BUS.addListener(RpgAviary::fall);
         NeoForge.EVENT_BUS.addListener(RpgAviary::damage);
-        NeoForge.EVENT_BUS.addListener(RpgAviary::stop);NeoForge.EVENT_BUS.addListener(AviaryCarry::tick);NeoForge.EVENT_BUS.addListener(AviaryCarry::tracking);NeoForge.EVENT_BUS.addListener(AviaryCarry::logout);NeoForge.EVENT_BUS.addListener(AviaryCarry::stop);
+        NeoForge.EVENT_BUS.addListener(RpgAviary::stop);NeoForge.EVENT_BUS.addListener(AviaryCarry::tick);NeoForge.EVENT_BUS.addListener(AviaryCarry::join);NeoForge.EVENT_BUS.addListener(AviaryCarry::tracking);NeoForge.EVENT_BUS.addListener(AviaryCarry::logout);NeoForge.EVENT_BUS.addListener(AviaryCarry::stop);
         NeoForge.EVENT_BUS.addListener(MeteorCrater::tick);
         NeoForge.EVENT_BUS.addListener(MeteorCrater::stop);
         NeoForge.EVENT_BUS.addListener(MobLevels::damage);

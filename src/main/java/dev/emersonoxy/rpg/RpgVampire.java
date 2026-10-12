@@ -66,7 +66,7 @@ public final class RpgVampire {
         if(bat(p)){p.fallDistance=0;if(p.tickCount%10==0&&c.world.noCollision(p,new net.minecraft.world.phys.AABB(p.getX()-.3,p.getY(),p.getZ()-.3,p.getX()+.3,p.getY()+1.8,p.getZ()+.3)))c.safe=p.position();if(p.tickCount%20==0&&!RpgDebug.unlimited(p)){if(!RpgResources.affordable(p,1))returnHuman(c,true);else RpgResources.spend(p,1);}}
         c.bats.removeIf(b->!b.isAlive()||b.isRemoved());if(c.swarm<=now&&!c.bats.isEmpty()){c.bats.forEach(Entity::discard);c.bats.clear();}
         for(int i=0;i<c.bats.size();i++){double a=now*.13+i*Math.PI*2/c.bats.size();c.bats.get(i).setPos(p.getX()+Math.cos(a)*1.1,p.getY()+1+Math.sin(a*1.5)*.25,p.getZ()+Math.sin(a)*1.1);}
-        if(!p.isCreative()&&!p.isSpectator()&&world.isRainingAt(p.blockPosition())&&p.tickCount%20==0)p.hurtServer(world,p.damageSources().drown(),.5f);
+        // Rain shelters vampires from sunlight; it does not inflict water damage.
         if(p.tickCount%20!=0)return;
         if(c.healUntil>now&&c.healing>0){float n=Math.min(c.healing,s.hasSkill(5)?1.5f:1);p.heal(n);c.healing-=n;}
         boolean day=world.dimensionType().hasSkyLight()&&Math.floorMod(world.getDayTime(),24000)<12000;

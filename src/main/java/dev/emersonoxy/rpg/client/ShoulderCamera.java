@@ -75,7 +75,15 @@ public final class ShoulderCamera {
         if(nativeFlight){reset();nativeFlight=false;tracked=entity;mode=next;depth=next.isFirstPerson()?0:next.isMirrored()?-4:4;orientation=next.isMirrored()?180:0;}
         if(tracked!=entity){reset();tracked=entity;mode=next;if(next==CameraType.THIRD_PERSON_FRONT){depth=-4;orientation=180;}}
         long now=System.nanoTime();double dt=lastFrame==0?0:Math.min(.05,(now-lastFrame)/1e9);lastFrame=now;if(mc.isPaused())dt=0;
-        if(mode!=next){mode=next;collision.reset();}
+        if(mode!=next){
+            // A new perspective starts in its own coordinate frame. Blending front/back
+            // depth and 180-degree yaw together flips the camera through the player.
+            mode=next;collision.reset();MovementFacing.reset();TargetLock.perspectiveChanged();
+            depth=next.isFirstPerson()?0:next.isMirrored()?-4:enabled?distance:4;
+            side=enabled&&next==CameraType.THIRD_PERSON_BACK?(left?-lateral:lateral):0;
+            up=enabled&&next==CameraType.THIRD_PERSON_BACK?height:0;
+            orientation=next.isMirrored()?180:0;amplitude=0;bodyVisible=!next.isFirstPerson();
+        }
         boolean shoulder=enabled&&next==CameraType.THIRD_PERSON_BACK;
         if(!shoulder&&next.isFirstPerson()&&Math.abs(depth)<.015&&Math.abs(side)<.01&&Math.abs(up)<.01){rendered=false;return null;}
         if(!enabled&&Math.abs(side)<.01&&!next.isFirstPerson()){rendered=false;return null;}

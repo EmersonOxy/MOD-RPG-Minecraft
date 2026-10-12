@@ -10,6 +10,7 @@ public final class BarrelRollCompat {
     private static Method active,clear,setRoll,setRolling;
     private static net.minecraft.client.player.LocalPlayer tracked;
     private static boolean gliding;
+    private static net.minecraft.client.CameraType perspective;
     private BarrelRollCompat() {}
     public static void resetFlight(){
         active();var p=net.minecraft.client.Minecraft.getInstance().player;if(p==null||clear==null)return;
@@ -17,8 +18,9 @@ public final class BarrelRollCompat {
         catch(ReflectiveOperationException e){clear=null;LoggerFactory.getLogger(BarrelRollCompat.class).warn("Não foi possível reiniciar a rotação de voo",e);}
     }
     public static void tick(){
-        var p=net.minecraft.client.Minecraft.getInstance().player;boolean next=p!=null&&p.isFallFlying()&&!p.getAbilities().flying;
-        if(tracked!=p||gliding!=next){tracked=p;gliding=next;resetFlight();}
+        var mc=net.minecraft.client.Minecraft.getInstance();var p=mc.player;boolean next=p!=null&&p.isFallFlying()&&!p.getAbilities().flying;
+        var view=mc.options.getCameraType();
+        if(tracked!=p||gliding!=next||perspective!=view){tracked=p;gliding=next;perspective=view;resetFlight();ShoulderCamera.reset();TargetLock.perspectiveChanged();}
     }
     public static boolean active() {
         if (!resolved) {

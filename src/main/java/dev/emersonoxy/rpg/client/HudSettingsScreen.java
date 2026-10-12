@@ -25,7 +25,7 @@ public final class HudSettingsScreen extends Screen {
         addRenderableWidget(Button.builder(Component.literal("Padrões"),b->{DynamicHud.defaults();rebuildWidgets();}).bounds(left+12,top+row(258),footer,20).build());
         addRenderableWidget(Button.builder(Component.literal("Combate"),b->minecraft.setScreen(new CombatSettingsScreen(this))).bounds(left+16+footer,top+row(258),footer,20).build());
         addRenderableWidget(Button.builder(Component.literal("Inventário"),b->minecraft.setScreen(new InventorySettingsScreen(this))).bounds(left+20+footer*2,top+row(258),footer,20).build());
-        addRenderableWidget(Button.builder(Component.literal("Explorar"),b->minecraft.setScreen(new ExplorationSettingsScreen(this))).bounds(left+24+footer*3,top+row(258),footer,20).build());
+        addRenderableWidget(Button.builder(Component.literal("Bússola"),b->minecraft.setScreen(new ExplorationSettingsScreen(this))).bounds(left+24+footer*3,top+row(258),footer,20).build());
         addRenderableWidget(Button.builder(Component.literal("Voltar"),b->onClose()).bounds(left+28+footer*4,top+row(258),footer,20).build());
     }
     private int row(int y){return y*panelHeight/290;}

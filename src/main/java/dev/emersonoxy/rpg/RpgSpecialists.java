@@ -74,7 +74,7 @@ public final class RpgSpecialists {
                 if(slot==0){
                     discard(c.copies);var target=AbilityAim.target(p);
                     int count=2+(s.hasSkill(4)?1:0)+(s.hasSkill(6)?1:0);
-                    for(int i=0;i<count;i++){var mob=spawn(c,target.getType(),p.position().add(Math.cos(i*6.28/count)*2,0,Math.sin(i*6.28/count)*2));if(mob!=null){MimicAppearance.copy(target,mob);c.copies.add(mob);}}
+                    for(int i=0;i<count;i++){var mob=spawn(c,target.getType(),p.position().add(Math.cos(i*6.28/count)*2,0,Math.sin(i*6.28/count)*2));if(mob!=null){MimicAppearance.copy(target,mob);mob.setInvisible(false);mob.setGlowingTag(false);c.copies.add(mob);}}
                     c.disguiseType=target.getType();c.disguiseSource=target.getId();
                     if(s.hasSkill(5))c.until[0]+=60;
                     ghost(p,(int)(c.until[0]-now));syncDisguise(c);for(var enemy:near(c,p.position(),32))if(enemy.getTarget()==p)enemy.setTarget(null);ClassJourney.advance(p,0,1);
@@ -237,11 +237,18 @@ public final class RpgSpecialists {
         String type=c.disguiseType==null?"":net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(c.disguiseType).toString();
         return new RpgNetwork.DisguiseState(c.player.getId(),c.disguiseSource,type,remaining);
     }
-    private static void syncDisguise(Cast c){PacketDistributor.sendToPlayersTrackingEntityAndSelf(c.player,disguiseState(c));}
+    private static void syncDisguise(Cast c){
+        PacketDistributor.sendToPlayersTrackingEntityAndSelf(c.player,disguiseState(c));
+        if(c.disguiseType!=null)for(var copy:c.copies)PacketDistributor.sendToPlayersTrackingEntity(copy,new RpgNetwork.DisguiseState(copy.getId(),c.disguiseSource,net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(c.disguiseType).toString(),(int)Math.max(0,c.until[0]-c.world.getGameTime())));
+    }
     private static void clearDisguise(ServerPlayer p){PacketDistributor.sendToPlayersTrackingEntityAndSelf(p,new RpgNetwork.DisguiseState(p.getId(),-1,"",0));}
     private static void discard(List<Mob> mobs){for(var m:mobs){OWNERS.remove(m.getUUID());m.discard();}mobs.clear();}
     public static void clear(ServerPlayer p){Professions.modifier(p,net.minecraft.world.entity.ai.attributes.Attributes.JUMP_STRENGTH,"phoenix_jump",0,net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_VALUE);var c=CASTS.remove(p.getUUID());p.getPersistentData().remove("oxy_waterwalk");if(c!=null){finishEclipse(c);discard(c.copies);discard(c.sea);clearDisguise(p);ghost(p,0);}p.getPersistentData().remove("oxy_eclipse");p.getPersistentData().remove("oxy_phase_tier");SHOTS.entrySet().removeIf(e->e.getValue().player()==p);}
-    public static void tracking(PlayerEvent.StartTracking e){if(e.getEntity() instanceof ServerPlayer viewer){if(e.getTarget() instanceof ServerPlayer p){var c=CASTS.get(p.getUUID());if(c!=null){int ticks=(int)Math.max(0,Math.max(c.until[0],c.until[2])-p.level().getGameTime());if(ticks>0&&c.profile.rpgClass()==RpgClass.ILUSIONISTA){PacketDistributor.sendToPlayer(viewer,new RpgNetwork.Ghost(p.getId(),ticks));PacketDistributor.sendToPlayer(viewer,disguiseState(c));}}}else if(temporary(e.getTarget()))PacketDistributor.sendToPlayer(viewer,new RpgNetwork.MobLevel(e.getTarget().getId(),e.getTarget().getPersistentData().getBooleanOr("oxy_cosmetic",false)?-2:-1));}}
+    public static void tracking(PlayerEvent.StartTracking e){if(e.getEntity() instanceof ServerPlayer viewer){if(e.getTarget() instanceof ServerPlayer p){var c=CASTS.get(p.getUUID());if(c!=null){int ticks=(int)Math.max(0,Math.max(c.until[0],c.until[2])-p.level().getGameTime());if(ticks>0&&c.profile.rpgClass()==RpgClass.ILUSIONISTA){PacketDistributor.sendToPlayer(viewer,new RpgNetwork.Ghost(p.getId(),ticks));PacketDistributor.sendToPlayer(viewer,disguiseState(c));}}}else if(temporary(e.getTarget())){
+            PacketDistributor.sendToPlayer(viewer,new RpgNetwork.MobLevel(e.getTarget().getId(),e.getTarget().getPersistentData().getBooleanOr("oxy_cosmetic",false)?-2:-1));
+            var owner=OWNERS.get(e.getTarget().getUUID());var c=owner==null?null:CASTS.get(owner.getUUID());
+            if(c!=null&&c.disguiseType!=null&&c.copies.contains(e.getTarget()))PacketDistributor.sendToPlayer(viewer,new RpgNetwork.DisguiseState(e.getTarget().getId(),c.disguiseSource,net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(c.disguiseType).toString(),(int)Math.max(0,c.until[0]-c.world.getGameTime())));
+        }}}
     public static void logout(PlayerEvent.PlayerLoggedOutEvent e){if(e.getEntity() instanceof ServerPlayer p)clear(p);}
     public static void stop(ServerStoppedEvent e){for(var c:new ArrayList<>(CASTS.values()))clear(c.player);CASTS.clear();SHOTS.clear();OWNERS.clear();}
 }

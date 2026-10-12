@@ -139,5 +139,6 @@
   "block.homesteads.prospectors_bench": "Bancada do prospector",
   "block.homesteads.forager_bench": "Bancada do coletor",
   "item.oxyrpg.relic_arqueiro_novo": "Relíquia: Arqueiro",
-  "item.oxyrpg.relic_deus_trovao": "Relíquia: Deus do Trovão"
+  "item.oxyrpg.relic_deus_trovao": "Relíquia: Deus do Trovão",
+  "key.oxyrpg.release_cargo": "Soltar criatura carregada"
 }

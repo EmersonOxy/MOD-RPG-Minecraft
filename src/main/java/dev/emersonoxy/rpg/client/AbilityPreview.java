@@ -12,9 +12,11 @@ public final class AbilityPreview {
     private static int slot=-1,selectedClass;
     private static final List<Vec3[]> LINES=new ArrayList<>();
     private static long built=-1;
+    private static boolean destinationValid=true;
+    private static Vec3 teleportMarker;
     private AbilityPreview(){}
     public static void clear(){slot=-1;LINES.clear();built=-1;}
-    public static void press(int index){var mc=Minecraft.getInstance();CombatOptions.load();if(!CombatOptions.preview||(EquipmentAccess.clientSelected()==RpgClass.AVIARIO||RpgSpecialists.handles(EquipmentAccess.clientSelected()))){OxyRpgClient.cast(index);return;}slot=index;selectedClass=EquipmentAccess.clientSelected().ordinal();built=-1;}
+    public static void press(int index){var mc=Minecraft.getInstance();CombatOptions.load();if((!CombatOptions.preview&&!(EquipmentAccess.clientSelected()==RpgClass.DEUS_TROVAO&&index==0))||(EquipmentAccess.clientSelected()==RpgClass.AVIARIO||RpgSpecialists.handles(EquipmentAccess.clientSelected()))){OxyRpgClient.cast(index);return;}slot=index;selectedClass=EquipmentAccess.clientSelected().ordinal();built=-1;}
     public static void tick(){
         var mc=Minecraft.getInstance();if(slot<0)return;
         if(mc.player==null||mc.level==null||mc.screen!=null||!mc.player.isAlive()||mc.player.isSpectator()||selectedClass!=EquipmentAccess.clientSelected().ordinal()){clear();return;}
@@ -27,7 +29,11 @@ public final class AbilityPreview {
     private static void build(RpgProfile p){
         var mc=Minecraft.getInstance();var player=mc.player;LINES.clear();var center=player.position();var point=ShoulderCamera.abilityPoint(mc.gameRenderer.getMainCamera().getPartialTickTime());
         var target=TargetLock.target();if(target!=null&&TargetLock.mouseLocked())point=TargetLock.point(target,mc.gameRenderer.getMainCamera().getPartialTickTime());
-        var direction=point.subtract(player.getEyePosition()).normalize();
+        var direction=point.subtract(player.getEyePosition()).normalize();destinationValid=true;teleportMarker=null;
+        if(p.rpgClass()==RpgClass.DEUS_TROVAO&&slot==0){
+            var destination=AdvancedClasses.teleportDestination(player,p,point);destinationValid=destination!=null;teleportMarker=destination;
+            if(destination!=null){circle(destination,.4);path(center,destination);}return;
+        }
         if(p.rpgClass()==RpgClass.MAGO&&slot==2){circle(center,p.mainUnlocked(2)?4+(p.hasSkill(18)?1:0):1.5+(p.hasSkill(16)?.5:0));return;}
         if(p.rpgClass()==RpgClass.GUERREIRO){circle(center,slot==0?3+(p.hasSkill(4)?.5:0)+Math.max(0,ClassEquipment.active(player,RpgClass.GUERREIRO)-1)*.5:1);return;}
         if(p.rpgClass()==RpgClass.MAGO&&slot==1&&p.mainUnlocked(1)){
@@ -46,9 +52,13 @@ public final class AbilityPreview {
         var mc=Minecraft.getInstance();if(slot<0||mc.player==null||mc.level==null||mc.screen!=null||mc.options.hideGui)return;var profile=OxyRpgClient.profile();if(profile==null)return;
         if(built!=mc.level.getGameTime()){build(profile);built=mc.level.getGameTime();}
         int cost=ClassEquipment.discount(mc.player,profile.rpgClass(),RpgResources.cost(profile,slot,false));var resource=OxyRpgClient.resources();var state=OxyRpgClient.state();
-        String status=!state.canUse(slot)?"Habilidade bloqueada":OxyRpgClient.cooldown(slot)>0?"Em recarga":resource!=null&&resource.mana()<cost&&!(OxyRpgClient.debugState()!=null&&OxyRpgClient.debugState().resources())?"Mana insuficiente":"Solte para lançar";
+        String status=!destinationValid?"Destino bloqueado":!state.canUse(slot)?"Habilidade bloqueada":OxyRpgClient.cooldown(slot)>0?"Em recarga":resource!=null&&resource.mana()<cost&&!(OxyRpgClient.debugState()!=null&&OxyRpgClient.debugState().resources())?"Mana insuficiente":"Solte para lançar";
         int color=status.equals("Solte para lançar")?0xD953D5BF:status.equals("Em recarga")?0xD9A1AAB8:0xD9FF7070;
         for(var line:LINES)WorldLines.line(g,line[0],line[1],color);
+        if(teleportMarker!=null){var screen=CameraProjection.project(teleportMarker.add(0,.15,0));if(WorldLines.onScreen(screen)){
+            int x=(int)((screen.x+1)*g.guiWidth()/2),y=(int)((1-screen.y)*g.guiHeight()/2);SkillGlyphs.draw(g,RpgClass.DEUS_TROVAO,0,x-8,y-8,16,0xFF78DCEC);
+            g.drawCenteredString(mc.font,"Destino · "+Math.round(mc.player.position().distanceTo(teleportMarker))+" m",x,y+10,0xFFAFEAF2);
+        }}
         g.drawCenteredString(mc.font,SkillTree.abilityName(profile.rpgClass(),slot)+" • "+status+" • "+(OxyRpgClient.debugState()!=null&&OxyRpgClient.debugState().resources()?0:cost)+" MP",g.guiWidth()/2,g.guiHeight()/2+30,0xFF000000|(color&0xFFFFFF));
     }
 }

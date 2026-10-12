@@ -60,6 +60,11 @@ public final class RpgNetwork {
         public static final StreamCodec<RegistryFriendlyByteBuf,CarryState> CODEC=StreamCodec.of((b,v)->{b.writeVarInt(v.player);b.writeVarInt(v.mob);},b->new CarryState(b.readVarInt(),b.readVarInt()));
         @Override public Type<CarryState> type(){return TYPE;}
     }
+    public record CarryApproach(int mob,int ticks) implements CustomPacketPayload {
+        public static final Type<CarryApproach> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath("oxyrpg","carry_approach"));
+        public static final StreamCodec<RegistryFriendlyByteBuf,CarryApproach> CODEC=StreamCodec.of((b,v)->{b.writeVarInt(v.mob);b.writeVarInt(v.ticks);},b->new CarryApproach(b.readVarInt(),b.readVarInt()));
+        @Override public Type<CarryApproach> type(){return TYPE;}
+    }
     public record EvasionMotion(double x,double y,double z,int ticks) implements CustomPacketPayload {
         public static final Type<EvasionMotion> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath("oxyrpg","evasion_motion"));
         public static final StreamCodec<RegistryFriendlyByteBuf,EvasionMotion> CODEC=StreamCodec.of((b,v)->{b.writeDouble(v.x);b.writeDouble(v.y);b.writeDouble(v.z);b.writeVarInt(v.ticks);},b->new EvasionMotion(b.readDouble(),b.readDouble(),b.readDouble(),b.readVarInt()));
@@ -194,7 +199,7 @@ public final class RpgNetwork {
         @Override public Type<ElectricArc> type(){return TYPE;}
     }
     public static void register(RegisterPayloadHandlersEvent event) {
-        var registrar = event.registrar("34");
+        var registrar = event.registrar("37");
         registrar.playToClient(BloodFx.TYPE,BloodFx.CODEC);
         registrar.playToClient(ImpactFx.TYPE,ImpactFx.CODEC);
         registrar.playToClient(CastFx.TYPE,CastFx.CODEC);
@@ -207,6 +212,7 @@ public final class RpgNetwork {
         registrar.playToClient(EvasionState.TYPE,EvasionState.CODEC);
         registrar.playToClient(EvasionMotion.TYPE,EvasionMotion.CODEC);
         registrar.playToClient(CarryState.TYPE,CarryState.CODEC);
+        registrar.playToClient(CarryApproach.TYPE,CarryApproach.CODEC);
         registrar.playToClient(ElectricArc.TYPE,ElectricArc.CODEC);
         registrar.playToClient(CombatText.TYPE,CombatText.CODEC);
         registrar.playToClient(EliteWarning.TYPE,EliteWarning.CODEC);

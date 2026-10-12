@@ -32,13 +32,14 @@ public final class DisguiseVisuals {
         var source=mc.level.getEntity(p.source());
         if(source instanceof Mob mob&&mob.getType()==type){
             dev.emersonoxy.rpg.MimicAppearance.copy(mob,model);
+            model.setUUID(mob.getUUID()); // ETF/EMF variants are identical for avatar and copies.
         }
         model.setInvisible(false);model.setNoAi(true);
         FORMS.put(p.entity(),new Form(type,p.source(),mc.level.getGameTime()+Math.clamp(p.ticks(),1,12000),model));
     }
     @SuppressWarnings({"rawtypes","unchecked"})
     public static void extract(Entity entity,EntityRenderState state){
-        world();state.setRenderData(DRAW,null);if(!(entity instanceof Player player))return;
+        world();state.setRenderData(DRAW,null);if(!(entity instanceof LivingEntity player))return;
         var mc=Minecraft.getInstance();var form=FORMS.get(entity.getId());if(form==null||mc.level==null)return;
         if(!player.isAlive()||form.until<=mc.level.getGameTime()){FORMS.remove(entity.getId());return;}
         var model=form.model;model.setPos(player.position());model.xo=player.xo;model.yo=player.yo;model.zo=player.zo;
@@ -57,6 +58,11 @@ public final class DisguiseVisuals {
             living.isInvisibleToPlayer=false;
         }
         state.setRenderData(DRAW,new Draw(renderer,draw));state.shadowRadius=draw.shadowRadius;
+    }
+    public static void renderMob(net.neoforged.neoforge.client.event.RenderLivingEvent.Pre<?,?,?> event){
+        if(event.getRenderState() instanceof AvatarRenderState)return;
+        var draw=event.getRenderState().getRenderData(DRAW);if(draw==null)return;
+        draw.renderer.submit(draw.state,event.getPoseStack(),event.getSubmitNodeCollector(),new net.minecraft.client.renderer.state.CameraRenderState());event.setCanceled(true);
     }
     public static boolean render(RenderPlayerEvent.Pre event){
         var draw=event.getRenderState().getRenderData(DRAW);if(draw==null)return false;

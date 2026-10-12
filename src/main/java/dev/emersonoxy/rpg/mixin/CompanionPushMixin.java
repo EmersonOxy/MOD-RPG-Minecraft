@@ -10,7 +10,8 @@ abstract class CompanionPushMixin {
     @Inject(method="push(Lnet/minecraft/world/entity/Entity;)V",at=@At("HEAD"),cancellable=true)
     private void oxyCompanion(Entity other,CallbackInfo ci){
         var self=(Entity)(Object)this;
-        if(self instanceof Player&&visual(other)||other instanceof Player&&visual(self))ci.cancel();
+        if(self instanceof Player p){if(visual(other)||dev.emersonoxy.rpg.AviaryCarry.holding(p,other))ci.cancel();}
+        else if(other instanceof Player p&&(visual(self)||dev.emersonoxy.rpg.AviaryCarry.holding(p,self)))ci.cancel();
     }
     private static boolean visual(Entity e){return e instanceof net.minecraft.world.entity.ambient.Bat||e.getPersistentData().getBooleanOr("oxy_cosmetic",false);}
 }

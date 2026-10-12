@@ -2,6 +2,7 @@
 
 - Alvo: Minecraft 1.21.10, NeoForge 21.10.64, JDK 21.
 - Preserve mundos, UUIDs, perfis existentes e outros mods.
+- Habilidades direcionais/canais e cada disparo de uma rajada devem usar a mira atual do jogador, nunca uma direção congelada no primeiro cast. Projéteis guiados acompanham o alvo selecionado; colisões e validação permanecem no servidor.
 - Use build-windows.bat para compilar e empacotar (assemble), sem executar testes.
 - O usuário prefere fazer a validação pessoalmente. Execute testes automatizados,
   GameTests ou abra o jogo para validação somente se ele solicitar explicitamente.

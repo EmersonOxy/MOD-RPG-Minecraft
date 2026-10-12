@@ -36,6 +36,7 @@ public final class OxyRpgClient {
         ALL_KEYS.add(mapping);return mapping;
     }
     public static final KeyMapping COMPARE_EQUIPMENT=key("compare_equipment",GLFW.GLFW_KEY_LEFT_SHIFT,net.neoforged.neoforge.client.settings.KeyConflictContext.GUI);
+    public static final KeyMapping RELEASE_CARGO=key("release_cargo",GLFW.GLFW_KEY_F6);
     public static final KeyMapping DODGE=key("dodge",GLFW.GLFW_KEY_LEFT_ALT);
     public static final KeyMapping MINIMAP=key("minimap",GLFW.GLFW_KEY_M);
     public static final KeyMapping MINIMAP_OPTIONS=key("minimap_options",GLFW.GLFW_KEY_UNKNOWN);
@@ -64,6 +65,7 @@ public final class OxyRpgClient {
     private static RpgNetwork.JourneyState journeyState;
     public static RpgNetwork.JourneyState journey(){return journeyState;}
     public static RpgNetwork.State state(){return hudState;}
+    public static long effectRemaining(int slot){var mc=Minecraft.getInstance();return mc.level==null?0:Math.max(0,effectUntil[slot]-mc.level.getGameTime());}
     public static long cooldown(int slot){var mc=Minecraft.getInstance();return mc.level==null?0:Math.max(0,hudReadyAt[slot]-mc.level.getGameTime());}
     public static dev.emersonoxy.rpg.RpgProfile profile(){return hudState==null||hudState.rpgClass()==0?null:new dev.emersonoxy.rpg.RpgProfile(RpgClass.values()[hudState.rpgClass()],hudState.level(),hudState.xp(),hudState.kills(),0,hudState.skills(),0,0,0,0,0,dev.emersonoxy.rpg.AttributeStats.EMPTY,"",hudState.debug()||hudState.testing());}
     public static RpgNetwork.Resources resources(){return resourceState;}
@@ -83,6 +85,7 @@ public final class OxyRpgClient {
         bus.addListener(OxyRpgClient::registerKeys);
         bus.addListener(OxyRpgClient::registerPayloads);
         bus.addListener(OxyRpgClient::registerHud);bus.addListener(CombatParticle::register);bus.addListener(AmbientLeaf::register);bus.addListener(WaterWake::register);bus.addListener(WaterPulse::register);
+        NeoForge.EVENT_BUS.addListener(ElectricArcs::extract);NeoForge.EVENT_BUS.addListener(ElectricArcs::render);NeoForge.EVENT_BUS.addListener(DisguiseVisuals::renderMob);
         NeoForge.EVENT_BUS.addListener(VegetationMotion::extract);NeoForge.EVENT_BUS.addListener(VegetationMotion::render);
         NeoForge.EVENT_BUS.addListener(OutsideClick::frame);NeoForge.EVENT_BUS.addListener(OutsideClick::click);
         NeoForge.EVENT_BUS.addListener(OxyRpgClient::tick);NeoForge.EVENT_BUS.addListener(VillagerClient::init);NeoForge.EVENT_BUS.addListener(VillagerClient::scroll);NeoForge.EVENT_BUS.addListener(InventoryMovement::opening); NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderHandEvent event)->{if(ShoulderCamera.hideHands())event.setCanceled(true);});
@@ -135,7 +138,8 @@ public final class OxyRpgClient {
     private static void registerPayloads(RegisterClientPayloadHandlersEvent event) {
         event.register(RpgNetwork.ContentState.TYPE,(value,context)->{dev.emersonoxy.rpg.RpgContent.receive(value.json());var screen=Minecraft.getInstance().screen;if(screen instanceof SkillTreeScreen tree)tree.loadNodes();if(screen instanceof ClassSelectionScreen classes)classes.contentChanged();});
         event.register(RpgNetwork.ElectricArc.TYPE,(value,context)->ElectricArcs.receive(value));
-        event.register(RpgNetwork.CarryState.TYPE,(value,context)->{var mc=Minecraft.getInstance();if(mc.level!=null){var p=mc.level.getEntity(value.player());if(p!=null)p.getPersistentData().putInt("oxy_carried_mob",value.mob());}});
+        event.register(RpgNetwork.CarryState.TYPE,(value,context)->{var mc=Minecraft.getInstance();if(mc.level!=null&&mc.level.getEntity(value.player()) instanceof net.minecraft.world.entity.player.Player p)dev.emersonoxy.rpg.AviaryCarry.receive(p,value.mob());});
+        event.register(RpgNetwork.CarryApproach.TYPE,(value,context)->{var p=Minecraft.getInstance().player;if(p!=null)dev.emersonoxy.rpg.AviaryCarry.clientApproach(p,value.mob(),value.ticks());});
         event.register(RpgNetwork.EvasionMotion.TYPE,(value,context)->{var p=Minecraft.getInstance().player;if(p==null)return;var tag=p.getPersistentData();tag.putDouble("oxy_dodge_x",value.x());tag.putDouble("oxy_dodge_y",value.y());tag.putDouble("oxy_dodge_z",value.z());tag.putInt("oxy_dodge_motion_until",p.tickCount+Math.clamp(value.ticks(),0,13));});
         event.register(RpgNetwork.EvasionState.TYPE,(value,context)->EvasionHud.receive(value));
         event.register(RpgNetwork.CombatText.TYPE,(value,context)->DamageNumbers.receiveText(value));
@@ -223,6 +227,7 @@ public final class OxyRpgClient {
         while(MINIMAP_OPTIONS.consumeClick())if(mc.player!=null&&mc.screen==null)mc.setScreen(new MinimapSettingsScreen(null));
         AmbientWorld.tick();SimpleMinimap.tick();ParticleFx.tick();VillagerClient.tick();ExplorationHud.tick();ClassCastEffects.tick();
         TargetLock.tick();
+        while(RELEASE_CARGO.consumeClick())if(mc.player!=null&&mc.screen==null&&dev.emersonoxy.rpg.EquipmentAccess.clientSelected()==RpgClass.AVIARIO){TargetLock.clear();mc.player.connection.send(new RpgNetwork.Request(19,0,-1,0,0,0));}
         DynamicHud.tick();
         while(TOGGLE_PANELS.consumeClick())if(mc.player!=null&&mc.screen==null)DynamicHud.cyclePanels();
         while(HUD_OPTIONS.consumeClick())if(mc.player!=null&&mc.screen==null)mc.setScreen(new HudSettingsScreen(null));
@@ -242,11 +247,12 @@ public final class OxyRpgClient {
         AbilityPreview.tick();
     }
 
-    public static boolean liveChannel(){var mc=Minecraft.getInstance();return mc.level!=null&&hudState!=null&&(hudState.rpgClass()==dev.emersonoxy.rpg.RpgClass.HIDROMANTE.ordinal()||hudState.rpgClass()==dev.emersonoxy.rpg.RpgClass.MAGO.ordinal()||hudState.rpgClass()==dev.emersonoxy.rpg.RpgClass.DEUS_TROVAO.ordinal())&&effectUntil[1]>mc.level.getGameTime();}
+    public static boolean liveChannel(){var mc=Minecraft.getInstance();return mc.level!=null&&hudState!=null&&(effectUntil[0]>mc.level.getGameTime()||effectUntil[1]>mc.level.getGameTime()||effectUntil[2]>mc.level.getGameTime());}
     private static void renderHud(GuiGraphics g) {
         var mc=Minecraft.getInstance();
         if(mc.options.hideGui||mc.getDebugOverlay().showDebugScreen()||mc.player==null||mc.level==null||mc.screen!=null||hudState==null)return;
-        SpecialistHud.render(g);VampireHud.prey(g);
+        SpecialistHud.render(g);VampireHud.prey(g);ArcherAimHud.render(g);
+        if(mc.player.getPersistentData().getIntOr("oxy_carried_mob",-1)>=0)g.drawCenteredString(mc.font,"Carregando criatura · "+RELEASE_CARGO.getTranslatedKeyMessage().getString()+" para soltar",g.guiWidth()/2,g.guiHeight()-76,0xFFCBE4EE);
         renderAbilityIcons(g);
         renderDynamicPanels(g);
     }

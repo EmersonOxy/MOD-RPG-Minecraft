@@ -16,23 +16,24 @@ public final class TargetLock {
     private static double firstPersonYaw,firstPersonPitch;
     private TargetLock(){}
     public static Mob target(){return target;}
+    public static void perspectiveChanged(){firstPersonTarget=null;firstPersonFrame=0;}
     public static void clear(){var mc=Minecraft.getInstance();if(target!=null&&mc.player!=null&&mc.level!=null&&dev.emersonoxy.rpg.EquipmentAccess.clientSelected()==dev.emersonoxy.rpg.RpgClass.AVIARIO)mc.player.connection.send(new dev.emersonoxy.rpg.RpgNetwork.Request(19,0,-1,0,0,0));if(mc.player!=null&&mc.level!=null&&dev.emersonoxy.rpg.EquipmentAccess.clientSelected()==dev.emersonoxy.rpg.RpgClass.ARQUEIRO_NOVO)mc.player.connection.send(new dev.emersonoxy.rpg.RpgNetwork.Request(20,0,-1,0,0,0));target=null;firstPersonTarget=null;firstPersonFrame=0;}
     public static boolean mouseLocked(){var mc=Minecraft.getInstance();return !BarrelRollCompat.active()&&target!=null&&!dev.emersonoxy.rpg.AviaryCarry.holding(mc.player,target)&&mc.screen==null&&valid(target);}
     private static boolean valid(Mob mob){
         var mc=Minecraft.getInstance();var p=mc.player;
         return p!=null&&mc.level!=null&&mob.level()==mc.level&&mob.isAlive()&&!mob.isRemoved()&&!mob.isInvisible()
-            &&!p.isSpectator()&&p.isAlive()&&p.distanceToSqr(mob)<=24*24&&p.hasLineOfSight(mob)
+            &&!p.isSpectator()&&p.isAlive()&&p.distanceToSqr(mob)<=Math.pow(dev.emersonoxy.rpg.TargetingRange.of(p),2)&&p.hasLineOfSight(mob)
             &&mc.level.clip(new net.minecraft.world.level.ClipContext(p.getEyePosition(),point(mob,1),net.minecraft.world.level.ClipContext.Block.COLLIDER,net.minecraft.world.level.ClipContext.Fluid.NONE,p)).getType()==net.minecraft.world.phys.HitResult.Type.MISS
             &&!(mob instanceof TamableAnimal pet&&pet.isTame())&&!EnemyNameplates.ally(mob.getId());
     }
     private static List<Mob> candidates(){
         var mc=Minecraft.getInstance();if(mc.player==null||mc.level==null)return List.of();var p=mc.player;var eye=p.getEyePosition();var look=p.getLookAngle();
-        return mc.level.getEntitiesOfClass(Mob.class,p.getBoundingBox().inflate(24),TargetLock::valid).stream()
+        return mc.level.getEntitiesOfClass(Mob.class,p.getBoundingBox().inflate(dev.emersonoxy.rpg.TargetingRange.of(p)),TargetLock::valid).stream()
             .filter(m->point(m,1).subtract(eye).normalize().dot(look)>.45)
             .filter(m->{var screen=mc.gameRenderer.projectPointToScreen(point(m,1));return screen.z>=-1&&screen.z<=1&&Math.abs(screen.x)<.98&&Math.abs(screen.y)<.98;})
             .sorted(Comparator.comparingDouble(m->(1-point(m,1).subtract(eye).normalize().dot(look))*10+p.distanceTo(m)*.01)).toList();
     }
-    public static void toggle(){if(target!=null){clear();message("Trava de mira desligada.");return;}var list=candidates();target=list.isEmpty()?null:list.getFirst();message(target==null?"Nenhuma criatura visível a até 24 blocos.":"Mira travada: "+target.getName().getString());}
+    public static void toggle(){if(target!=null){clear();message("Trava de mira desligada.");return;}var list=candidates();target=list.isEmpty()?null:list.getFirst();var p=Minecraft.getInstance().player;message(target==null?"Nenhuma criatura visível a até "+(int)(p==null?24:dev.emersonoxy.rpg.TargetingRange.of(p))+" blocos.":"Mira travada: "+target.getName().getString());}
     public static void cycle(){var list=candidates();if(list.isEmpty()){clear();return;}int index=list.indexOf(target);target=list.get((index+1)%list.size());message("Mira travada: "+target.getName().getString());}
     private static void message(String text){var p=Minecraft.getInstance().player;if(p!=null)p.displayClientMessage(Component.literal(text),true);}
     public static Vec3 point(Mob mob,float partial){return mob.getPosition(partial).add(0,mob.getBbHeight()*.6,0);}

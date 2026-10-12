@@ -1,8 +1,20 @@
-# Estado do Oxy RPG — revisão 0.50.1
+# Estado do Oxy RPG — revisão 0.51.2
 
-Revisão registrada em 12/10/2026. Minecraft 1.21.10, NeoForge 21.10.64, JDK 21, protocolo de rede 34. Os documentos numerados são históricos de cada entrega.
+Revisão registrada em 12/10/2026. Minecraft 1.21.10, NeoForge 21.10.64, JDK 21, protocolo de rede 37. Os documentos numerados são históricos de cada entrega.
 
-A revisão inventariou fontes Java, registros, eventos, mixins, telas, recursos JSON, geração de dados, integração e persistência. Código das áreas alteradas foi inspecionado em detalhe. Inventário atual de arquivos e hashes: [REVISAO_ARQUIVOS_0501.json](REVISAO_ARQUIVOS_0501.json). O registro distingue inventário do projeto e revisão detalhada dos caminhos alterados. Não equivale a validação integral dentro do jogo nem a auditoria de segurança.
+A revisão anterior inventariou fontes Java, registros, eventos, mixins, telas, recursos JSON, geração de dados, integração e persistência: [REVISAO_ARQUIVOS_0501.json](REVISAO_ARQUIVOS_0501.json). A 0.51 revisa os caminhos descritos abaixo, sem representar uma nova auditoria funcional de todo o projeto. A auditoria PvPvE continua vinculada à 0.50.1.
+
+## Correção 0.51.2
+
+Peso pena preserva a criatura transportada; Meteoro preparado em voo mantém controles e duração restante de Decolagem, com contato verificado no percurso real e carga excluída do impacto. Bússola sobe para altura 32, recebe ajuste por barra, oito direções, graus, indicação do alvo travado e local marcado com distância. Desligamento explícito em R → Interface → Bússola. [Causas, controles e validação pendente](CORRECOES_0512.md). [Instalação e backup](INSTALACAO_0512.md).
+
+## Correção 0.51.1
+
+Transporte do Aviário refeito como vínculo próprio sem montaria, restaurando IA/gravidade na soltura e após carregamento de salvamento interrompido. Aproximação prevista no cliente e servidor, trava a 64 blocos para Aviário no ar e Arqueiro. Trovão mantém corrida durante saltos, acelera progressivamente e recebe superpulo no Avatar. Validação da câmera aceita faces diferentes do mesmo bloco alcançável; bússola movida abaixo do painel padrão Jade. [Causas, uso, valores e validação manual pendente](CORRECOES_0511.md). [Instalação e backup](INSTALACAO_0511.md).
+
+## Correção 0.51.0
+
+Mira atual em cada disparo da rajada, flechas guiadas com colisão para alvos pequenos, salto maior, indicação de pontaria, prévia obrigatória do teleporte e raios de geometria nativa. Deus do Trovão mais rápido, captura livre e aproximação do Aviário com soltura em F6, esquiva distribuída pela animação e reinício da câmera/Barrel Roll nas mudanças de perspectiva. Removido dano de chuva do Vampiresco e overlays AppleSkin sobre sua sede; cópias iguais ao disfarce e hook opcional de vegetação para Sodium. [Causas, números, controles e validação pendente](CORRECOES_051.md). [Instalação e backup](INSTALACAO_051.md). Compilação assemble; validação no jogo reservada ao usuário.
 
 ## Correção 0.50.1
 

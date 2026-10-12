@@ -18,11 +18,16 @@ public final class CameraAim {
         var end=start.add(direction.scale(range));
         var block=mc.level.clip(new ClipContext(start,end,ClipContext.Block.OUTLINE,ClipContext.Fluid.NONE,p));
         var mob=ProjectileUtil.getEntityHitResult(p,start,block.getLocation(),new AABB(start,block.getLocation()).inflate(1),
-            e->EntitySelector.CAN_BE_PICKED.test(e)&&!EnemyNameplates.ally(e.getId()),start.distanceToSqr(block.getLocation()));
+            e->EntitySelector.CAN_BE_PICKED.test(e)&&!EnemyNameplates.ally(e.getId())&&!dev.emersonoxy.rpg.AviaryCarry.holding(p,e),start.distanceToSqr(block.getLocation()));
         HitResult hit=mob==null?block:mob;var point=hit.getLocation();
         double reach=hit instanceof EntityHitResult?p.entityInteractionRange():p.blockInteractionRange();
         var obstruction=mc.level.clip(new ClipContext(eye,point,ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,p));
         boolean clear=obstruction.getType()==HitResult.Type.MISS||obstruction.getLocation().distanceToSqr(point)<.01;
+        // Shoulder and eye rays can enter different faces of the SAME block,
+        // especially directly below the feet. Use the reachable eye-side face.
+        if(hit instanceof BlockHitResult b&&b.getType()==HitResult.Type.BLOCK&&obstruction.getType()==HitResult.Type.BLOCK&&b.getBlockPos().equals(obstruction.getBlockPos())){
+            clear=true;hit=obstruction;point=hit.getLocation();
+        }
         if(!clear||eye.distanceToSqr(point)>reach*reach){
             var delta=point.subtract(eye);hit=BlockHitResult.miss(point,net.minecraft.core.Direction.getApproximateNearest(delta.x,delta.y,delta.z),net.minecraft.core.BlockPos.containing(point));
         }

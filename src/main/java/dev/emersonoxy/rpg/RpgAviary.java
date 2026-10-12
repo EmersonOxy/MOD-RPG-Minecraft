@@ -20,7 +20,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 public final class RpgAviary {
     private static final Map<UUID,Flight> FLIGHTS=new HashMap<>();
     private static class Flight {
-        long until,boostUntil,meteorUntil,launchAt,lastBoost;int total;double peak,speed,thrust;Vec3 previous,meteorMotion=Vec3.ZERO;boolean forward;RpgProfile cast;boolean launched,gliding,slowUsed;Object dimension;
+        long until,boostUntil,meteorUntil,meteorAt,launchAt,lastBoost;int total;double peak,speed,thrust;Vec3 previous,meteorMotion=Vec3.ZERO;boolean forward;RpgProfile cast;boolean launched,gliding,slowUsed;Object dimension;
     }
     private RpgAviary(){}
     public static boolean boostAvailable(ServerPlayer p,int slot){var f=FLIGHTS.get(p.getUUID());return slot==0&&f!=null&&f.until>p.level().getGameTime()&&f.meteorUntil==0;}
@@ -32,7 +32,7 @@ public final class RpgAviary {
     }
     /** End a downward glide within four blocks of solid ground, with matching client prediction. */
     private static boolean landing(Player p){
-        if(p.onGround()||p.getDeltaMovement().y>=-.08||p.getXRot()<35)return false;
+        if(AviaryCarry.approaching(p)||AviaryCarry.lifting(p)||p.onGround()||p.getDeltaMovement().y>=-.08||p.getXRot()<35)return false;
         boolean active;
         if(p instanceof ServerPlayer server){var f=FLIGHTS.get(server.getUUID());active=f!=null&&f.gliding&&f.until>p.level().getGameTime()&&f.meteorUntil==0;}
         else{var tag=p.getPersistentData();active=p.isLocalPlayer()&&EquipmentAccess.clientSelected()==RpgClass.AVIARIO&&tag.getBooleanOr("oxy_flight_gliding",false)&&tag.getIntOr("oxy_flight_until",0)>p.tickCount&&tag.getIntOr("oxy_meteor_until",0)<=p.tickCount;}
@@ -54,13 +54,15 @@ public final class RpgAviary {
         var f=FLIGHTS.computeIfAbsent(p.getUUID(),id->new Flight());long now=p.level().getGameTime();f.dimension=p.level().dimension();f.cast=profile;
         if(slot==0){
             if(p.getAbilities().flying){p.getAbilities().flying=false;p.onUpdateAbilities();p.stopFallFlying();}
-            if(f.until>now){f.gliding=true;f.launched=true;p.startFallFlying();f.lastBoost=now;f.thrust=Math.min(maximumSpeed(profile),Math.max(.75+.5*profile.level()/100.0,Math.max(p.getKnownMovement().length(),f.thrust)+.15+.45*profile.level()/100.0));p.setDeltaMovement(p.getLookAngle().scale(f.thrust));p.hurtMarked=true;f.boostUntil=Math.min(f.until,now+(profile.mainUnlocked(0)?40:20)+(profile.hasSkill(5)?20:0));}
+            if(f.until>now){if(!p.isFallFlying())AviaryCarry.beginApproach(p);f.gliding=true;f.launched=true;p.startFallFlying();f.lastBoost=now;f.thrust=Math.min(maximumSpeed(profile),Math.max(.75+.5*profile.level()/100.0,Math.max(p.getKnownMovement().length(),f.thrust)+.15+.45*profile.level()/100.0));p.setDeltaMovement(p.getLookAngle().scale(f.thrust));p.hurtMarked=true;f.boostUntil=Math.min(f.until,now+(profile.mainUnlocked(0)?40:20)+(profile.hasSkill(5)?20:0));}
             else{SkillEffects.impact(p.level(),p.position(),2,7);f.thrust=0;f.total=profile.abilityDuration(0);f.until=now+f.total;f.launched=false;f.gliding=false;f.lastBoost=0;f.launchAt=now;p.stopFallFlying();p.setDeltaMovement(0,1.25,0);p.hurtMarked=true;ClassJourney.advance(p,0,1);}
             p.level().playSound(null,p.blockPosition(),SoundEvents.FIREWORK_ROCKET_LAUNCH,SoundSource.PLAYERS,.7f,1.2f);
         }else{
-            f.forward=p.isFallFlying();f.until=f.boostUntil=0;f.gliding=false;f.meteorUntil=now+(f.forward?100:600);f.peak=p.getY();f.previous=p.position();f.speed=p.getKnownMovement().length();
-            if(f.forward){f.meteorMotion=p.getLookAngle().normalize().scale(Math.min(maximumSpeed(profile),Math.max(.8,f.speed)));p.setDeltaMovement(f.meteorMotion);}
-            else{f.meteorMotion=Vec3.ZERO;p.stopFallFlying();p.setDeltaMovement(p.getDeltaMovement().scale(.5).add(0,-1.2,0));}
+            f.forward=p.isFallFlying();f.meteorUntil=now+(f.forward?100:600);f.meteorAt=now;f.peak=p.getY();f.previous=p.position();f.speed=p.getKnownMovement().length();f.meteorMotion=Vec3.ZERO;
+            // Arming an airborne impact retains ordinary steering, momentum and glide.
+            // Only the falling version starts a dive; no frozen launch vector competes
+            // with the player's input or Barrel Roll on subsequent ticks.
+            if(!f.forward){f.until=f.boostUntil=0;f.gliding=false;p.stopFallFlying();p.setDeltaMovement(p.getDeltaMovement().scale(.5).add(0,-1.2,0));}
             p.hurtMarked=true;
         }
         sync(p,f);
@@ -78,10 +80,10 @@ public final class RpgAviary {
         if(player.level().isClientSide()){
             if(!player.isLocalPlayer())return;var tag=player.getPersistentData();
             if(player.getAbilities().flying){if(player.isFallFlying())player.stopFallFlying();return;}
-            if(tag.getIntOr("oxy_meteor_until",0)>player.tickCount&&!player.onGround()){
-                if(tag.getBooleanOr("oxy_meteor_forward",false))player.setDeltaMovement(new Vec3(tag.getFloatOr("oxy_meteor_x",0),tag.getFloatOr("oxy_meteor_y",0),tag.getFloatOr("oxy_meteor_z",0)));
-                else player.setDeltaMovement(player.getDeltaMovement().multiply(.96,1,.96).add(0,-.12,0).with(net.minecraft.core.Direction.Axis.Y,Math.max(-3,player.getDeltaMovement().y-.12)));
+            if(tag.getIntOr("oxy_meteor_until",0)>player.tickCount&&!player.onGround()&&!tag.getBooleanOr("oxy_meteor_forward",false)){
+                player.setDeltaMovement(player.getDeltaMovement().multiply(.96,1,.96).add(0,-.12,0).with(net.minecraft.core.Direction.Axis.Y,Math.max(-3,player.getDeltaMovement().y-.12)));
             }
+            else if(AviaryCarry.liftMovement(player)||AviaryCarry.approachMovement(player)){}
             else if(tag.getIntOr("oxy_boost_until",0)>player.tickCount&&canFly(player)){
                 var direction=player.getLookAngle();double speed=Math.clamp(tag.getFloatOr("oxy_flight_thrust",.8f),.35,3.8);player.setDeltaMovement(player.getDeltaMovement().scale(.72).add(direction.scale(speed*.28)));
             }
@@ -107,9 +109,8 @@ public final class RpgAviary {
             else{
                 double travel=f.previous==null?0:p.position().distanceTo(f.previous);if(travel>64){clear(p);return;}
                 f.speed=Math.max(f.speed,Math.min(8,travel));f.peak=Math.max(f.peak,p.getY());
-                Vec3 contact=f.forward?forwardContact(p,f.previous,f.meteorMotion):null;f.previous=p.position();
+                Vec3 contact=f.forward&&now>f.meteorAt?forwardContact(p,f.previous):null;f.previous=p.position();
                 if(p.onGround()||contact!=null){impact(p,f,contact==null?p.position():contact);finishMeteor(p,f);}
-                else if(f.forward)p.setDeltaMovement(f.meteorMotion);
             }
         }
         if(f.until>0){
@@ -141,25 +142,28 @@ public final class RpgAviary {
     public static boolean controlledLanding(Player p){return p.getPersistentData().getLongOr("oxy_landing_until",0)>p.level().getGameTime()&&!p.getAbilities().flying;}
     public static void fall(LivingFallEvent event){if(event.getEntity() instanceof ServerPlayer p){var s=RpgAbilities.profile(p);if(s.rpgClass()!=RpgClass.AVIARIO)return;var f=FLIGHTS.get(p.getUUID());if(controlledLanding(p)||f!=null&&f.meteorUntil>0)event.setCanceled(true);}}
     public static void damage(LivingDamageEvent.Pre event){if(event.getEntity() instanceof ServerPlayer p){var s=RpgAbilities.profile(p);if(s.rpgClass()==RpgClass.AVIARIO&&controlledLanding(p)&&(event.getSource().is(net.minecraft.tags.DamageTypeTags.IS_FALL)||event.getSource().is(net.minecraft.world.damagesource.DamageTypes.FLY_INTO_WALL))){event.setNewDamage(0);return;}if(s.rpgClass()==RpgClass.AVIARIO&&event.getSource().is(net.minecraft.tags.DamageTypeTags.IS_FALL))event.setNewDamage(event.getNewDamage()*.7f);if(event.getSource().getEntity() instanceof LivingEntity&&slowing(p,s)){float reduction=(s.mainUnlocked(1)?.25f:s.hasSkill(9)?.1f:0)+(s.hasSkill(12)?.1f:0)+(s.hasSkill(13)?.1f:0);event.setNewDamage(event.getNewDamage()*(1-reduction));}}}
-    private static void finishMeteor(ServerPlayer p,Flight f){f.meteorUntil=0;f.forward=false;f.meteorMotion=Vec3.ZERO;p.stopFallFlying();sync(p,f);}
+    private static void finishMeteor(ServerPlayer p,Flight f){f.meteorUntil=0;f.forward=false;f.meteorMotion=Vec3.ZERO;if(p.onGround()||!f.gliding||f.until<=p.level().getGameTime())p.stopFallFlying();sync(p,f);}
     /** Sweep the actual travelled segment; compare entity hits against solid blocks. */
-    private static Vec3 forwardContact(ServerPlayer p,Vec3 previous,Vec3 motion){
+    private static Vec3 forwardContact(ServerPlayer p,Vec3 previous){
         Vec3 start=(previous==null?p.position():previous).add(0,p.getBbHeight()*.5,0);
-        Vec3 end=p.position().add(0,p.getBbHeight()*.5,0).add(motion.normalize().scale(.35));
+        Vec3 end=p.position().add(0,p.getBbHeight()*.5,0);
+        boolean moved=start.distanceToSqr(end)>1e-6;
         var block=p.level().clip(new net.minecraft.world.level.ClipContext(start,end,net.minecraft.world.level.ClipContext.Block.COLLIDER,net.minecraft.world.level.ClipContext.Fluid.NONE,p));
-        Vec3 contact=block.getType()==net.minecraft.world.phys.HitResult.Type.MISS?null:block.getLocation();double nearest=contact==null?Double.POSITIVE_INFINITY:start.distanceToSqr(contact);
-        for(var mob:p.level().getEntitiesOfClass(LivingEntity.class,new AABB(start,end).inflate(p.getBbHeight()),RpgAbilities::attackable)){
-            var box=mob.getBoundingBox().inflate(p.getBbWidth()*.5,.35,p.getBbWidth()*.5);
+        Vec3 contact=!moved||block.getType()==net.minecraft.world.phys.HitResult.Type.MISS?null:block.getLocation();double nearest=contact==null?Double.POSITIVE_INFINITY:start.distanceToSqr(contact);
+        if(moved)for(var mob:p.level().getEntitiesOfClass(LivingEntity.class,new AABB(start,end).inflate(p.getBbWidth()),m->RpgAbilities.attackable(m)&&!AviaryCarry.holding(p,m))){
+            var box=mob.getBoundingBox().inflate(p.getBbWidth()*.5,p.getBbHeight()*.5,p.getBbWidth()*.5);
             Vec3 hit=box.contains(start)?start:box.clip(start,end).orElse(null);
             if(hit!=null&&start.distanceToSqr(hit)<nearest){contact=hit;nearest=start.distanceToSqr(hit);}
         }
-        return contact!=null?contact:p.horizontalCollision||p.verticalCollision?p.position():null;
+        if(contact!=null)return contact;
+        if(p.horizontalCollision||p.verticalCollision)for(var shape:p.level().getBlockCollisions(p,p.getBoundingBox().inflate(.02)))if(!shape.isEmpty())return p.position();
+        return null;
     }
     private static void impact(ServerPlayer p,Flight f,Vec3 center){
         var level=p.level();var s=f.cast;double force=Math.min(12,Math.sqrt(Math.max(0,f.peak-p.getY()))*.38+f.speed*f.speed*.35);
         double radius=Math.min(14,(s.mainUnlocked(2)?3:2)+force*.8+(s.hasSkill(18)?1:0)+(s.hasSkill(20)?1:0));
         float damage=(float)((s.mainUnlocked(2)?8:4)*(1+force)*(s.hasSkill(16)?1.15:1)*(s.hasSkill(19)?1.2:1)*(s.hasSkill(14)?1.05:1));int hits=0;
-        for(var mob:level.getEntitiesOfClass(LivingEntity.class,new AABB(center,center).inflate(radius),RpgAbilities::attackable))if(mob.position().distanceToSqr(center)<=radius*radius){if(mob.hurtServer(level,p.damageSources().playerAttack(p),damage))hits++;var away=mob.position().subtract(center).normalize();mob.push(away.x*.7,.5,away.z*.7);}
+        for(var mob:level.getEntitiesOfClass(LivingEntity.class,new AABB(center,center).inflate(radius),m->RpgAbilities.attackable(m)&&!AviaryCarry.holding(p,m)))if(mob.position().distanceToSqr(center)<=radius*radius){if(mob.hurtServer(level,p.damageSources().playerAttack(p),damage))hits++;var away=mob.position().subtract(center).normalize();mob.push(away.x*.7,.5,away.z*.7);}
         if(hits>0)ClassJourney.advance(p,2,1);
         if(s.mainUnlocked(2)&&p.mayBuild())MeteorCrater.enqueue(p,center,radius,force,s.hasSkill(20),f.forward);
         SkillEffects.impact(level,center,radius,6);

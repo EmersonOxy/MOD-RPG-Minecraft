@@ -129,5 +129,6 @@
   "itemGroup.oxyrpg.complements": "Complement Mods — Items",
   "item.oxyrpg.village_guard_spawn_egg": "Village Guard Spawn Egg",
   "item.oxyrpg.relic_arqueiro_novo": "Archer Relic",
-  "item.oxyrpg.relic_deus_trovao": "Thunder God Relic"
+  "item.oxyrpg.relic_deus_trovao": "Thunder God Relic",
+  "key.oxyrpg.release_cargo": "Release carried creature"
 }

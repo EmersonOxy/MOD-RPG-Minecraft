@@ -39,7 +39,7 @@ public final class AdventureItems {
             var stack=p.getItemInHand(hand);if(!RpgDebug.cooldownsDisabled(p)&&p.getCooldowns().isOnCooldown(stack)||!EquipmentAccess.allowed(p,stack)||RpgSpecialists.intangible(p))return InteractionResult.FAIL;
             int cost=frost?18:24;if(!RpgResources.affordable(p,cost)){p.displayClientMessage(Component.translatable("message.oxyrpg.item_mana",cost),true);return InteractionResult.FAIL;}
             RpgResources.spend(p,cost);if(!RpgDebug.cooldownsDisabled(p))p.getCooldowns().addCooldown(stack,frost?160:220);
-            var start=p.getEyePosition();var direction=p.getLookAngle();double length=frost?7:10;var end=start.add(direction.scale(length));
+            var start=p.getEyePosition();var direction=AbilityAim.direction(p);double length=frost?7:10;var end=start.add(direction.scale(length));
             var hit=level.clip(new ClipContext(start,end,ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,p));end=hit.getLocation();
             var world=p.level();var bounds=new AABB(start,end).inflate(frost?1.3:.9);int rank=RpgAbilities.profile(p).level();
             for(var mob:level.getEntitiesOfClass(Mob.class,bounds,RpgAbilities::attackable)){
