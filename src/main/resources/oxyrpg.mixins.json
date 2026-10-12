@@ -44,7 +44,8 @@
     "TerralithWorldInvoker",
     "TerralithWorldTabMixin",
     "NativeAimInputMixin",
-    "MerchantCoordinatesMixin"
+    "MerchantCoordinatesMixin",
+    "CameraPickMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -1,8 +1,12 @@
-# Estado do Oxy RPG — revisão 0.44.0
+# Estado do Oxy RPG — revisão 0.49.0
 
-Revisão registrada em 11/10/2026. Minecraft 1.21.10, NeoForge 21.10.64, JDK 21, protocolo de rede 30. Este registro substitui descrições antigas do README. Os documentos numerados são históricos de cada entrega.
+Revisão registrada em 12/10/2026. Minecraft 1.21.10, NeoForge 21.10.64, JDK 21, protocolo de rede 32. Este registro substitui descrições antigas do README. Os documentos numerados são históricos de cada entrega.
 
-A revisão inventariou fontes Java, registros, eventos, mixins, telas, recursos JSON, geração de dados, integração e persistência. Código das áreas alteradas foi inspecionado em detalhe. Inventário de arquivos e hashes: [INVENTARIO_CODIGO_040.json](INVENTARIO_CODIGO_040.json). Não equivale a validação integral dentro do jogo nem a auditoria de segurança.
+A revisão inventariou fontes Java, registros, eventos, mixins, telas, recursos JSON, geração de dados, integração e persistência. Código das áreas alteradas foi inspecionado em detalhe. Inventário atual de arquivos e hashes: [REVISAO_ARQUIVOS_049.json](REVISAO_ARQUIVOS_049.json). O registro desta entrega distingue inventário do projeto e revisão detalhada dos caminhos alterados. Não equivale a validação integral dentro do jogo nem a auditoria de segurança.
+
+## Entrega 0.49
+
+Disfarce do Ilusionista usa modelo renderizado sem entidade física no jogador; guardas/golens revidam ao Vampiresco; estados de voo criativo e planagem separados, rotação Barrel Roll reiniciada nas transições. Mira de ombro central com seleção por câmera/alcance nativo, lança-chamas acompanhando a mira com anéis de fogo. Guerreiro ganha efeitos/sons e preset Better Combat para sua espada; Necromante ganha fragmentos de terreno; tremor aleatório mais amplo/rápido. Prévia das skills no chão desligada por padrão e clique fora fecha containers/telas próprias. Seta lateral da esquiva removida. [Implementação e limites](CORRECOES_049.md). Compilação/instalação registradas em INSTALACAO_049.json; validação em jogo pendente. Demais complementos preservados.
 
 ## Entrega 0.44
 

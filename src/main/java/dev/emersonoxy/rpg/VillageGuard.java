@@ -11,7 +11,7 @@ public final class VillageGuard extends Villager {
     @Override protected void customServerAiStep(ServerLevel level){
         var data=getPersistentData();if(!data.contains("oxy_guard_x")){data.putDouble("oxy_guard_x",getX());data.putDouble("oxy_guard_y",getY());data.putDouble("oxy_guard_z",getZ());}
         if(VillagerQuests.conversing(this)){getNavigation().stop();setDeltaMovement(0,getDeltaMovement().y,0);return;}
-        if(tickCount%10==0){var enemies=level.getEntitiesOfClass(Mob.class,getBoundingBox().inflate(16),m->m instanceof Enemy&&m.isAlive()&&!RpgNecromancer.isSummon(m)&&!RpgSpecialists.temporary(m));
+        if(tickCount%10==0){var enemies=level.getEntitiesOfClass(LivingEntity.class,getBoundingBox().inflate(16),m->m.isAlive()&&(m instanceof Enemy&&!RpgNecromancer.isSummon(m)&&!RpgSpecialists.temporary(m)||VampireHunt.vampire(m)&&(VampireHunt.night(level)||getTarget()==m||getLastHurtByMob()==m)));
             var tag=getPersistentData();var home=new net.minecraft.world.phys.Vec3(tag.getDoubleOr("oxy_guard_x",getX()),tag.getDoubleOr("oxy_guard_y",getY()),tag.getDoubleOr("oxy_guard_z",getZ()));
             var target=enemies.stream().filter(m->m.position().distanceToSqr(home)<32*32).filter(this::hasLineOfSight).min(java.util.Comparator.comparingDouble(this::distanceToSqr)).orElse(null);setTarget(target);
             if(target!=null)getNavigation().moveTo(target,1.0);

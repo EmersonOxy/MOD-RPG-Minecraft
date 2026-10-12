@@ -31,7 +31,7 @@ public final class RpgSpecialists {
         final ServerPlayer player;final ServerLevel world;RpgProfile profile;
         final long[] until=new long[3];final List<Mob> copies=new ArrayList<>(),bats=new ArrayList<>(),sea=new ArrayList<>();
         final List<Core> cores=new ArrayList<>();final LinkedHashMap<UUID,Integer> fireworks=new LinkedHashMap<>();final List<Line> lines=new ArrayList<>();final List<Vec3> embers=new ArrayList<>();
-        Mob disguise,levitated;Vec3 safe,jet;long nextExplosion,nextMagma,nextBoost,overheated,heated,fireLanding;int chain;float heat;boolean ending,ground,launchAir,doubleJump,jumpHeld;
+        EntityType<?> disguiseType;int disguiseSource=-1;Mob levitated;Vec3 safe,jet;long nextExplosion,nextMagma,nextBoost,overheated,heated,fireLanding;int chain;float heat;boolean ending,ground,launchAir,doubleJump,jumpHeld;
         Cast(ServerPlayer p,RpgProfile s){player=p;world=p.level();profile=s;safe=p.position();heat=RpgDebug.unlimited(p)?100:0;}
     }
     private static final class Core {Vec3 position;UUID target;long expires;Core(Vec3 p,UUID target,long expires){position=p;this.target=target;this.expires=expires;}}
@@ -41,7 +41,7 @@ public final class RpgSpecialists {
     public static boolean handles(RpgClass c){return c==RpgClass.ILUSIONISTA||c==RpgClass.HIDROMANTE||c==RpgClass.PIROMANTE;}
     public static boolean temporary(Entity e){return e!=null&&e.getPersistentData().getBooleanOr(TEMP,false);}
     public static boolean intangible(Player p){return p.getPersistentData().getLongOr("oxy_eclipse",0)>p.level().getGameTime();}
-    public static boolean disguised(Player p){var c=CASTS.get(p.getUUID());return c!=null&&c.player==p&&c.world==p.level()&&c.profile.rpgClass()==RpgClass.ILUSIONISTA&&c.disguise!=null&&c.disguise.isAlive()&&c.until[0]>p.level().getGameTime();}
+    public static boolean disguised(Player p){var c=CASTS.get(p.getUUID());return c!=null&&c.player==p&&c.world==p.level()&&c.profile.rpgClass()==RpgClass.ILUSIONISTA&&c.disguiseType!=null&&c.until[0]>p.level().getGameTime();}
     /** Shared prediction uses ordinary terrain collision, independent of ghost collision shapes. */
     public static void ghostFlight(Player p,boolean up,boolean down){
         p.setNoGravity(true);p.fallDistance=0;double height=phaseTier(p)>=3?8:5;
@@ -72,14 +72,14 @@ public final class RpgSpecialists {
         switch(s.rpgClass()){
             case ILUSIONISTA -> {
                 if(slot==0){
-                    discard(c.copies);if(c.disguise!=null){OWNERS.remove(c.disguise.getUUID());c.disguise.discard();}var target=AbilityAim.target(p);
+                    discard(c.copies);var target=AbilityAim.target(p);
                     int count=2+(s.hasSkill(4)?1:0)+(s.hasSkill(6)?1:0);
                     for(int i=0;i<count;i++){var mob=spawn(c,target.getType(),p.position().add(Math.cos(i*6.28/count)*2,0,Math.sin(i*6.28/count)*2));if(mob!=null){mob.setHealth(Math.min(mob.getMaxHealth(),s.hasSkill(2)?6:3));c.copies.add(mob);}}
-                    c.disguise=spawn(c,target.getType(),p.position(),true);if(c.disguise!=null){c.disguise.setInvulnerable(true);c.disguise.setNoGravity(true);c.disguise.noPhysics=true;}
+                    c.disguiseType=target.getType();c.disguiseSource=target.getId();
                     if(s.hasSkill(5))c.until[0]+=60;
-                    ghost(p,(int)(c.until[0]-now));for(var enemy:near(c,p.position(),32))if(enemy.getTarget()==p)enemy.setTarget(null);ClassJourney.advance(p,0,1);
+                    ghost(p,(int)(c.until[0]-now));syncDisguise(c);for(var enemy:near(c,p.position(),32))if(enemy.getTarget()==p)enemy.setTarget(null);ClassJourney.advance(p,0,1);
                 }else if(slot==1){c.levitated=AbilityAim.target(p);effect(c.levitated,MobEffects.LEVITATION,s.abilityDuration(slot)+(s.hasSkill(12)?40:0),0);effect(c.levitated,MobEffects.WEAKNESS,s.abilityDuration(slot),s.mainUnlocked(slot)?1:0);ClassJourney.advance(p,1,1);}
-                else{p.closeContainer();c.safe=p.position();p.getPersistentData().putLong("oxy_eclipse",c.until[2]);p.getPersistentData().putInt("oxy_phase_tier",s.hasSkill(20)?3:s.hasSkill(19)?2:1);ghost(p,(int)(c.until[2]-now));
+                else{p.closeContainer();clearDisguise(p);c.safe=p.position();p.getPersistentData().putLong("oxy_eclipse",c.until[2]);p.getPersistentData().putInt("oxy_phase_tier",s.hasSkill(20)?3:s.hasSkill(19)?2:1);ghost(p,(int)(c.until[2]-now));
                     for(int i=0;i<6;i++){var bat=spawn(c,EntityType.BAT,p.position().add(0,1,0),true);if(bat!=null){bat.setInvulnerable(true);bat.setNoGravity(true);if(bat instanceof net.minecraft.world.entity.ambient.Bat b)b.setResting(false);bat.noPhysics=true;c.bats.add(bat);}}ClassJourney.advance(p,2,1);
                 }
             }
@@ -162,14 +162,13 @@ public final class RpgSpecialists {
     private static void illusionTick(Cast c,long now){
         var p=c.player;
         if(c.until[0]>now){
-            if(c.disguise!=null){c.disguise.teleportTo(p.getX(),p.getY(),p.getZ());c.disguise.setYRot(p.getYRot());c.disguise.setYHeadRot(p.getYHeadRot());}
             c.copies.removeIf(m->{if(m.isAlive())return false;OWNERS.remove(m.getUUID());return true;});
             if(p.tickCount%20==0)for(var copy:c.copies){
                 if(copy.getTarget()==p||copy.getTarget()!=null&&temporary(copy.getTarget()))copy.setTarget(null);
                 if(copy.distanceToSqr(p)>100)copy.getNavigation().moveTo(p,1.0);
             }
             for(var mob:near(c,p.position(),32))if(mob.getTarget()==p)mob.setTarget(null);
-        }else{discard(c.copies);if(c.disguise!=null){OWNERS.remove(c.disguise.getUUID());c.disguise.discard();c.disguise=null;if(!intangible(p))ghost(p,0);}}
+        }else{discard(c.copies);if(c.disguiseType!=null){c.disguiseType=null;clearDisguise(p);if(!intangible(p))ghost(p,0);}}
         if(c.until[1]>now&&c.levitated!=null&&c.levitated.isAlive()&&p.tickCount%20==0){hit(c,c.levitated,c.profile.hasSkill(9)?3:2);if(c.profile.mainUnlocked(1))for(var mob:near(c,c.levitated.position(),c.profile.hasSkill(11)?5:3)){effect(mob,MobEffects.SLOWNESS,30,1);effect(mob,MobEffects.WEAKNESS,30,0);}}
         if(c.until[2]>now){
             p.getPersistentData().putLong("oxy_eclipse",c.until[2]);
@@ -181,7 +180,7 @@ public final class RpgSpecialists {
             for(var mob:near(c,p.position(),20))if(mob.getTarget()==p)mob.setTarget(null);
         }else if(!c.bats.isEmpty()){finishEclipse(c);}
     }
-    private static void finishEclipse(Cast c){var p=c.player;p.setNoGravity(false);p.fallDistance=0;Professions.modifier(p,net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED,"eclipse_speed",0,net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);p.getPersistentData().remove("oxy_eclipse");p.getPersistentData().remove("oxy_phase_tier");if(!c.world.noCollision(p,p.getBoundingBox()))p.teleportTo(c.safe.x,c.safe.y,c.safe.z);discard(c.bats);ghost(p,c.until[0]>c.world.getGameTime()?(int)(c.until[0]-c.world.getGameTime()):0);}
+    private static void finishEclipse(Cast c){var p=c.player;p.setNoGravity(false);p.fallDistance=0;Professions.modifier(p,net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED,"eclipse_speed",0,net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);p.getPersistentData().remove("oxy_eclipse");p.getPersistentData().remove("oxy_phase_tier");if(!c.world.noCollision(p,p.getBoundingBox()))p.teleportTo(c.safe.x,c.safe.y,c.safe.z);discard(c.bats);ghost(p,c.until[0]>c.world.getGameTime()?(int)(c.until[0]-c.world.getGameTime()):0);syncDisguise(c);}
     private static void jet(Cast c){
         var start=c.player.getEyePosition();var direction=AbilityAim.direction(c.player);double range=(c.profile.mainUnlocked(1)?22:16)+(c.profile.hasSkill(11)?6:0);var end=c.world.clip(new ClipContext(start,start.add(direction.scale(range)),ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,c.player)).getLocation();
         for(double d=.65;d<start.distanceTo(end);d+=1.15){var at=start.add(direction.scale(d));c.world.sendParticles(RpgParticles.WATER_PULSE.get(),at.x,at.y,at.z,0,direction.x,direction.y,direction.z,1);c.world.sendParticles(ParticleTypes.BUBBLE,at.x,at.y,at.z,1,.07,.07,.07,0);}
@@ -233,9 +232,16 @@ public final class RpgSpecialists {
     public static void join(EntityJoinLevelEvent e){if(!e.getLevel().isClientSide()&&e.getEntity() instanceof ServerPlayer p&&!CASTS.containsKey(p.getUUID())&&p.getPersistentData().contains("oxy_eclipse")){p.setNoGravity(false);p.getPersistentData().remove("oxy_eclipse");p.getPersistentData().remove("oxy_phase_tier");}if(!e.getLevel().isClientSide()&&temporary(e.getEntity())&&!OWNERS.containsKey(e.getEntity().getUUID()))e.setCanceled(true);}
     public static void drops(LivingDropsEvent e){if(temporary(e.getEntity()))e.setCanceled(true);}
     public static void experience(LivingExperienceDropEvent e){if(temporary(e.getEntity()))e.setCanceled(true);}
+    private static RpgNetwork.DisguiseState disguiseState(Cast c){
+        int remaining=c.disguiseType==null||intangible(c.player)?0:(int)Math.max(0,c.until[0]-c.world.getGameTime());
+        String type=c.disguiseType==null?"":net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(c.disguiseType).toString();
+        return new RpgNetwork.DisguiseState(c.player.getId(),c.disguiseSource,type,remaining);
+    }
+    private static void syncDisguise(Cast c){PacketDistributor.sendToPlayersTrackingEntityAndSelf(c.player,disguiseState(c));}
+    private static void clearDisguise(ServerPlayer p){PacketDistributor.sendToPlayersTrackingEntityAndSelf(p,new RpgNetwork.DisguiseState(p.getId(),-1,"",0));}
     private static void discard(List<Mob> mobs){for(var m:mobs){OWNERS.remove(m.getUUID());m.discard();}mobs.clear();}
-    public static void clear(ServerPlayer p){Professions.modifier(p,net.minecraft.world.entity.ai.attributes.Attributes.JUMP_STRENGTH,"phoenix_jump",0,net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_VALUE);var c=CASTS.remove(p.getUUID());p.getPersistentData().remove("oxy_waterwalk");if(c!=null){finishEclipse(c);discard(c.copies);discard(c.sea);if(c.disguise!=null){OWNERS.remove(c.disguise.getUUID());c.disguise.discard();}ghost(p,0);}p.getPersistentData().remove("oxy_eclipse");p.getPersistentData().remove("oxy_phase_tier");SHOTS.entrySet().removeIf(e->e.getValue().player()==p);}
-    public static void tracking(PlayerEvent.StartTracking e){if(e.getEntity() instanceof ServerPlayer viewer){if(e.getTarget() instanceof ServerPlayer p){var c=CASTS.get(p.getUUID());if(c!=null){int ticks=(int)Math.max(0,Math.max(c.until[0],c.until[2])-p.level().getGameTime());if(ticks>0&&c.profile.rpgClass()==RpgClass.ILUSIONISTA)PacketDistributor.sendToPlayer(viewer,new RpgNetwork.Ghost(p.getId(),ticks));}}else if(temporary(e.getTarget()))PacketDistributor.sendToPlayer(viewer,new RpgNetwork.MobLevel(e.getTarget().getId(),e.getTarget().getPersistentData().getBooleanOr("oxy_cosmetic",false)?-2:-1));}}
+    public static void clear(ServerPlayer p){Professions.modifier(p,net.minecraft.world.entity.ai.attributes.Attributes.JUMP_STRENGTH,"phoenix_jump",0,net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_VALUE);var c=CASTS.remove(p.getUUID());p.getPersistentData().remove("oxy_waterwalk");if(c!=null){finishEclipse(c);discard(c.copies);discard(c.sea);clearDisguise(p);ghost(p,0);}p.getPersistentData().remove("oxy_eclipse");p.getPersistentData().remove("oxy_phase_tier");SHOTS.entrySet().removeIf(e->e.getValue().player()==p);}
+    public static void tracking(PlayerEvent.StartTracking e){if(e.getEntity() instanceof ServerPlayer viewer){if(e.getTarget() instanceof ServerPlayer p){var c=CASTS.get(p.getUUID());if(c!=null){int ticks=(int)Math.max(0,Math.max(c.until[0],c.until[2])-p.level().getGameTime());if(ticks>0&&c.profile.rpgClass()==RpgClass.ILUSIONISTA){PacketDistributor.sendToPlayer(viewer,new RpgNetwork.Ghost(p.getId(),ticks));PacketDistributor.sendToPlayer(viewer,disguiseState(c));}}}else if(temporary(e.getTarget()))PacketDistributor.sendToPlayer(viewer,new RpgNetwork.MobLevel(e.getTarget().getId(),e.getTarget().getPersistentData().getBooleanOr("oxy_cosmetic",false)?-2:-1));}}
     public static void logout(PlayerEvent.PlayerLoggedOutEvent e){if(e.getEntity() instanceof ServerPlayer p)clear(p);}
     public static void stop(ServerStoppedEvent e){for(var c:new ArrayList<>(CASTS.values()))clear(c.player);CASTS.clear();SHOTS.clear();OWNERS.clear();}
 }

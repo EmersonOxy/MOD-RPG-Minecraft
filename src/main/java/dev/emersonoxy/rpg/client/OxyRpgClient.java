@@ -84,6 +84,7 @@ public final class OxyRpgClient {
         bus.addListener(OxyRpgClient::registerPayloads);
         bus.addListener(OxyRpgClient::registerHud);bus.addListener(CombatParticle::register);bus.addListener(AmbientLeaf::register);bus.addListener(WaterWake::register);bus.addListener(WaterPulse::register);
         NeoForge.EVENT_BUS.addListener(VegetationMotion::extract);NeoForge.EVENT_BUS.addListener(VegetationMotion::render);
+        NeoForge.EVENT_BUS.addListener(OutsideClick::frame);NeoForge.EVENT_BUS.addListener(OutsideClick::click);
         NeoForge.EVENT_BUS.addListener(OxyRpgClient::tick);NeoForge.EVENT_BUS.addListener(VillagerClient::init);NeoForge.EVENT_BUS.addListener(VillagerClient::scroll);NeoForge.EVENT_BUS.addListener(InventoryMovement::opening); NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderHandEvent event)->{if(ShoulderCamera.hideHands())event.setCanceled(true);});
         NeoForge.EVENT_BUS.addListener(DynamicHud::beforeLayer);
         NeoForge.EVENT_BUS.addListener(DynamicHud::afterLayer);
@@ -114,10 +115,7 @@ public final class OxyRpgClient {
         event.registerAboveAll(ResourceLocation.fromNamespaceAndPath("oxyrpg", "shoulder_crosshair"),(g,d)->{
             var mc=Minecraft.getInstance();if(!ShoulderCamera.active()||mc.options.hideGui||DynamicHud.mode()==DynamicHud.Mode.HIDDEN||mc.screen!=null||mc.player==null||mc.player.isSpectator())return;
             var pipeline=net.minecraft.client.renderer.RenderPipelines.CROSSHAIR;
-            var point=ShoulderCamera.aimPoint(mc.gameRenderer.getMainCamera().getPartialTickTime());
-            var projection=CameraProjection.project(point);
-            if(!Double.isFinite(projection.x)||!Double.isFinite(projection.y)||projection.z<-1||projection.z>1)return;
-            int cx=(int)((projection.x+1)*g.guiWidth()/2),cy=(int)((1-projection.y)*g.guiHeight()/2);
+            int cx=g.guiWidth()/2,cy=g.guiHeight()/2;
             g.blitSprite(pipeline,ResourceLocation.withDefaultNamespace("hud/crosshair"),cx-7,cy-7,15,15);
             var target=TargetLock.target();if(target!=null){
                 var targetScreen=CameraProjection.project(TargetLock.point(target,mc.gameRenderer.getMainCamera().getPartialTickTime()));
@@ -141,6 +139,7 @@ public final class OxyRpgClient {
         event.register(RpgNetwork.EliteWarning.TYPE,(value,context)->EliteWarnings.receive(value));
         event.register(RpgNetwork.FlightState.TYPE,(value,context)->{
             var p=Minecraft.getInstance().player;if(p==null)return;var tag=p.getPersistentData();
+            if(value.remaining()>0&&(tag.getIntOr("oxy_flight_until",0)<=p.tickCount||value.gliding()&&!tag.getBooleanOr("oxy_flight_gliding",false)))BarrelRollCompat.resetFlight();
             tag.putBoolean("oxy_flight_gliding",value.gliding());tag.putInt("oxy_flight_until",p.tickCount+value.remaining());tag.putInt("oxy_boost_until",p.tickCount+value.boost());tag.putInt("oxy_meteor_until",p.tickCount+value.meteor());tag.putBoolean("oxy_fast_flight",value.fast());tag.putFloat("oxy_flight_thrust",value.thrust());tag.putBoolean("oxy_meteor_forward",value.forward());tag.putFloat("oxy_meteor_x",value.meteorX());tag.putFloat("oxy_meteor_y",value.meteorY());tag.putFloat("oxy_meteor_z",value.meteorZ());
         });
         event.register(RpgNetwork.DamageNumber.TYPE,(value,context)->DamageNumbers.receive(value));
@@ -164,6 +163,7 @@ public final class OxyRpgClient {
         event.register(RpgNetwork.CastFx.TYPE,(value,context)->ClassCastEffects.receive(value));
         event.register(RpgNetwork.BloodFx.TYPE,(value,context)->ParticleFx.blood(value));
         event.register(RpgNetwork.ImpactFx.TYPE,(value,context)->SkillEffectsRenderer.receive(value));
+        event.register(RpgNetwork.DisguiseState.TYPE,(value,context)->DisguiseVisuals.receive(value));
         event.register(RpgNetwork.EntityMotion.TYPE,(value,context)->EntityMotionVisuals.receive(value));
         event.register(RpgNetwork.VampireState.TYPE,(value,context)->VampireHud.receive(value));
         event.register(RpgNetwork.SpecialState.TYPE,(value,context)->SpecialistHud.receive(value));
@@ -235,11 +235,11 @@ public final class OxyRpgClient {
         while (OPEN_MENU.consumeClick()) {
             if (mc.player != null && mc.screen == null) mc.setScreen(new RpgScreen());
         }
-        LiveAim.tick();SpecialistHud.tick();
+        BarrelRollCompat.tick();LiveAim.tick();SpecialistHud.tick();
         AbilityPreview.tick();
     }
 
-    public static boolean liveChannel(){var mc=Minecraft.getInstance();return mc.level!=null&&hudState!=null&&(hudState.rpgClass()==dev.emersonoxy.rpg.RpgClass.HIDROMANTE.ordinal())&&effectUntil[1]>mc.level.getGameTime();}
+    public static boolean liveChannel(){var mc=Minecraft.getInstance();return mc.level!=null&&hudState!=null&&(hudState.rpgClass()==dev.emersonoxy.rpg.RpgClass.HIDROMANTE.ordinal()||hudState.rpgClass()==dev.emersonoxy.rpg.RpgClass.MAGO.ordinal())&&effectUntil[1]>mc.level.getGameTime();}
     private static void renderHud(GuiGraphics g) {
         var mc=Minecraft.getInstance();
         if(mc.options.hideGui||mc.getDebugOverlay().showDebugScreen()||mc.player==null||mc.level==null||mc.screen!=null||hudState==null)return;

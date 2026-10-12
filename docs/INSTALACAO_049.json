@@ -1,0 +1,47 @@
+{
+  "version": "0.49.0",
+  "protocol": 32,
+  "date": "2026-10-12",
+  "local_time": "15:42:18",
+  "instance": "C:\\Users\\canal\\AppData\\Roaming\\.sklauncher\\instances\\neoforge-1-21-10",
+  "backup": "C:\\Users\\canal\\AppData\\Roaming\\.sklauncher\\instances\\neoforge-1-21-10\\mod-backups\\20261012-153830-0.49.0",
+  "backup_files": 26,
+  "previous_jars": [
+    "oxyrpg-0.48.0.jar"
+  ],
+  "installed": "oxyrpg-0.49.0.jar",
+  "sha256": "52071e7823f6a770a27d8acf49fe8b765b8a92e365a8163ba5d86229440d9079",
+  "game_closed": true,
+  "game_validation": false,
+  "build": "build-windows.bat assemble successful",
+  "automated_tests_run": false,
+  "other_mods_preserved": {
+    "bettercombat-neoforge-3.0.0+1.21.10.jar": "97979f5e94ebdec1a56ce1c1decb836ff74d5c54133653ca6d87cb972cfcf65c",
+    "cloth-config-20.0.149-neoforge.jar": "fb5a2e83f5e48887003c816d781f2fefc36986d4541dd926e14b8d9d5adac47e",
+    "curios-neoforge-13.0.0+1.21.10.jar": "24d37149001ab0df77c9c7653a582aabb14667cd5cd9e798c99b25f038187e21",
+    "DoAnotherBarrelRoll-3.7.4+1.21.10.jar": "f997d851fda2319a9aa81705dc1a7ca9720f2b826f9d8532b562f3fac798d271",
+    "entity_model_features-3.3.11-1.21.9-neoforge.jar": "cc00722366c31e6b29a1986635e28404556f921e3c54c4186e73f490d14d9297",
+    "entity_texture_features-7.2.5-1.21.9-neoforge.jar": "fb65e52470c3d9f5fc52252d39b9e436b849e84e39ad554a7cda21b1941f166a",
+    "Explorify v1.6.5.mod.jar": "2dc76398b48b2aae9b4024642da098b0880125572de160cb5ecf91d102890cad",
+    "ferritecore-8.1.0-neoforge.jar": "aab0374476365244c859b39e171499376cb57ca6c789b71676ff2228ce113de9",
+    "geckolib-neoforge-1.21.10-5.3-alpha-3.jar": "8021252ddff1d1cbdbe891cd88a4f5b1edb996836c12d789dc15383748221efd",
+    "homesteads-1.0.1-neoforge-for-1.21.10.jar": "40bdc2776f266381b5c3f47a318be90b4ba9d35460fbcb1ad5b443a804c7dd73",
+    "lithium-neoforge-0.20.1+mc1.21.10.jar": "cd0ca6d3e226e02d2bfd37ff84df6cf965da59bbb2fd6e047859f6790cafeacb",
+    "more_mobs-v1.5.11-mc1.14-26.3.9-mod.jar": "e8a1e0aa8b9df2ee414e0a89924e5007414861269b8ddcc816c11c4926f61de4",
+    "owo-lib-neoforge-0.12.28+1.21.10.jar": "ef2e458889bf1df8abc4eb2732031653d0b583b425639eb12a16dc197f3952ab",
+    "PlayerAnimationLibNeoforge-1.1.3+mc.1.21.9.jar": "bb1ed1a481be12215c9dc14a73532ef562f7c80a7d488aada6fc4e777fb611d1",
+    "Structory_26.2_v1.3.7.jar": "e9079b2bb9bc2efb9b0f1244376488e41f8b50f25415094d8f03dc753cdfb131",
+    "yet_another_config_lib_v3-3.8.2+1.21.10-neoforge-oxycompat.jar": "28fa9bec444b27acbfd37c458859150eda08db165bf19f6a6382e34fe525d03a"
+  },
+  "resourcepacks_preserved": {
+    "FA+Player-v1.1.zip": "9ee3ae5b2fe5cd980e4041429dc66d88243f5f2420e2814e5361c746ad937f33",
+    "FreshAnimations_v1.10.4.zip": "8e44b29560d2e7d952c0a4f77f0451e6dcb048f827189bffc712b446be8de7f2",
+    "OxyRollVisuals-1.1.zip": "1a2ac387fe1ecb9f6f7e3caaec88a35f791487699cb98d25d262f00d00f2d4f8"
+  },
+  "terralith_sha256": "e9e5cddb7ed6384192ccaa0b2ff7df887dea04bcfca314390347e0d4d1c55a8d",
+  "options_unchanged": true,
+  "config_files_unchanged": true,
+  "ground_preview_default": false,
+  "combat_roll_full_mod_installed": false,
+  "final_package_checked": true
+}

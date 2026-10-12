@@ -7,8 +7,19 @@ import org.slf4j.LoggerFactory;
 /** Optional client bridge: the flight controller owns view rotation while active. */
 public final class BarrelRollCompat {
     private static boolean resolved;
-    private static Method active;
+    private static Method active,clear,setRoll,setRolling;
+    private static net.minecraft.client.player.LocalPlayer tracked;
+    private static boolean gliding;
     private BarrelRollCompat() {}
+    public static void resetFlight(){
+        active();var p=net.minecraft.client.Minecraft.getInstance().player;if(p==null||clear==null)return;
+        try{clear.invoke(null);setRoll.invoke(p,0f);setRolling.invoke(p,false);}
+        catch(ReflectiveOperationException e){clear=null;LoggerFactory.getLogger(BarrelRollCompat.class).warn("Não foi possível reiniciar a rotação de voo",e);}
+    }
+    public static void tick(){
+        var p=net.minecraft.client.Minecraft.getInstance().player;boolean next=p!=null&&p.isFallFlying()&&!p.getAbilities().flying;
+        if(tracked!=p||gliding!=next){tracked=p;gliding=next;resetFlight();}
+    }
     public static boolean active() {
         if (!resolved) {
             resolved = true;
@@ -16,6 +27,10 @@ public final class BarrelRollCompat {
                 try {
                     active = Class.forName("nl.enjarai.doabarrelroll.DoABarrelRollClient")
                         .getMethod("isFallFlying");
+                    clear=Class.forName("nl.enjarai.doabarrelroll.DoABarrelRollClient").getMethod("clearValues");
+                    var roll=Class.forName("nl.enjarai.doabarrelroll.api.RollEntity");
+                    setRoll=roll.getMethod("doABarrelRoll$setRoll",float.class);
+                    setRolling=roll.getMethod("doABarrelRoll$setRolling",boolean.class);
                 } catch (ReflectiveOperationException e) {
                     LoggerFactory.getLogger(BarrelRollCompat.class).warn("Controlador de voo incompatível; câmera Oxy preservada", e);
                 }

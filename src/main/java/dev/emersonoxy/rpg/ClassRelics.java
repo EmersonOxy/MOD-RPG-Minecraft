@@ -44,7 +44,12 @@ public final class ClassRelics {
         RpgResources.spend(p,10);int rank=ClassEquipment.identity(stack).getIntOr("stage",1);int cooldown=(40-rank*5)*20;
         if(!RpgDebug.cooldownsDisabled(p)){if(RpgDebug.enabled(p))RpgDebug.itemCooldown(p,s.rpgClass(),now+cooldown);else d.putLong(s.rpgClass().name(),now+cooldown);}
         switch(s.rpgClass()){
-            case GUERREIRO->{p.addEffect(new MobEffectInstance(MobEffects.RESISTANCE,60,0));for(var m:p.level().getEntitiesOfClass(net.minecraft.world.entity.Mob.class,p.getBoundingBox().inflate(3),RpgAbilities::attackable))m.knockback(.6,p.getX()-m.getX(),p.getZ()-m.getZ());}
+            case GUERREIRO->{p.addEffect(new MobEffectInstance(MobEffects.RESISTANCE,60,0));for(var m:p.level().getEntitiesOfClass(net.minecraft.world.entity.Mob.class,p.getBoundingBox().inflate(3),RpgAbilities::attackable))m.knockback(.6,p.getX()-m.getX(),p.getZ()-m.getZ());
+                var world=p.level();world.sendParticles(net.minecraft.core.particles.ParticleTypes.GUST,p.getX(),p.getY()+.8,p.getZ(),8,1,.3,1,.05);
+                world.sendParticles(net.minecraft.core.particles.ParticleTypes.SWEEP_ATTACK,p.getX(),p.getY()+.9,p.getZ(),4,1,.2,1,0);
+                world.playSound(null,p.blockPosition(),net.minecraft.sounds.SoundEvents.SHIELD_BLOCK.value(),net.minecraft.sounds.SoundSource.PLAYERS,.9f,.85f);
+                world.playSound(null,p.blockPosition(),net.minecraft.sounds.SoundEvents.PLAYER_ATTACK_SWEEP,net.minecraft.sounds.SoundSource.PLAYERS,.8f,.8f);
+            }
             case MAGO,ARQUEIRO,NECROMANTE,VAMPIRESCO->{d.putLong("charged",now+200);d.putInt("charged_class",s.rpgClass().ordinal());}
             case XAMA->{p.removeEffect(MobEffects.POISON);p.removeEffect(MobEffects.WEAKNESS);p.heal(2);}
             case AVIARIO->{p.setDeltaMovement(p.getDeltaMovement().add(0,.45,0));p.hurtMarked=true;p.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING,60,0));}

@@ -143,6 +143,13 @@ public final class RpgNecromancer {
         if(!found)return;
         var unit=new Minion(mob,g,strikes,index);g.units.add(unit);MINIONS.put(mob.getUUID(),unit);
         if(!g.world.addFreshEntity(mob)){g.units.remove(unit);MINIONS.remove(mob.getUUID());return;}
+        if(g.profile.rpgClass()==RpgClass.NECROMANTE){
+            var pos=mob.blockPosition().below();var state=g.world.getBlockState(pos);
+            if(!state.isAir()){
+                g.world.sendParticles(new net.minecraft.core.particles.BlockParticleOption(ParticleTypes.BLOCK,state),mob.getX(),mob.getY()+.1,mob.getZ(),18,.45,.15,.45,.08);
+                g.world.playSound(null,pos,state.getSoundType(g.world,pos,mob).getBreakSound(),net.minecraft.sounds.SoundSource.HOSTILE,.5f,.8f);
+            }
+        }
         if(target!=null){mob.setTarget(target);if(mob instanceof Spider)mob.setDeltaMovement(target.position().subtract(mob.position()).multiply(1,0,1).normalize().scale(.5).add(0,.45,0));}
     }
     public static void impact(ProjectileImpactEvent event){

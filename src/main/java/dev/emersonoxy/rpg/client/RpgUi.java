@@ -28,6 +28,7 @@ public final class RpgUi {
         var font=Minecraft.getInstance().font;g.drawCenteredString(font,font.plainSubstrByWidth(button.getMessage().getString(),w-12),x+w/2,y+3,button.active?TEXT:MUTED);
     }
     public static void panel(GuiGraphics g,int x,int y,int w,int h){
+        OutsideClick.panel(x,y,w,h);
         g.fill(x,y,x+w,y+h,0xF511151D);border(g,x,y,w,h,0xFF796341);border(g,x+3,y+3,w-6,h-6,0xFF333E50);
         for(int dx:new int[]{0,w-9})for(int dy:new int[]{0,h-9}){g.fill(x+dx,y+dy,x+dx+9,y+dy+2,GOLD);g.fill(x+dx,y+dy,x+dx+2,y+dy+9,GOLD);}
     }

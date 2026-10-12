@@ -23,5 +23,6 @@ public abstract class ShoulderCameraMixin {
             var rotation=TargetLock.firstPersonRotation(partial);
             if(rotation!=null)setRotation(rotation.x,rotation.y,0);
         }
+        dev.emersonoxy.rpg.client.CameraAim.pick(partial);
     }
 }

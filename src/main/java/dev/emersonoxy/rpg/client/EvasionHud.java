@@ -21,7 +21,6 @@ public final class EvasionHud {
         if(energy<state.maximum())DynamicHud.signal(DynamicHud.Part.EVASION);
         float alpha=DynamicHud.alpha(DynamicHud.Part.EVASION);if(alpha<.01)return;HudOpacity.begin(alpha);
         int x=g.guiWidth()/2-91,y=g.guiHeight()-25;
-        var arrow=ResourceLocation.fromNamespaceAndPath("oxy_roll","textures/gui/arrow.png");if(mc.getResourceManager().getResource(arrow).isPresent())g.blit(RenderPipelines.GUI_TEXTURED,arrow,x-17,y-6,0,0,13,13,13,13);
         var background=ResourceLocation.withDefaultNamespace("hud/experience_bar_background");var progress=ResourceLocation.withDefaultNamespace("hud/experience_bar_progress");
         for(int i=0;i<3;i++){
             int sx=x+i*62;g.blitSprite(RenderPipelines.GUI_TEXTURED,background,sx,y,58,5);

@@ -22,7 +22,7 @@ public final class CombatSettingsScreen extends Screen {
             @Override protected void updateMessage(){setMessage(Component.literal("Tamanho do dano: "+Math.round(CombatOptions.size*100)+"%"));}
             @Override protected void applyValue(){CombatOptions.size=.6+value;}
         });
-        toggle(150,"Segurar para prever / soltar para lançar",CombatOptions.preview,()->{CombatOptions.preview=!CombatOptions.preview;AbilityPreview.clear();});
+        toggle(150,"Marcações no chão antes de lançar",CombatOptions.preview,()->{CombatOptions.preview=!CombatOptions.preview;AbilityPreview.clear();});
         addRenderableWidget(Button.builder(Component.translatable("screen.oxyrpg.combat_visuals"),b->minecraft.setScreen(new CombatVisualSettingsScreen(this))).bounds(left+12,top+174,w-24,20).build());
         addRenderableWidget(Button.builder(Component.literal("Voltar"),b->onClose()).bounds(left+12,top+206,w-24,20).build());
     }

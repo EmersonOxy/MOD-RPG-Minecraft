@@ -138,11 +138,5 @@ public final class ShoulderCamera {
         }
         return result;
     }
-    public static Vec3 aimPoint(float partial){
-        var mc=Minecraft.getInstance();var p=mc.player;if(p==null)return Vec3.ZERO;
-        if((mc.options.keyUse.isDown()||p.isUsingItem()||OxyRpgClient.liveChannel())&&!mc.options.getCameraType().isMirrored())return abilityPoint(partial);
-        // Use the same result consumed by Minecraft's attack/use actions, including misses.
-        // The distant fallback made unreachable enemies appear to be attack targets.
-        return mc.hitResult!=null?mc.hitResult.getLocation():p.getEyePosition(partial).add(p.getViewVector(partial).scale(p.entityInteractionRange()));
-    }
+    public static Vec3 aimPoint(float partial){return abilityPoint(partial);}
 }

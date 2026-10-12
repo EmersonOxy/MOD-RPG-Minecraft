@@ -36,5 +36,5 @@ public final class EntityMotionVisuals {
         else if(motion.kind==6&&state instanceof LivingEntityRenderState living){living.bodyRot+=motion.direction*45;}
         else if(motion.kind==2&&state instanceof LivingEntityRenderState living){living.bodyRot+=(float)Math.sin(t*Math.PI)*12;state.y+=(float)Math.sin(t*Math.PI)*.06;}
     }
-    public static boolean morph(RenderPlayerEvent.Pre event){var draw=event.getRenderState().getRenderData(BAT);if(draw==null)return false;draw.renderer.submit(draw.state,event.getPoseStack(),event.getSubmitNodeCollector(),new net.minecraft.client.renderer.state.CameraRenderState());event.setCanceled(true);return true;}
+    public static boolean morph(RenderPlayerEvent.Pre event){var draw=event.getRenderState().getRenderData(BAT);if(draw==null)return DisguiseVisuals.render(event);draw.renderer.submit(draw.state,event.getPoseStack(),event.getSubmitNodeCollector(),new net.minecraft.client.renderer.state.CameraRenderState());event.setCanceled(true);return true;}
 }

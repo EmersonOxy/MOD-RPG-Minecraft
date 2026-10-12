@@ -40,7 +40,7 @@ public final class RpgAviary {
     public static void validate(ServerPlayer p,int slot){
         if(slot==1)throw new IllegalStateException("Peso pena é passiva: segure Agachar no ar para frear a queda.");
         if(slot==2&&(p.onGround()||p.isInWater()||p.isInLava()||p.isPassenger()||p.getAbilities().flying))throw new IllegalStateException("Impacto Meteoro exige estar voando ou caindo no ar.");
-        if(slot==0&&(p.isInWater()||p.isInLava()||p.isPassenger()||p.hasEffect(MobEffects.LEVITATION)||p.getAbilities().flying))throw new IllegalStateException("Decole fora da água, sem montaria e com o voo criativo desativado.");
+        if(slot==0&&(p.isInWater()||p.isInLava()||p.isPassenger()||p.hasEffect(MobEffects.LEVITATION)))throw new IllegalStateException("Decole fora da água e sem montaria.");
         var f=FLIGHTS.get(p.getUUID());if(f!=null&&f.meteorUntil>0)throw new IllegalStateException("Impacto Meteoro já está preparado: aguarde o impacto.");
         if(slot==0&&f!=null&&f.until>p.level().getGameTime()&&p.onGround())throw new IllegalStateException("Aguarde sair do chão para iniciar o voo.");
         if(slot==0&&f!=null&&f.lastBoost>0&&p.level().getGameTime()-f.lastBoost<10)throw new IllegalStateException("Aguarde meio segundo entre impulsos.");
@@ -48,6 +48,7 @@ public final class RpgAviary {
     public static void activate(ServerPlayer p,RpgProfile profile,int slot){
         var f=FLIGHTS.computeIfAbsent(p.getUUID(),id->new Flight());long now=p.level().getGameTime();f.dimension=p.level().dimension();f.cast=profile;
         if(slot==0){
+            if(p.getAbilities().flying){p.getAbilities().flying=false;p.onUpdateAbilities();p.stopFallFlying();}
             if(f.until>now){f.gliding=true;f.launched=true;p.startFallFlying();f.lastBoost=now;f.thrust=Math.min(maximumSpeed(profile),Math.max(.75+.5*profile.level()/100.0,Math.max(p.getKnownMovement().length(),f.thrust)+.15+.45*profile.level()/100.0));p.setDeltaMovement(p.getLookAngle().scale(f.thrust));p.hurtMarked=true;f.boostUntil=Math.min(f.until,now+(profile.mainUnlocked(0)?40:20)+(profile.hasSkill(5)?20:0));}
             else{SkillEffects.impact(p.level(),p.position(),2,7);f.thrust=0;f.total=profile.abilityDuration(0);f.until=now+f.total;f.launched=false;f.gliding=false;f.lastBoost=0;f.launchAt=now;p.stopFallFlying();p.setDeltaMovement(0,1.25,0);p.hurtMarked=true;ClassJourney.advance(p,0,1);}
             p.level().playSound(null,p.blockPosition(),SoundEvents.FIREWORK_ROCKET_LAUNCH,SoundSource.PLAYERS,.7f,1.2f);
@@ -67,6 +68,7 @@ public final class RpgAviary {
         if(landing(player)&&player.isFallFlying()){player.stopFallFlying();player.setDeltaMovement(0,player.getDeltaMovement().y,0);}
         if(player.level().isClientSide()){
             if(!player.isLocalPlayer())return;var tag=player.getPersistentData();
+            if(player.getAbilities().flying){if(player.isFallFlying())player.stopFallFlying();return;}
             if(tag.getIntOr("oxy_meteor_until",0)>player.tickCount&&!player.onGround()){
                 if(tag.getBooleanOr("oxy_meteor_forward",false))player.setDeltaMovement(new Vec3(tag.getFloatOr("oxy_meteor_x",0),tag.getFloatOr("oxy_meteor_y",0),tag.getFloatOr("oxy_meteor_z",0)));
                 else player.setDeltaMovement(player.getDeltaMovement().multiply(.96,1,.96).add(0,-.12,0).with(net.minecraft.core.Direction.Axis.Y,Math.max(-3,player.getDeltaMovement().y-.12)));
@@ -84,6 +86,7 @@ public final class RpgAviary {
         }
         if(!(player instanceof ServerPlayer p))return;var profile=RpgAbilities.profile(p);var f=FLIGHTS.get(p.getUUID());
         if(profile.rpgClass()!=RpgClass.AVIARIO||!p.isAlive()||p.isSpectator()){if(f!=null)clear(p);return;}
+        if(p.getAbilities().flying){if(f!=null&&(f.until>0||f.meteorUntil>0))clear(p);if(p.isFallFlying())p.stopFallFlying();return;}
         boolean slow=slowing(p,profile);
         if(slow){if(p.isFallFlying())p.stopFallFlying();featherMovement(p);}
         if(f==null){f=new Flight();f.dimension=p.level().dimension();FLIGHTS.put(p.getUUID(),f);}

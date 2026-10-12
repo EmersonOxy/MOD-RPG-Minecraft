@@ -19,9 +19,19 @@ public final class VampireHunt {
     private VampireHunt(){}
     public static boolean night(ServerLevel w){return w.dimensionType().hasSkyLight()&&Math.floorMod(w.getDayTime(),24000)>=12000;}
     public static boolean afraid(Villager v){return v.getPersistentData().getLongOr("oxy_vampire_fear",0)>v.level().getGameTime();}
+    public static boolean vampire(LivingEntity e){return e instanceof ServerPlayer p&&p.isAlive()&&!p.isSpectator()&&RpgAbilities.profile(p).rpgClass()==RpgClass.VAMPIRESCO;}
+    public static boolean defender(Mob m){return m instanceof VillageGuard||m instanceof net.minecraft.world.entity.animal.AbstractGolem;}
     public static void threaten(LivingEntity target,ServerPlayer vampire){
         if(!(target instanceof Mob m)||!m.isAlive())return;
-        if(m instanceof Enemy){m.setTarget(vampire);m.setLastHurtByMob(vampire);return;}
+        if(m instanceof Enemy||defender(m)){
+            m.getPersistentData().remove("oxy_vampire_fear");
+            if(m instanceof Villager v){
+                VillagerQuests.frighten(v);if(v.isSleeping())v.stopSleeping();
+                if(v.getTradingPlayer()!=null){var trader=v.getTradingPlayer();v.setTradingPlayer(null);trader.closeContainer();}
+                v.getBrain().eraseMemory(MemoryModuleType.NEAREST_HOSTILE);v.getBrain().eraseMemory(MemoryModuleType.WALK_TARGET);
+            }
+            m.setTarget(vampire);m.setLastHurtByMob(vampire);return;
+        }
         var away=m.position().subtract(vampire.position()).multiply(1,0,1);
         if(away.lengthSqr()<.01)away=new net.minecraft.world.phys.Vec3(1,0,0);away=away.normalize();
         var to=m.position().add(away.scale(5));if(m instanceof PathfinderMob walker){var safe=net.minecraft.world.entity.ai.util.DefaultRandomPos.getPosAway(walker,8,3,vampire.position());if(safe!=null)to=safe;}
@@ -41,7 +51,7 @@ public final class VampireHunt {
         if(m instanceof Villager v&&!afraid(v)){var speed=v.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED);if(speed!=null)speed.removeModifier(FEAR);}
         boolean wounded=m.hasEffect(Bleeding.EFFECT);
         if(wounded&&Bleeding.owner(m) instanceof ServerPlayer vampire&&vampire.isAlive()&&vampire.level()==w&&RpgAbilities.profile(vampire).rpgClass()==RpgClass.VAMPIRESCO&&m.distanceToSqr(vampire)<256)threaten(m,vampire);
-        if(m instanceof Villager&&night(w))for(var p:w.players())if(p.isAlive()&&!p.isSpectator()&&m.distanceToSqr(p)<64&&RpgAbilities.profile(p).rpgClass()==RpgClass.VAMPIRESCO){threaten(m,p);break;}
+        if((m instanceof Villager||defender(m))&&night(w))for(var p:w.players())if(p.isAlive()&&!p.isSpectator()&&m.distanceToSqr(p)<64&&RpgAbilities.profile(p).rpgClass()==RpgClass.VAMPIRESCO){threaten(m,p);break;}
         if(!wounded){m.getPersistentData().remove("oxy_bandaging_since");m.getPersistentData().remove("oxy_wound_seen");return;}
         boolean capable=(m instanceof Villager||m instanceof WanderingTrader||m instanceof AbstractIllager||m instanceof net.minecraft.world.entity.monster.piglin.Piglin)&&Math.floorMod(m.getUUID().hashCode(),3)==0;
         if(!capable)return;var tag=m.getPersistentData();long now=w.getGameTime();

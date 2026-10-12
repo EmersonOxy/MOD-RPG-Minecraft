@@ -1,4 +1,4 @@
-# Oxy RPG 0.48.0
+# Oxy RPG 0.49.0
 
 Mod RPG para Minecraft **1.21.10**, NeoForge **21.10.64**, JDK **21**.
 
@@ -33,6 +33,8 @@ A 0.44 substitui o avatar pela forma renderizada de morcego com dimensões/câme
 A 0.47 faz o canhão aquático acompanhar a mira, alinha arco/tridente/besta com a câmera, corrige a seleção e registro da animação de esquiva, separa itens do criativo e acrescenta ovo de guarda. [Correções, instruções de guardas e escolha de complementos](docs/CORRECOES_047.md).
 
 A 0.48 corrige o ovo do guarda e o alinhamento das trocas, reformula missões/conversa, integra Homesteads e More Mobs como complementos e permite poses de combate/rolamento coexistirem com EMF. [Implementação, estado real das integrações e limites](docs/CORRECOES_048.md).
+
+A 0.49 corrige o disfarce do Ilusionista, a transição de voo criativo, a reação dos defensores ao vampiro e a mira de ombro. Acrescenta efeitos do Guerreiro/Necromante, lança-chamas em anéis, tremor distribuído, prévia no chão opcional e fechamento por clique fora. [Mudanças e validação pendente](docs/CORRECOES_049.md).
 
 ## Controles
 

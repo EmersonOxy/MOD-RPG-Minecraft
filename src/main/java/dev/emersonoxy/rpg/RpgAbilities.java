@@ -38,7 +38,7 @@ public final class RpgAbilities {
         long impetus, passiveHeal, passiveFire, passiveThorns;
         int crouchTicks, dashes, quakePulse, replicas;
         float hunger;
-        Vec3 quakeOrigin, fireAim;
+        Vec3 quakeOrigin;
         ServerLevel quakeLevel;
         final List<BlockPos> blocks = new ArrayList<>();
         MobEffectInstance previousInvisibility;
@@ -68,7 +68,6 @@ public final class RpgAbilities {
         Active a = active(p);
         if (extraDash(p,slot)) { a.dashes--; dash(p,a.cast[2],direction); return; }
         a.cast[slot] = s;
-        if(s.rpgClass()==RpgClass.MAGO&&slot==1)a.fireAim=AbilityAim.direction(p);
         a.until[slot] = now(p) + s.abilityDuration(slot);
         a.total[slot]=s.abilityDuration(slot);a.phase[slot]=s.rpgClass()==RpgClass.MAGO ? (slot==1&&s.mainUnlocked(1)?2:slot==2?4:3) : 3;
         p.swing(InteractionHand.MAIN_HAND,true);
@@ -77,7 +76,7 @@ public final class RpgAbilities {
             case MAGO -> {
                 if (slot == 0) launch(p,s,1,new ItemStack(Items.ICE),1.7f);
                 else if (slot == 1) {
-                    if (s.mainUnlocked(1)) fire(p,s); else launch(p,s,3,new ItemStack(Items.FIRE_CHARGE),1.5f);
+                    if (s.mainUnlocked(1)) fire(p,s,true); else launch(p,s,3,new ItemStack(Items.FIRE_CHARGE),1.5f);
                     sound(p,SoundEvents.BLAZE_SHOOT,.8f);
                 } else {
                     clearCracks(p,a);
@@ -97,8 +96,10 @@ public final class RpgAbilities {
                     int duration = s.abilityDuration(0)+(s.hasSkill(6)?Math.min(5,hits)*20:0);
                     a.until[0]=now(p)+duration;a.total[0]=duration;
                     p.addEffect(new MobEffectInstance(MobEffects.STRENGTH,duration,0));
-                    if(s.mainUnlocked(0))level.sendParticles(ParticleTypes.SWEEP_ATTACK,p.getX(),p.getY()+1,p.getZ(),6,radius/2,.1,radius/2,0);
-                    if(s.mainUnlocked(0))sound(p,SoundEvents.PLAYER_ATTACK_SWEEP,1);
+                    level.sendParticles(ParticleTypes.SWEEP_ATTACK,p.getX(),p.getY()+1,p.getZ(),6,radius/2,.1,radius/2,0);
+                    sound(p,SoundEvents.PLAYER_ATTACK_SWEEP,1);
+                    level.sendParticles(ParticleTypes.CRIT,p.getX(),p.getY()+1,p.getZ(),14,.7,.6,.7,.06);
+                    sound(p,SoundEvents.PLAYER_ATTACK_STRONG,.8f);
                 } else if (slot == 1) {
                     a.hunger = 0;
                     if(s.mainUnlocked(1)) { p.getFoodData().setSaturation(0); p.addEffect(new MobEffectInstance(MobEffects.HUNGER,s.abilityDuration(1),0)); }
@@ -159,12 +160,18 @@ public final class RpgAbilities {
         for(double step=0;step<safe;step+=.4) {var at=start.add(dir.scale(step));level.sendParticles(ParticleTypes.CLOUD,at.x,at.y+.5,at.z,2,.1,.2,.1,.02);}
         sound(p,SoundEvents.PLAYER_ATTACK_SWEEP,.7f);
     }
-    private static void fire(ServerPlayer p,RpgProfile s) {
-        var level=(ServerLevel)p.level(); Vec3 start=p.getEyePosition(),dir=active(p).fireAim==null?AbilityAim.direction(p):active(p).fireAim;
+    private static void fire(ServerPlayer p,RpgProfile s,boolean damage) {
+        var level=(ServerLevel)p.level(); Vec3 start=p.getEyePosition(),dir=AbilityAim.direction(p);
         double range=6+(s.hasSkill(11)?1:0)+(s.hasSkill(13)?1:0);
         Vec3 end=level.clip(new ClipContext(start,start.add(dir.scale(range)),ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,p)).getLocation();
         double length=start.distanceTo(end);
-        for(double d=.3;d<length;d+=.35){var at=start.add(dir.scale(d));level.sendParticles(ParticleTypes.FLAME,at.x,at.y,at.z,3,.12,.12,.12,.02);}
+        var side=dir.cross(Math.abs(dir.y)>.9?new Vec3(1,0,0):new Vec3(0,1,0)).normalize();var up=side.cross(dir).normalize();
+        for(double d=.45;d<length;d+=1.05){
+            var at=start.add(dir.scale(d));level.sendParticles(RpgParticles.FIRE_PULSE.get(),at.x,at.y,at.z,0,dir.x,dir.y,dir.z,1);
+            for(int i=0;i<4;i++){double angle=i*Math.PI/2+p.tickCount*.18+d;var flame=at.add(side.scale(Math.cos(angle)*.55)).add(up.scale(Math.sin(angle)*.55));level.sendParticles(ParticleTypes.FLAME,flame.x,flame.y,flame.z,1,.025,.025,.025,.01);}
+        }
+        if(p.tickCount%20==0)sound(p,SoundEvents.FIRE_AMBIENT,.45f);
+        if(!damage)return;
         int hits=0;
         for(var e:level.getEntitiesOfClass(LivingEntity.class,new AABB(start,end).inflate(1.6),RpgAbilities::enemy)) {
             Vec3 relative=e.getBoundingBox().getCenter().subtract(start); double projection=relative.dot(dir);
@@ -179,14 +186,17 @@ public final class RpgAbilities {
     private static void selectBlocks(ServerPlayer p,Active a) {
         BlockPos origin=BlockPos.containing(a.quakeOrigin).below();
         int radius=a.cast[2].hasSkill(18)?5:4;
-        for(int[] direction:new int[][]{{1,0},{0,1},{-1,0},{0,-1}}){
-            boolean selected=false;
-            for(int distance=2;distance<=radius&&!selected;distance++)for(int dy:new int[]{0,1,-1}){
-                var pos=origin.offset(direction[0]*distance,dy,direction[1]*distance);
+        var candidates=new ArrayList<BlockPos>();
+        for(int dx=-radius;dx<=radius;dx++)for(int dz=-radius;dz<=radius;dz++){
+            if(dx*dx+dz*dz>radius*radius||dx*dx+dz*dz<2)continue;
+            for(int dy:new int[]{0,1,-1}){
+                var pos=origin.offset(dx,dy,dz);
                 if(!allowedBlock(a.quakeLevel,pos)||!a.quakeLevel.mayInteract(p,pos)||!a.quakeLevel.getBlockState(pos.above()).getCollisionShape(a.quakeLevel,pos.above()).isEmpty())continue;
-                a.blocks.add(pos.immutable());selected=true;break;
+                candidates.add(pos.immutable());break;
             }
         }
+        for(int i=candidates.size()-1;i>0;i--){int j=p.getRandom().nextInt(i+1);Collections.swap(candidates,i,j);}
+        a.blocks.addAll(candidates.subList(0,Math.min(candidates.size(),a.cast[2].hasSkill(18)?22:14)));
     }
     private static boolean allowedBlock(ServerLevel level,BlockPos pos) {
         var state=level.getBlockState(pos);
@@ -201,7 +211,7 @@ public final class RpgAbilities {
         if(replica||a.quakePulse==0)SkillEffects.impact(a.quakeLevel,a.quakeOrigin,radius,8);
         int hits=0;
         for(var e:near(a.quakeLevel,a.quakeOrigin,radius)) if(p.hasLineOfSight(e)) {
-            if(e.hurtServer(a.quakeLevel,p.damageSources().indirectMagic(p,p),s.mainUnlocked(2)?replica?1.5f:2:1))hits++;
+            if(e.hurtServer(a.quakeLevel,p.damageSources().indirectMagic(p,p),s.mainUnlocked(2)?replica?1.5f:a.quakePulse==0?2:1:.5f))hits++;
             e.addEffect(new MobEffectInstance(MobEffects.SLOWNESS,50,s.mainUnlocked(2)?1:0));
         }
         if(hits>=2)ClassJourney.advance(p,2,1);
@@ -209,8 +219,8 @@ public final class RpgAbilities {
         if(!replica&&s.mainUnlocked(2)) {
             a.quakePulse++;
             for(var pos:a.blocks) if(allowedBlock(a.quakeLevel,pos)&&a.quakeLevel.mayInteract(p,pos)) {
-                int progress=a.quakePulse*2;
-                if(progress==10) {a.quakeLevel.destroyBlockProgress(crackId(p,pos),pos,-1);a.quakeLevel.destroyBlock(pos,true,p);}
+                int progress=Math.min(10,a.quakePulse*3+Math.floorMod(pos.hashCode(),3));
+                if(progress>=10) {a.quakeLevel.destroyBlockProgress(crackId(p,pos),pos,-1);a.quakeLevel.destroyBlock(pos,true,p);}
                 else if(progress<10) a.quakeLevel.destroyBlockProgress(crackId(p,pos),pos,progress);
             }
         }
@@ -269,10 +279,10 @@ public final class RpgAbilities {
             if(a.hunger>=1){int drain=(int)a.hunger;a.hunger-=drain;p.getFoodData().setFoodLevel(Math.max(0,p.getFoodData().getFoodLevel()-drain));}
         }
         if(s.rpgClass()==RpgClass.MAGO) {
-            if(a.until[1]>time&&a.cast[1]!=null&&a.cast[1].mainUnlocked(1)&&p.tickCount%10==0)fire(p,a.cast[1]);
+            if(a.until[1]>time&&a.cast[1]!=null&&a.cast[1].mainUnlocked(1)&&p.tickCount%5==0)fire(p,a.cast[1],p.tickCount%10==0);
             if(a.cast[2]!=null&&a.quakeOrigin!=null) {
                 if(p.level()!=a.quakeLevel){clearCracks(p,a);a.quakeOrigin=null;}
-                else if(p.tickCount%20==0){if(a.until[2]>time)quake(p,a,false);else if(a.replicas>0){quake(p,a,true);a.replicas--;}else{clearCracks(p,a);a.quakeOrigin=null;}}
+                else if(p.tickCount%10==0){if(a.until[2]>time)quake(p,a,false);else if(a.replicas>0){quake(p,a,true);a.replicas--;}else{clearCracks(p,a);a.quakeOrigin=null;}}
             }
         }
         if(s.rpgClass()==RpgClass.ARQUEIRO&&s.hasSkill(8)) {

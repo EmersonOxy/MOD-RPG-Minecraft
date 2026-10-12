@@ -75,7 +75,7 @@ public final class EnemyNameplates {
     }
     public static void register(RegisterRenderStateModifiersEvent event) {
         event.registerEntityModifier(new TypeToken<EntityRenderer<Entity, EntityRenderState>>() {}, (entity, state) -> {
-            EntityMotionVisuals.extract(entity,state);
+            EntityMotionVisuals.extract(entity,state);DisguiseVisuals.extract(entity,state);
             state.setRenderData(HIDDEN, entity instanceof Player && hidden(entity.getId()));
             state.setRenderData(PLATE, null);
             if (!(entity instanceof Mob mob)) return;
