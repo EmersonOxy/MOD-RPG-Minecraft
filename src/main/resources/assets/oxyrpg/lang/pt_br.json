@@ -122,5 +122,6 @@
   "tooltip.oxyrpg.bleeding_weapon": "Sangramento: %s%% de chance · %s dano/s",
   "item.oxyrpg.relic_vampiresco": "Presa Noturna",
   "death.attack.oxyrpg.vampire_bite": "%1$s foi drenado por %2$s",
-  "death.attack.oxyrpg.vampire_bite.player": "%1$s foi drenado por %2$s"
+  "death.attack.oxyrpg.vampire_bite.player": "%1$s foi drenado por %2$s",
+  "entity.oxyrpg.village_guard": "Guarda da aldeia"
 }

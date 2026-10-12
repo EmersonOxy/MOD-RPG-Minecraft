@@ -130,3 +130,7 @@ Painel em R > Debug para operadores. Debug ON libera árvore completa e nível 1
 ## Atualização 0.45.0 — 12/10/2026
 
 Correções e limites registrados em CORRECOES_045.md; pesquisa de todos os links em REFERENCIAS_045.md. Compilação assemble, sem abrir jogo ou executar testes. Nenhuma dependência nova. Proposta de Assassino + novo Arqueiro registrada; classe atual preservada. Instalação e SHA256 em INSTALACAO_045.json.
+
+## 0.46.0 — NPCs e complementos
+
+39 contratos de profissão, três de defesa para guardas próprios, trocas + missões em painel lateral, diálogo curto, Better Combat/PAL/Cloth Config, Terralith opcional por mundo e visuais Combat Roll separados. Protocolo 31. Regras e limites: NPCS_E_INTEGRACOES_046.md; hashes: INTEGRACOES_046.json. Footsteps não instalado por falta de release NeoForge 1.21.10 nas consultas pesquisadas.

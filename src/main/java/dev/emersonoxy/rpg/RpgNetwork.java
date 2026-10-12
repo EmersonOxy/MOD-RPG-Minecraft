@@ -157,9 +157,10 @@ public final class RpgNetwork {
         public static final StreamCodec<RegistryFriendlyByteBuf,ProfessionState> CODEC=StreamCodec.of((b,v)->{b.writeVarInt(v.mining);b.writeVarInt(v.farming);b.writeVarInt(v.arsenal);b.writeUtf(v.journal,512);},b->new ProfessionState(b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readUtf(512)));
         @Override public Type<ProfessionState> type(){return TYPE;}
     }
-    public record VillagerDialogue(int entityId,String name,String title,String dialogue,String objective,String reward,int status,boolean canTrade) implements CustomPacketPayload {
+    public record VillagerDialogue(int entityId,String name,String title,String dialogue,String objective,String reward,int status,boolean canTrade,String offers,int selectedQuest,String npcDialogue) implements CustomPacketPayload {
+        public VillagerDialogue(int entityId,String name,String title,String dialogue,String objective,String reward,int status,boolean canTrade){this(entityId,name,title,dialogue,objective,reward,status,canTrade,"[]",-1,dialogue);}
         public static final Type<VillagerDialogue> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath("oxyrpg","villager_dialogue"));
-        public static final StreamCodec<RegistryFriendlyByteBuf,VillagerDialogue> CODEC=StreamCodec.of((b,v)->{b.writeVarInt(v.entityId);b.writeUtf(v.name,256);b.writeUtf(v.title,256);b.writeUtf(v.dialogue,512);b.writeUtf(v.objective,256);b.writeUtf(v.reward,256);b.writeVarInt(v.status);b.writeBoolean(v.canTrade);},b->new VillagerDialogue(b.readVarInt(),b.readUtf(256),b.readUtf(256),b.readUtf(512),b.readUtf(256),b.readUtf(256),b.readVarInt(),b.readBoolean()));
+        public static final StreamCodec<RegistryFriendlyByteBuf,VillagerDialogue> CODEC=StreamCodec.of((b,v)->{b.writeVarInt(v.entityId);b.writeUtf(v.name,256);b.writeUtf(v.title,256);b.writeUtf(v.dialogue,512);b.writeUtf(v.objective,256);b.writeUtf(v.reward,256);b.writeVarInt(v.status);b.writeBoolean(v.canTrade);b.writeUtf(v.offers,4096);b.writeVarInt(v.selectedQuest);b.writeUtf(v.npcDialogue,1024);},b->new VillagerDialogue(b.readVarInt(),b.readUtf(256),b.readUtf(256),b.readUtf(512),b.readUtf(256),b.readUtf(256),b.readVarInt(),b.readBoolean(),b.readUtf(4096),b.readVarInt(),b.readUtf(1024)));
         @Override public Type<VillagerDialogue> type(){return TYPE;}
     }
     public record VillagerMark(int entityId,int state) implements CustomPacketPayload {
@@ -173,7 +174,7 @@ public final class RpgNetwork {
         @Override public Type<EliteInfo> type(){return TYPE;}
     }
     public static void register(RegisterPayloadHandlersEvent event) {
-        var registrar = event.registrar("30");
+        var registrar = event.registrar("31");
         registrar.playToClient(BloodFx.TYPE,BloodFx.CODEC);
         registrar.playToClient(ImpactFx.TYPE,ImpactFx.CODEC);
         registrar.playToClient(CastFx.TYPE,CastFx.CODEC);
@@ -201,6 +202,7 @@ public final class RpgNetwork {
             if (context.player() instanceof ServerPlayer player){
                 if(request.action()==1||request.action()==5||request.action()==6||request.action()==8||request.action()==9||request.action()==16)
                     AbilityAim.cast(player,request.targetId(),new net.minecraft.world.phys.Vec3(request.aimX(),request.aimY(),request.aimZ()),()->OxyRpg.menuAction(player,request.action(),request.direction()));
+                else if(request.action()>=300&&request.action()<=308)VillagerQuests.action(player,request.action(),request.direction(),request.targetId());
                 else OxyRpg.menuAction(player,request.action(),request.direction());
             }
         });

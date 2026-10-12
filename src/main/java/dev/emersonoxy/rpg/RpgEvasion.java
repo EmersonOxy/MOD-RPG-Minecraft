@@ -39,6 +39,7 @@ public final class RpgEvasion {
         // Vanilla collision handles the movement; the dodge never teleports through blocks.
         if(!p.level().noCollision(p,p.getBoundingBox().move(dir.scale(.5))))return;
         if(!RpgDebug.cooldownsDisabled(p))a.energy=Math.max(0,a.energy-1);a.lastUse=now;a.dodge=now+6;
+        PacketDistributor.sendToPlayersTrackingEntityAndSelf(p,new RpgNetwork.EntityMotion(p.getId(),6,Math.floorMod(direction,8)));
         p.stopUsingItem();p.setDeltaMovement(dir.scale(1.25).add(0,.1,0));p.hasImpulse=true;p.hurtMarked=true;
         p.connection.send(new ClientboundSetEntityMotionPacket(p));
         ((net.minecraft.server.level.ServerLevel)p.level()).playSound(null,p.blockPosition(),net.minecraft.sounds.SoundEvents.PLAYER_ATTACK_SWEEP,net.minecraft.sounds.SoundSource.PLAYERS,.45f,1.35f);

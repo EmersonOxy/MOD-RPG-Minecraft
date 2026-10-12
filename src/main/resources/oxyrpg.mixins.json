@@ -37,7 +37,10 @@
     "FreeMovementSprintMixin",
     "ClassCastAnimationMixin",
     "AviaryCrouchMixin",
-    "VegetationModelMixin"
+    "VegetationModelMixin",
+    "MerchantLayoutMixin",
+    "TerralithWorldInvoker",
+    "TerralithWorldTabMixin"
   ],
   "injectors": {
     "defaultRequire": 1

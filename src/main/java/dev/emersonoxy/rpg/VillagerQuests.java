@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 
 public final class VillagerQuests {
     public record Quest(String title,String dialogue,String target,int amount,int area,int emeralds,int kind){}
-    private static final Quest[] QUESTS={
+    private static final Quest[] QUESTS=NpcContracts.append(new Quest[]{
         new Quest("Guarda da aldeia","Zumbis rondam nossas casas. Pode nos ajudar?","minecraft:zombie",6,2,6,0),
         new Quest("Arqueiros da noite","Esqueletos assustam os moradores. Afaste-os da região.","minecraft:skeleton",5,2,6,0),
         new Quest("Teias na estrada","Precisamos viajar em segurança. Cuide das aranhas.","minecraft:spider",6,2,5,0),
@@ -27,9 +27,9 @@ public final class VillagerQuests {
         new Quest("Sopa da aldeia","Você consegue trazer algumas cenouras?","minecraft:carrot",12,1,5,1),
         new Quest("Reparos da oficina","Precisamos de ferro para consertar nossas ferramentas.","minecraft:iron_ingot",8,0,8,1),
         new Quest("Colheita cuidadosa","Colha oito pés de trigo maduro depois de aceitar.","minecraft:wheat",8,1,5,2)
-    };
+    });
     public static final int COUNT=QUESTS.length;
-    private record Conversation(UUID npc,long expires){}
+    private record Conversation(UUID npc,long expires,int selected,int topic){Conversation(UUID npc,long expires){this(npc,expires,-1,0);}}
     private static final Map<UUID,Conversation> TALKS=new HashMap<>();
     private static final Map<UUID,Map<Integer,Integer>> MARKS=new HashMap<>();
     private VillagerQuests(){}
@@ -40,7 +40,7 @@ public final class VillagerQuests {
     public static String journal(ServerPlayer p,ProfessionStore.Data data){
         return journal(data);
     }
-    private static int offer(Villager v,ProfessionStore.Data d){return Math.floorMod(v.getUUID().hashCode()+d.completed,COUNT);}
+    private static int offer(Villager v,ProfessionStore.Data d){var ids=NpcContracts.offers(v);return ids.length==0?-1:ids[Math.floorMod(v.getUUID().hashCode()+d.completed,ids.length)];}
     private static Item targetItem(Quest q){return BuiltInRegistries.ITEM.getValue(net.minecraft.resources.ResourceLocation.parse(q.target()));}
     public static void interact(PlayerInteractEvent.EntityInteract event){
         if(event.isCanceled()||!(event.getEntity() instanceof ServerPlayer p)||!(event.getTarget() instanceof Villager v)||p.isShiftKeyDown()&&RpgAbilities.profile(p).rpgClass()!=RpgClass.VAMPIRESCO||v.isBaby()||!v.isAlive())return;
@@ -63,15 +63,18 @@ public final class VillagerQuests {
                 Professions.sync(p);
             }
         }catch(IOException e){Professions.notify(p,"Falha ao registrar entrega. Consulte o log.");LoggerFactory.getLogger(VillagerQuests.class).error("Falha na entrega ao villager",e);}
-        show(p,v);
+        show(p,v);if(!v.getOffers().isEmpty())((dev.emersonoxy.rpg.mixin.VillagerTradeInvoker)v).oxyStartTrading(p);
     }
     private static void show(ServerPlayer p,Villager v){try{
-        var d=ProfessionStore.get(p);boolean mine=d.quest>=0&&v.getUUID().equals(d.villager);int id=mine?d.quest:offer(v,d);var q=QUESTS[id];
+        var d=ProfessionStore.get(p);boolean mine=d.quest>=0&&v.getUUID().equals(d.villager);var talk=TALKS.get(p.getUUID());int selected=talk!=null&&NpcContracts.allows(v,talk.selected())?talk.selected():offer(v,d);int id=mine?d.quest:selected;
+        var list=new com.google.gson.JsonArray();for(int choice:NpcContracts.offers(v)){var row=new com.google.gson.JsonObject();row.addProperty("id",choice);row.addProperty("title",QUESTS[choice].title());list.add(row);}
+        if(id<0){PacketDistributor.sendToPlayer(p,new RpgNetwork.VillagerDialogue(v.getId(),v.getDisplayName().getString(),"Sem contrato",NpcContracts.chat(v,0),"Este morador ainda não exerce uma profissão de oficina.","",5,!v.getOffers().isEmpty(),list.toString(),-1,NpcContracts.chat(v,talk==null?0:talk.topic())));return;}
+        var q=QUESTS[id];
         int progress=mine?d.progress:0;
         int status=d.quest<0?0:!mine?3:progress>=q.amount()?2:1;
         String objective=(q.kind()==0?"Derrotar ":q.kind()==1?"Entregar ":"Colher ")+q.amount()+" "+targetName(q)+(mine?" • "+Math.min(progress,q.amount())+"/"+q.amount():"");
         String dialogue=status==3?"Você já tem um compromisso com outro morador. Conclua-o ou abandone pelo diário.":status==2?"Você cumpriu o objetivo? Confirme a conclusão para receber sua recompensa.":status==1?(q.kind()==1?"Segure o item na mão principal e clique em mim para entregar. Aceito entregas parciais.":"Ainda precisamos da sua ajuda. Volte quando terminar."):q.dialogue();
-        PacketDistributor.sendToPlayer(p,new RpgNetwork.VillagerDialogue(v.getId(),v.getDisplayName().getString(),q.title(),dialogue,objective,q.emeralds()+" esmeraldas + 50 XP de "+Professions.NAMES[q.area()]+"; bônus a cada 5 contratos",status,!v.getOffers().isEmpty()));
+        PacketDistributor.sendToPlayer(p,new RpgNetwork.VillagerDialogue(v.getId(),v.getDisplayName().getString(),q.title(),dialogue,objective,q.emeralds()+" esmeraldas + 50 XP de "+Professions.NAMES[q.area()]+"; bônus a cada 5 contratos",status,!v.getOffers().isEmpty(),list.toString(),id,NpcContracts.chat(v,talk==null?0:talk.topic())));
     }catch(IOException e){Professions.notify(p,"Não foi possível ler o contrato. Seus dados foram preservados.");}}
     private static String targetName(Quest q){return q.kind()==0?BuiltInRegistries.ENTITY_TYPE.getValue(net.minecraft.resources.ResourceLocation.parse(q.target())).getDescription().getString():targetItem(q).getName().getString();}
     public static void frighten(Villager v){TALKS.entrySet().removeIf(e->e.getValue().npc().equals(v.getUUID()));}
@@ -84,7 +87,7 @@ public final class VillagerQuests {
         }
         return false;
     }
-    public static void action(ServerPlayer p,int action,int entityId){
+    public static void action(ServerPlayer p,int action,int entityId,int choice){
         if((action==303||action==306)&&RpgAbilities.profile(p).rpgClass()==RpgClass.VAMPIRESCO&&VampireHunt.night(p.level())){Professions.notify(p,"Este morador teme sua presença durante a noite.");return;}
         if(action==302){try{var d=ProfessionStore.get(p);d.quest=-1;d.progress=0;d.villager=null;ProfessionStore.save(p,d);Professions.sync(p);Professions.notify(p,"Contrato abandonado, sem recompensa.");}catch(IOException e){Professions.notify(p,"Falha ao abandonar contrato.");}return;}
         var talk=TALKS.get(p.getUUID());var entity=p.level().getEntity(entityId);
@@ -93,7 +96,9 @@ public final class VillagerQuests {
             talk=new Conversation(candidate.getUUID(),p.level().getGameTime()+100);TALKS.put(p.getUUID(),talk);
         }
         if(talk==null||talk.expires()<p.level().getGameTime()||!(entity instanceof Villager v)||!v.isAlive()||v.isBaby()||!v.getUUID().equals(talk.npc())||p.distanceToSqr(v)>36||!p.hasLineOfSight(v)||!p.isAlive()||p.isSpectator())return;
-        TALKS.put(p.getUUID(),new Conversation(v.getUUID(),p.level().getGameTime()+100));
+        TALKS.put(p.getUUID(),new Conversation(v.getUUID(),p.level().getGameTime()+100,talk.selected(),talk.topic()));
+        if(action==307){if(NpcContracts.allows(v,choice)){TALKS.put(p.getUUID(),new Conversation(v.getUUID(),p.level().getGameTime()+100,choice,talk.topic()));show(p,v);}return;}
+        if(action==308){TALKS.put(p.getUUID(),new Conversation(v.getUUID(),p.level().getGameTime()+100,talk.selected(),Math.floorMod(choice,3)));show(p,v);return;}
         if(action==305)return;
         if(action==303){p.closeContainer();show(p,v);return;}
         if(action==306){
@@ -102,9 +107,14 @@ public final class VillagerQuests {
             ((dev.emersonoxy.rpg.mixin.VillagerTradeInvoker)v).oxyStartTrading(p);return;
         }
         try{var d=ProfessionStore.get(p);
-            if(action==300&&d.quest<0){d.quest=offer(v,d);d.villager=v.getUUID();d.progress=0;ProfessionStore.save(p,d);}
+            if(action==300&&d.quest<0){int selected=NpcContracts.allows(v,choice)?choice:offer(v,d);if(selected<0)return;d.quest=selected;d.villager=v.getUUID();d.progress=0;ProfessionStore.save(p,d);}
             else if(action==301&&v.getUUID().equals(d.villager)&&d.quest>=0){
-                var q=QUESTS[d.quest];if(q.kind()==1||d.progress<q.amount()){show(p,v);return;}
+                var q=QUESTS[d.quest];if(q.kind()==1&&d.progress<q.amount()){
+                    var used=new ArrayList<int[]>();int needed=q.amount()-d.progress;
+                    for(int i=0;i<36&&needed>0;i++){var stack=p.getInventory().getItem(i);if(stack.is(targetItem(q))){int n=Math.min(needed,stack.getCount());used.add(new int[]{i,n});needed-=n;d.progress+=n;}}
+                    ProfessionStore.save(p,d);for(var take:used)p.getInventory().getItem(take[0]).shrink(take[1]);p.getInventory().setChanged();p.containerMenu.broadcastChanges();
+                }
+                if(d.progress<q.amount()){Professions.sync(p);show(p,v);return;}
                 complete(p,v,d,q);return;
             }
             Professions.sync(p);show(p,v);
@@ -121,7 +131,7 @@ public final class VillagerQuests {
         world.sendParticles(net.minecraft.core.particles.ParticleTypes.FIREWORK,v.getX(),v.getY()+1.8,v.getZ(),24,.5,.5,.5,.08);
         world.playSound(null,v.blockPosition(),net.minecraft.sounds.SoundEvents.VILLAGER_YES,net.minecraft.sounds.SoundSource.NEUTRAL,1,1.1f);
         world.playSound(null,p.blockPosition(),net.minecraft.sounds.SoundEvents.PLAYER_LEVELUP,net.minecraft.sounds.SoundSource.PLAYERS,.6f,1.3f);
-        PacketDistributor.sendToPlayer(p,new RpgNetwork.VillagerDialogue(v.getId(),v.getDisplayName().getString(),q.title(),"Muito obrigado! Seu trabalho ajudou nossa aldeia.","Missão concluída — todos os objetivos entregues/confirmados.",q.emeralds()+" esmeraldas + 50 XP de "+Professions.NAMES[q.area()],4,!v.getOffers().isEmpty()));
+        PacketDistributor.sendToPlayer(p,new RpgNetwork.VillagerDialogue(v.getId(),v.getDisplayName().getString(),q.title(),"Muito obrigado! Seu trabalho ajudou nossa aldeia.","Missão concluída — todos os objetivos entregues/confirmados.",q.emeralds()+" esmeraldas + 50 XP de "+Professions.NAMES[q.area()],4,!v.getOffers().isEmpty()));show(p,v);
     }
     private static void give(ServerPlayer p,ItemStack stack){
         // Explicit survival-style insertion also preserves overflow in creative mode.
@@ -142,7 +152,7 @@ public final class VillagerQuests {
     }
     private static int marker(Villager v,ProfessionStore.Data d){
         if(v.isBaby()||!v.isAlive())return 0;
-        if(d.quest<0)return 1;
+        if(d.quest<0)return NpcContracts.offers(v).length>0?1:0;
         return v.getUUID().equals(d.villager)?d.progress>=QUESTS[d.quest].amount()?3:2:0;
     }
     private static void mark(ServerPlayer p,Villager v,ProfessionStore.Data d,boolean force){

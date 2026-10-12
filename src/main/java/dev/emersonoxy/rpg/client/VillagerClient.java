@@ -10,7 +10,10 @@ import net.neoforged.neoforge.client.event.ScreenEvent;
 public final class VillagerClient {
     private static RpgNetwork.VillagerDialogue dialogue;private static long switchingUntil;
     private VillagerClient(){}
-    public static void receive(RpgNetwork.VillagerDialogue data){dialogue=data;switchingUntil=0;Minecraft.getInstance().setScreen(new VillagerDialogueScreen(data));}
+    public static RpgNetwork.VillagerDialogue data(){return dialogue;}
+    public static void choose(int action,int choice){var mc=Minecraft.getInstance();if(mc.player!=null&&dialogue!=null)mc.player.connection.send(new RpgNetwork.Request(action,dialogue.entityId(),choice));}
+    public static int sideWidth(int width){return width>=416?Math.min(220,width-296):0;}
+    public static void receive(RpgNetwork.VillagerDialogue data){boolean same=dialogue!=null&&dialogue.entityId()==data.entityId();dialogue=data;switchingUntil=0;var mc=Minecraft.getInstance();if(same&&mc.screen instanceof MerchantScreen)return;if(same&&mc.screen instanceof VillagerDialogueScreen)return;mc.setScreen(new VillagerDialogueScreen(data));}
     public static void request(int action){var mc=Minecraft.getInstance();if(mc.player==null||dialogue==null)return;switchingUntil=mc.player.tickCount+40;mc.player.connection.send(new RpgNetwork.Request(action,dialogue.entityId()));}
     public static void close(){var mc=Minecraft.getInstance();if(mc.player!=null&&dialogue!=null)mc.player.connection.send(new RpgNetwork.Request(304,dialogue.entityId()));dialogue=null;switchingUntil=0;}
     public static void tick(){var mc=Minecraft.getInstance();if(dialogue==null)return;if(mc.player==null||mc.level==null){dialogue=null;return;}
@@ -21,8 +24,9 @@ public final class VillagerClient {
     }
     public static void init(ScreenEvent.Init.Post event){
         if(dialogue==null||!(event.getScreen() instanceof MerchantScreen screen))return;
-        int y=Math.max(2,screen.getGuiTop()-23),x=screen.getGuiLeft()+screen.getXSize()/2-82;
-        var trade=Button.builder(Component.literal("Trocas"),b->{}).bounds(x,y,80,20).build();trade.active=false;event.addListener(trade);
-        event.addListener(Button.builder(Component.literal("Missões"),b->request(303)).bounds(x+84,y,80,20).build());
+        int side=sideWidth(screen.width);if(side>0){VillagerPanel.init(screen.getGuiLeft()+282,Math.max(4,screen.getGuiTop()-30),side,event::addListener);return;}
+        event.addListener(Button.builder(Component.literal("Missões / diálogo"),b->request(303)).bounds(screen.getGuiLeft()+65,Math.max(2,screen.getGuiTop()-23),150,20).build());
     }
+    public static void scroll(net.neoforged.neoforge.client.event.ScreenEvent.MouseScrolled.Pre e){if(dialogue!=null&&e.getScreen() instanceof MerchantScreen screen&&sideWidth(screen.width)>0&&e.getMouseX()>=screen.getGuiLeft()+282){VillagerPanel.scroll(e.getScrollDeltaY());e.setCanceled(true);}}
+    public static void render(net.neoforged.neoforge.client.event.ScreenEvent.Render.Post e){if(dialogue!=null&&e.getScreen() instanceof MerchantScreen screen){int side=sideWidth(screen.width);if(side>0)VillagerPanel.render(e.getGuiGraphics(),screen.getGuiLeft()+282,Math.max(4,screen.getGuiTop()-30),side);}}
 }

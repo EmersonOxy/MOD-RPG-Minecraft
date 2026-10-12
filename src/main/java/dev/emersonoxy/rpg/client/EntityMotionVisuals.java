@@ -10,7 +10,7 @@ import net.neoforged.neoforge.client.event.RenderPlayerEvent;
 /** Extracted visual state: native bat renderer replaces the avatar, not a second world entity. */
 public final class EntityMotionVisuals {
     private static final Set<Integer> FORMS=new HashSet<>();
-    private record Motion(long until,int duration,int kind){}
+    private record Motion(long until,int duration,int kind,int direction){}
     private static final Map<Integer,Motion> MOTIONS=new HashMap<>();
     private record BatDraw(net.minecraft.client.renderer.entity.BatRenderer renderer,BatRenderState state){}
     private static final ContextKey<BatDraw> BAT=new ContextKey<>(ResourceLocation.fromNamespaceAndPath("oxyrpg","bat_form"));
@@ -19,9 +19,10 @@ public final class EntityMotionVisuals {
     private static void world(){var w=Minecraft.getInstance().level;if(w!=world){world=w;FORMS.clear();MOTIONS.clear();DUMMIES.clear();}}
     public static void receive(RpgNetwork.EntityMotion p){world();var mc=Minecraft.getInstance();if(mc.level==null)return;
         if(p.kind()==3||p.kind()==4){if(p.kind()==3)FORMS.add(p.entity());else{FORMS.remove(p.entity());DUMMIES.remove(p.entity());}var entity=mc.level.getEntity(p.entity());if(entity!=null){entity.getPersistentData().putBoolean("oxy_vampire_bat",p.kind()==3);entity.refreshDimensions();}return;}
+        if(p.kind()==6){var entity=mc.level.getEntity(p.entity());if(entity instanceof net.minecraft.world.entity.Avatar avatar&&net.neoforged.fml.ModList.get().isLoaded("player_animation_library"))DodgeAnimation.play(avatar);MOTIONS.put(p.entity(),new Motion(mc.level.getGameTime()+13,13,6,Math.floorMod(p.ticks(),8)));return;}
         var active=MOTIONS.get(p.entity());if(p.kind()==2&&active!=null&&(active.kind==1||active.kind==5)&&active.until>mc.level.getGameTime())return;
         if(MOTIONS.size()>=2048)MOTIONS.remove(MOTIONS.keySet().iterator().next());
-        MOTIONS.put(p.entity(),new Motion(mc.level.getGameTime()+Math.clamp(p.ticks(),0,40),Math.clamp(p.ticks(),1,40),p.kind()));
+        MOTIONS.put(p.entity(),new Motion(mc.level.getGameTime()+Math.clamp(p.ticks(),0,40),Math.clamp(p.ticks(),1,40),p.kind(),0));
     }
     public static void tick(){world();var mc=Minecraft.getInstance();if(mc.level!=null)MOTIONS.values().removeIf(m->m.until<=mc.level.getGameTime());}
     public static void extract(Entity entity,EntityRenderState state){world();state.setRenderData(BAT,null);var mc=Minecraft.getInstance();if(mc.level==null)return;
@@ -32,6 +33,7 @@ public final class EntityMotionVisuals {
         float t=(float)Math.clamp(1-left/motion.duration,0,1);
         if(motion.kind==1){float ease=t*t*(3-2*t);state.y-=(1-ease)*Math.min(1.6,state.boundingBoxHeight*.85);if(state instanceof LivingEntityRenderState living){living.xRot+=(1-ease)*20;}}
         else if(motion.kind==5&&state instanceof LivingEntityRenderState living){living.scale*=.15f+.85f*(t*t*(3-2*t));}
+        else if(motion.kind==6&&state instanceof LivingEntityRenderState living){living.bodyRot+=motion.direction*45;}
         else if(motion.kind==2&&state instanceof LivingEntityRenderState living){living.bodyRot+=(float)Math.sin(t*Math.PI)*12;state.y+=(float)Math.sin(t*Math.PI)*.06;}
     }
     public static boolean morph(RenderPlayerEvent.Pre event){var draw=event.getRenderState().getRenderData(BAT);if(draw==null)return false;draw.renderer.submit(draw.state,event.getPoseStack(),event.getSubmitNodeCollector(),new net.minecraft.client.renderer.state.CameraRenderState());event.setCanceled(true);return true;}

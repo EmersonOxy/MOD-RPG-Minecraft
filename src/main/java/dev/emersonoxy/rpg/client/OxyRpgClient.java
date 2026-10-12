@@ -78,11 +78,13 @@ public final class OxyRpgClient {
     public OxyRpgClient(IEventBus bus,net.neoforged.fml.ModContainer container) {
         container.registerExtensionPoint(net.neoforged.neoforge.client.gui.IConfigScreenFactory.class,net.neoforged.neoforge.client.gui.ConfigurationScreen::new);
         if(Boolean.getBoolean("oxyrpg.cameraQA"))NeoForge.EVENT_BUS.addListener(CameraClientQA::tick);
+        bus.addListener((net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterRenderers e)->e.registerEntityRenderer(dev.emersonoxy.rpg.VillageGuards.GUARD.get(),VillageGuardRenderer::new));
+        if(net.neoforged.fml.ModList.get().isLoaded("player_animation_library"))DodgeAnimation.register();
         bus.addListener(OxyRpgClient::registerKeys);
         bus.addListener(OxyRpgClient::registerPayloads);
         bus.addListener(OxyRpgClient::registerHud);bus.addListener(CombatParticle::register);bus.addListener(AmbientLeaf::register);bus.addListener(WaterWake::register);bus.addListener(WaterPulse::register);
         NeoForge.EVENT_BUS.addListener(VegetationMotion::extract);NeoForge.EVENT_BUS.addListener(VegetationMotion::render);
-        NeoForge.EVENT_BUS.addListener(OxyRpgClient::tick);NeoForge.EVENT_BUS.addListener(VillagerClient::init);NeoForge.EVENT_BUS.addListener(InventoryMovement::opening); NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderHandEvent event)->{if(ShoulderCamera.hideHands())event.setCanceled(true);});
+        NeoForge.EVENT_BUS.addListener(OxyRpgClient::tick);NeoForge.EVENT_BUS.addListener(VillagerClient::init);NeoForge.EVENT_BUS.addListener(VillagerClient::scroll);NeoForge.EVENT_BUS.addListener(InventoryMovement::opening); NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderHandEvent event)->{if(ShoulderCamera.hideHands())event.setCanceled(true);});
         NeoForge.EVENT_BUS.addListener(DynamicHud::beforeLayer);
         NeoForge.EVENT_BUS.addListener(DynamicHud::afterLayer);
         NeoForge.EVENT_BUS.addListener(OxyRpgClient::potionInput);

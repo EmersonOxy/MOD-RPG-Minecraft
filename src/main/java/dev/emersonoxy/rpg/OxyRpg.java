@@ -21,7 +21,7 @@ public final class OxyRpg {
     private static final Logger LOGGER = LoggerFactory.getLogger(OxyRpg.class);
 
     public OxyRpg(net.neoforged.bus.api.IEventBus bus,net.neoforged.fml.ModContainer container) {
-        RpgConfig.register(container);PlayerAttachments.register(bus);RpgDataMaps.register(bus);RpgItems.register(bus);RpgParticles.register(bus);Bleeding.register(bus);RpgGameTests.functions(bus);
+        VillageGuards.register(bus);RpgConfig.register(container);PlayerAttachments.register(bus);RpgDataMaps.register(bus);RpgItems.register(bus);RpgParticles.register(bus);Bleeding.register(bus);RpgGameTests.functions(bus);
         bus.addListener(RpgDataGenerator::gather);bus.addListener(RpgGameTests::register);
         NeoForge.EVENT_BUS.addListener(RpgContent::listeners);NeoForge.EVENT_BUS.addListener(RpgContent::sync);
         bus.addListener(RpgContent::configReloaded);
@@ -183,7 +183,7 @@ public final class OxyRpg {
             case 11 -> action(player,"classe",RpgClass.AVIARIO);
             case 10 -> action(player,"classe",RpgClass.XAMA);
             case 8,9 -> RpgShaman.potion(player,requested==9);
-            case 300,301,302,303,304,305,306 -> VillagerQuests.action(player,requested,direction);
+            case 300,301,302,303,304,305,306,307,308 -> VillagerQuests.action(player,requested,direction,-1);
             default -> { if (requested >= 102 && requested < 100+SkillTree.COUNT) unlockSkill(player, requested - 100);
                 else if(requested>=1000&&requested<1000+AttributeTree.COUNT)allocateAttribute(player,requested-1000); }
         }

@@ -122,5 +122,6 @@
   "tooltip.oxyrpg.bleeding_weapon": "Bleeding: %s%% chance · %s damage/s",
   "item.oxyrpg.relic_vampiresco": "Night Fang",
   "death.attack.oxyrpg.vampire_bite": "%1$s was drained by %2$s",
-  "death.attack.oxyrpg.vampire_bite.player": "%1$s was drained by %2$s"
+  "death.attack.oxyrpg.vampire_bite.player": "%1$s was drained by %2$s",
+  "entity.oxyrpg.village_guard": "Village Guard"
 }

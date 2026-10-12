@@ -223,3 +223,6 @@ tasks.named('test') { useJUnitPlatform() }
 // Packet codec tests need the same Minecraft/NeoForge types as the mod.
 sourceSets.test.compileClasspath += sourceSets.main.compileClasspath
 sourceSets.test.runtimeClasspath += sourceSets.main.compileClasspath
+
+repositories { maven { url = "https://api.modrinth.com/maven"; content { includeGroup("maven.modrinth") } } }
+dependencies { compileOnly "maven.modrinth:player-animation-library:Ciw2S8Ez" }

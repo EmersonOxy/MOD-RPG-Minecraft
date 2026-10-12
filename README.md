@@ -1,4 +1,4 @@
-# Oxy RPG 0.45.0
+# Oxy RPG 0.46.0
 
 Mod RPG para Minecraft **1.21.10**, NeoForge **21.10.64**, JDK **21**.
 
@@ -70,3 +70,5 @@ No Windows, `build-windows.bat` compila com assemble. Testes e GameTests são op
 Instalar somente com Minecraft fechado, preservando o JAR anterior fora de mods e fazendo backup dos mundos/configurações. Cliente e servidor precisam do mesmo protocolo — **23** nesta versão. Compilação não confirma validação visual ou balanceamento em jogo.
 
 A 0.45 corrige mira de skills pela câmera, cópias com IA, colisão cosmética, fuga dos aldeões, Fênix, mergulho próximo ao chão e visual do canhão de água. [Correções](docs/CORRECOES_045.md) · [Análise dos mods indicados](docs/REFERENCIAS_045.md).
+
+A 0.46 reúne trocas e contratos de profissão, acrescenta guardas próprios/diálogos, integra Better Combat + PAL e permite escolher Terralith por novo mundo. Reutiliza apenas os visuais do Combat Roll em pacote separado. [Funcionamento e limites](docs/NPCS_E_INTEGRACOES_046.md).

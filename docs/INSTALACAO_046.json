@@ -1,0 +1,23 @@
+{
+  "version": "0.46.0",
+  "protocol": 31,
+  "date": "2026-10-12T13:11:10.967568",
+  "instance": "C:\\Users\\canal\\AppData\\Roaming\\.sklauncher\\instances\\neoforge-1-21-10",
+  "backup": "C:\\Users\\canal\\AppData\\Roaming\\.sklauncher\\instances\\neoforge-1-21-10\\mod-backups\\20261012-131103-0.46.0",
+  "installed": "oxyrpg-0.46.0.jar",
+  "sha256": "f47e03a247f91c4e017cfebf669285897234905c3406ff6ab82d997087d79996",
+  "game_closed": true,
+  "game_validation": false,
+  "build": "assemble successful",
+  "new_mods": [
+    "bettercombat-neoforge-3.0.0+1.21.10.jar",
+    "PlayerAnimationLibNeoforge-1.1.3+mc.1.21.9.jar",
+    "cloth-config-20.0.149-neoforge.jar"
+  ],
+  "old_mods_preserved": 11,
+  "old_resourcepacks_preserved": 2,
+  "selected_visual_pack": "file/OxyRollVisuals-1.0.zip",
+  "terralith": "external optional datapack; disabled by default per world",
+  "combat_roll_mod_installed": false,
+  "footsteps_installed": false
+}
