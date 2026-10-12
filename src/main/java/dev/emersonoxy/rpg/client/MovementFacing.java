@@ -16,7 +16,7 @@ public final class MovementFacing {
     private static long frame;
     private static double yaw;
     private MovementFacing(){}
-    public static boolean freeMovement(){var mc=Minecraft.getInstance();return mc.player!=null&&ShoulderCamera.independentMovement()&&mc.options.getCameraType()!=CameraType.FIRST_PERSON&&!mc.player.isFallFlying()&&!mc.player.isPassenger()&&!mc.player.isInWater();}
+    public static boolean freeMovement(){var mc=Minecraft.getInstance();return mc.player!=null&&(ShoulderCamera.independentMovement()||dev.emersonoxy.rpg.RpgVampire.bat(mc.player))&&mc.options.getCameraType()!=CameraType.FIRST_PERSON&&!mc.player.isFallFlying()&&!mc.player.isPassenger()&&!mc.player.isInWater();}
     public static boolean sprintImpulse(net.minecraft.client.player.ClientInput input){return freeMovement()?input.getMoveVector().lengthSquared()>.01f:input.hasForwardImpulse();}
     public static void reset(){tracked=null;frame=0;}
     public static void register(RegisterRenderStateModifiersEvent event){

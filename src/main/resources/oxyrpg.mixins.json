@@ -17,7 +17,8 @@
     "AviaryPoseMixin",
     "PoisonDamageMixin",
     "VampirePotionMixin",
-    "VampireDimensionsMixin"
+    "VampireDimensionsMixin",
+    "CompanionPushMixin"
   ],
   "client": [
     "ShoulderCameraMixin",

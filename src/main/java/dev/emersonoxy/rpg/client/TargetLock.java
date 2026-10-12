@@ -23,7 +23,7 @@ public final class TargetLock {
         return p!=null&&mc.level!=null&&mob.level()==mc.level&&mob.isAlive()&&!mob.isRemoved()&&!mob.isInvisible()
             &&!p.isSpectator()&&p.isAlive()&&p.distanceToSqr(mob)<=24*24&&p.hasLineOfSight(mob)
             &&mc.level.clip(new net.minecraft.world.level.ClipContext(p.getEyePosition(),point(mob,1),net.minecraft.world.level.ClipContext.Block.COLLIDER,net.minecraft.world.level.ClipContext.Fluid.NONE,p)).getType()==net.minecraft.world.phys.HitResult.Type.MISS
-            &&!(mob instanceof Villager)&&!(mob instanceof TamableAnimal pet&&pet.isTame())&&!EnemyNameplates.ally(mob.getId());
+            &&!(mob instanceof TamableAnimal pet&&pet.isTame())&&!EnemyNameplates.ally(mob.getId());
     }
     private static List<Mob> candidates(){
         var mc=Minecraft.getInstance();if(mc.player==null||mc.level==null)return List.of();var p=mc.player;var eye=p.getEyePosition();var look=p.getLookAngle();

@@ -326,7 +326,7 @@ public final class OxyRpgClient {
     }
     private static RpgNetwork.Request aimedRequest(int action,int direction){
         var mc=Minecraft.getInstance();var target=TargetLock.mouseLocked()?TargetLock.target():null;
-        var point=ShoulderCamera.aimPoint(mc.gameRenderer.getMainCamera().getPartialTickTime());
+        var point=ShoulderCamera.abilityPoint(mc.gameRenderer.getMainCamera().getPartialTickTime());
         return new RpgNetwork.Request(action,direction,target==null?-1:target.getId(),point.x,point.y,point.z);
     }
 }

@@ -38,7 +38,7 @@ public final class RpgAbilities {
         long impetus, passiveHeal, passiveFire, passiveThorns;
         int crouchTicks, dashes, quakePulse, replicas;
         float hunger;
-        Vec3 quakeOrigin;
+        Vec3 quakeOrigin, fireAim;
         ServerLevel quakeLevel;
         final List<BlockPos> blocks = new ArrayList<>();
         MobEffectInstance previousInvisibility;
@@ -68,6 +68,7 @@ public final class RpgAbilities {
         Active a = active(p);
         if (extraDash(p,slot)) { a.dashes--; dash(p,a.cast[2],direction); return; }
         a.cast[slot] = s;
+        if(s.rpgClass()==RpgClass.MAGO&&slot==1)a.fireAim=AbilityAim.direction(p);
         a.until[slot] = now(p) + s.abilityDuration(slot);
         a.total[slot]=s.abilityDuration(slot);a.phase[slot]=s.rpgClass()==RpgClass.MAGO ? (slot==1&&s.mainUnlocked(1)?2:slot==2?4:3) : 3;
         p.swing(InteractionHand.MAIN_HAND,true);
@@ -159,7 +160,7 @@ public final class RpgAbilities {
         sound(p,SoundEvents.PLAYER_ATTACK_SWEEP,.7f);
     }
     private static void fire(ServerPlayer p,RpgProfile s) {
-        var level=(ServerLevel)p.level(); Vec3 start=p.getEyePosition(),dir=AbilityAim.direction(p);
+        var level=(ServerLevel)p.level(); Vec3 start=p.getEyePosition(),dir=active(p).fireAim==null?AbilityAim.direction(p):active(p).fireAim;
         double range=6+(s.hasSkill(11)?1:0)+(s.hasSkill(13)?1:0);
         Vec3 end=level.clip(new ClipContext(start,start.add(dir.scale(range)),ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,p)).getLocation();
         double length=start.distanceTo(end);

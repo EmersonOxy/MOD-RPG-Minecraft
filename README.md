@@ -1,4 +1,4 @@
-# Oxy RPG 0.44.0
+# Oxy RPG 0.45.0
 
 Mod RPG para Minecraft **1.21.10**, NeoForge **21.10.64**, JDK **21**.
 
@@ -68,3 +68,5 @@ Os documentos numerados em docs preservam o histórico; descrições antigas nã
 No Windows, `build-windows.bat` compila com assemble. Testes e GameTests são opt-in, conforme [AGENTS.md](AGENTS.md). Não abrir o jogo automaticamente para validar.
 
 Instalar somente com Minecraft fechado, preservando o JAR anterior fora de mods e fazendo backup dos mundos/configurações. Cliente e servidor precisam do mesmo protocolo — **23** nesta versão. Compilação não confirma validação visual ou balanceamento em jogo.
+
+A 0.45 corrige mira de skills pela câmera, cópias com IA, colisão cosmética, fuga dos aldeões, Fênix, mergulho próximo ao chão e visual do canhão de água. [Correções](docs/CORRECOES_045.md) · [Análise dos mods indicados](docs/REFERENCIAS_045.md).

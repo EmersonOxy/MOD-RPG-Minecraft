@@ -25,7 +25,7 @@ public final class AbilityPreview {
     private static void circle(Vec3 center,double radius){for(int i=0;i<64;i++){double a=i*Math.PI/32,b=(i+1)*Math.PI/32;edge(center.add(Math.cos(a)*radius,0,Math.sin(a)*radius),center.add(Math.cos(b)*radius,0,Math.sin(b)*radius));}}
     private static void path(Vec3 start,Vec3 end){double distance=start.distanceTo(end);int steps=Math.max(1,(int)Math.ceil(distance*2));for(int i=0;i<steps;i++)edge(start.lerp(end,i/(double)steps),start.lerp(end,(i+1)/(double)steps));}
     private static void build(RpgProfile p){
-        var mc=Minecraft.getInstance();var player=mc.player;LINES.clear();var center=player.position();var point=ShoulderCamera.aimPoint(mc.gameRenderer.getMainCamera().getPartialTickTime());
+        var mc=Minecraft.getInstance();var player=mc.player;LINES.clear();var center=player.position();var point=ShoulderCamera.abilityPoint(mc.gameRenderer.getMainCamera().getPartialTickTime());
         var target=TargetLock.target();if(target!=null&&TargetLock.mouseLocked())point=TargetLock.point(target,mc.gameRenderer.getMainCamera().getPartialTickTime());
         var direction=point.subtract(player.getEyePosition()).normalize();
         if(p.rpgClass()==RpgClass.MAGO&&slot==2){circle(center,p.mainUnlocked(2)?4+(p.hasSkill(18)?1:0):1.5+(p.hasSkill(16)?.5:0));return;}

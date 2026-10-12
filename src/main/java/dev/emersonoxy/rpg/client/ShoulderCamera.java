@@ -125,8 +125,22 @@ public final class ShoulderCamera {
         }
         return fraction;
     }
+    public static Vec3 abilityPoint(float partial){
+        var mc=Minecraft.getInstance();if(mc.player==null||mc.level==null)return Vec3.ZERO;
+        var camera=mc.gameRenderer.getMainCamera();var start=camera.getPosition();
+        var look=new org.joml.Vector3f(0,0,-1).rotate(camera.rotation());
+        var end=start.add(new Vec3(look).scale(64));
+        end=mc.level.clip(new ClipContext(start,end,ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,mc.player)).getLocation();
+        double nearest=start.distanceToSqr(end);var result=end;
+        for(var mob:mc.level.getEntitiesOfClass(Mob.class,new AABB(start,end).inflate(.3),m->m.isAlive()&&!EnemyNameplates.ally(m.getId()))){
+            var at=mob.getBoundingBox().inflate(.1).clip(start,end).orElse(null);
+            if(at!=null&&start.distanceToSqr(at)<nearest){nearest=start.distanceToSqr(at);result=at;}
+        }
+        return result;
+    }
     public static Vec3 aimPoint(float partial){
         var mc=Minecraft.getInstance();var p=mc.player;if(p==null)return Vec3.ZERO;
+        if(mc.options.keyUse.isDown()&&!mc.options.getCameraType().isMirrored())return abilityPoint(partial);
         // Use the same result consumed by Minecraft's attack/use actions, including misses.
         // The distant fallback made unreachable enemies appear to be attack targets.
         return mc.hitResult!=null?mc.hitResult.getLocation():p.getEyePosition(partial).add(p.getViewVector(partial).scale(p.entityInteractionRange()));

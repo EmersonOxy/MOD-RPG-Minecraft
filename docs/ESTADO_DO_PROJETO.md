@@ -126,3 +126,7 @@ Gestos de conjuração nos modelos nativos do jogador/armadura, cosméticos por 
 ## Debug — 0.37
 
 Painel em R > Debug para operadores. Debug ON libera árvore completa e nível 100; nível 1–100, classe, atributos, Arsenal, recursos e recargas ajustáveis. Overrides não são gravados no perfil; pools de mana/esquiva isolados e cooldowns de skills/ação do item de classe por sessão. Modo teste mantém custos normais. Perfis temporários explicitamente identificados e bloqueados em ProfileStore. [Comandos, limitações e validação](DEBUG_037.md).
+
+## Atualização 0.45.0 — 12/10/2026
+
+Correções e limites registrados em CORRECOES_045.md; pesquisa de todos os links em REFERENCIAS_045.md. Compilação assemble, sem abrir jogo ou executar testes. Nenhuma dependência nova. Proposta de Assassino + novo Arqueiro registrada; classe atual preservada. Instalação e SHA256 em INSTALACAO_045.json.

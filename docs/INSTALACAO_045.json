@@ -1,0 +1,15 @@
+{
+  "version": "0.45.0",
+  "protocol": 30,
+  "date": "2026-10-12T12:42:16.281556",
+  "instance": "C:\\Users\\canal\\AppData\\Roaming\\.sklauncher\\instances\\neoforge-1-21-10",
+  "backup": "C:\\Users\\canal\\AppData\\Roaming\\.sklauncher\\instances\\neoforge-1-21-10\\mod-backups\\20261012-124208-0.45.0",
+  "installed": "oxyrpg-0.45.0.jar",
+  "sha256": "d46606bde67edcfb75e9fab0e76a8d77935109ad92f0658cd1b53ea09d13a6aa",
+  "game_closed": true,
+  "game_validation": false,
+  "build": "assemble successful",
+  "other_mods_unchanged": 11,
+  "resourcepacks_unchanged": 2,
+  "new_mixin_descriptor_verified": "LivingEntity.push(Entity):void"
+}

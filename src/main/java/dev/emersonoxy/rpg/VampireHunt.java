@@ -26,15 +26,15 @@ public final class VampireHunt {
         if(away.lengthSqr()<.01)away=new net.minecraft.world.phys.Vec3(1,0,0);away=away.normalize();
         var to=m.position().add(away.scale(5));if(m instanceof PathfinderMob walker){var safe=net.minecraft.world.entity.ai.util.DefaultRandomPos.getPosAway(walker,8,3,vampire.position());if(safe!=null)to=safe;}
         if(m instanceof Villager v){
-            var speed=v.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED);if(speed!=null&&!speed.hasModifier(FEAR))speed.addTransientModifier(new net.minecraft.world.entity.ai.attributes.AttributeModifier(FEAR,-.3,net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+            var speed=v.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED);if(speed!=null)speed.removeModifier(FEAR);
             if(v.isSleeping())v.stopSleeping();v.getPersistentData().putLong("oxy_vampire_fear",v.level().getGameTime()+60);
             if(v.getTradingPlayer()!=null){var trader=v.getTradingPlayer();v.setTradingPlayer(null);trader.closeContainer();}
             VillagerQuests.frighten(v);
             v.getBrain().setMemory(MemoryModuleType.NEAREST_HOSTILE,vampire);
             v.getBrain().eraseMemory(MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE);
-            v.getBrain().setMemory(MemoryModuleType.WALK_TARGET,new WalkTarget(new BlockPosTracker(BlockPos.containing(to)),0.65f,1));
+            v.getBrain().setMemory(MemoryModuleType.WALK_TARGET,new WalkTarget(new BlockPosTracker(BlockPos.containing(to)),0.75f,1));
         }
-        m.getNavigation().moveTo(to.x,to.y,to.z,.65);
+        m.getNavigation().moveTo(to.x,to.y,to.z,.75);
     }
     public static void tick(EntityTickEvent.Post event){
         if(!(event.getEntity() instanceof Mob m)||!(m.level() instanceof ServerLevel w)||!m.isAlive()||m.tickCount%10!=0||RpgVampire.proxy(m)||RpgNecromancer.isSummon(m)||RpgSpecialists.temporary(m))return;

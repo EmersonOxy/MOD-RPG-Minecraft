@@ -17,7 +17,7 @@ public final class AbilityAim {
     private static Vec3 validatedPoint(ServerPlayer p,Vec3 point){
         if(!Double.isFinite(point.x)||!Double.isFinite(point.y)||!Double.isFinite(point.z)||!p.isAlive()||p.isSpectator())return null;
         var delta=point.subtract(p.getEyePosition());
-        if(delta.lengthSqr()<.04||delta.lengthSqr()>65*65||delta.normalize().dot(p.getLookAngle())<.45)return null;
+        if(delta.lengthSqr()<.04||delta.lengthSqr()>65*65)return null;
         return p.level().clip(new ClipContext(p.getEyePosition(),point,ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,p)).getLocation();
     }
     private static final ThreadLocal<Mob> TARGET=new ThreadLocal<>();
@@ -32,9 +32,9 @@ public final class AbilityAim {
         if(id<0||!p.isAlive()||p.isSpectator()||p.isSleeping()||p.isPassenger())return null;
         var entity=p.level().getEntity(id);
         if(!(entity instanceof Mob mob)||!mob.isAlive()||mob.isRemoved()||mob.isInvisible()||p.distanceToSqr(mob)>24*24
-            ||mob instanceof Villager||mob instanceof TamableAnimal pet&&pet.isTame()||RpgNecromancer.isSummon(mob)||!p.hasLineOfSight(mob))return null;
+            ||mob instanceof TamableAnimal pet&&pet.isTame()||RpgNecromancer.isSummon(mob)||!p.hasLineOfSight(mob))return null;
         var point=mob.position().add(0,mob.getBbHeight()*.6,0);var delta=point.subtract(p.getEyePosition());
-        if(delta.lengthSqr()<1e-8||delta.normalize().dot(p.getLookAngle())<.45)return null;
+        if(delta.lengthSqr()<1e-8)return null;
         var hit=p.level().clip(new ClipContext(p.getEyePosition(),point,ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,p));
         return hit.getType()==HitResult.Type.MISS?mob:null;
     }
@@ -42,7 +42,7 @@ public final class AbilityAim {
         var locked=TARGET.get();if(locked!=null)return locked;
         var start=p.getEyePosition();var end=start.add(direction(p).scale(24));
         end=p.level().clip(new ClipContext(start,end,ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,p)).getLocation();final var rayEnd=end;
-        return p.level().getEntitiesOfClass(Mob.class,new net.minecraft.world.phys.AABB(start,end).inflate(.3),m->RpgAbilities.attackable(m)&&!(m instanceof Villager)&&!(m instanceof TamableAnimal pet&&pet.isTame()))
+        return p.level().getEntitiesOfClass(Mob.class,new net.minecraft.world.phys.AABB(start,end).inflate(.3),m->RpgAbilities.attackable(m)&&!(m instanceof TamableAnimal pet&&pet.isTame()))
             .stream().filter(m->m.getBoundingBox().inflate(.2).contains(start)||m.getBoundingBox().inflate(.2).clip(start,rayEnd).isPresent()).min(java.util.Comparator.comparingDouble(m->m.getBoundingBox().inflate(.2).clip(start,rayEnd).map(start::distanceToSqr).orElse(0.0))).orElse(null);
     }
     public static void shoot(Projectile shot,ServerPlayer p,float speed){

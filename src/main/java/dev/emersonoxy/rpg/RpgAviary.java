@@ -26,9 +26,16 @@ public final class RpgAviary {
     public static boolean boostAvailable(ServerPlayer p,int slot){var f=FLIGHTS.get(p.getUUID());return slot==0&&f!=null&&f.until>p.level().getGameTime()&&f.meteorUntil==0;}
     public static boolean canFly(LivingEntity entity){
         if(!(entity instanceof Player p)||!p.isAlive()||p.onGround()||p.isPassenger()||p.isInWater()||p.isInLava()||p.hasEffect(MobEffects.LEVITATION)||p.getAbilities().flying)return false;
-        if(featherFalling(p))return false;
+        if(featherFalling(p)||landing(p))return false;
         if(p instanceof ServerPlayer s){var f=FLIGHTS.get(p.getUUID());return f!=null&&(f.gliding&&f.until>s.level().getGameTime()&&f.meteorUntil==0||f.forward&&f.meteorUntil>s.level().getGameTime());}
         var tag=p.getPersistentData();return tag.getBooleanOr("oxy_flight_gliding",false)&&tag.getIntOr("oxy_flight_until",0)>p.tickCount&&tag.getIntOr("oxy_meteor_until",0)<=p.tickCount||tag.getBooleanOr("oxy_meteor_forward",false)&&tag.getIntOr("oxy_meteor_until",0)>p.tickCount;
+    }
+    /** End a downward glide within four blocks of solid ground, with matching client prediction. */
+    private static boolean landing(Player p){
+        if(p.onGround()||p.getDeltaMovement().y>=-.08||p.getXRot()<35)return false;
+        boolean active=p instanceof ServerPlayer server?FLIGHTS.containsKey(server.getUUID()):p.isLocalPlayer()&&EquipmentAccess.clientSelected()==RpgClass.AVIARIO;
+        if(!active)return false;
+        var at=p.position();return p.level().clip(new net.minecraft.world.level.ClipContext(at,at.add(0,-4,0),net.minecraft.world.level.ClipContext.Block.COLLIDER,net.minecraft.world.level.ClipContext.Fluid.NONE,p)).getType()!=net.minecraft.world.phys.HitResult.Type.MISS;
     }
     public static void validate(ServerPlayer p,int slot){
         if(slot==1)throw new IllegalStateException("Peso pena é passiva: segure Agachar no ar para frear a queda.");
@@ -57,6 +64,7 @@ public final class RpgAviary {
     public static int remaining(ServerPlayer p,int slot){var f=FLIGHTS.get(p.getUUID());if(f==null)return 0;return slot==0?(int)Math.max(0,f.until-p.level().getGameTime()):slot==2?(int)Math.max(0,f.meteorUntil-p.level().getGameTime()):0;}
     public static void tick(EntityTickEvent.Pre event){
         if(!(event.getEntity() instanceof Player player))return;
+        if(landing(player)&&player.isFallFlying()){player.stopFallFlying();player.setDeltaMovement(0,player.getDeltaMovement().y,0);}
         if(player.level().isClientSide()){
             if(!player.isLocalPlayer())return;var tag=player.getPersistentData();
             if(tag.getIntOr("oxy_meteor_until",0)>player.tickCount&&!player.onGround()){
