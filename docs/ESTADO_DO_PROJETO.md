@@ -1,8 +1,12 @@
-# Estado do Oxy RPG — revisão 0.42.1
+# Estado do Oxy RPG — revisão 0.43.0
 
 Revisão registrada em 11/10/2026. Minecraft 1.21.10, NeoForge 21.10.64, JDK 21, protocolo de rede 29. Este registro substitui descrições antigas do README. Os documentos numerados são históricos de cada entrega.
 
 A revisão inventariou fontes Java, registros, eventos, mixins, telas, recursos JSON, geração de dados, integração e persistência. Código das áreas alteradas foi inspecionado em detalhe. Inventário de arquivos e hashes: [INVENTARIO_CODIGO_040.json](INVENTARIO_CODIGO_040.json). Não equivale a validação integral dentro do jogo nem a auditoria de segurança.
+
+## Entrega 0.43
+
+Alimentação por interação, aviso de presa, sangramento probabilístico na mordida, reações de mobs e medo noturno de aldeões. Autocura limitada de alguns humanoides; fome/sede vermelha. Números de dano ao jogador suprimidos; textos de crítico/erro preservados. Morcego visual maior/mais alto e sangue do Twilight vivo/emissivo. Vegetação mantém pressão e modelo/cor nativos, ondas alcançam sete blocos e duram quatro segundos. Skills na HUD separadas da barra de avisos; aba de trocas acessível, ausência de ofertas explicada, conversa renovada ao alternar tela. Extensão oficial Fresh Animations: Player 1.1 preparada para EMF/ETF existentes. [Implementação e validação](CORRECOES_043.md). Protocolo 29.
 
 ## Correção 0.42.1
 

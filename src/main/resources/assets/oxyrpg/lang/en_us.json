@@ -120,5 +120,7 @@
   "death.attack.oxyrpg.bleeding": "%1$s bled to death",
   "death.attack.oxyrpg.bleeding.player": "%1$s bled to death fighting %2$s",
   "tooltip.oxyrpg.bleeding_weapon": "Bleeding: %s%% chance · %s damage/s",
-  "item.oxyrpg.relic_vampiresco": "Night Fang"
+  "item.oxyrpg.relic_vampiresco": "Night Fang",
+  "death.attack.oxyrpg.vampire_bite": "%1$s was drained by %2$s",
+  "death.attack.oxyrpg.vampire_bite.player": "%1$s was drained by %2$s"
 }

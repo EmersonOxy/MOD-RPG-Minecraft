@@ -107,8 +107,8 @@ public final class OxyRpgClient {
         });
         event.registerAbove(net.neoforged.neoforge.client.gui.VanillaGuiLayers.PLAYER_HEALTH,ResourceLocation.fromNamespaceAndPath("oxyrpg","mana"),(g,d)->renderMana(g));
         event.registerAboveAll(ResourceLocation.fromNamespaceAndPath("oxyrpg","exploration"),(g,d)->{EvasionHud.render(g);SimpleMinimap.render(g);ExplorationHud.render(g);});
-        event.registerAboveAll(ResourceLocation.fromNamespaceAndPath("oxyrpg","combat_feedback"),(g,d)->{AbilityPreview.render(g);EliteWarnings.render(g);DamageNumbers.render(g);SkillEffectsRenderer.render(g);ClassCastEffects.render(g);});
         event.registerAboveAll(ResourceLocation.fromNamespaceAndPath("oxyrpg", "hud"), (graphics, delta) -> renderHud(graphics));
+        event.registerAboveAll(ResourceLocation.fromNamespaceAndPath("oxyrpg","combat_feedback"),(g,d)->{AbilityPreview.render(g);EliteWarnings.render(g);DamageNumbers.render(g);SkillEffectsRenderer.render(g);ClassCastEffects.render(g);});
         event.registerAboveAll(ResourceLocation.fromNamespaceAndPath("oxyrpg", "shoulder_crosshair"),(g,d)->{
             var mc=Minecraft.getInstance();if(!ShoulderCamera.active()||mc.options.hideGui||DynamicHud.mode()==DynamicHud.Mode.HIDDEN||mc.screen!=null||mc.player==null||mc.player.isSpectator())return;
             var pipeline=net.minecraft.client.renderer.RenderPipelines.CROSSHAIR;
@@ -170,7 +170,7 @@ public final class OxyRpgClient {
             if(hudState==null||state.xp()!=hudState.xp()||state.level()!=hudState.level()||state.rpgClass()!=hudState.rpgClass()||state.skills()!=hudState.skills())DynamicHud.signal(DynamicHud.Part.RPG);
             if(hudState==null||state.kills()!=hudState.kills()||state.questStage()!=hudState.questStage()||state.questFirst()!=hudState.questFirst()||state.questSecond()!=hudState.questSecond())DynamicHud.signal(DynamicHud.Part.QUEST);
             hudState = state;
-            if(mc.player!=null){mc.player.getPersistentData().putBoolean("oxy_feather_ready",state.rpgClass()==RpgClass.AVIARIO.ordinal()&&state.hasSkill(8));mc.player.getPersistentData().putBoolean("oxy_feather_enhanced",state.hasSkill(11));}
+            if(mc.player!=null){mc.player.getPersistentData().putBoolean("oxy_vampire_class",state.rpgClass()==RpgClass.VAMPIRESCO.ordinal());mc.player.getPersistentData().putBoolean("oxy_feather_ready",state.rpgClass()==RpgClass.AVIARIO.ordinal()&&state.hasSkill(8));mc.player.getPersistentData().putBoolean("oxy_feather_enhanced",state.hasSkill(11));}
             dev.emersonoxy.rpg.EquipmentAccess.clientClass(state.rpgClass());
             dev.emersonoxy.rpg.EquipmentAccess.clientLevel(state.level());
             if(state.rpgClass()!=0)for(int slot=0;slot<3;slot++){
@@ -239,7 +239,7 @@ public final class OxyRpgClient {
     private static void renderHud(GuiGraphics g) {
         var mc=Minecraft.getInstance();
         if(mc.options.hideGui||mc.getDebugOverlay().showDebugScreen()||mc.player==null||mc.level==null||mc.screen!=null||hudState==null)return;
-        SpecialistHud.render(g);
+        SpecialistHud.render(g);VampireHud.prey(g);
         renderAbilityIcons(g);
         renderDynamicPanels(g);
     }
@@ -261,20 +261,22 @@ public final class OxyRpgClient {
     }
     private static void renderAbilityIcons(GuiGraphics g) {
         var mc=Minecraft.getInstance();var state=hudState;if(state==null||state.rpgClass()==0||mc.level==null)return;
-        int start=g.guiWidth()/2-51,y=g.guiHeight()-Math.max(86,mc.gui.leftHeight+38);var keys=new KeyMapping[]{USE_ABILITY,SECOND_ABILITY,THIRD_ABILITY};
+        int start=g.guiWidth()/2-50,y=g.guiHeight()-Math.max(118,mc.gui.leftHeight+62);var keys=new KeyMapping[]{USE_ABILITY,SECOND_ABILITY,THIRD_ABILITY};
         for(int slot=0;slot<3;slot++){float alpha=DynamicHud.alpha(DynamicHud.ability(slot));if(alpha<=0)continue;HudOpacity.begin(alpha);int x=start+slot*36;
             long remaining=effectUntil[slot]==Long.MAX_VALUE?Long.MAX_VALUE:Math.max(0,effectUntil[slot]-mc.level.getGameTime()),cooldown=Math.max(0,hudReadyAt[slot]-mc.level.getGameTime());boolean available=state.canUse(slot),active=remaining>0;
             int accent=ClassSelectionScreen.accent(RpgClass.values()[state.rpgClass()]),ink=!available?0xFF586473:active?0xFFF6E4AA:cooldown>0?0xFF8392A2:accent;
-            g.fill(x+2,y,x+28,y+34,0xDD101720);g.fill(x,y+2,x+30,y+32,0xDD101720);g.fill(x+2,y,x+28,y+1,ink);g.fill(x+2,y+33,x+28,y+34,0xFF384759);
-            SkillGlyphs.draw(g,RpgClass.values()[state.rpgClass()],slot,x+6,y+8,19,0xFF05090E);SkillGlyphs.draw(g,RpgClass.values()[state.rpgClass()],slot,x+5,y+7,19,ink);
-            String key=mc.font.plainSubstrByWidth(keys[slot].getTranslatedKeyMessage().getString(),22);g.pose().pushMatrix();g.pose().translate(x+2,y+1);g.pose().scale(.75f,.75f);g.drawString(mc.font,key,0,0,0xFFEADCC0);g.pose().popMatrix();
+            g.fill(x,y,x+28,y+28,0xC5101720);RpgUi.border(g,x,y,28,28,ink);
+            if(cooldown>0&&!active){int cover=(int)(26*Math.clamp((float)cooldown/Math.max(1,cooldownTotal[slot]),0,1));g.fill(x+1,y+1,x+27,y+1+cover,0xB0253140);}
+            SkillGlyphs.draw(g,RpgClass.values()[state.rpgClass()],slot,x+5,y+5,19,0xFF05090E);SkillGlyphs.draw(g,RpgClass.values()[state.rpgClass()],slot,x+4,y+4,19,ink);
+            String key=mc.font.plainSubstrByWidth(keys[slot].getTranslatedKeyMessage().getString(),24);g.pose().pushMatrix();g.pose().translate(x+14,y-9);g.pose().scale(.8f,.8f);g.drawString(mc.font,key,-mc.font.width(key)/2,0,0xFFEADCC0);g.pose().popMatrix();
             float fill=active?(remaining==Long.MAX_VALUE?1:Math.clamp((float)remaining/Math.max(1,effectTotal[slot]),0,1)):1-Math.clamp((float)cooldown/Math.max(1,cooldownTotal[slot]),0,1);
-            g.fill(x+3,y+30,x+27,y+32,0xFF283644);g.fill(x+3,y+30,x+3+(int)(24*fill),y+32,ink);
-            if(!available||cooldown>0&&!active){String text=!available?"×":((cooldown+19)/20)+"";g.fill(x+4,y+21,x+26,y+30,0xD0101720);g.drawCenteredString(mc.font,text,x+15,y+21,ink);}
-            else if(active&&remaining!=Long.MAX_VALUE){g.pose().pushMatrix();g.pose().translate(x+22,y+21);g.pose().scale(.7f,.7f);g.drawString(mc.font,((remaining+19)/20)+"",-8,0,0xFFF3E2BC);g.pose().popMatrix();}
+            g.fill(x+1,y+29,x+27,y+31,0xFF283644);g.fill(x+1,y+29,x+1+(int)(26*fill),y+31,ink);
+            String time=!available?"×":cooldown>0&&!active?((cooldown+19)/20)+"":active&&remaining!=Long.MAX_VALUE?((remaining+19)/20)+"":"";
+            if(!time.isEmpty()){g.pose().pushMatrix();g.pose().translate(x+14,y+33);g.pose().scale(.8f,.8f);g.drawString(mc.font,time,-mc.font.width(time)/2,0,ink);g.pose().popMatrix();}
             HudOpacity.end();
         }
     }
+
     public static boolean abilityActive(int slot){
         var mc=Minecraft.getInstance();return mc.level!=null&&hudState!=null&&hudState.rpgClass()!=0
             &&(hudReadyAt[slot]>mc.level.getGameTime()||effectUntil[slot]>mc.level.getGameTime());

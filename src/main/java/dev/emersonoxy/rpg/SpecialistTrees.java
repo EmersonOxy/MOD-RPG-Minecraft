@@ -6,7 +6,7 @@ final class SpecialistTrees {
         case VAMPIRESCO -> new String[][] {
             {"Instinto noturno","Passiva: sol fere, dia enfraquece; à noite recebe visão noturna.","redstone"},
             {"Primeira mordida","Arme um vínculo ao perder vida: seu próximo golpe cura e abre uma ferida.","sweet_berries"},
-            {"Paladar aguçado","Alimentar-se de animais recupera mais sede.","beef"},
+            {"Paladar aguçado","Botão direito em um alvo pacífico recupera mais sede.","beef"},
             {"Sede de Sangue","Ao perder vida, marque um alvo com um golpe. Cura imediata e gradual; repetir o golpe paralisa e fortalece o dano.","fermented_spider_eye"},
             {"Vínculo cruel","Golpes no alvo vinculado recebem mais dano adicional.","iron_sword"},
             {"Sangue restaurador","Amplia a cura gradual do vínculo.","ghast_tear"},

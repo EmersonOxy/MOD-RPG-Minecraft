@@ -75,6 +75,7 @@ public final class EnemyNameplates {
     }
     public static void register(RegisterRenderStateModifiersEvent event) {
         event.registerEntityModifier(new TypeToken<EntityRenderer<Entity, EntityRenderState>>() {}, (entity, state) -> {
+            if(entity instanceof net.minecraft.world.entity.ambient.Bat&&entity.getCustomName()!=null&&entity.getCustomName().getString().equals("oxy_vampire_form")&&state instanceof net.minecraft.client.renderer.entity.state.LivingEntityRenderState living)living.scale*=2.2f;
             state.setRenderData(HIDDEN, entity instanceof Player && hidden(entity.getId()));
             state.setRenderData(PLATE, null);
             if (!(entity instanceof Mob mob)) return;

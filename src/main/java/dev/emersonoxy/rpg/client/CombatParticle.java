@@ -90,7 +90,7 @@ public final class CombatParticle extends SingleQuadParticle {
             }
         }
         @Override protected Layer getLayer(){return Layer.TRANSLUCENT;}
-        @Override protected int getLightColor(float partial){var p=Minecraft.getInstance().player;return p!=null&&dev.emersonoxy.rpg.RpgVampire.twilight(p)?240:super.getLightColor(partial);}
+        @Override protected int getLightColor(float partial){var p=Minecraft.getInstance().player;return p!=null&&dev.emersonoxy.rpg.RpgVampire.twilight(p)?0xF000F0:super.getLightColor(partial);}
         @Override public Optional<ParticleLimit> getParticleLimit(){return Optional.empty();}
         @Override public void tick(){
             if(!CombatOptions.blood||!CombatOptions.bloodMarks||Minecraft.getInstance().level!=level||!level.hasChunkAt(support)||age++>=lifetime){remove();return;}
@@ -98,7 +98,7 @@ public final class CombatParticle extends SingleQuadParticle {
                 ||!level.getFluidState(BlockPos.containing(getPos().add(normal.scale(.05)))).isEmpty()
                 ||level.isRainingAt(BlockPos.containing(getPos()).above()))){remove();return;}
             float t=age/(float)lifetime;alpha=.9f*(1-Math.clamp((t-.75f)/.25f,0,1));
-            setColor(.50f-.16f*t,.012f,.022f);
+            var viewer=Minecraft.getInstance().player;boolean highlight=viewer!=null&&dev.emersonoxy.rpg.RpgVampire.twilight(viewer);setColor(highlight?1:.50f-.16f*t,highlight?.12f:.012f,highlight?.23f:.022f);if(highlight)alpha=Math.max(alpha,.8f)*(1-Math.clamp((t-.9f)/.1f,0,1));
         }
         @Override public void extract(QuadParticleRenderState state,Camera camera,float partial){
             if(!CombatOptions.blood||!CombatOptions.bloodMarks)return;

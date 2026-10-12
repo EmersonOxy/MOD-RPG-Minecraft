@@ -45,7 +45,7 @@ public final class RpgVampire {
         var c=state(p,s);long now=c.world.getGameTime();
         if(slot==0){c.thirst=now+s.abilityDuration(0);c.bond=null;}
         else if(slot==1){if(bat(p)){returnHuman(c,true);return;}c.mayfly=p.getAbilities().mayfly;c.flying=p.getAbilities().flying;p.getPersistentData().putBoolean("oxy_vampire_original_mayfly",c.mayfly);p.getPersistentData().putBoolean("oxy_vampire_original_flying",c.flying);p.closeContainer();c.form=spawn(c,p.position().add(0,.6,0));
-            if(c.form!=null)c.form.setInvulnerable(true);p.getPersistentData().putBoolean("oxy_vampire_bat",true);p.getAbilities().mayfly=true;p.getAbilities().flying=true;p.onUpdateAbilities();ghost(p,72000);sync(c);}
+            if(c.form!=null){c.form.setInvulnerable(true);c.form.getPersistentData().putBoolean("oxy_vampire_form",true);c.form.setCustomName(net.minecraft.network.chat.Component.literal("oxy_vampire_form"));c.form.setCustomNameVisible(false);}p.getPersistentData().putBoolean("oxy_vampire_bat",true);p.getAbilities().mayfly=true;p.getAbilities().flying=true;p.onUpdateAbilities();ghost(p,72000);sync(c);}
         else {c.twilight=now+s.abilityDuration(2);p.getPersistentData().putLong("oxy_vampire_twilight",c.twilight);effect(p,MobEffects.STRENGTH,s.abilityDuration(2),s.mainUnlocked(2)?1:0);effect(p,MobEffects.SPEED,s.abilityDuration(2),s.hasSkill(18)?1:0);effect(p,MobEffects.HASTE,s.abilityDuration(2),s.hasSkill(19)?1:0);sync(c);}
         ClassJourney.advance(p,slot,1);
     }
@@ -62,7 +62,7 @@ public final class RpgVampire {
         if(!(e instanceof ServerPlayer p))return;var s=RpgAbilities.profile(p);
         if(s.rpgClass()!=RpgClass.VAMPIRESCO||!p.isAlive()){if(STATES.containsKey(p.getUUID()))clear(p);return;}var c=state(p,s);
         if(bat(p)&&!s.canUseAbility(1))returnHuman(c,false);
-        if(bat(p)){p.fallDistance=0;if(c.form!=null){c.form.setPos(p.position().add(0,.6,0));c.form.setYRot(p.getYRot());}if(p.tickCount%20==0&&!RpgDebug.unlimited(p)){if(!RpgResources.affordable(p,1))returnHuman(c,true);else RpgResources.spend(p,1);}}
+        if(bat(p)){p.fallDistance=0;if(c.form!=null){c.form.setPos(p.position().add(0,1.15,0));c.form.setYRot(p.getYRot());}if(p.tickCount%20==0&&!RpgDebug.unlimited(p)){if(!RpgResources.affordable(p,1))returnHuman(c,true);else RpgResources.spend(p,1);}}
         c.bats.removeIf(b->!b.isAlive()||b.isRemoved());if(c.swarm<=now&&!c.bats.isEmpty()){c.bats.forEach(Entity::discard);c.bats.clear();}
         for(int i=0;i<c.bats.size();i++){double a=now*.13+i*Math.PI*2/c.bats.size();c.bats.get(i).setPos(p.getX()+Math.cos(a)*1.1,p.getY()+1+Math.sin(a*1.5)*.25,p.getZ()+Math.sin(a)*1.1);}
         if(p.tickCount%20!=0)return;
@@ -82,8 +82,7 @@ public final class RpgVampire {
     public static void damage(LivingDamageEvent.Pre event){if(Bleeding.damage(event.getSource()))return;if(event.getSource().getDirectEntity() instanceof ServerPlayer p){var c=STATES.get(p.getUUID());if(c!=null&&c.thirst>p.level().getGameTime()&&event.getEntity().getUUID().equals(c.bond)&&c.bondUntil>p.level().getGameTime())event.setNewDamage(event.getNewDamage()*(c.profile.hasSkill(4)?1.4f:1.2f));}}
     public static void hit(LivingDamageEvent.Post event){
         if(event.getNewDamage()<=0||Bleeding.damage(event.getSource())||!(event.getSource().getDirectEntity() instanceof ServerPlayer p)||event.getSource().getEntity()!=p||!event.getSource().is(DamageTypes.PLAYER_ATTACK)||RpgAbilities.secondaryHit())return;
-        var s=RpgAbilities.profile(p);var target=event.getEntity();if(s.rpgClass()!=RpgClass.VAMPIRESCO||!(target instanceof Mob)||RpgNecromancer.isSummon(target)||RpgSpecialists.temporary(target)||proxy(target))return;var c=state(p,s);long now=c.world.getGameTime();Bleeding.apply(target,p,0);
-        if(!(target instanceof net.minecraft.world.entity.monster.Enemy)&&now>=c.nextFeed){p.getFoodData().eat(2+(s.hasSkill(2)?1:0),.3f);c.nextFeed=now+20;}
+        var s=RpgAbilities.profile(p);var target=event.getEntity();if(s.rpgClass()!=RpgClass.VAMPIRESCO||!(target instanceof Mob)||RpgNecromancer.isSummon(target)||RpgSpecialists.temporary(target)||proxy(target))return;var c=state(p,s);long now=c.world.getGameTime();if(target instanceof net.minecraft.world.entity.monster.Enemy)Bleeding.apply(target,p,0);
         if(c.thirst<=now)return;
         if(target.getUUID().equals(c.bond)&&c.bondUntil>now){ROOTS.put(target.getUUID(),now+(s.hasSkill(6)?60:40));target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS,60,9));}
         else {float heal=Math.min(4,event.getNewDamage()*.15f+.5f+s.level()*.01f);p.heal(heal);c.healing=Math.min(p.getMaxHealth()*(s.hasSkill(5)?.25f:.15f),4+s.level()*.04f);c.healUntil=now+s.abilityDuration(0);c.bond=target.getUUID();c.bondUntil=c.thirst;Bleeding.apply(target,p,s.mainUnlocked(0)?1:0);}
@@ -103,8 +102,26 @@ public final class RpgVampire {
     public static void attack(AttackEntityEvent e){if(bat(e.getEntity()))e.setCanceled(true);}
     public static void rightItem(PlayerInteractEvent.RightClickItem e){if(bat(e.getEntity()))e.setCanceled(true);}
     public static void rightBlock(PlayerInteractEvent.RightClickBlock e){if(bat(e.getEntity()))e.setCanceled(true);}
-    public static void interact(PlayerInteractEvent.EntityInteract e){if(bat(e.getEntity()))e.setCanceled(true);}
-    public static void specific(PlayerInteractEvent.EntityInteractSpecific e){if(bat(e.getEntity()))e.setCanceled(true);}
+    public static void interact(PlayerInteractEvent.EntityInteract e){if(bat(e.getEntity()))e.setCanceled(true);else if(!e.isCanceled()&&feed(e,e.getTarget())){e.setCanceled(true);e.setCancellationResult(net.minecraft.world.InteractionResult.SUCCESS);}}
+    public static void specific(PlayerInteractEvent.EntityInteractSpecific e){if(bat(e.getEntity()))e.setCanceled(true);else if(!e.isCanceled()&&feed(e,e.getTarget())){e.setCanceled(true);e.setCancellationResult(net.minecraft.world.InteractionResult.SUCCESS);}}
+    public static boolean prey(Entity e){return e instanceof Mob m&&m.isAlive()&&!(m instanceof net.minecraft.world.entity.monster.Enemy)&&!RpgNecromancer.isSummon(m)&&!RpgSpecialists.temporary(m)&&!proxy(m);}
+    private static boolean feed(PlayerInteractEvent e,Entity target){
+        var player=e.getEntity();if(player.isShiftKeyDown()||player.isSpectator()||player.getFoodData().getFoodLevel()>=20||!prey(target)||player.getItemInHand(e.getHand()).is(RpgItems.BANDAGE.get()))return false;
+        if(player instanceof ServerPlayer p){
+            var s=RpgAbilities.profile(p);if(s.rpgClass()!=RpgClass.VAMPIRESCO||bat(p)||p.distanceToSqr(target)>9||!p.hasLineOfSight(target))return false;
+            if(e.getHand()!=net.minecraft.world.InteractionHand.MAIN_HAND)return true;
+            var c=state(p,s);long now=p.level().getGameTime();if(now<c.nextFeed)return true;c.nextFeed=now+60;
+            var victim=(LivingEntity)target;
+            var bite=new DamageSource(p.level().registryAccess().lookupOrThrow(Registries.DAMAGE_TYPE).getOrThrow(VampireHunt.BITE),p);
+            float before=victim.getHealth();if(!victim.hurtServer(p.level(),bite,2)||victim.getHealth()>=before)return true;
+            p.getFoodData().eat(4+(s.hasSkill(2)?2:0),.4f);
+            if(victim.isAlive()&&p.getRandom().nextFloat()<.35f)Bleeding.apply(victim,p,0);
+            VampireHunt.threaten(victim,p);p.swing(net.minecraft.world.InteractionHand.MAIN_HAND,true);
+            p.level().playSound(null,p.blockPosition(),net.minecraft.sounds.SoundEvents.HONEY_DRINK.value(),net.minecraft.sounds.SoundSource.PLAYERS,.65f,.7f);
+            return true;
+        }else if(player.getPersistentData().getBooleanOr("oxy_vampire_class",false)){return true;}
+        return false;
+    }
     public static void breaking(net.neoforged.neoforge.event.level.BlockEvent.BreakEvent e){if(bat(e.getPlayer()))e.setCanceled(true);}
     public static void tracking(PlayerEvent.StartTracking e){if(e.getEntity() instanceof ServerPlayer viewer){if(e.getTarget() instanceof Player p&&bat(p))PacketDistributor.sendToPlayer(viewer,new RpgNetwork.Ghost(p.getId(),72000));else if(proxy(e.getTarget()))PacketDistributor.sendToPlayer(viewer,new RpgNetwork.MobLevel(e.getTarget().getId(),-2));}}
     public static void clear(ServerPlayer p){var c=STATES.remove(p.getUUID());if(c!=null){if(bat(p))returnHuman(c,false);c.bats.forEach(Entity::discard);}if(c==null&&bat(p)){p.getAbilities().mayfly=p.isCreative()||p.isSpectator()||p.getPersistentData().getBooleanOr("oxy_vampire_original_mayfly",false);p.getAbilities().flying=p.getAbilities().mayfly&&p.getPersistentData().getBooleanOr("oxy_vampire_original_flying",false);p.onUpdateAbilities();ghost(p,0);}p.getPersistentData().remove("oxy_vampire_original_mayfly");p.getPersistentData().remove("oxy_vampire_original_flying");p.getPersistentData().remove("oxy_vampire_bat");p.getPersistentData().remove("oxy_vampire_twilight");

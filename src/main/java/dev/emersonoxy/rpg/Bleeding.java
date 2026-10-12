@@ -31,6 +31,10 @@ public final class Bleeding {
         if(target.addEffect(new MobEffectInstance(EFFECT,MobEffectInstance.INFINITE_DURATION,rank,false,false,true),attacker))
             target.getPersistentData().putString(OWNER,attacker.getUUID().toString());
     }
+    public static net.minecraft.world.entity.Entity owner(LivingEntity entity){
+        if(!(entity.level() instanceof ServerLevel level))return null;
+        try{var id=UUID.fromString(entity.getPersistentData().getStringOr(OWNER,""));var found=level.getEntity(id);return found!=null?found:level.getServer().getPlayerList().getPlayer(id);}catch(IllegalArgumentException ignored){return null;}
+    }
     public static void stop(LivingEntity entity){entity.removeEffect(EFFECT);entity.getPersistentData().remove(OWNER);}
     public static void hit(LivingDamageEvent.Post event){
         if(event.getNewDamage()<=0||damage(event.getSource())||!(event.getSource().getDirectEntity() instanceof LivingEntity attacker)||event.getSource().getEntity()!=attacker)return;

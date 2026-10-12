@@ -23,12 +23,15 @@ public final class CombatFeedback {
     public static void damage(LivingDamageEvent.Post event){
         var target=event.getEntity();var source=event.getSource();var p=RpgNecromancer.owner(source);
         if(target instanceof ServerPlayer victim&&event.getBlockedDamage()>0&&RpgAbilities.profile(victim).rpgClass()==RpgClass.GUERREIRO)ClassJourney.advance(victim,2,1);
+        if(target instanceof ServerPlayer victim){
+            if(CombatChances.take(source,target)&&event.getNewDamage()>0)CombatFeedback.text(victim,victim,"Crítico!",0xFF8B68);
+            return;
+        }
         int tint=ConditionDamage.color(source);
         if(tint!=0&&event.getNewDamage()>0&&target.level() instanceof net.minecraft.server.level.ServerLevel level){
             if(p!=null&&!Bleeding.damage(source))ClassJourney.damage(p,event);
             PacketDistributor.sendToPlayersNear(level,null,target.getX(),target.getY(),target.getZ(),32,new RpgNetwork.DamageNumber(target.getId(),target.getX(),target.getY()+target.getBbHeight()*.75,target.getZ(),event.getNewDamage(),p!=null&&CombatChances.take(source,target),false,tint));return;
         }
-        if(target instanceof ServerPlayer victim&&source.getEntity() instanceof net.minecraft.world.entity.Mob mob){if(CombatChances.take(source,target)&&event.getNewDamage()>0)CombatFeedback.text(victim,mob,"Crítico!",0xFF8B68);return;}
         if(p==null||target==p||RpgNecromancer.isSummon(target))return;
         boolean blocked=event.getNewDamage()<=0&&event.getBlockedDamage()>0;
         if(!blocked&&event.getNewDamage()<=0)return;

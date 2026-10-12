@@ -27,9 +27,9 @@ public final class OxyRpg {
         bus.addListener(RpgContent::configReloaded);
         bus.addListener(RpgNetwork::register);
         VillageLoot.register(bus);
-        NeoForge.EVENT_BUS.addListener(RpgVampire::tick);NeoForge.EVENT_BUS.addListener(RpgVampire::damage);NeoForge.EVENT_BUS.addListener(RpgVampire::hit);
+        NeoForge.EVENT_BUS.addListener(RpgVampire::tick);NeoForge.EVENT_BUS.addListener(VampireHunt::tick);NeoForge.EVENT_BUS.addListener(RpgVampire::damage);NeoForge.EVENT_BUS.addListener(RpgVampire::hit);
         NeoForge.EVENT_BUS.addListener(EventPriority.HIGH,RpgVampire::incoming);NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST,RpgVampire::shield);NeoForge.EVENT_BUS.addListener(RpgVampire::applicable);NeoForge.EVENT_BUS.addListener(RpgVampire::useItem);
-        NeoForge.EVENT_BUS.addListener(RpgVampire::attack);NeoForge.EVENT_BUS.addListener(RpgVampire::rightItem);NeoForge.EVENT_BUS.addListener(RpgVampire::rightBlock);NeoForge.EVENT_BUS.addListener(RpgVampire::interact);NeoForge.EVENT_BUS.addListener(RpgVampire::specific);NeoForge.EVENT_BUS.addListener(RpgVampire::breaking);
+        NeoForge.EVENT_BUS.addListener(RpgVampire::attack);NeoForge.EVENT_BUS.addListener(RpgVampire::rightItem);NeoForge.EVENT_BUS.addListener(RpgVampire::rightBlock);NeoForge.EVENT_BUS.addListener(EventPriority.HIGHEST,RpgVampire::interact);NeoForge.EVENT_BUS.addListener(EventPriority.HIGHEST,RpgVampire::specific);NeoForge.EVENT_BUS.addListener(RpgVampire::breaking);
         NeoForge.EVENT_BUS.addListener(RpgVampire::tracking);NeoForge.EVENT_BUS.addListener(RpgVampire::logout);NeoForge.EVENT_BUS.addListener(RpgVampire::stop);
         NeoForge.EVENT_BUS.addListener(net.neoforged.bus.api.EventPriority.HIGH,Bleeding::interact);NeoForge.EVENT_BUS.addListener(Bleeding::hit);NeoForge.EVENT_BUS.addListener(Bleeding::removed);
         NeoForge.EVENT_BUS.addListener(AdventureItems::fall);

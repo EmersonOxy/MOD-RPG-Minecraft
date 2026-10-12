@@ -16,9 +16,9 @@ public final class AmbientWorld {
                 }
             }
         }
-        if(AmbientOptions.water&&mc.options.particles().get()!=net.minecraft.server.level.ParticleStatus.MINIMAL&&now%5==0&&!p.onGround()&&!p.isInWater()&&p.getDeltaMovement().horizontalDistanceSqr()>.015){
-            for(int depth=0;depth<=3;depth++){var pos=p.blockPosition().below(depth);var fluid=level.getFluidState(pos);if(!fluid.is(FluidTags.WATER)||!level.getFluidState(pos.above()).isEmpty())continue;double y=pos.getY()+fluid.getHeight(level,pos)+.015;if(p.getY()-y<0||p.getY()-y>2.5)break;
-                WaterWake.spawn(level,p.getX(),y,p.getZ());for(int side:new int[]{-1,1}){double dx=p.getDeltaMovement().z*side,dz=-p.getDeltaMovement().x*side;level.addParticle(ParticleTypes.SPLASH,p.getX()+dx,y+.03,p.getZ()+dz,dx*.2,.08,dz*.2);}break;
+        if(AmbientOptions.water&&mc.options.particles().get()!=net.minecraft.server.level.ParticleStatus.MINIMAL&&now%4==0&&!p.onGround()&&!p.isInWater()&&p.getDeltaMovement().horizontalDistanceSqr()>.015){
+            for(int depth=0;depth<=8;depth++){var pos=p.blockPosition().below(depth);var fluid=level.getFluidState(pos);if(!fluid.is(FluidTags.WATER)||!level.getFluidState(pos.above()).isEmpty())continue;double y=pos.getY()+fluid.getHeight(level,pos)+.015;if(p.getY()-y<0||p.getY()-y>7)break;
+                var flow=p.getDeltaMovement().multiply(1,0,1).normalize();var lateral=new net.minecraft.world.phys.Vec3(flow.z,0,-flow.x);WaterWake.spawn(level,p.getX(),y,p.getZ());for(int sign:new int[]{-1,1})WaterWake.spawn(level,p.getX()+lateral.x*sign*.55,y,p.getZ()+lateral.z*sign*.55);for(int side:new int[]{-1,1}){double dx=p.getDeltaMovement().z*side,dz=-p.getDeltaMovement().x*side;level.addParticle(ParticleTypes.SPLASH,p.getX()+dx,y+.03,p.getZ()+dz,dx*.2,.08,dz*.2);}break;
             }
         }
     }

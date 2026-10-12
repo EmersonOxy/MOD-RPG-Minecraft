@@ -43,9 +43,10 @@ public final class VillagerQuests {
     private static int offer(Villager v,ProfessionStore.Data d){return Math.floorMod(v.getUUID().hashCode()+d.completed,COUNT);}
     private static Item targetItem(Quest q){return BuiltInRegistries.ITEM.getValue(net.minecraft.resources.ResourceLocation.parse(q.target()));}
     public static void interact(PlayerInteractEvent.EntityInteract event){
-        if(event.isCanceled()||!(event.getEntity() instanceof ServerPlayer p)||!(event.getTarget() instanceof Villager v)||p.isShiftKeyDown()||v.isBaby()||!v.isAlive())return;
+        if(event.isCanceled()||!(event.getEntity() instanceof ServerPlayer p)||!(event.getTarget() instanceof Villager v)||p.isShiftKeyDown()&&RpgAbilities.profile(p).rpgClass()!=RpgClass.VAMPIRESCO||v.isBaby()||!v.isAlive())return;
         event.setCanceled(true);event.setCancellationResult(InteractionResult.SUCCESS);
         if(event.getHand()!=InteractionHand.MAIN_HAND)return;
+        if(RpgAbilities.profile(p).rpgClass()==RpgClass.VAMPIRESCO&&VampireHunt.night(p.level())){Professions.notify(p,"Este morador teme sua presença durante a noite.");return;}
         if(v.getTradingPlayer()!=null&&v.getTradingPlayer()!=p){Professions.notify(p,"Este morador já está negociando.");return;}
         TALKS.put(p.getUUID(),new Conversation(v.getUUID(),p.level().getGameTime()+100));
         v.getNavigation().stop();v.setDeltaMovement(0,v.getDeltaMovement().y,0);
@@ -73,7 +74,9 @@ public final class VillagerQuests {
         PacketDistributor.sendToPlayer(p,new RpgNetwork.VillagerDialogue(v.getId(),v.getDisplayName().getString(),q.title(),dialogue,objective,q.emeralds()+" esmeraldas + 50 XP de "+Professions.NAMES[q.area()]+"; bônus a cada 5 contratos",status,!v.getOffers().isEmpty()));
     }catch(IOException e){Professions.notify(p,"Não foi possível ler o contrato. Seus dados foram preservados.");}}
     private static String targetName(Quest q){return q.kind()==0?BuiltInRegistries.ENTITY_TYPE.getValue(net.minecraft.resources.ResourceLocation.parse(q.target())).getDescription().getString():targetItem(q).getName().getString();}
+    public static void frighten(Villager v){TALKS.entrySet().removeIf(e->e.getValue().npc().equals(v.getUUID()));}
     public static boolean conversing(Villager v){
+        if(VampireHunt.afraid(v))return false;
         if(!(v.level() instanceof net.minecraft.server.level.ServerLevel level))return false;
         for(var entry:TALKS.entrySet()){
             var talk=entry.getValue();if(!talk.npc().equals(v.getUUID())||talk.expires()<level.getGameTime())continue;
@@ -82,9 +85,13 @@ public final class VillagerQuests {
         return false;
     }
     public static void action(ServerPlayer p,int action,int entityId){
+        if((action==303||action==306)&&RpgAbilities.profile(p).rpgClass()==RpgClass.VAMPIRESCO&&VampireHunt.night(p.level())){Professions.notify(p,"Este morador teme sua presença durante a noite.");return;}
         if(action==302){try{var d=ProfessionStore.get(p);d.quest=-1;d.progress=0;d.villager=null;ProfessionStore.save(p,d);Professions.sync(p);Professions.notify(p,"Contrato abandonado, sem recompensa.");}catch(IOException e){Professions.notify(p,"Falha ao abandonar contrato.");}return;}
         var talk=TALKS.get(p.getUUID());var entity=p.level().getEntity(entityId);
         if(action==304){if(talk!=null&&entity!=null&&talk.npc().equals(entity.getUUID()))TALKS.remove(p.getUUID());return;}
+        if((action==303||action==306)&&entity instanceof Villager candidate&&candidate.isAlive()&&!candidate.isBaby()&&p.distanceToSqr(candidate)<=36&&p.hasLineOfSight(candidate)&&p.isAlive()&&!p.isSpectator()){
+            talk=new Conversation(candidate.getUUID(),p.level().getGameTime()+100);TALKS.put(p.getUUID(),talk);
+        }
         if(talk==null||talk.expires()<p.level().getGameTime()||!(entity instanceof Villager v)||!v.isAlive()||v.isBaby()||!v.getUUID().equals(talk.npc())||p.distanceToSqr(v)>36||!p.hasLineOfSight(v)||!p.isAlive()||p.isSpectator())return;
         TALKS.put(p.getUUID(),new Conversation(v.getUUID(),p.level().getGameTime()+100));
         if(action==305)return;

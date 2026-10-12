@@ -1,4 +1,4 @@
-# Oxy RPG 0.42.1
+# Oxy RPG 0.43.0
 
 Mod RPG para Minecraft **1.21.10**, NeoForge **21.10.64**, JDK **21**.
 
@@ -25,6 +25,8 @@ A 0.41 adiciona sangramento persistente, bandagens para estancar, chances por ar
 A 0.40 remove tetos próprios de sangue/manchas, processa grandes respingos em lotes e preserva caches separados de superfície/pisos do minimapa. [Mudanças e evidências dos prints](docs/CORRECOES_040.md).
 
 A 0.42.1 corrige a falha de inicialização do hook de vegetação: seleção explícita da sobrecarga NeoForge de `renderBatched`. [Diagnóstico e verificação](docs/CORRECOES_0421.md).
+
+A 0.43 muda a alimentação do Vampiresco para botão direito, inclui indicador de presa, medo noturno/fuga e bandagens para alguns humanoides. Sede vermelha, morcego ampliado, sangue destacado no Twilight, HUD de skills reposicionada, grama amassada enquanto ocupada e ondas de água mais longas. Acrescenta Fresh Animations: Player Extension oficial como pacote separado. [Detalhes e limites](docs/CORRECOES_043.md).
 
 ## Controles
 

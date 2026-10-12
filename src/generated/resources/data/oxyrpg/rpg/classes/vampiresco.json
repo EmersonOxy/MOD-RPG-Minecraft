@@ -20,7 +20,7 @@
     {
       "id": 2,
       "title": "Paladar aguçado",
-      "description": "Alimentar-se de animais recupera mais sede.",
+      "description": "Botão direito em um alvo pacífico recupera mais sede.",
       "icon": "beef"
     },
     {

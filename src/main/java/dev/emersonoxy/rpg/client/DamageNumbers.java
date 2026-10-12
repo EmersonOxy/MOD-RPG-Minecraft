@@ -18,7 +18,7 @@ public final class DamageNumbers {
     private DamageNumbers(){}
     public static void clear(){NUMBERS.clear();hitUntil=soundAt=0;}
     public static void receive(RpgNetwork.DamageNumber value){
-        var mc=Minecraft.getInstance();if(mc.level==null||mc.player==null)return;CombatOptions.load();double now=mc.level.getGameTime();
+        var mc=Minecraft.getInstance();if(mc.level==null||mc.player==null)return;if(value.entity()==mc.player.getId())return;CombatOptions.load();double now=mc.level.getGameTime();
         if(value.color()==0){hitUntil=now+5;lastCritical=value.critical();lastBlocked=value.blocked();}
         boolean merged=false;
         if(CombatOptions.group&&!value.blocked())for(int i=NUMBERS.size()-1;i>=0;i--){var n=NUMBERS.get(i);if(n.text==null&&n.entity==value.entity()&&n.critical==value.critical()&&n.color==value.color()&&!n.blocked&&now-n.born<=4){n.damage+=value.damage();n.last=now;merged=true;break;}}
