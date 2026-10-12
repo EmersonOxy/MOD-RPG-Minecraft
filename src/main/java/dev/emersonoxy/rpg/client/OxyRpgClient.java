@@ -79,7 +79,7 @@ public final class OxyRpgClient {
         container.registerExtensionPoint(net.neoforged.neoforge.client.gui.IConfigScreenFactory.class,net.neoforged.neoforge.client.gui.ConfigurationScreen::new);
         if(Boolean.getBoolean("oxyrpg.cameraQA"))NeoForge.EVENT_BUS.addListener(CameraClientQA::tick);
         bus.addListener((net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterRenderers e)->e.registerEntityRenderer(dev.emersonoxy.rpg.VillageGuards.GUARD.get(),VillageGuardRenderer::new));
-        bus.addListener((net.neoforged.fml.event.lifecycle.FMLClientSetupEvent e)->e.enqueueWork(()->{if(net.neoforged.fml.ModList.get().isLoaded("player_animation_library"))DodgeAnimation.register();}));
+        bus.addListener((net.neoforged.fml.event.lifecycle.FMLClientSetupEvent e)->e.enqueueWork(()->{if(net.neoforged.fml.ModList.get().isLoaded("player_animation_library")){DodgeAnimation.register();if(net.neoforged.fml.ModList.get().isLoaded("entity_model_features")&&net.neoforged.fml.ModList.get().isLoaded("entity_texture_features"))EmfCombatBridge.register();}}));
         bus.addListener(OxyRpgClient::registerKeys);
         bus.addListener(OxyRpgClient::registerPayloads);
         bus.addListener(OxyRpgClient::registerHud);bus.addListener(CombatParticle::register);bus.addListener(AmbientLeaf::register);bus.addListener(WaterWake::register);bus.addListener(WaterPulse::register);

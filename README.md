@@ -1,4 +1,4 @@
-# Oxy RPG 0.47.0
+# Oxy RPG 0.48.0
 
 Mod RPG para Minecraft **1.21.10**, NeoForge **21.10.64**, JDK **21**.
 
@@ -31,6 +31,8 @@ A 0.43 muda a alimentação do Vampiresco para botão direito, inclui indicador 
 A 0.44 substitui o avatar pela forma renderizada de morcego com dimensões/câmera menores, protege a escolta, reduz a fuga dos aldeões, impede dano de queda do impulso da Fênix, cria canhão aquático em anéis e impactos de magma com cratera/contaminação. Grama usa a iluminação de blocos; HUD com ícones coloridos ao lado da hotbar. Golems recebem nível e novas criaturas/invocações têm animação de surgimento. [Detalhes e limites](docs/CORRECOES_044.md).
 
 A 0.47 faz o canhão aquático acompanhar a mira, alinha arco/tridente/besta com a câmera, corrige a seleção e registro da animação de esquiva, separa itens do criativo e acrescenta ovo de guarda. [Correções, instruções de guardas e escolha de complementos](docs/CORRECOES_047.md).
+
+A 0.48 corrige o ovo do guarda e o alinhamento das trocas, reformula missões/conversa, integra Homesteads e More Mobs como complementos e permite poses de combate/rolamento coexistirem com EMF. [Implementação, estado real das integrações e limites](docs/CORRECOES_048.md).
 
 ## Controles
 

@@ -12,7 +12,7 @@ public final class VillagerClient {
     private VillagerClient(){}
     public static RpgNetwork.VillagerDialogue data(){return dialogue;}
     public static void choose(int action,int choice){var mc=Minecraft.getInstance();if(mc.player!=null&&dialogue!=null)mc.player.connection.send(new RpgNetwork.Request(action,dialogue.entityId(),choice));}
-    public static int sideWidth(int width){return width>=416?Math.min(220,width-296):0;}
+    public static int sideWidth(int width){return width>=480?Math.min(260,width-296):0;}
     public static void receive(RpgNetwork.VillagerDialogue data){boolean same=dialogue!=null&&dialogue.entityId()==data.entityId();dialogue=data;switchingUntil=0;var mc=Minecraft.getInstance();if(same&&mc.screen instanceof MerchantScreen)return;if(same&&mc.screen instanceof VillagerDialogueScreen)return;mc.setScreen(new VillagerDialogueScreen(data));}
     public static void request(int action){var mc=Minecraft.getInstance();if(mc.player==null||dialogue==null)return;switchingUntil=mc.player.tickCount+40;mc.player.connection.send(new RpgNetwork.Request(action,dialogue.entityId()));}
     public static void close(){var mc=Minecraft.getInstance();if(mc.player!=null&&dialogue!=null)mc.player.connection.send(new RpgNetwork.Request(304,dialogue.entityId()));dialogue=null;switchingUntil=0;}

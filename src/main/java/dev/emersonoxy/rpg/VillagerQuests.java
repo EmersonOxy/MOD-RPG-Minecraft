@@ -67,7 +67,7 @@ public final class VillagerQuests {
     }
     private static void show(ServerPlayer p,Villager v){try{
         var d=ProfessionStore.get(p);boolean mine=d.quest>=0&&v.getUUID().equals(d.villager);var talk=TALKS.get(p.getUUID());int selected=talk!=null&&NpcContracts.allows(v,talk.selected())?talk.selected():offer(v,d);int id=mine?d.quest:selected;
-        var list=new com.google.gson.JsonArray();for(int choice:NpcContracts.offers(v)){var row=new com.google.gson.JsonObject();row.addProperty("id",choice);row.addProperty("title",QUESTS[choice].title());list.add(row);}
+        var list=new com.google.gson.JsonArray();for(int choice:NpcContracts.offers(v)){var row=new com.google.gson.JsonObject();row.addProperty("id",choice);row.addProperty("title",QUESTS[choice].title());row.addProperty("target",QUESTS[choice].target());row.addProperty("kind",QUESTS[choice].kind());list.add(row);}
         if(id<0){PacketDistributor.sendToPlayer(p,new RpgNetwork.VillagerDialogue(v.getId(),v.getDisplayName().getString(),"Sem contrato",NpcContracts.chat(v,0),"Este morador ainda não exerce uma profissão de oficina.","",5,!v.getOffers().isEmpty(),list.toString(),-1,NpcContracts.chat(v,talk==null?0:talk.topic())));return;}
         var q=QUESTS[id];
         int progress=mine?d.progress:0;

@@ -14,7 +14,7 @@ public final class VillageGuards {
     public static void register(net.neoforged.bus.api.IEventBus bus){TYPES.register(bus);bus.addListener(VillageGuards::attributes);net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(VillageGuards::tick);}
     private static void attributes(EntityAttributeCreationEvent e){e.put(GUARD.get(),Villager.createAttributes().add(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH,40).add(net.minecraft.world.entity.ai.attributes.Attributes.ARMOR,6).build());}
     private static void tick(EntityTickEvent.Post e){
-        if(!(e.getEntity() instanceof Villager v)||v instanceof VillageGuard||v.isBaby()||!v.isAlive()||!(v.level() instanceof ServerLevel w)||v.tickCount%200!=0||!w.isVillage(v.blockPosition()))return;
+        if(!(e.getEntity() instanceof Villager v)||v instanceof VillageGuard||v.isBaby()||!v.isAlive()||!(v.level() instanceof ServerLevel w)||v.tickCount%200!=0||!(w.isVillage(v.blockPosition())||ComplementCompat.homestead(v)))return;
         var tag=v.getPersistentData();if(w.getGameTime()<tag.getLongOr("oxy_guard_check",0))return;tag.putLong("oxy_guard_check",w.getGameTime()+1200);
         if(w.getEntitiesOfClass(VillageGuard.class,v.getBoundingBox().inflate(40)).size()>=2)return;
         var at=net.minecraft.world.entity.ai.util.DefaultRandomPos.getPos(v,6,2);if(at==null)return;

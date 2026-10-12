@@ -226,3 +226,7 @@ sourceSets.test.runtimeClasspath += sourceSets.main.compileClasspath
 
 repositories { maven { url = "https://api.modrinth.com/maven"; content { includeGroup("maven.modrinth") } } }
 dependencies { compileOnly "maven.modrinth:player-animation-library:Ciw2S8Ez" }
+dependencies {
+    compileOnly "maven.modrinth:entity-model-features:gunEHTty"
+    compileOnly "maven.modrinth:entitytexturefeatures:TodzZznO"
+}

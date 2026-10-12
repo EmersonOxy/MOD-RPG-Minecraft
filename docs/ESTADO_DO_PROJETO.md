@@ -138,3 +138,7 @@ Correções e limites registrados em CORRECOES_045.md; pesquisa de todos os link
 ## 0.47.0 — Mira, esquiva e criativo
 
 Canhão acompanha mira durante canalização; arco/tridente/flechas de besta recebem ponto validado da câmera ao disparar. Abas próprias de equipamento/consumíveis e itens externos separados do vanilla. Ovo de guarda e centro de patrulha para invocação manual. OxyRollVisuals 1.1 corrige metadados recusados no log, e PAL registrado na etapa de setup do cliente. Better Combat mantido; Epic Fight sem release oficial NeoForge 1.21.10 nas fontes consultadas. Compilação assemble concluída, sem abrir jogo ou executar testes. Detalhes: CORRECOES_047.md; instalação: INSTALACAO_047.json.
+
+## 0.48.0 — Aldeões e integrações priorizadas
+
+Prioridade escolhida: vilas/mobs. Ovo de guarda usa modelo nativo de aldeão; coordenadas de ofertas/botões/rolagem alinhadas com inventário, painel de missões/conversa reformulado e layout compacto. Homesteads original + 15 contratos e diálogos de profissão; guardas nos assentamentos. More Mobs original + exclusão de invocações/ilusões. Ponte própria EMF/PAL para poses de gameplay, indicador ∞ para recargas OFF. O mod Combat Roll completo segue ausente. Itens de pesquisa não instalados listados explicitamente em CORRECOES_048.md. Sem execução de jogo/testes; recibo em INSTALACAO_048.json.

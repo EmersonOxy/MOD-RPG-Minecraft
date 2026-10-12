@@ -3,7 +3,7 @@ package dev.emersonoxy.rpg;
 import net.neoforged.neoforge.registries.*;
 public final class RpgItems {
     private static final DeferredRegister.Items ITEMS=DeferredRegister.createItems(OxyRpg.MOD_ID);
-    public static final DeferredItem<net.minecraft.world.item.SpawnEggItem> GUARD_EGG=ITEMS.registerItem("village_guard_spawn_egg",net.minecraft.world.item.SpawnEggItem::new,p->p.spawnEgg(VillageGuards.GUARD.get()).component(net.minecraft.core.component.DataComponents.ITEM_MODEL,net.minecraft.resources.ResourceLocation.withDefaultNamespace("villager_spawn_egg")));
+    public static final DeferredItem<net.minecraft.world.item.SpawnEggItem> GUARD_EGG=ITEMS.registerItem("village_guard_spawn_egg",net.minecraft.world.item.SpawnEggItem::new,p->p.spawnEgg(VillageGuards.GUARD.get()));
     public static final DeferredItem<AnimatedSigilItem> SIGIL=ITEMS.registerItem("sigil",AnimatedSigilItem::new,properties->properties.stacksTo(1));
     public static final DeferredItem<ManaPotionItem> MANA_POTION=manaPotion("mana_potion",35);
     public static final DeferredItem<ManaPotionItem> GREATER_MANA_POTION=manaPotion("greater_mana_potion",80);

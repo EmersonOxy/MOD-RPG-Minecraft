@@ -43,7 +43,8 @@
     "MerchantLayoutMixin",
     "TerralithWorldInvoker",
     "TerralithWorldTabMixin",
-    "NativeAimInputMixin"
+    "NativeAimInputMixin",
+    "MerchantCoordinatesMixin"
   ],
   "injectors": {
     "defaultRequire": 1

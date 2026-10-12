@@ -1,0 +1,20 @@
+{
+  "homesteads": {
+    "version": "1.0.1",
+    "id": "LcoNDDYr",
+    "file": "homesteads-1.0.1-neoforge-for-1.21.10.jar",
+    "url": "https://cdn.modrinth.com/data/6ItsEKMh/versions/LcoNDDYr/homesteads-1.0.1-neoforge-for-1.21.10.jar",
+    "sha512": "b89599ca03a608ed07bb6fba0f7de362540632d10a87362ecaa65389c9e1623d5b93d1754ba83b39495ad7f8da4f586f6560a8ac0006df74c149fa0789d61831",
+    "sha256": "40bdc2776f266381b5c3f47a318be90b4ba9d35460fbcb1ad5b443a804c7dd73",
+    "mode": "original external complement; not embedded"
+  },
+  "more-mobs": {
+    "version": "1.5.11+mod",
+    "id": "edz35rwg",
+    "file": "more_mobs-v1.5.11-mc1.14-26.3.9-mod.jar",
+    "url": "https://cdn.modrinth.com/data/HJR6V0I2/versions/edz35rwg/more_mobs-v1.5.11-mc1.14-26.3.9-mod.jar",
+    "sha512": "8eac707a245ef4ec5678c4288d7eea19d0286c8ff3a2c5a08ac9ce69b3bd4c74786d0a3cf216ef9c052798ba720b0b659ac03011b0741d79d292d3a34f775247",
+    "sha256": "e8a1e0aa8b9df2ee414e0a89924e5007414861269b8ddcc816c11c4926f61de4",
+    "mode": "original external complement; not embedded"
+  }
+}

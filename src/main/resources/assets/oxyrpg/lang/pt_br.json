@@ -127,5 +127,15 @@
   "itemGroup.oxyrpg.equipment": "Oxy RPG — Equipamentos",
   "itemGroup.oxyrpg.supplies": "Oxy RPG — Consumíveis",
   "itemGroup.oxyrpg.complements": "Complementos — Itens",
-  "item.oxyrpg.village_guard_spawn_egg": "Invocar guarda da aldeia"
+  "item.oxyrpg.village_guard_spawn_egg": "Invocar guarda da aldeia",
+  "entity.minecraft.villager.homesteads.home_steader": "Mateiro",
+  "entity.minecraft.villager.homesteads.bee_keeper": "Apicultor",
+  "entity.minecraft.villager.homesteads.lumber_jack": "Lenhador",
+  "entity.minecraft.villager.homesteads.prospector": "Prospector",
+  "entity.minecraft.villager.homesteads.forager": "Coletor",
+  "block.homesteads.tanning_rack": "Cavalete de curtume",
+  "block.homesteads.honey_bottling_station": "Estação de engarrafar mel",
+  "block.homesteads.wood_work_log": "Bancada de carpintaria",
+  "block.homesteads.prospectors_bench": "Bancada do prospector",
+  "block.homesteads.forager_bench": "Bancada do coletor"
 }

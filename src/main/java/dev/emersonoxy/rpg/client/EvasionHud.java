@@ -30,6 +30,7 @@ public final class EvasionHud {
             if(filled>0){g.enableScissor(sx,y,sx+filled,y+5);g.blitSprite(RenderPipelines.GUI_TEXTURED,progress,sx,y,58,5);g.disableScissor();}
             if(fill<1)g.fill(sx+27,y+2,sx+31,y+3,0xFF758194);
         }
+        var debug=OxyRpgClient.debugState();if(debug!=null&&debug.mode()==1&&!debug.cooldowns())g.drawString(mc.font,"∞",x+187,y-2,RpgUi.GOLD);
         HudOpacity.end();
     }
 }

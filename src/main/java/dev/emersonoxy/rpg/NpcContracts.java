@@ -20,10 +20,21 @@ public final class NpcContracts {
         Map.entry("leatherworker","Uma costura boa precisa de paciência. Minha oficina cuida de cada detalhe."),
         Map.entry("mason","As casas precisam de fundações fortes antes de receberem decoração."),
         Map.entry("guard","Meu dever é proteger quem vive aqui. Patrulhamos as entradas e as estradas; você pode ajudar com os contratos de defesa."),
+        Map.entry("homesteads:bee_keeper","As abelhas conhecem cada flor daqui. Cuido das colmeias sem tirar tudo que elas precisam."),
+        Map.entry("homesteads:lumber_jack","Escolho a madeira com cuidado e replanto o que corto. O bosque também é nossa casa."),
+        Map.entry("homesteads:home_steader","Nas trilhas aproveitamos couro, fibras e pequenas reservas. Nada deve ficar para trás."),
+        Map.entry("homesteads:prospector","Veios pequenos também sustentam uma oficina. Observe a pedra antes de abrir um túnel."),
+        Map.entry("homesteads:forager","O campo oferece flores, cogumelos e ervas. Saber reconhecer cada planta evita desperdício."),
         Map.entry("none","Ainda estou procurando uma profissão. Um bloco de trabalho me ajudaria a encontrar meu lugar."),
         Map.entry("nitwit","Prefiro ouvir as histórias da praça. Nem todo mundo precisa de uma oficina."));
     private NpcContracts(){}
-    public static String role(Villager v){return v instanceof VillageGuard?"guard":BuiltInRegistries.VILLAGER_PROFESSION.getKey(v.getVillagerData().profession().value()).getPath();}
+    private static final Map<String,String[]> HOMESTEAD_CHAT=Map.of(
+        "homesteads:bee_keeper",new String[]{"Frascos, cera e flores mantêm o apiário funcionando. Veja os contratos para escolher uma entrega.","Use fumaça e deixe mel suficiente para as abelhas. Uma colmeia tranquila produz melhor."},
+        "homesteads:lumber_jack",new String[]{"Precisamos de vigas, madeira de reserva e mudas. Cada entrega tem um uso aqui no acampamento.","Replante depois de cortar e evite derrubar o bosque inteiro. A sombra protege o solo."},
+        "homesteads:home_steader",new String[]{"Couro, linha e peles ajudam a remendar as bolsas e os abrigos da trilha.","Observe o terreno antes de montar acampamento. Uma reserva pequena vale muito longe da aldeia."},
+        "homesteads:prospector",new String[]{"Estou reunindo ferro, cobre e carvão. Traga amostras separadas; cada veio merece uma avaliação.","Ilumine a descida e deixe um caminho de volta. O minério pode esperar, sua segurança não."},
+        "homesteads:forager",new String[]{"Cogumelos, flores e cana fazem falta na despensa e nas bancadas. Escolha uma coleta nos contratos.","Não leve toda a vegetação de um lugar. Deixe o campo se renovar para a próxima estação."});
+    public static String role(Villager v){if(v instanceof VillageGuard)return "guard";var id=BuiltInRegistries.VILLAGER_PROFESSION.getKey(v.getVillagerData().profession().value());return id.getNamespace().equals("minecraft")?id.getPath():id.toString();}
     public static VillagerQuests.Quest[] append(VillagerQuests.Quest[] legacy){var q=new ArrayList<>(List.of(legacy));
         add(q,"farmer","Celeiro de inverno","Minha oficina precisa de 24 unidades para celeiro de inverno.","minecraft:wheat",24,1,6,1);
         add(q,"farmer","Legumes para a feira","Minha oficina precisa de 20 unidades para legumes para a feira.","minecraft:carrot",20,1,6,1);
@@ -67,10 +78,25 @@ public final class NpcContracts {
         add(q,"guard","Saqueadores na estrada","Nossos mensageiros precisam da estrada segura. Intercepte os saqueadores.","minecraft:pillager",5,2,12,0);
         add(q,"guard","Machados no portão","Vindicadores ameaçam nossas casas. Mantenha-os longe dos moradores.","minecraft:vindicator",3,2,14,0);
         add(q,"guard","Ameaça dos pântanos","Bruxas estão preparando ataques. Proteja a aldeia.","minecraft:witch",3,2,14,0);
+        add(q,"homesteads:bee_keeper","Frascos da colheita","O mel está pronto; faltam frascos para guardá-lo.","minecraft:glass_bottle",12,1,8,1);
+        add(q,"homesteads:bee_keeper","Cera da oficina","Vamos preparar velas para as casas do assentamento.","minecraft:honeycomb",8,1,8,1);
+        add(q,"homesteads:bee_keeper","Jardim das abelhas","Novas flores perto das colmeias ajudam a próxima colheita.","minecraft:poppy",12,1,8,1);
+        add(q,"homesteads:lumber_jack","Vigas do abrigo","Precisamos de madeira firme para reforçar o abrigo.","minecraft:oak_log",24,0,8,1);
+        add(q,"homesteads:lumber_jack","Reserva de pinheiro","A oficina está sem toras de pinheiro.","minecraft:spruce_log",16,0,8,1);
+        add(q,"homesteads:lumber_jack","Replantar o bosque","Antes da próxima viagem, vamos repor as árvores.","minecraft:oak_sapling",12,1,8,1);
+        add(q,"homesteads:home_steader","Correias da trilha","As bolsas da expedição precisam de novas correias.","minecraft:leather",12,1,8,1);
+        add(q,"homesteads:home_steader","Fibras para os reparos","Vamos remendar as redes e os abrigos.","minecraft:string",16,1,8,1);
+        add(q,"homesteads:home_steader","Forro das luvas","Peles pequenas ajudam a preparar luvas para o frio.","minecraft:rabbit_hide",6,1,8,1);
+        add(q,"homesteads:prospector","Amostras de ferro","Quero separar o ferro antes de enviá-lo à forja.","minecraft:raw_iron",16,0,8,1);
+        add(q,"homesteads:prospector","Mapa dos veios de cobre","Traga amostras de cobre para avaliarmos a jazida.","minecraft:raw_copper",24,0,8,1);
+        add(q,"homesteads:prospector","Luz no acampamento","Faltam carvão e luz para a próxima descida.","minecraft:coal",24,0,8,1);
+        add(q,"homesteads:forager","Cogumelos do bosque","Vamos renovar a reserva da cozinha com cogumelos.","minecraft:brown_mushroom",12,1,8,1);
+        add(q,"homesteads:forager","Flores da estação","Quero preservar as flores mais comuns desta estação.","minecraft:dandelion",12,1,8,1);
+        add(q,"homesteads:forager","Fibras das margens","A cana das margens serve para papel e provisões.","minecraft:sugar_cane",24,1,8,1);
         return q.toArray(VillagerQuests.Quest[]::new);
     }
     private static void add(List<VillagerQuests.Quest> list,String role,String title,String text,String item,int count,int area,int reward,int kind){ROLES.put(list.size(),role);list.add(new VillagerQuests.Quest(title,text,item,count,area,reward,kind));}
     public static int[] offers(Villager v){String role=role(v);return ROLES.entrySet().stream().filter(e->e.getValue().equals(role)).mapToInt(Map.Entry::getKey).sorted().toArray();}
     public static boolean allows(Villager v,int id){return Arrays.stream(offers(v)).anyMatch(q->q==id);}
-    public static String chat(Villager v,int topic){String line=CHAT.getOrDefault(role(v),"Cada ofício tem sua importância por aqui.");return topic%3==0?line:topic%3==1?v instanceof VillageGuard?"Se ouvir o sino, procure abrigo. Eu e os outros guardas cuidaremos dos portões.":"Se precisar dos produtos da minha profissão, veja minhas trocas. Os contratos ajudam a manter a oficina funcionando.":v instanceof VillageGuard?"As marcas nas estradas avisam onde houve problemas. Traga notícias das patrulhas; queremos que todos retornem.":"É bom reconhecer quem ajuda nossa aldeia. Volte para conversar quando passar pela praça.";}
+    public static String chat(Villager v,int topic){String role=role(v);String line=CHAT.getOrDefault(role,"Cada ofício tem sua importância por aqui.");int subject=Math.floorMod(topic,3);var homestead=HOMESTEAD_CHAT.get(role);if(subject>0&&homestead!=null)return homestead[subject-1];return subject==0?line:subject==1?v instanceof VillageGuard?"Se ouvir o sino, procure abrigo. Eu e os outros guardas cuidaremos dos portões.":"Se precisar dos produtos da minha profissão, veja minhas trocas. Os contratos ajudam a manter a oficina funcionando.":v instanceof VillageGuard?"As marcas nas estradas avisam onde houve problemas. Traga notícias das patrulhas; queremos que todos retornem.":"É bom reconhecer quem ajuda nossa aldeia. Volte para conversar quando passar pela praça.";}
 }
