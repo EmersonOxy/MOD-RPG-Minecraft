@@ -5,12 +5,13 @@ import net.minecraft.client.gui.GuiGraphics;
 /** The vanilla food value remains the server resource; only its presentation changes. */
 public final class VampireHud {
     private VampireHud(){}
-    public static void receive(RpgNetwork.VampireState state){var mc=Minecraft.getInstance();if(mc.player==null||mc.level==null)return;var tag=mc.player.getPersistentData();boolean changed=dev.emersonoxy.rpg.RpgVampire.bat(mc.player)!=state.bat();tag.putBoolean("oxy_vampire_bat",state.bat());if(changed)mc.player.refreshDimensions();tag.putLong("oxy_vampire_twilight",mc.level.getGameTime()+state.twilight());}
+    public static void receive(RpgNetwork.VampireState state){var mc=Minecraft.getInstance();if(mc.player==null||mc.level==null)return;var tag=mc.player.getPersistentData();boolean changed=dev.emersonoxy.rpg.RpgVampire.bat(mc.player)!=state.bat();tag.putBoolean("oxy_vampire_bat",state.bat());if(changed)mc.player.refreshDimensions();tag.putInt("oxy_vampire_meals",state.meals());tag.putLong("oxy_vampire_twilight",mc.level.getGameTime()+state.twilight());}
     public static void prey(GuiGraphics g){
         var mc=Minecraft.getInstance();if(mc.player==null||mc.screen!=null||mc.options.hideGui||DynamicHud.mode()==DynamicHud.Mode.HIDDEN||!mc.player.getPersistentData().getBooleanOr("oxy_vampire_class",false)||dev.emersonoxy.rpg.RpgVampire.bat(mc.player)||mc.player.getFoodData().getFoodLevel()>=20||mc.player.isShiftKeyDown()||!(mc.hitResult instanceof net.minecraft.world.phys.EntityHitResult hit)||!dev.emersonoxy.rpg.RpgVampire.prey(hit.getEntity())||mc.player.distanceToSqr(hit.getEntity())>9)return;
         var projected=CameraProjection.project(hit.getEntity().getEyePosition().add(0,.35,0));if(!WorldLines.onScreen(projected))return;
         int x=(int)((projected.x+1)*g.guiWidth()/2),y=(int)((1-projected.y)*g.guiHeight()/2);
-        SkillGlyphs.draw(g,dev.emersonoxy.rpg.RpgClass.VAMPIRESCO,0,x-8,y-8,16,0xFFFF526B);
+        SkillGlyphs.fangs(g,x-8,y-8,16,0xFFFF526B);
+        if(mc.player.getPersistentData().getIntOr("oxy_vampire_meals",0)>=3)return;
         String label=mc.options.keyUse.getTranslatedKeyMessage().getString()+" · Beber sangue";
         g.pose().pushMatrix();g.pose().translate(x,y+11);g.pose().scale(.8f,.8f);g.drawString(mc.font,label,-mc.font.width(label)/2,0,0xFFFFA3AB);g.pose().popMatrix();
     }

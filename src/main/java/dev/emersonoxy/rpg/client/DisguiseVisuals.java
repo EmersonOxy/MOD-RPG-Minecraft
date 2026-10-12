@@ -31,8 +31,7 @@ public final class DisguiseVisuals {
         if(FORMS.size()>=128)FORMS.clear();
         var source=mc.level.getEntity(p.source());
         if(source instanceof Mob mob&&mob.getType()==type){
-            var data=mob.getEntityData().getNonDefaultValues();if(data!=null)model.getEntityData().assignValues(data);
-            for(var slot:EquipmentSlot.values())model.setItemSlot(slot,mob.getItemBySlot(slot).copy());
+            dev.emersonoxy.rpg.MimicAppearance.copy(mob,model);
         }
         model.setInvisible(false);model.setNoAi(true);
         FORMS.put(p.entity(),new Form(type,p.source(),mc.level.getGameTime()+Math.clamp(p.ticks(),1,12000),model));

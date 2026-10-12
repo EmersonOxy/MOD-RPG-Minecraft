@@ -48,6 +48,7 @@ public final class ClassCastEffects {
             if(!CombatOptions.effects||entity.distanceToSqr(mc.player)>32*32||age%2!=0||budget<2)continue;
             // Respect the native particle preference. No particles are sent every tick by the server.
             if(mc.options.particles().get()==net.minecraft.server.level.ParticleStatus.MINIMAL||mc.options.particles().get()==net.minecraft.server.level.ParticleStatus.DECREASED&&age%4!=0)continue;
+            if(c.kind()==RpgClass.MAGO.ordinal()&&c.slot()==1||c.kind()==RpgClass.HIDROMANTE.ordinal()&&c.slot()==1)continue;
             for(int i=0;i<2;i++){double angle=age*.32+i*Math.PI;double r=c.kind()==6?1.1:.65;
                 var at=entity.position().add(Math.cos(angle)*r,.6+Math.sin(age*.2)*.25,Math.sin(angle)*r);
                 mc.level.addParticle(DUST[c.kind()],at.x,at.y,at.z,0,.025,0);budget--;

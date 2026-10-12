@@ -49,7 +49,7 @@ public final class RpgAbilities {
     private RpgAbilities() {}
     private static long now(ServerPlayer p) { return p.level().getGameTime(); }
     private static Active active(ServerPlayer p) { return ACTIVE.computeIfAbsent(p.getUUID(), id -> new Active()); }
-    public static void updateProfile(ServerPlayer p, RpgProfile profile) { PROFILES.put(p.getUUID(), profile); }
+    public static void updateProfile(ServerPlayer p, RpgProfile profile) { if(profile(p).rpgClass()==RpgClass.VAMPIRESCO&&profile.rpgClass()!=RpgClass.VAMPIRESCO)VampireHunt.changedClass(p);if(profile(p).rpgClass()!=profile.rpgClass())clear(p);PROFILES.put(p.getUUID(), profile); }
     static RpgProfile profile(ServerPlayer p) { return PROFILES.getOrDefault(p.getUUID(), RpgProfile.NEW); }
     public static boolean attackable(LivingEntity e) { return e instanceof Mob && e.isAlive()&&!RpgNecromancer.isSummon(e)&&!RpgSpecialists.temporary(e)&&!RpgVampire.proxy(e); }
     private static boolean enemy(LivingEntity e){return attackable(e);}
@@ -63,6 +63,7 @@ public final class RpgAbilities {
     }
     public static void activate(ServerPlayer p, RpgProfile s, int slot, int direction) {
         if(s.rpgClass()==RpgClass.AVIARIO){RpgAviary.activate(p,s,slot);return;}
+        if(AdvancedClasses.handles(s.rpgClass())){AdvancedClasses.activate(p,s,slot);return;}
         if(s.rpgClass()==RpgClass.VAMPIRESCO){RpgVampire.activate(p,s,slot);return;}
         if(RpgSpecialists.handles(s.rpgClass())){RpgSpecialists.activate(p,s,slot);return;}
         Active a = active(p);
@@ -113,7 +114,7 @@ public final class RpgAbilities {
                 }
             }
             case ARQUEIRO -> {
-                if(slot == 0) launch(p,s,2,new ItemStack(Items.SPECTRAL_ARROW),3.3f);
+                if(slot == 0) launch(p,s,4,new ItemStack(Items.IRON_SWORD),3.3f);
                 else if(slot == 1) {
                     startGhost(p,a,s.abilityDuration(1));
                     smoke(p,s); sound(p,SoundEvents.ILLUSIONER_MIRROR_MOVE,.8f);
@@ -144,6 +145,7 @@ public final class RpgAbilities {
         sound(p,type==2?SoundEvents.ARROW_SHOOT:SoundEvents.EVOKER_CAST_SPELL,1);
     }
     private static void dash(ServerPlayer p,RpgProfile s,int direction) {
+        RpgEvasion.cancelMotion(p);
         Vec3 dir = p.getLookAngle().multiply(1,0,1).normalize().yRot((float)(-Math.floorMod(direction,8)*Math.PI/4));
         if(dir.lengthSqr()<.01) dir = new Vec3(0,0,1).yRot((float)Math.toRadians(-p.getYRot()));
         double distance = s.mainUnlocked(2)?5+(s.hasSkill(18)?1:0):2;
@@ -165,10 +167,9 @@ public final class RpgAbilities {
         double range=6+(s.hasSkill(11)?1:0)+(s.hasSkill(13)?1:0);
         Vec3 end=level.clip(new ClipContext(start,start.add(dir.scale(range)),ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,p)).getLocation();
         double length=start.distanceTo(end);
-        var side=dir.cross(Math.abs(dir.y)>.9?new Vec3(1,0,0):new Vec3(0,1,0)).normalize();var up=side.cross(dir).normalize();
-        for(double d=.45;d<length;d+=1.05){
+        for(double d=.65;d<length;d+=1.15){
             var at=start.add(dir.scale(d));level.sendParticles(RpgParticles.FIRE_PULSE.get(),at.x,at.y,at.z,0,dir.x,dir.y,dir.z,1);
-            for(int i=0;i<4;i++){double angle=i*Math.PI/2+p.tickCount*.18+d;var flame=at.add(side.scale(Math.cos(angle)*.55)).add(up.scale(Math.sin(angle)*.55));level.sendParticles(ParticleTypes.FLAME,flame.x,flame.y,flame.z,1,.025,.025,.025,.01);}
+            level.sendParticles(ParticleTypes.SMALL_FLAME,at.x,at.y,at.z,1,.18,.18,.18,.005);
         }
         if(p.tickCount%20==0)sound(p,SoundEvents.FIRE_AMBIENT,.45f);
         if(!damage)return;
@@ -285,15 +286,15 @@ public final class RpgAbilities {
                 else if(p.tickCount%10==0){if(a.until[2]>time)quake(p,a,false);else if(a.replicas>0){quake(p,a,true);a.replicas--;}else{clearCracks(p,a);a.quakeOrigin=null;}}
             }
         }
-        if(s.rpgClass()==RpgClass.ARQUEIRO&&s.hasSkill(8)) {
+        if(s.rpgClass()==RpgClass.ARQUEIRO_NOVO&&s.hasSkill(7)) {
             if(p.isShiftKeyDown()&&!a.ghost){if(++a.crouchTicks>=40){a.cast[1]=s;startGhost(p,a,40);a.crouchTicks=0;}}
             else if(!p.isShiftKeyDown())a.crouchTicks=0;
         }
         if(a.ghost) {
-            var sCast=a.cast[1];boolean full=sCast!=null&&sCast.mainUnlocked(1);
+            var sCast=a.cast[1];boolean full=sCast!=null&&sCast.rpgClass()==RpgClass.ARQUEIRO&&sCast.mainUnlocked(1);
             for(var mob:((ServerLevel)p.level()).getEntitiesOfClass(Mob.class,p.getBoundingBox().inflate(32),e->e instanceof Enemy))
                 if(mob.getTarget()==p&&(full||p.distanceToSqr(mob)>16))mob.setTarget(null);
-            if(sCast!=null&&sCast.mainUnlocked(1)&&p.tickCount%10==0&&a.until[1]-time>(sCast!=null?sCast.abilityDuration(1)-40:0)&&sCast!=null)smoke(p,sCast);
+            if(sCast!=null&&sCast.rpgClass()==RpgClass.ARQUEIRO&&sCast.mainUnlocked(1)&&p.tickCount%10==0&&a.until[1]-time>(sCast!=null?sCast.abilityDuration(1)-40:0)&&sCast!=null)smoke(p,sCast);
         }
     }
     private static void modifier(ServerPlayer p,net.minecraft.core.Holder<Attribute> attribute,String name,double amount,AttributeModifier.Operation operation) {
@@ -302,8 +303,8 @@ public final class RpgAbilities {
     }
     private static void stats(ServerPlayer p,RpgProfile s,Active a) {
         modifier(p,Attributes.MAX_HEALTH,"vitality",s.rpgClass()==RpgClass.GUERREIRO&&s.hasSkill(7)?2:0,AttributeModifier.Operation.ADD_VALUE);
-        modifier(p,Attributes.KNOCKBACK_RESISTANCE,"stance",s.hasSkill(14)&&s.rpgClass()!=RpgClass.ARQUEIRO?.1:0,AttributeModifier.Operation.ADD_VALUE);
-        double speed=s.rpgClass()==RpgClass.ARQUEIRO&&s.hasSkill(14)?.03:0;
+        modifier(p,Attributes.KNOCKBACK_RESISTANCE,"stance",s.hasSkill(14)&&s.rpgClass()!=RpgClass.ARQUEIRO&&s.rpgClass()!=RpgClass.ARQUEIRO_NOVO&&s.rpgClass()!=RpgClass.DEUS_TROVAO?.1:0,AttributeModifier.Operation.ADD_VALUE);
+        double speed=(s.rpgClass()==RpgClass.ARQUEIRO||s.rpgClass()==RpgClass.ARQUEIRO_NOVO)&&s.hasSkill(14)?.03:0;
         if(s.rpgClass()==RpgClass.GUERREIRO&&a!=null&&a.until[2]>now(p)&&a.cast[2]!=null&&a.cast[2].hasSkill(19))speed+=.03;
         modifier(p,Attributes.MOVEMENT_SPEED,"agility",speed,AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
         if(p.getHealth()>p.getMaxHealth())p.setHealth(p.getMaxHealth());
@@ -314,10 +315,10 @@ public final class RpgAbilities {
             if(s.rpgClass()==RpgClass.MAGO&&s.hasSkill(0)&&event.getSource().is(DamageTypes.FREEZE))event.setNewDamage(event.getNewDamage()*.9f);}
         if(!attackable(event.getEntity())||!(event.getSource().getEntity() instanceof ServerPlayer p))return;
         var s=profile(p);var a=ACTIVE.get(p.getUUID());float factor=event.getSource().getDirectEntity() instanceof Projectile projectile ? projectile.getPersistentData().getFloatOr("oxy_bonus",1) : 1;boolean arrow=event.getSource().getDirectEntity() instanceof AbstractArrow;
-        boolean melee=event.getSource().getDirectEntity()==p;boolean magic=event.getSource().is(DamageTypes.INDIRECT_MAGIC)||event.getSource().is(DamageTypes.MAGIC);
+        boolean dagger=event.getSource().getDirectEntity() instanceof Projectile shot&&shot.getPersistentData().getIntOr("oxy_type",0)==4;boolean melee=event.getSource().getDirectEntity()==p;boolean magic=event.getSource().is(DamageTypes.INDIRECT_MAGIC)||event.getSource().is(DamageTypes.MAGIC);
         if(s.rpgClass()==RpgClass.GUERREIRO&&melee){if(s.hasSkill(0))factor*=1.05f;if(a!=null&&a.impetus>now(p))factor*=1.05f;}
         if(s.rpgClass()==RpgClass.MAGO&&magic){if(s.hasSkill(7))factor*=1.05f;if(s.hasSkill(0)&&FROST.containsKey(event.getEntity().getUUID()))factor*=1.1f;}
-        if(s.rpgClass()==RpgClass.ARQUEIRO){if(arrow&&s.hasSkill(0))factor*=1.05f;if(a!=null&&a.until[2]>now(p)&&a.cast[2]!=null&&a.cast[2].mainUnlocked(2)&&(melee||arrow))factor*=1.3f+.7f*s.level()/100f+(a.cast[2].hasSkill(19)?.2f*s.level()/100f:0);
+        if(s.rpgClass()==RpgClass.ARQUEIRO){if(melee&&s.hasSkill(0))factor*=1.05f;if(a!=null&&a.until[2]>now(p)&&a.cast[2]!=null&&a.cast[2].mainUnlocked(2)&&(melee||arrow||dagger))factor*=1.3f+.7f*s.level()/100f+(a.cast[2].hasSkill(19)?.2f*s.level()/100f:0);
             if(a!=null&&a.ghost&&s.hasSkill(13))factor*=1.25f+.5f*s.level()/100f;}
         event.setNewDamage(event.getNewDamage()*factor);
     }
@@ -340,7 +341,7 @@ public final class RpgAbilities {
                 if(s.hasSkill(8)&&time>=a.passiveFire){target.igniteForSeconds(s.hasSkill(9)?2:1);a.passiveFire=time+60;}
                 if(s.hasSkill(15))for(var e:near((ServerLevel)p.level(),target.position(),s.hasSkill(16)?2:1.5))if(p.hasLineOfSight(e))e.addEffect(new MobEffectInstance(MobEffects.SLOWNESS,20,0));
             }
-            if(s.rpgClass()==RpgClass.ARQUEIRO) {
+            if(s.rpgClass()==RpgClass.ARQUEIRO||s.rpgClass()==RpgClass.ARQUEIRO_NOVO) {
                 if(source.getDirectEntity() instanceof AbstractArrow&&s.hasSkill(1))target.addEffect(new MobEffectInstance(MobEffects.GLOWING,s.hasSkill(2)?60:40,0));
 
                 if(a.ghost){ClassJourney.advance(p,1,1);stopGhost(p,a);}
@@ -359,8 +360,8 @@ public final class RpgAbilities {
     public static void targeting(LivingChangeTargetEvent event) {
         if(!(event.getNewAboutToBeSetTarget() instanceof ServerPlayer p)||!(event.getEntity() instanceof Enemy))return;
         var s=profile(p);var a=ACTIVE.get(p.getUUID());boolean ghost=a!=null&&a.ghost&&a.until[1]>now(p);
-        if(ghost&&(a.cast[1]!=null&&a.cast[1].mainUnlocked(1)||p.distanceToSqr(event.getEntity())>16))event.setNewAboutToBeSetTarget(null);
-        else if(s.rpgClass()==RpgClass.ARQUEIRO&&s.hasSkill(7)&&event.getEntity() instanceof Mob mob){double range=mob.getAttributeValue(Attributes.FOLLOW_RANGE)*(s.hasSkill(9)?.85:.9);if(p.distanceToSqr(mob)>range*range)event.setNewAboutToBeSetTarget(null);}
+        if(ghost&&(a.cast[1]!=null&&a.cast[1].rpgClass()==RpgClass.ARQUEIRO&&a.cast[1].mainUnlocked(1)||p.distanceToSqr(event.getEntity())>16))event.setNewAboutToBeSetTarget(null);
+        else if((s.rpgClass()==RpgClass.ARQUEIRO||s.rpgClass()==RpgClass.ARQUEIRO_NOVO)&&s.hasSkill(7)&&event.getEntity() instanceof Mob mob){double range=mob.getAttributeValue(Attributes.FOLLOW_RANGE)*(s.rpgClass()==RpgClass.ARQUEIRO&&s.hasSkill(9)?.85:.9);if(p.distanceToSqr(mob)>range*range)event.setNewAboutToBeSetTarget(null);}
     }
     public static void onImpact(ProjectileImpactEvent event) {
         var shot=event.getProjectile();if(!(shot.level() instanceof ServerLevel level)||event.isCanceled())return;
@@ -390,10 +391,10 @@ public final class RpgAbilities {
                 }
                 level.sendParticles(ParticleTypes.SNOWFLAKE,pos.x,pos.y,pos.z,30,radius,.4,radius,.06);
             } else if(type==3&&direct!=null&&enemy(direct)){direct.hurtServer(level,p.damageSources().indirectMagic(shot,p),3*bonus);direct.igniteForSeconds(s.hasSkill(9)?2:1);}
-            else if(type==2&&direct!=null&&enemy(direct)) {
+            else if((type==2||type==4)&&direct!=null&&enemy(direct)) {
                 String key="hit_"+direct.getUUID();if(!tag.getBooleanOr(key,false)) {
                     tag.putBoolean(key,true);int hits=tag.getIntOr("oxy_hits",0)+1;tag.putInt("oxy_hits",hits);
-                    direct.hurtServer(level,p.damageSources().arrow((AbstractArrow)shot,p),s.abilityDamage()*(s.hasSkill(6)?1.25f:1));
+                    direct.hurtServer(level,type==4?p.damageSources().thrown(shot,p):p.damageSources().arrow((AbstractArrow)shot,p),s.abilityDamage()*(s.hasSkill(6)?1.25f:1));
                     direct.addEffect(new MobEffectInstance(MobEffects.GLOWING,s.abilityDuration(0),0));
                     if(s.mainUnlocked(0))direct.addEffect(new MobEffectInstance(MobEffects.SLOWNESS,s.hasSkill(6)?120:80,0));
                 }
@@ -417,6 +418,7 @@ public final class RpgAbilities {
         syncStatus(p);
     }
     public static void syncStatus(ServerPlayer p) {
+        if(AdvancedClasses.handles(profile(p).rpgClass())){AdvancedClasses.sync(p);return;}
         if(profile(p).rpgClass()==RpgClass.VAMPIRESCO){RpgVampire.syncStatus(p);return;}
         var a=ACTIVE.get(p.getUUID());int[] remaining=new int[3],total=new int[3],phase=new int[3];
         if(a!=null)for(int i=0;i<3;i++){remaining[i]=(int)Math.max(0,a.until[i]-now(p));total[i]=Math.max(1,a.total[i]);phase[i]=remaining[i]>0?a.phase[i]:0;}
@@ -427,7 +429,7 @@ public final class RpgAbilities {
         PacketDistributor.sendToPlayer(p,new RpgNetwork.AbilityStatus(remaining[0],remaining[1],remaining[2],total[0],total[1],total[2],phase[0],phase[1],phase[2]));
     }
     public static void cleanse(LivingEntity e){FROST.remove(e.getUUID());e.setTicksFrozen(0);RpgNecromancer.cleanse(e);}
-    public static void clear(ServerPlayer p){RpgVampire.clear(p);RpgSpecialists.clear(p);RpgAviary.clear(p);RpgShaman.clear(p);RpgNecromancer.clear(p);var a=ACTIVE.remove(p.getUUID());if(a!=null){stopGhost(p,a);clearCracks(p,a);}stats(p,RpgProfile.NEW,null);}
+    public static void clear(ServerPlayer p){AdvancedClasses.clear(p);RpgVampire.clear(p);RpgSpecialists.clear(p);RpgAviary.clear(p);RpgShaman.clear(p);RpgNecromancer.clear(p);var a=ACTIVE.remove(p.getUUID());if(a!=null){stopGhost(p,a);clearCracks(p,a);}stats(p,RpgProfile.NEW,null);}
     public static void logout(PlayerEvent.PlayerLoggedOutEvent e){if(e.getEntity() instanceof ServerPlayer p){clear(p);PROFILES.remove(p.getUUID());FROST.entrySet().removeIf(x->x.getValue().owner.equals(p.getUUID()));}}
     public static void stop(ServerStoppedEvent e){ACTIVE.clear();PROFILES.clear();FROST.clear();}
 }

@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 /** Stable player orientation, with a projected reticle instead of frame-dependent toe-in. */
 public final class ShoulderCamera {
     public record Pose(Vec3 position,float yaw,float pitch,float roll,boolean detached){}
-    private static boolean loaded,enabled=true,left,rendered,bodyVisible,independentMovement;
+    private static boolean loaded,enabled=true,left,rendered,bodyVisible,independentMovement,nativeFlight;
     private static int intensity=1;
     private static double distance=2.8,height=.18,lateral=.65;
     private static Entity tracked;
@@ -66,12 +66,13 @@ public final class ShoulderCamera {
     public static void cycle(){load();intensity=(intensity+1)%3;save();}
     public static boolean active(){return rendered&&tracked==Minecraft.getInstance().player;}
     public static boolean hideHands(){var mc=Minecraft.getInstance();return active()&&mc.options.getCameraType().isFirstPerson()&&mc.player!=null&&mc.gameRenderer.getMainCamera().getPosition().distanceToSqr(mc.player.getEyePosition(mc.gameRenderer.getMainCamera().getPartialTickTime()))>.0625;}
-    public static void reset(){tracked=null;mode=null;lastFrame=0;depth=side=up=amplitude=orientation=0;rendered=bodyVisible=false;collision.reset();}
+    public static void reset(){tracked=null;mode=null;lastFrame=0;depth=side=up=amplitude=orientation=0;rendered=bodyVisible=nativeFlight=false;collision.reset();}
     public static Pose pose(Entity entity,boolean detached,boolean reverse,float partial){
         var mc=Minecraft.getInstance();load();
-        if(BarrelRollCompat.active()){reset();return null;}
+        if(BarrelRollCompat.active()){nativeFlight=true;rendered=false;return null;}
         if(entity!=mc.player||mc.player==null||mc.level==null||mc.player.isSleeping()||mc.player.isPassenger()){reset();return null;}
         var next=mc.options.getCameraType();
+        if(nativeFlight){reset();nativeFlight=false;tracked=entity;mode=next;depth=next.isFirstPerson()?0:next.isMirrored()?-4:4;orientation=next.isMirrored()?180:0;}
         if(tracked!=entity){reset();tracked=entity;mode=next;if(next==CameraType.THIRD_PERSON_FRONT){depth=-4;orientation=180;}}
         long now=System.nanoTime();double dt=lastFrame==0?0:Math.min(.05,(now-lastFrame)/1e9);lastFrame=now;if(mc.isPaused())dt=0;
         if(mode!=next){mode=next;collision.reset();}
@@ -97,7 +98,8 @@ public final class ShoulderCamera {
             pitch=(float)-Math.toDegrees(Math.atan2(forward.y,forward.horizontalDistance()));
         }
         double yawRad=Math.toRadians(yaw);var right=new Vec3(-Math.cos(yawRad),0,-Math.sin(yawRad));
-        var eye=entity.getEyePosition(partial);double scale=player.getScale();
+        var eyeState=(dev.emersonoxy.rpg.mixin.CameraEyeAccessor)mc.gameRenderer.getMainCamera();
+        var eye=entity.getPosition(partial).add(0,net.minecraft.util.Mth.lerp(partial,eyeState.oxyOldEyeHeight(),eyeState.oxyEyeHeight()),0);double scale=player.getScale();
         var delta=forward.scale(-depth*scale).add(right.scale((side+swayX)*scale)).add(0,(up+swayY)*scale,0);
         var position=eye.add(delta.scale(collision.update(clip(entity,eye,delta),dt)));
         if(lockedDirection!=null&&!next.isMirrored()){

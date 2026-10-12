@@ -124,7 +124,7 @@ public final class Professions {
     public static void tick(EntityTickEvent.Post event){
         if(!(event.getEntity() instanceof ServerPlayer p)||p.tickCount%20!=0)return;
         refreshModifiers(p);
-        if(ClassRules.selected(p)==RpgClass.ARQUEIRO&&p.getMainHandItem().is(Items.SHIELD))returnEquipment(p,EquipmentSlot.MAINHAND,"Arqueiros não equipam escudos.");
+        if(ClassRules.selected(p)==RpgClass.ARQUEIRO_NOVO&&p.getMainHandItem().is(Items.SHIELD))returnEquipment(p,EquipmentSlot.MAINHAND,"Arqueiros não equipam escudos.");
         for(var slot:new EquipmentSlot[]{EquipmentSlot.HEAD,EquipmentSlot.CHEST,EquipmentSlot.LEGS,EquipmentSlot.FEET,EquipmentSlot.OFFHAND}){
             var stack=p.getItemBySlot(slot);String reason=ClassRules.denial(p,stack);if(reason.isEmpty())reason=denial(p,stack,true);
             if(!EquipmentAccess.allowed(p,stack)){
@@ -140,13 +140,13 @@ public final class Professions {
         modifier(p,Attributes.ATTACK_DAMAGE,"profession_arsenal",level(p,2)==20?.05:0,AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
         if(p.getHealth()>p.getMaxHealth())p.setHealth(p.getMaxHealth());
     }
-    private static void returnEquipment(ServerPlayer p,EquipmentSlot slot,String reason){
+    public static void returnEquipment(ServerPlayer p,EquipmentSlot slot,String reason){
         // Move the original stack exactly once into a specific empty main-inventory slot.
         // Inventory.add can route back into offhand and discards overflow in creative mode.
         var stack=p.getItemBySlot(slot);if(stack.isEmpty())return;
         int destination=-1;
         for(int i=0;i<36;i++){
-            if(stack.is(Items.SHIELD)&&ClassRules.selected(p)==RpgClass.ARQUEIRO&&i==p.getInventory().getSelectedSlot())continue;
+            if(stack.is(Items.SHIELD)&&ClassRules.selected(p)==RpgClass.ARQUEIRO_NOVO&&i==p.getInventory().getSelectedSlot())continue;
             if(p.getInventory().getItem(i).isEmpty()){destination=i;break;}
         }
         if(destination<0){notify(p,reason+" Libere espaço no inventário para retirar o equipamento; o item foi preservado.");return;}

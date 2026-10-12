@@ -16,8 +16,8 @@ public final class TargetLock {
     private static double firstPersonYaw,firstPersonPitch;
     private TargetLock(){}
     public static Mob target(){return target;}
-    public static void clear(){target=null;firstPersonTarget=null;firstPersonFrame=0;}
-    public static boolean mouseLocked(){var mc=Minecraft.getInstance();return !BarrelRollCompat.active()&&target!=null&&mc.screen==null&&valid(target);}
+    public static void clear(){var mc=Minecraft.getInstance();if(target!=null&&mc.player!=null&&mc.level!=null&&dev.emersonoxy.rpg.EquipmentAccess.clientSelected()==dev.emersonoxy.rpg.RpgClass.AVIARIO)mc.player.connection.send(new dev.emersonoxy.rpg.RpgNetwork.Request(19,0,-1,0,0,0));if(mc.player!=null&&mc.level!=null&&dev.emersonoxy.rpg.EquipmentAccess.clientSelected()==dev.emersonoxy.rpg.RpgClass.ARQUEIRO_NOVO)mc.player.connection.send(new dev.emersonoxy.rpg.RpgNetwork.Request(20,0,-1,0,0,0));target=null;firstPersonTarget=null;firstPersonFrame=0;}
+    public static boolean mouseLocked(){var mc=Minecraft.getInstance();return !BarrelRollCompat.active()&&target!=null&&!dev.emersonoxy.rpg.AviaryCarry.holding(mc.player,target)&&mc.screen==null&&valid(target);}
     private static boolean valid(Mob mob){
         var mc=Minecraft.getInstance();var p=mc.player;
         return p!=null&&mc.level!=null&&mob.level()==mc.level&&mob.isAlive()&&!mob.isRemoved()&&!mob.isInvisible()
@@ -62,7 +62,9 @@ public final class TargetLock {
     public static void tick(){
         var mc=Minecraft.getInstance();if(target==null)return;
         if(!valid(target)||mc.player.isSleeping()||mc.player.isPassenger()||mc.options.getCameraType().isMirrored()){clear();return;}
-        if(mc.screen!=null||mc.isPaused()||BarrelRollCompat.active())return;var p=mc.player;var look=point(target,1).subtract(p.getEyePosition());
+        if(mc.player.tickCount%5==0&&dev.emersonoxy.rpg.EquipmentAccess.clientSelected()==dev.emersonoxy.rpg.RpgClass.AVIARIO)mc.player.connection.send(new dev.emersonoxy.rpg.RpgNetwork.Request(19,0,target.getId(),0,0,0));
+        if(mc.player.tickCount%5==0&&dev.emersonoxy.rpg.EquipmentAccess.clientSelected()==dev.emersonoxy.rpg.RpgClass.ARQUEIRO_NOVO)mc.player.connection.send(new dev.emersonoxy.rpg.RpgNetwork.Request(20,0,target.getId(),0,0,0));
+        if(mc.screen!=null||mc.isPaused()||BarrelRollCompat.active()||dev.emersonoxy.rpg.AviaryCarry.holding(mc.player,target))return;var p=mc.player;var look=point(target,1).subtract(p.getEyePosition());
         float yaw=(float)Math.toDegrees(Math.atan2(-look.x,look.z)),pitch=(float)-Math.toDegrees(Math.atan2(look.y,look.horizontalDistance()));
         p.setYRot(p.getYRot()+Mth.wrapDegrees(yaw-p.getYRot()));p.setXRot(Mth.clamp(pitch,-89,89));
     }

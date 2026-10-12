@@ -68,6 +68,8 @@ public record RpgProfile(RpgClass rpgClass, int level, int xp, int kills, long a
             case ARQUEIRO -> slot == 0 ? (mainUnlocked(0) ? 200 : 40) + (hasSkill(2) && !mainUnlocked(0) ? 20 : 0) + (hasSkill(5) ? 40 : 0)
                 : slot == 1 ? (mainUnlocked(1) ? 200 : 60) + (hasSkill(11) ? 40 : 0)
                 : mainUnlocked(2) ? 160 : 60;
+            case ARQUEIRO_NOVO -> slot==0?40:slot==1?100:(mainUnlocked(2)?200:80)+(hasSkill(18)?40:0)+(hasSkill(16)?20:0);
+            case DEUS_TROVAO -> slot==0?20:slot==1?(mainUnlocked(1)?80:40)+(hasSkill(12)?40:0):(mainUnlocked(2)?160:60)+(hasSkill(18)?40:0)+(hasSkill(16)?20:0);
             case NECROMANTE -> slot==0?80:slot==1?(mainUnlocked(1)?600:300):240;
             case AVIARIO -> slot==0?(mainUnlocked(0)?300:160)+(hasSkill(2)?40:0)+(hasSkill(4)?80:0)+(hasSkill(6)?(int)(240*level/100.0):0):slot==1?0:600;
             case ILUSIONISTA -> slot==0?(mainUnlocked(0)?240:120):slot==1?(mainUnlocked(1)?100:60):(mainUnlocked(2)?120:60)+(hasSkill(18)?40:0);

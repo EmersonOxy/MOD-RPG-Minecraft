@@ -16,7 +16,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 public final class RpgEvasion {
     public static final int RECHARGE=120;
     private static final Map<UUID,Pool> POOLS=new HashMap<>(),TEST_POOLS=new HashMap<>();
-    private static final class Pool {float energy;int maximum;long last,dodge,lastUse=-100;Pool(int maximum,long now){this.maximum=maximum;energy=maximum;last=now;}}
+    private static final class Pool {float energy;int maximum;long last,dodge,lastUse=-100,motionUntil;Vec3 origin;Pool(int maximum,long now){this.maximum=maximum;energy=maximum;last=now;}}
     private RpgEvasion(){}
     public static int maximum(ServerPlayer p){int level=RpgAbilities.profile(p).level();return RpgConfig.charges(level);}
     private static Pool pool(ServerPlayer p){
@@ -28,22 +28,32 @@ public final class RpgEvasion {
         a.energy=Math.clamp(a.energy,0,max);a.last=now;return a;
     }
     private static void save(ServerPlayer p,Pool a){if(RpgDebug.enabled(p))return;p.getPersistentData().putFloat("oxy_dodge_energy",a.energy);p.getPersistentData().putLong("oxy_dodge_saved",a.last);}
+    public static void cancelMotion(ServerPlayer p){var a=pool(p);a.origin=null;a.motionUntil=0;PacketDistributor.sendToPlayer(p,new RpgNetwork.EvasionMotion(p.getX(),p.getY(),p.getZ(),0));}
     public static void refill(ServerPlayer p){var a=pool(p);a.energy=a.maximum;sync(p,a);}
     public static float currentEnergy(ServerPlayer p){return pool(p).energy;}
     public static void use(ServerPlayer p,int direction){
-        var a=pool(p);long now=p.level().getGameTime();
-        if(!p.isAlive()||p.isSpectator()||p.isPassenger()||p.isSleeping()||!p.onGround()||p.isInWater()||p.isInLava()||p.isFallFlying())return;
+        var a=pool(p);long now=p.level().getGameTime();boolean free=AdvancedClasses.freeRoll(p);
+        if(!p.isAlive()||p.isSpectator()||p.isPassenger()||p.isSleeping()||!free&&!p.onGround()||p.isInWater()||p.isInLava()||!free&&p.isFallFlying())return;
         if(now-a.lastUse<8)return;
-        if(!RpgDebug.cooldownsDisabled(p)&&a.energy<.9999f){p.displayClientMessage(Component.literal("Esquiva recarregando"),true);sync(p,a);return;}
+        if(!free&&!RpgDebug.cooldownsDisabled(p)&&a.energy<.9999f){p.displayClientMessage(Component.literal("Esquiva recarregando"),true);sync(p,a);return;}
         Vec3 dir=new Vec3(0,0,1).yRot((float)Math.toRadians(-p.getYRot())).yRot((float)(-Math.floorMod(direction,8)*Math.PI/4));
         // Vanilla collision handles the movement; the dodge never teleports through blocks.
         if(!p.level().noCollision(p,p.getBoundingBox().move(dir.scale(.5))))return;
-        if(!RpgDebug.cooldownsDisabled(p))a.energy=Math.max(0,a.energy-1);a.lastUse=now;a.dodge=now+6;
+        if(!free&&!RpgDebug.cooldownsDisabled(p))a.energy=Math.max(0,a.energy-1);a.lastUse=now;a.dodge=now+6;
         PacketDistributor.sendToPlayersTrackingEntityAndSelf(p,new RpgNetwork.EntityMotion(p.getId(),6,Math.floorMod(direction,8)));
-        p.stopUsingItem();p.setDeltaMovement(dir.scale(1.25).add(0,.1,0));p.hasImpulse=true;p.hurtMarked=true;
+        a.origin=p.position();a.motionUntil=now+13;PacketDistributor.sendToPlayer(p,new RpgNetwork.EvasionMotion(p.getX(),p.getY(),p.getZ(),13));
+        p.stopUsingItem();p.setDeltaMovement(dir.scale(.95).add(0,.08,0));p.hasImpulse=true;p.hurtMarked=true;
         p.connection.send(new ClientboundSetEntityMotionPacket(p));
         ((net.minecraft.server.level.ServerLevel)p.level()).playSound(null,p.blockPosition(),net.minecraft.sounds.SoundEvents.PLAYER_ATTACK_SWEEP,net.minecraft.sounds.SoundSource.PLAYERS,.45f,1.35f);
-        save(p,a);sync(p,a);
+        if(free)ClassJourney.advance(p,2,1);save(p,a);sync(p,a);
+    }
+    public static Vec3 movement(net.minecraft.world.entity.player.Player p,Vec3 move){
+        Vec3 origin;
+        if(p instanceof ServerPlayer server){var pools=RpgDebug.enabled(server)?TEST_POOLS:POOLS;var pool=pools.get(p.getUUID());if(pool==null||pool.origin==null||p.level().getGameTime()>=pool.motionUntil)return move;origin=pool.origin;}
+        else{if(!p.isLocalPlayer())return move;var tag=p.getPersistentData();if(tag.getIntOr("oxy_dodge_motion_until",0)<=p.tickCount)return move;origin=new Vec3(tag.getDoubleOr("oxy_dodge_x",p.getX()),tag.getDoubleOr("oxy_dodge_y",p.getY()),tag.getDoubleOr("oxy_dodge_z",p.getZ()));}
+        var end=p.position().add(move).subtract(origin);double distance=end.horizontalDistance();if(distance<=3)return move;
+        var limited=origin.add(end.x*3/distance,end.y,end.z*3/distance).subtract(p.position());
+        p.setDeltaMovement(0,p.getDeltaMovement().y,0);return limited;
     }
     public static void incoming(LivingIncomingDamageEvent event){if(Bleeding.damage(event.getSource()))return;
         if(!(event.getEntity() instanceof ServerPlayer p))return;var a=pool(p);var source=event.getSource();
@@ -53,7 +63,7 @@ public final class RpgEvasion {
         event.setCanceled(true);CombatFeedback.text(p,p,"Esquivou",0x75BFFF);
     }
     public static void sync(ServerPlayer p){sync(p,pool(p));}
-    private static void sync(ServerPlayer p,Pool a){PacketDistributor.sendToPlayer(p,new RpgNetwork.EvasionState(a.maximum,RpgDebug.cooldownsDisabled(p)?a.maximum:a.energy,RpgConfig.recharge()));}
+    private static void sync(ServerPlayer p,Pool a){PacketDistributor.sendToPlayer(p,new RpgNetwork.EvasionState(a.maximum,RpgDebug.cooldownsDisabled(p)||AdvancedClasses.freeRoll(p)?a.maximum:a.energy,RpgConfig.recharge()));}
     public static void tick(PlayerTickEvent.Post event){if(event.getEntity() instanceof ServerPlayer p){var a=pool(p);if(p.tickCount%5==0)sync(p,a);if(p.tickCount%100==0)save(p,a);}}
     public static void clonePlayer(PlayerEvent.Clone event){if(event.getEntity() instanceof ServerPlayer p){POOLS.remove(p.getUUID());var old=event.getOriginal().getPersistentData();if(old.contains("oxy_dodge_energy")){p.getPersistentData().putFloat("oxy_dodge_energy",old.getFloatOr("oxy_dodge_energy",1));p.getPersistentData().putLong("oxy_dodge_saved",old.getLongOr("oxy_dodge_saved",p.level().getGameTime()));}}}
     public static void endTesting(ServerPlayer p){TEST_POOLS.remove(p.getUUID());}

@@ -60,7 +60,7 @@
   "oxyrpg.config.enemyCriticalDamage": "Mob critical multiplier",
   "item.oxyrpg.relic_guerreiro": "Relic: Guerreiro",
   "item.oxyrpg.relic_mago": "Relic: Mago",
-  "item.oxyrpg.relic_arqueiro": "Relic: Arqueiro",
+  "item.oxyrpg.relic_arqueiro": "Assassin Relic",
   "item.oxyrpg.relic_necromante": "Relic: Necromante",
   "item.oxyrpg.relic_xama": "Relic: Xama",
   "item.oxyrpg.relic_aviario": "Relic: Aviario",
@@ -127,5 +127,7 @@
   "itemGroup.oxyrpg.equipment": "Oxy RPG — Equipment",
   "itemGroup.oxyrpg.supplies": "Oxy RPG — Supplies",
   "itemGroup.oxyrpg.complements": "Complement Mods — Items",
-  "item.oxyrpg.village_guard_spawn_egg": "Village Guard Spawn Egg"
+  "item.oxyrpg.village_guard_spawn_egg": "Village Guard Spawn Egg",
+  "item.oxyrpg.relic_arqueiro_novo": "Archer Relic",
+  "item.oxyrpg.relic_deus_trovao": "Thunder God Relic"
 }

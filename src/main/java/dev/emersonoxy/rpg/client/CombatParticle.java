@@ -65,36 +65,38 @@ public final class CombatParticle extends SingleQuadParticle {
         private final Quaternionf orientation;
         private final Vec3 normal;
         private final float initialSize;
+        private final java.util.Map<BlockPos,BlockState> surfaces=new java.util.HashMap<>();
         BloodMark(ClientLevel level,BlockHitResult hit,TextureAtlasSprite sprite){
             super(level,hit.getLocation().x,hit.getLocation().y,hit.getLocation().z,sprite);
             support=hit.getBlockPos().immutable();original=level.getBlockState(support);
             var face=hit.getDirection();normal=new Vec3(face.getStepX(),face.getStepY(),face.getStepZ());
             var at=hit.getLocation().add(normal.scale(.003));setPos(at.x,at.y,at.z);xo=x;yo=y;zo=z;
             lifetime=CombatOptions.bloodMarkSeconds*20;hasPhysics=false;
-            // Keep splashes within the hit block face instead of spanning adjacent blocks.
-            var local=hit.getLocation().subtract(Vec3.atLowerCornerOf(support));double margin=1;
-            for(var axis:Direction.Axis.values())if(axis!=face.getAxis()){
-                double v=local.get(axis);margin=Math.min(margin,Math.min(v,1-v));
-            }
-            quadSize=(float)Math.max(0,Math.min(.1+random.nextDouble()*.09,margin*.65));initialSize=quadSize;
-            if(quadSize<.025)remove();setSize(quadSize*2,quadSize*2);
+            quadSize=.1f+random.nextFloat()*.09f;
             setColor(.50f,.012f,.022f);alpha=.9f;
             orientation=new Quaternionf().rotationTo(0,0,1,(float)normal.x,(float)normal.y,(float)normal.z).rotateZ(random.nextFloat()*(float)(Math.PI*2));
-            // Verify corners against the same collision surface (slabs/stairs/fences included).
-            var shape=original.getCollisionShape(level,support);
-            for(int a:new int[]{-1,1})for(int b:new int[]{-1,1}){
-                var tangent=new org.joml.Vector3f(a*quadSize,b*quadSize,0).rotate(orientation);
-                var corner=hit.getLocation().add(tangent.x,tangent.y,tangent.z);
-                var check=shape.clip(corner.add(normal.scale(.03)),corner.subtract(normal.scale(.03)),support);
-                if(check==null||check.getDirection()!=face||check.getLocation().distanceToSqr(corner)>.0001)remove();
+            // Neighboring faces may support the same splash: no margin at block seams.
+            boolean supported=false;
+            for(int attempt=0;attempt<4&&!supported;attempt++){
+                surfaces.clear();surfaces.put(support,original);supported=true;
+                for(int a:new int[]{-1,1})for(int b:new int[]{-1,1}){
+                    var tangent=new org.joml.Vector3f(a*quadSize,b*quadSize,0).rotate(orientation);
+                    var corner=hit.getLocation().add(tangent.x,tangent.y,tangent.z);
+                    var pos=BlockPos.containing(corner.subtract(normal.scale(.01)));var block=level.getBlockState(pos);
+                    var check=block.getCollisionShape(level,pos).clip(corner.add(normal.scale(.03)),corner.subtract(normal.scale(.03)),pos);
+                    if(check==null||check.getDirection()!=face||check.getLocation().distanceToSqr(corner)>.0001||!level.getFluidState(pos).isEmpty()){supported=false;break;}
+                    surfaces.put(pos.immutable(),block);
+                }
+                if(!supported)quadSize*=.65f;
             }
+            if(!supported||quadSize<.025)remove();initialSize=quadSize;setSize(quadSize*2,quadSize*2);
         }
         @Override protected Layer getLayer(){return Layer.TRANSLUCENT;}
         @Override protected int getLightColor(float partial){var p=Minecraft.getInstance().player;return p!=null&&dev.emersonoxy.rpg.RpgVampire.twilight(p)?0xF000F0:super.getLightColor(partial);}
         @Override public Optional<ParticleLimit> getParticleLimit(){return Optional.empty();}
         @Override public void tick(){
             if(!CombatOptions.blood||!CombatOptions.bloodMarks||Minecraft.getInstance().level!=level||!level.hasChunkAt(support)||age++>=lifetime){remove();return;}
-            if(age%10==0&&(level.getBlockState(support)!=original||!level.getFluidState(support).isEmpty()
+            if(age%10==0&&(surfaces.entrySet().stream().anyMatch(e->level.getBlockState(e.getKey())!=e.getValue()||!level.getFluidState(e.getKey()).isEmpty())||!level.getFluidState(support).isEmpty()
                 ||!level.getFluidState(BlockPos.containing(getPos().add(normal.scale(.05)))).isEmpty()
                 ||level.isRainingAt(BlockPos.containing(getPos()).above()))){remove();return;}
             float t=age/(float)lifetime;alpha=.9f*(1-Math.clamp((t-.75f)/.25f,0,1));

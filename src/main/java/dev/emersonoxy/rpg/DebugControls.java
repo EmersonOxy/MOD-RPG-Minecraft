@@ -25,7 +25,7 @@ public final class DebugControls {
             .then(Commands.literal("subir").then(Commands.argument("quantidade",IntegerArgumentType.integer(1,99)).executes(c->changeLevel(c.getSource().getPlayerOrException(),IntegerArgumentType.getInteger(c,"quantidade")))))
             .then(Commands.literal("descer").then(Commands.argument("quantidade",IntegerArgumentType.integer(1,99)).executes(c->changeLevel(c.getSource().getPlayerOrException(),-IntegerArgumentType.getInteger(c,"quantidade"))))));
         var classes=Commands.literal("classe");for(var type:RpgClass.values())if(type!=RpgClass.NONE)
-            classes.then(Commands.literal(type.name().toLowerCase(java.util.Locale.ROOT)).executes(c->choose(c.getSource().getPlayerOrException(),type)));
+            classes.then(Commands.literal(type.command()).executes(c->choose(c.getSource().getPlayerOrException(),type)));
         root.then(classes);
         root.then(Commands.literal("cooldowns")
             .then(Commands.literal("on").executes(c->modify(c.getSource().getPlayerOrException(),p->RpgDebug.cooldowns(p,true),false)))

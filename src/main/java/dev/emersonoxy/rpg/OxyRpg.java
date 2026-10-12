@@ -78,6 +78,7 @@ public final class OxyRpg {
         NeoForge.EVENT_BUS.addListener(EliteAbilities::tick);
         NeoForge.EVENT_BUS.addListener(EliteAbilities::projectile);
         NeoForge.EVENT_BUS.addListener(EliteAbilities::arrowEffect);
+        NeoForge.EVENT_BUS.addListener(AdvancedClasses::tick);NeoForge.EVENT_BUS.addListener(AdvancedClasses::join);NeoForge.EVENT_BUS.addListener(AdvancedClasses::impact);NeoForge.EVENT_BUS.addListener(AdvancedClasses::hit);NeoForge.EVENT_BUS.addListener(AdvancedClasses::damage);NeoForge.EVENT_BUS.addListener(AdvancedClasses::stop);
         NeoForge.EVENT_BUS.addListener(RpgSpecialists::tick);
         NeoForge.EVENT_BUS.addListener(RpgSpecialists::projectile);
         NeoForge.EVENT_BUS.addListener(FluidPockets::tick);
@@ -113,7 +114,7 @@ public final class OxyRpg {
         NeoForge.EVENT_BUS.addListener(RpgAviary::tick);
         NeoForge.EVENT_BUS.addListener(RpgAviary::fall);
         NeoForge.EVENT_BUS.addListener(RpgAviary::damage);
-        NeoForge.EVENT_BUS.addListener(RpgAviary::stop);
+        NeoForge.EVENT_BUS.addListener(RpgAviary::stop);NeoForge.EVENT_BUS.addListener(AviaryCarry::tick);NeoForge.EVENT_BUS.addListener(AviaryCarry::tracking);NeoForge.EVENT_BUS.addListener(AviaryCarry::logout);NeoForge.EVENT_BUS.addListener(AviaryCarry::stop);
         NeoForge.EVENT_BUS.addListener(MeteorCrater::tick);
         NeoForge.EVENT_BUS.addListener(MeteorCrater::stop);
         NeoForge.EVENT_BUS.addListener(MobLevels::damage);
@@ -255,7 +256,7 @@ public final class OxyRpg {
             var effective = RpgDebug.effective(player, real);
             RpgAbilities.updateProfile(player, effective);
             boolean debug=RpgDebug.cooldownsDisabled(player), extra = RpgAbilities.extraDash(player, slot)||RpgAviary.boostAvailable(player,slot)||RpgSpecialists.extra(player,slot)||RpgVampire.extra(player,slot);
-            RpgVampire.validate(player,slot);RpgSpecialists.validate(player,effective,slot);
+            AdvancedClasses.validate(player,effective,slot);RpgVampire.validate(player,slot);RpgSpecialists.validate(player,effective,slot);
             if(effective.rpgClass()==RpgClass.AVIARIO)RpgAviary.validate(player,slot);
             if (!effective.canUseAbility(slot)) { tell(player, "Aprenda o efeito inicial desse ramo na árvore de skills."); return 0; }
             if(effective.rpgClass()==RpgClass.XAMA&&slot==2&&(!player.getMainHandItem().isEmpty()||!player.getOffhandItem().isEmpty())){tell(player,"Especialista exige ambas as mãos vazias.");return 0;}
@@ -369,7 +370,7 @@ public final class OxyRpg {
         var classes = Commands.literal("classe")
             .executes(c -> action(c.getSource().getPlayerOrException(), "classes", null));
         for (RpgClass selected : RpgClass.values()) {
-            if (selected != RpgClass.NONE) classes.then(Commands.literal(selected.name().toLowerCase(java.util.Locale.ROOT))
+            if (selected != RpgClass.NONE) classes.then(Commands.literal(selected.command())
                 .executes(c -> action(c.getSource().getPlayerOrException(), "classe", selected)));
         }
         root.then(classes);

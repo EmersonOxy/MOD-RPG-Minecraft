@@ -61,6 +61,8 @@ public final class RpgResources {
             case MAGO->profile.mainUnlocked(slot)?new int[]{20,30,35}[slot]:new int[]{8,8,10}[slot];
             case GUERREIRO->slot==0&&!profile.mainUnlocked(0)?0:new int[]{12,20,25}[slot];
             case ARQUEIRO->profile.mainUnlocked(slot)?new int[]{12,20,15}[slot]:new int[]{5,8,5}[slot];
+            case ARQUEIRO_NOVO->profile.mainUnlocked(slot)?new int[]{18,28,30}[slot]:new int[]{8,12,16}[slot];
+            case DEUS_TROVAO->profile.mainUnlocked(slot)?new int[]{20,30,28}[slot]:new int[]{10,12,14}[slot];
             case NECROMANTE->profile.mainUnlocked(slot)?new int[]{20,40,35}[slot]:new int[]{10,15,15}[slot];
             case AVIARIO->slot==1?0:slot==0?20:30;
             case ILUSIONISTA->profile.mainUnlocked(slot)?new int[]{28,24,35}[slot]:new int[]{14,12,18}[slot];

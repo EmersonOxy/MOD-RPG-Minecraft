@@ -142,7 +142,7 @@
       "y": 54
     },
     {
-      "description": "área de 4 blocos por 6 s, dano periódico, Lentidão II e desgaste de até 4 blocos naturais. Recarga 40 s.",
+      "description": "área de 4 blocos por 6 s, dano periódico, Lentidão II e desgaste de até 14 blocos naturais. Recarga 40 s.",
       "icon": "deepslate",
       "id": 17,
       "title": "Tremor",
@@ -150,7 +150,7 @@
       "y": 23
     },
     {
-      "description": "Raio do Tremor +1 bloco.",
+      "description": "Raio do Tremor +1 bloco; seleciona até 22 blocos naturais.",
       "icon": "obsidian",
       "id": 18,
       "title": "Epicentro",

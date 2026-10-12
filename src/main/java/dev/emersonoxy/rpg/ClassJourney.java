@@ -18,7 +18,9 @@ public final class ClassJourney {
         return switch(c){
             case GUERREIRO->new String[]{"Acerte 3 ataques corpo a corpo em mobs.","Acerte 2 mobs no mesmo Corte Circular.","Bloqueie 3 ataques usando um escudo."}[stage];
             case MAGO->new String[]{"Acerte 3 Bolas de Gelo em mobs.","Acerte 2 mobs com o mesmo pulso de Lança-chamas.","Acerte 2 mobs com a mesma onda de Tremor."}[stage];
-            case ARQUEIRO->new String[]{"Acerte 3 Flechas Espectrais em mobs.","Acerte 3 ataques enquanto estiver invisível.","Faça 3 dashes do Assassino com deslocamento."}[stage];
+            case ARQUEIRO->new String[]{"Acerte 3 Adagas Espectrais em criaturas.","Acerte 3 ataques enquanto estiver invisível.","Faça 3 dashes do Assassino com deslocamento."}[stage];
+            case ARQUEIRO_NOVO->new String[]{"Acerte 3 flechas da rajada em criaturas.","Acerte 3 flechas da chuva em criaturas.","Faça 3 esquivas durante a Caçada."}[stage];
+            case DEUS_TROVAO->new String[]{"Realize 3 teleportes elétricos.","Acerte 3 pulsos da Corrente de Raios.","Acerte 3 choques com as mãos vazias durante Avatar."}[stage];
             case NECROMANTE->new String[]{"Acerte 3 projéteis de teia em mobs.","Seus mortos-vivos devem acertar 3 ataques.","Seus phantoms devem acertar 3 ataques."}[stage];
             case AVIARIO->new String[]{"Realize 3 decolagens.","Use a descida de Peso pena em 3 saltos.","Acerte mobs com 3 Impactos Meteoro."}[stage];
             case ILUSIONISTA->new String[]{"Use Mímico em 3 alvos.","Suspenda 3 inimigos.","Use Corpo de Eclipse 3 vezes."}[stage];
@@ -50,7 +52,7 @@ public final class ClassJourney {
         switch(RpgAbilities.profile(p).rpgClass()){
             case GUERREIRO->{if(direct==p)advance(p,0,1);}
             case MAGO->{if(type==1&&!direct.getPersistentData().getBooleanOr("oxy_lesson_counted",false)){direct.getPersistentData().putBoolean("oxy_lesson_counted",true);advance(p,0,1);}}
-            case ARQUEIRO->{if(type==2&&!direct.getPersistentData().getBooleanOr("oxy_lesson_counted",false)){direct.getPersistentData().putBoolean("oxy_lesson_counted",true);advance(p,0,1);}}
+            case ARQUEIRO->{if(type==4&&!direct.getPersistentData().getBooleanOr("oxy_lesson_counted",false)){direct.getPersistentData().putBoolean("oxy_lesson_counted",true);advance(p,0,1);}}
             case NECROMANTE->{var ally=RpgNecromancer.isSummon(direct)?direct:RpgNecromancer.isSummon(source.getEntity())?source.getEntity():null;if(ally!=null){int slot=ally.getPersistentData().getIntOr("oxy_summon_slot",0);if(slot==1||slot==2)advance(p,slot,1);}}
             case XAMA->{if(source.is(DamageTypes.LIGHTNING_BOLT))advance(p,0,1);}
             default->{}

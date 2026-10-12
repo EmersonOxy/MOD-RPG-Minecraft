@@ -40,9 +40,9 @@ public final class RpgNetwork {
         public static final StreamCodec<RegistryFriendlyByteBuf,EntityMotion> CODEC=StreamCodec.of((b,v)->{b.writeVarInt(v.entity);b.writeVarInt(v.kind);b.writeVarInt(v.ticks);},b->new EntityMotion(b.readVarInt(),b.readVarInt(),b.readVarInt()));
         @Override public Type<EntityMotion> type(){return TYPE;}
     }
-    public record VampireState(boolean bat,int twilight,int bats) implements CustomPacketPayload {
+    public record VampireState(boolean bat,int twilight,int bats,int meals) implements CustomPacketPayload {
         public static final Type<VampireState> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath("oxyrpg","vampire"));
-        public static final StreamCodec<RegistryFriendlyByteBuf,VampireState> CODEC=StreamCodec.of((b,v)->{b.writeBoolean(v.bat);b.writeVarInt(v.twilight);b.writeVarInt(v.bats);},b->new VampireState(b.readBoolean(),b.readVarInt(),b.readVarInt()));
+        public static final StreamCodec<RegistryFriendlyByteBuf,VampireState> CODEC=StreamCodec.of((b,v)->{b.writeBoolean(v.bat);b.writeVarInt(v.twilight);b.writeVarInt(v.bats);b.writeVarInt(v.meals);},b->new VampireState(b.readBoolean(),b.readVarInt(),b.readVarInt(),b.readVarInt()));
         @Override public Type<VampireState> type(){return TYPE;}
     }
     public record SpecialState(int phase,int ticks,float heat,int overheated,boolean waterwalk) implements CustomPacketPayload {
@@ -54,6 +54,16 @@ public final class RpgNetwork {
         public static final Type<ContentState> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath("oxyrpg","content"));
         public static final StreamCodec<RegistryFriendlyByteBuf,ContentState> CODEC=StreamCodec.of((b,v)->b.writeUtf(v.json,262144),b->new ContentState(b.readUtf(262144)));
         @Override public Type<ContentState> type(){return TYPE;}
+    }
+    public record CarryState(int player,int mob) implements CustomPacketPayload {
+        public static final Type<CarryState> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath("oxyrpg","carry"));
+        public static final StreamCodec<RegistryFriendlyByteBuf,CarryState> CODEC=StreamCodec.of((b,v)->{b.writeVarInt(v.player);b.writeVarInt(v.mob);},b->new CarryState(b.readVarInt(),b.readVarInt()));
+        @Override public Type<CarryState> type(){return TYPE;}
+    }
+    public record EvasionMotion(double x,double y,double z,int ticks) implements CustomPacketPayload {
+        public static final Type<EvasionMotion> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath("oxyrpg","evasion_motion"));
+        public static final StreamCodec<RegistryFriendlyByteBuf,EvasionMotion> CODEC=StreamCodec.of((b,v)->{b.writeDouble(v.x);b.writeDouble(v.y);b.writeDouble(v.z);b.writeVarInt(v.ticks);},b->new EvasionMotion(b.readDouble(),b.readDouble(),b.readDouble(),b.readVarInt()));
+        @Override public Type<EvasionMotion> type(){return TYPE;}
     }
     public record EvasionState(int maximum,float energy,int recharge) implements CustomPacketPayload {
         public static final Type<EvasionState> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath("oxyrpg","evasion"));
@@ -178,8 +188,13 @@ public final class RpgNetwork {
         public static final StreamCodec<RegistryFriendlyByteBuf,EliteInfo> CODEC=StreamCodec.of((b,v)->{b.writeVarInt(v.entityId);b.writeUtf(v.title,128);},b->new EliteInfo(b.readVarInt(),b.readUtf(128)));
         @Override public Type<EliteInfo> type(){return TYPE;}
     }
+    public record ElectricArc(double x,double y,double z,double tx,double ty,double tz) implements CustomPacketPayload {
+        public static final Type<ElectricArc> TYPE=new Type<>(ResourceLocation.fromNamespaceAndPath("oxyrpg","electric_arc"));
+        public static final StreamCodec<RegistryFriendlyByteBuf,ElectricArc> CODEC=StreamCodec.of((b,v)->{b.writeDouble(v.x);b.writeDouble(v.y);b.writeDouble(v.z);b.writeDouble(v.tx);b.writeDouble(v.ty);b.writeDouble(v.tz);},b->new ElectricArc(b.readDouble(),b.readDouble(),b.readDouble(),b.readDouble(),b.readDouble(),b.readDouble()));
+        @Override public Type<ElectricArc> type(){return TYPE;}
+    }
     public static void register(RegisterPayloadHandlersEvent event) {
-        var registrar = event.registrar("32");
+        var registrar = event.registrar("33");
         registrar.playToClient(BloodFx.TYPE,BloodFx.CODEC);
         registrar.playToClient(ImpactFx.TYPE,ImpactFx.CODEC);
         registrar.playToClient(CastFx.TYPE,CastFx.CODEC);
@@ -190,6 +205,9 @@ public final class RpgNetwork {
         registrar.playToClient(SpecialState.TYPE,SpecialState.CODEC);
         registrar.playToClient(ContentState.TYPE,ContentState.CODEC);
         registrar.playToClient(EvasionState.TYPE,EvasionState.CODEC);
+        registrar.playToClient(EvasionMotion.TYPE,EvasionMotion.CODEC);
+        registrar.playToClient(CarryState.TYPE,CarryState.CODEC);
+        registrar.playToClient(ElectricArc.TYPE,ElectricArc.CODEC);
         registrar.playToClient(CombatText.TYPE,CombatText.CODEC);
         registrar.playToClient(EliteWarning.TYPE,EliteWarning.CODEC);
         registrar.playToClient(FlightState.TYPE,FlightState.CODEC);
@@ -208,6 +226,8 @@ public final class RpgNetwork {
             if (context.player() instanceof ServerPlayer player){
                 if(request.action()==1||request.action()==5||request.action()==6||request.action()==8||request.action()==9||request.action()==16)
                     AbilityAim.cast(player,request.targetId(),new net.minecraft.world.phys.Vec3(request.aimX(),request.aimY(),request.aimZ()),()->OxyRpg.menuAction(player,request.action(),request.direction()));
+                else if(request.action()==20)AdvancedClasses.mark(player,request.targetId());
+                else if(request.action()==19)AviaryCarry.request(player,request.targetId());
                 else if(request.action()==18)AbilityAim.receive(player,new net.minecraft.world.phys.Vec3(request.aimX(),request.aimY(),request.aimZ()));
                 else if(request.action()>=300&&request.action()<=308)VillagerQuests.action(player,request.action(),request.direction(),request.targetId());
                 else OxyRpg.menuAction(player,request.action(),request.direction());

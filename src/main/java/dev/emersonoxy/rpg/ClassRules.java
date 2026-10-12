@@ -26,8 +26,9 @@ public final class ClassRules {
         if(ClassEquipment.gear(stack)&&!ClassEquipment.allowed(p,stack))return ClassEquipment.denial(p,stack);
         var c=selected(p);
         if(c==RpgClass.GUERREIRO&&ranged(stack))return "Guerreiros não usam arcos, bestas ou tridentes.";
-        if(c==RpgClass.ARQUEIRO&&stack.is(Items.SHIELD))return "Arqueiros não equipam escudos.";
+        if(c==RpgClass.ARQUEIRO_NOVO&&stack.is(Items.SHIELD))return "Arqueiros não equipam escudos.";
         if(c==RpgClass.XAMA&&meat(stack))return "Xamãs não consomem carne nem peixe.";
+        if(c==RpgClass.ARQUEIRO&&!lightArmor(stack))return "Assassinos usam apenas armaduras leves.";
         return "";
     }
     public static void use(LivingEntityUseItemEvent.Start event){
@@ -40,7 +41,9 @@ public final class ClassRules {
         String reason=denial(p,event.getItemStack());if(reason.isEmpty())reason=Professions.denial(p,event.getItemStack(),true);
         if(!reason.isEmpty()){event.setCanceled(true);event.setCancellationResult(net.minecraft.world.InteractionResult.FAIL);Professions.notify(p,reason);}
     }
+    public static boolean lightArmor(ItemStack stack){var e=stack.get(DataComponents.EQUIPPABLE);return e==null||!e.slot().isArmor()||stack.is(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM,ResourceLocation.fromNamespaceAndPath("oxyrpg","light_armor")));}
     public static void damage(LivingDamageEvent.Pre event){if(Bleeding.damage(event.getSource()))return;
+        if(event.getEntity() instanceof ServerPlayer victim&&selected(victim)==RpgClass.ARQUEIRO&&event.getSource().is(net.minecraft.tags.DamageTypeTags.IS_PROJECTILE))event.setNewDamage(event.getNewDamage()*1.25f);
         var owner=RpgNecromancer.owner(event.getSource());
         if(owner!=null&&selected(owner)==RpgClass.NECROMANTE&&!RpgNecromancer.summonKill(event.getSource(),event.getEntity(),owner))event.setNewDamage(event.getNewDamage()*.8f);
         if(event.getEntity() instanceof ServerPlayer p&&selected(p)==RpgClass.MAGO
@@ -49,16 +52,19 @@ public final class ClassRules {
     }
     public static void tick(ServerPlayer p){
         var c=selected(p);
+        if(c==RpgClass.ARQUEIRO)for(var slot:new net.minecraft.world.entity.EquipmentSlot[]{net.minecraft.world.entity.EquipmentSlot.HEAD,net.minecraft.world.entity.EquipmentSlot.CHEST,net.minecraft.world.entity.EquipmentSlot.LEGS,net.minecraft.world.entity.EquipmentSlot.FEET}){var armor=p.getItemBySlot(slot);if(!lightArmor(armor)){Professions.returnEquipment(p,slot,"Assassinos usam apenas armaduras leves.");}}
         if(c==RpgClass.GUERREIRO&&!p.isCreative()&&!p.isSpectator())p.causeFoodExhaustion(.2f);
         boolean day=c==RpgClass.NECROMANTE&&p.level().dimensionType().hasSkyLight()&&Math.floorMod(p.level().getDayTime(),24000)<12000;
         Professions.modifier(p,Attributes.MOVEMENT_SPEED,"class_day_slow",day?-.15:0,net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-        Professions.modifier(p,Attributes.MAX_HEALTH,"class_archer_health",c==RpgClass.ARQUEIRO?-4:0,net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_VALUE);
+        Professions.modifier(p,Attributes.MAX_HEALTH,"class_archer_health",c==RpgClass.ARQUEIRO_NOVO?-4:0,net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_VALUE);
         Professions.modifier(p,Attributes.MAX_HEALTH,"class_fragile",c==RpgClass.AVIARIO||c==RpgClass.ILUSIONISTA?-4:c==RpgClass.MAGO||c==RpgClass.PIROMANTE?-2:0,net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_VALUE);
         if(p.getHealth()>p.getMaxHealth())p.setHealth(p.getMaxHealth());
     }
     public static String description(RpgClass c){return switch(c){
         case GUERREIRO->"Sem armas de distância; fome adicional.";
-        case ARQUEIRO->"Sem escudos; -2 corações de vida base.";
+        case ARQUEIRO->"Somente armaduras leves; +25% dano recebido de projéteis.";
+        case ARQUEIRO_NOVO->"Sem escudos; -2 corações de vida base. Habilidades de flecha consomem munição.";
+        case DEUS_TROVAO->"Não consegue nadar; calor extremo causa superaquecimento e dano. Corrida contínua aumenta velocidade.";
         case MAGO->"-1 coração de vida base; +20% dano recebido de ataques corpo a corpo.";
         case NECROMANTE->"-20% dano próprio; -15% velocidade de dia.";
         case AVIARIO->"-2 corações de vida base; +20% dano de projéteis no ar. Voo cresce com seu nível.";

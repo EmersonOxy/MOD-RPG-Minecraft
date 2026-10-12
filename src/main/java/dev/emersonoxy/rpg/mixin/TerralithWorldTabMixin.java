@@ -11,5 +11,5 @@ abstract class TerralithWorldTabMixin extends GridLayoutTab {
     @Shadow @Final private CreateWorldScreen this$0;
     private TerralithWorldTabMixin(){super(Component.empty());}
     @Inject(method="<init>(Lnet/minecraft/client/gui/screens/worldselection/CreateWorldScreen;)V",at=@At("RETURN"))
-    private void oxyTerralith(CreateWorldScreen screen,CallbackInfo ci){layout.addChild(Button.builder(Component.literal(dev.emersonoxy.rpg.client.TerralithChoice.label(screen)),b->dev.emersonoxy.rpg.client.TerralithChoice.toggle(screen)).width(210).build(),3,0);}
+    private void oxyTerralith(CreateWorldScreen screen,CallbackInfo ci){var button=layout.addChild(Button.builder(Component.literal(dev.emersonoxy.rpg.client.TerralithChoice.label(screen)),b->dev.emersonoxy.rpg.client.TerralithChoice.toggle(screen)).width(210).build(),3,0);screen.getUiState().addListener(state->button.setMessage(Component.literal(dev.emersonoxy.rpg.client.TerralithChoice.label(screen))));}
 }

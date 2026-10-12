@@ -18,7 +18,7 @@ public abstract class AviaryFlightMixin {
     }
     @Inject(method="travel",at=@At("RETURN"))
     private void oxyFeatherEnd(net.minecraft.world.phys.Vec3 movement,CallbackInfo ci){
-        if((Object)this instanceof net.minecraft.world.entity.player.Player p&&RpgAviary.featherFalling(p))RpgAviary.featherMovement(p);
+        if((Object)this instanceof net.minecraft.world.entity.player.Player p){if(RpgAviary.featherFalling(p))RpgAviary.featherMovement(p);dev.emersonoxy.rpg.AdvancedClasses.waterMovement(p);}
     }
     // Vanilla's maintenance selects an equipped glider to damage; our flight has no such item.
     @Inject(method="updateFallFlying",at=@At("HEAD"),cancellable=true)

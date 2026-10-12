@@ -27,7 +27,9 @@ public final class SkillTreeLayouts {
             // Three curved arcs form an arcane spiral.
             case MAGO -> polar(radius,angle+offset+radius*.00125);
             // A bow fans toward the right, with arrows at its tips.
-            case ARQUEIRO -> polar(radius, (branch-1)*.85+offset);
+            case ARQUEIRO_NOVO -> polar(radius, (branch-1)*.85+offset);
+            case ARQUEIRO -> polar(radius,angle+offset+(branch==0?.35:branch==1?-.25:.2));
+            case DEUS_TROVAO -> new double[]{(branch-1)*radius*.75+Math.sin(radius/85)*55+Math.sin(offset)*radius,-radius*.8+Math.abs(offset)*radius*.4};
             // Three skeletal chains alternate between inward and outward bends.
             case NECROMANTE -> polar(radius,angle+offset+Math.sin(radius/115)*.15);
             // Roots grow into a spreading crown; each root bends independently.

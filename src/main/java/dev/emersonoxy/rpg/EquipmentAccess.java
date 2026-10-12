@@ -19,9 +19,10 @@ public final class EquipmentAccess {
     public static void resetClient(){clientClass=RpgClass.NONE;clientXp=new int[3];clientLevel=1;}
     public static boolean allowed(Player player,ItemStack stack){
         if(stack.isEmpty())return true;
-        if(ClassEquipment.gear(stack))return ClassEquipment.allowed(player,stack);
+        if(ClassEquipment.gear(stack)&&!ClassEquipment.allowed(player,stack))return false;
         RpgClass selected=player instanceof ServerPlayer p?ClassRules.selected(p):clientClass;
-        if(selected==RpgClass.ARQUEIRO&&stack.is(Items.SHIELD)||selected==RpgClass.GUERREIRO&&ClassRules.ranged(stack))return false;
+        if(selected==RpgClass.ARQUEIRO_NOVO&&stack.is(Items.SHIELD)||selected==RpgClass.GUERREIRO&&ClassRules.ranged(stack))return false;
+        if(selected==RpgClass.ARQUEIRO&&!ClassRules.lightArmor(stack))return false;
         var requirement=Professions.requirement(stack);if(requirement.area()<0)return true;
         int level=player instanceof ServerPlayer p?Professions.level(p,requirement.area()):ProfessionStore.level(clientXp[requirement.area()]);
         return level>=requirement.level();

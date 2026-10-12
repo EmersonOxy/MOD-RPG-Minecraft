@@ -25,6 +25,7 @@ public final class AbilityAim {
         if(!shot.isNoGravity()){double time=Math.min(24/speed,aim.length()/speed);aim=aim.add(0,.025*time*time,0);}
         aim=aim.normalize().yRot((float)Math.toRadians(-yawOffset));shot.shoot(aim.x,aim.y,aim.z,speed,spread);return true;
     }
+    public static Vec3 point(ServerPlayer p,double range){var hint=POINT.get();if(hint==null)hint=live(p);var end=hint!=null&&hint.distanceToSqr(p.getEyePosition())<=range*range?hint:p.getEyePosition().add(direction(p).scale(range));return p.level().clip(new ClipContext(p.getEyePosition(),end,ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,p)).getLocation();}
     public static Vec3 direction(ServerPlayer p){var point=POINT.get();if(point==null)point=live(p);return point==null?p.getLookAngle():point.subtract(p.getEyePosition()).normalize();}
     private static Vec3 validatedPoint(ServerPlayer p,Vec3 point){
         if(!Double.isFinite(point.x)||!Double.isFinite(point.y)||!Double.isFinite(point.z)||!p.isAlive()||p.isSpectator())return null;

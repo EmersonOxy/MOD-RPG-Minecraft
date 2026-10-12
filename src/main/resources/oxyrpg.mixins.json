@@ -20,7 +20,10 @@
     "VampireDimensionsMixin",
     "CompanionPushMixin",
     "NativeProjectileAimMixin",
-    "NativeCrossbowAimMixin"
+    "NativeCrossbowAimMixin",
+    "EvasionMovementMixin",
+    "AviaryCarryMixin",
+    "ThunderSwimMixin"
   ],
   "client": [
     "ShoulderCameraMixin",
@@ -45,7 +48,9 @@
     "TerralithWorldTabMixin",
     "NativeAimInputMixin",
     "MerchantCoordinatesMixin",
-    "CameraPickMixin"
+    "CameraPickMixin",
+    "MovementPauseMixin",
+    "CameraEyeAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

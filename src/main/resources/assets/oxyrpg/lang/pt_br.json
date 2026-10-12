@@ -60,7 +60,7 @@
   "oxyrpg.config.enemyCriticalDamage": "Multiplicador de crítico dos mobs",
   "item.oxyrpg.relic_guerreiro": "Relíquia: Guerreiro",
   "item.oxyrpg.relic_mago": "Relíquia: Mago",
-  "item.oxyrpg.relic_arqueiro": "Relíquia: Arqueiro",
+  "item.oxyrpg.relic_arqueiro": "Relíquia: Assassino",
   "item.oxyrpg.relic_necromante": "Relíquia: Necromante",
   "item.oxyrpg.relic_xama": "Relíquia: Xama",
   "item.oxyrpg.relic_aviario": "Relíquia: Aviario",
@@ -137,5 +137,7 @@
   "block.homesteads.honey_bottling_station": "Estação de engarrafar mel",
   "block.homesteads.wood_work_log": "Bancada de carpintaria",
   "block.homesteads.prospectors_bench": "Bancada do prospector",
-  "block.homesteads.forager_bench": "Bancada do coletor"
+  "block.homesteads.forager_bench": "Bancada do coletor",
+  "item.oxyrpg.relic_arqueiro_novo": "Relíquia: Arqueiro",
+  "item.oxyrpg.relic_deus_trovao": "Relíquia: Deus do Trovão"
 }

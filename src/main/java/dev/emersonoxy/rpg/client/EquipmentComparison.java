@@ -29,7 +29,8 @@ public final class EquipmentComparison {
         if(stack.isEmpty())return "Slot vazio.";
         if(ClassEquipment.gear(stack)){var data=ClassEquipment.identity(stack);if(!data.getStringOr("owner","").equals(p.getUUID().toString()))return "Bloqueado: pertence a outro jogador.";if(data.getIntOr("class",0)!=c.ordinal())return "Bloqueado: pertence a outra classe.";int stage=data.getIntOr("stage",1);if(stage>ClassEquipment.stage(p))return stage==2?"Requer nível RPG 20 + Arsenal 8.":"Requer nível RPG 50 + Arsenal 16.";}
         if(c==RpgClass.GUERREIRO&&ClassRules.ranged(stack))return "Bloqueado: Guerreiro não usa armas de distância.";
-        if(c==RpgClass.ARQUEIRO&&stack.is(Items.SHIELD))return "Bloqueado: Arqueiro não usa escudos.";
+        if(c==RpgClass.ARQUEIRO_NOVO&&stack.is(Items.SHIELD))return "Bloqueado: Arqueiro não usa escudos.";
+        if(c==RpgClass.ARQUEIRO&&!ClassRules.lightArmor(stack))return "Bloqueado: Assassino usa armaduras leves.";
         var r=Professions.requirement(stack);if(r.area()>=0&&EquipmentAccess.clientProfessionLevel(r.area())<r.level())return "Requer "+Professions.NAMES[r.area()]+" nível "+r.level()+".";
         return EquipmentAccess.allowed(p,stack)?"Liberado para sua classe e nível.":"Bloqueado para sua classe.";
     }

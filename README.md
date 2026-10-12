@@ -1,8 +1,10 @@
-# Oxy RPG 0.49.0
+# Oxy RPG 0.50.0
 
 Mod RPG para Minecraft **1.21.10**, NeoForge **21.10.64**, JDK **21**.
 
-Dez classes, progressão até nível 100, árvores de habilidades e atributos com zoom/arraste, trabalhos, arsenal, missões, criaturas por nível, elites, mana, esquiva e parry.
+Doze classes, progressão até nível 100, árvores de habilidades e atributos com zoom/arraste, trabalhos, arsenal, missões, criaturas por nível, elites, mana, esquiva e parry.
+
+A 0.50.0 transforma o Arqueiro antigo em **Assassino** e acrescenta um **Arqueiro** dedicado e o **Deus do Trovão**, preservando perfis existentes. Inclui transporte de criaturas pelo Aviário, pouso controlado e correções de câmera, disfarces, sangue, guardas, Terralith e Esc. [Alterações e validação pendente](docs/CORRECOES_050.md). [Catálogo das 12 classes, passivas, fraquezas e 612 nós](docs/CATALOGO_CLASSES_050.md).
 
 A 0.33.0 acrescenta mapa local de cavernas, painéis independentes da HUD, corrida em inventários/baús, tema comum para missões/trocas, bússola e avisos de região. Inclui nove itens, slots de anéis/colar, patrulhas de saqueadores com recompensas e estruturas mais frequentes.
 

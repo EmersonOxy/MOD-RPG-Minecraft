@@ -134,6 +134,9 @@ public final class OxyRpgClient {
     }
     private static void registerPayloads(RegisterClientPayloadHandlersEvent event) {
         event.register(RpgNetwork.ContentState.TYPE,(value,context)->{dev.emersonoxy.rpg.RpgContent.receive(value.json());var screen=Minecraft.getInstance().screen;if(screen instanceof SkillTreeScreen tree)tree.loadNodes();if(screen instanceof ClassSelectionScreen classes)classes.contentChanged();});
+        event.register(RpgNetwork.ElectricArc.TYPE,(value,context)->ElectricArcs.receive(value));
+        event.register(RpgNetwork.CarryState.TYPE,(value,context)->{var mc=Minecraft.getInstance();if(mc.level!=null){var p=mc.level.getEntity(value.player());if(p!=null)p.getPersistentData().putInt("oxy_carried_mob",value.mob());}});
+        event.register(RpgNetwork.EvasionMotion.TYPE,(value,context)->{var p=Minecraft.getInstance().player;if(p==null)return;var tag=p.getPersistentData();tag.putDouble("oxy_dodge_x",value.x());tag.putDouble("oxy_dodge_y",value.y());tag.putDouble("oxy_dodge_z",value.z());tag.putInt("oxy_dodge_motion_until",p.tickCount+Math.clamp(value.ticks(),0,13));});
         event.register(RpgNetwork.EvasionState.TYPE,(value,context)->EvasionHud.receive(value));
         event.register(RpgNetwork.CombatText.TYPE,(value,context)->DamageNumbers.receiveText(value));
         event.register(RpgNetwork.EliteWarning.TYPE,(value,context)->EliteWarnings.receive(value));
@@ -239,7 +242,7 @@ public final class OxyRpgClient {
         AbilityPreview.tick();
     }
 
-    public static boolean liveChannel(){var mc=Minecraft.getInstance();return mc.level!=null&&hudState!=null&&(hudState.rpgClass()==dev.emersonoxy.rpg.RpgClass.HIDROMANTE.ordinal()||hudState.rpgClass()==dev.emersonoxy.rpg.RpgClass.MAGO.ordinal())&&effectUntil[1]>mc.level.getGameTime();}
+    public static boolean liveChannel(){var mc=Minecraft.getInstance();return mc.level!=null&&hudState!=null&&(hudState.rpgClass()==dev.emersonoxy.rpg.RpgClass.HIDROMANTE.ordinal()||hudState.rpgClass()==dev.emersonoxy.rpg.RpgClass.MAGO.ordinal()||hudState.rpgClass()==dev.emersonoxy.rpg.RpgClass.DEUS_TROVAO.ordinal())&&effectUntil[1]>mc.level.getGameTime();}
     private static void renderHud(GuiGraphics g) {
         var mc=Minecraft.getInstance();
         if(mc.options.hideGui||mc.getDebugOverlay().showDebugScreen()||mc.player==null||mc.level==null||mc.screen!=null||hudState==null)return;

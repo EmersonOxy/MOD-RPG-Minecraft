@@ -1,0 +1,315 @@
+{
+  "cooldown_multiplier": 1,
+  "damage_multiplier": 1,
+  "duration_multiplier": 1,
+  "label": "Arqueiro",
+  "mana_multiplier": 1,
+  "nodes": [
+    {
+      "id": 0,
+      "title": "Mira treinada",
+      "description": "Flechas causam 5% mais dano.",
+      "icon": "bow"
+    },
+    {
+      "id": 1,
+      "title": "Rajada breve",
+      "description": "Dispara 2 flechas na mira; causa lentidão por 3 s. Consome 2 flechas.",
+      "icon": "arrow"
+    },
+    {
+      "id": 2,
+      "title": "Toxina persistente",
+      "description": "Lentidão da rajada dura 5 s.",
+      "icon": "fermented_spider_eye"
+    },
+    {
+      "id": 3,
+      "title": "Rajada debilitante",
+      "description": "Dispara 6 flechas na mira, aplicando lentidão e fraqueza. Consome uma flecha por disparo.",
+      "icon": "crossbow"
+    },
+    {
+      "id": 4,
+      "title": "Aljava ampla",
+      "description": "Rajada dispara mais 2 flechas.",
+      "icon": "bundle"
+    },
+    {
+      "id": 5,
+      "title": "Disparo pesado",
+      "description": "Dano da rajada +15%.",
+      "icon": "iron_nugget"
+    },
+    {
+      "id": 6,
+      "title": "Rajada venenosa",
+      "description": "Mais 2 flechas na rajada e veneno por 3 s.",
+      "icon": "spider_eye"
+    },
+    {
+      "id": 7,
+      "title": "Passos leves",
+      "description": "Agachar por 2 s concede camuflagem breve; detecção de criaturas -10%.",
+      "icon": "leather_boots"
+    },
+    {
+      "id": 8,
+      "title": "Chuva breve",
+      "description": "Dispara 4 flechas para cima que convergem sobre uma criatura marcada.",
+      "icon": "spectral_arrow"
+    },
+    {
+      "id": 9,
+      "title": "Flechas firmes",
+      "description": "Dano das flechas da chuva +15%.",
+      "icon": "flint"
+    },
+    {
+      "id": 10,
+      "title": "Chuva de flechas",
+      "description": "10 flechas sobem e caem sobre a criatura marcada, acompanhando seu deslocamento.",
+      "icon": "bow"
+    },
+    {
+      "id": 11,
+      "title": "Nuvem de setas",
+      "description": "Chuva dispara mais 4 flechas.",
+      "icon": "feather"
+    },
+    {
+      "id": 12,
+      "title": "Ponta reforçada",
+      "description": "Dano da chuva +25%; explosões ganham 1 de dano.",
+      "icon": "iron_ingot"
+    },
+    {
+      "id": 13,
+      "title": "Chuva explosiva",
+      "description": "Flechas da chuva explodem ao colidir; raio 2,5 blocos, sem destruir terreno.",
+      "icon": "fire_charge"
+    },
+    {
+      "id": 14,
+      "title": "Agilidade",
+      "description": "Velocidade de movimento +3%.",
+      "icon": "sugar"
+    },
+    {
+      "id": 15,
+      "title": "Caçada breve",
+      "description": "Velocidade e superpulo por 4 s; esquivas sem consumir cargas, inclusive no ar.",
+      "icon": "rabbit_foot"
+    },
+    {
+      "id": 16,
+      "title": "Fôlego da caçada",
+      "description": "Caçada inicial e principal duram mais 1 s.",
+      "icon": "apple"
+    },
+    {
+      "id": 17,
+      "title": "Caçada implacável",
+      "description": "Por 10 s: velocidade, superpulo e esquivas livres. Ao mirar ou marcar uma criatura, flechas perseguem o alvo e causam lentidão.",
+      "icon": "spyglass"
+    },
+    {
+      "id": 18,
+      "title": "Caçada prolongada",
+      "description": "Caçada dura mais 2 s; lentidão dos disparos guiados dura 6 s.",
+      "icon": "clock"
+    },
+    {
+      "id": 19,
+      "title": "Setas velozes",
+      "description": "Velocidade dos disparos guiados aumenta de 3,4 para 4 blocos/tick.",
+      "icon": "wind_charge"
+    },
+    {
+      "id": 20,
+      "title": "Caçador aéreo",
+      "description": "Superpulo III e lentidão II nos disparos guiados.",
+      "icon": "elytra"
+    },
+    {
+      "id": 21,
+      "title": "Preparação: Rajada debilitante",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 22,
+      "title": "Domínio: Rajada debilitante",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 23,
+      "title": "Potência I",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 24,
+      "title": "Persistência I",
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock"
+    },
+    {
+      "id": 25,
+      "title": "Eficiência I",
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli"
+    },
+    {
+      "id": 26,
+      "title": "Recuperação I",
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard"
+    },
+    {
+      "id": 27,
+      "title": "Potência II",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 28,
+      "title": "Persistência II",
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock"
+    },
+    {
+      "id": 29,
+      "title": "Eficiência II",
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli"
+    },
+    {
+      "id": 30,
+      "title": "Recuperação II",
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard"
+    },
+    {
+      "id": 31,
+      "title": "Preparação: Chuva de flechas",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 32,
+      "title": "Domínio: Chuva de flechas",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 33,
+      "title": "Potência I",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 34,
+      "title": "Persistência I",
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock"
+    },
+    {
+      "id": 35,
+      "title": "Eficiência I",
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli"
+    },
+    {
+      "id": 36,
+      "title": "Recuperação I",
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard"
+    },
+    {
+      "id": 37,
+      "title": "Potência II",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 38,
+      "title": "Persistência II",
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock"
+    },
+    {
+      "id": 39,
+      "title": "Eficiência II",
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli"
+    },
+    {
+      "id": 40,
+      "title": "Recuperação II",
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard"
+    },
+    {
+      "id": 41,
+      "title": "Preparação: Caçada implacável",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 42,
+      "title": "Domínio: Caçada implacável",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 43,
+      "title": "Potência I",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 44,
+      "title": "Persistência I",
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock"
+    },
+    {
+      "id": 45,
+      "title": "Eficiência I",
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli"
+    },
+    {
+      "id": 46,
+      "title": "Recuperação I",
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard"
+    },
+    {
+      "id": 47,
+      "title": "Potência II",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 48,
+      "title": "Persistência II",
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock"
+    },
+    {
+      "id": 49,
+      "title": "Eficiência II",
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli"
+    },
+    {
+      "id": 50,
+      "title": "Recuperação II",
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard"
+    }
+  ]
+}

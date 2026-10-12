@@ -21,6 +21,8 @@ public final class SkillGlyphs {
         switch(cls){
             case GUERREIRO->{if(slot==0){arrow(g,color);line(g,5,11,13,19,color);}else if(slot==1){drop(g,color);line(g,10,12,14,12,color);}else shield(g,color);}
             case MAGO->{if(slot==0)spark(g,color);else if(slot==1)flame(g,color);else waves(g,color);}
+            case ARQUEIRO_NOVO->{if(slot==0)arrow(g,color);else if(slot==1){arrow(g,color);line(g,3,2,3,18,color);line(g,21,2,21,18,color);}else{arrow(g,color);eye(g,color);}}
+            case DEUS_TROVAO->{line(g,15,2,7,13,color);line(g,7,13,16,11,color);line(g,16,11,8,22,color);if(slot==1){line(g,2,6,6,10,color);line(g,18,14,22,18,color);}else if(slot==2)eye(g,color);}
             case ARQUEIRO->{if(slot==0)arrow(g,color);else if(slot==1){eye(g,color);line(g,3,21,21,3,color);}else{line(g,3,6,13,12,color);line(g,13,12,3,19,color);line(g,12,6,22,12,color);line(g,22,12,12,19,color);}}
             case NECROMANTE->{if(slot==0){spark(g,color);ring(g,12,12,6,color);}else if(slot==1){ring(g,12,9,7,color);g.fill(7,9,10,12,color);g.fill(15,9,18,12,color);line(g,8,16,8,20,color);line(g,12,16,12,21,color);line(g,16,16,16,20,color);}else wing(g,color);}
             case XAMA->{if(slot==0){line(g,16,2,6,12,color);line(g,6,12,14,12,color);line(g,14,12,8,22,color);}else if(slot==1){drop(g,color);line(g,7,18,18,6,color);}else{ring(g,12,15,7,color);line(g,9,3,15,3,color);line(g,9,3,9,8,color);line(g,15,3,15,8,color);}}
@@ -31,6 +33,12 @@ public final class SkillGlyphs {
             case VAMPIRESCO->{if(slot==0){drop(g,color);line(g,6,4,9,10,color);line(g,18,4,15,10,color);}else if(slot==1){wing(g,color);line(g,10,9,12,4,color);line(g,12,4,14,9,color);}else{ring(g,12,12,9,color);line(g,6,6,7,14,color);line(g,7,14,16,20,color);}}
             default->spark(g,color);
         }
+        g.pose().popMatrix();
+    }
+    public static void fangs(GuiGraphics g,int x,int y,int size,int color){
+        g.pose().pushMatrix();g.pose().translate(x,y);g.pose().scale(size/24f,size/24f);
+        g.fill(3,4,21,7,0xFF21151C);g.fill(4,5,20,7,color);
+        for(int row=0;row<12;row++){int w=Math.max(1,5-row*4/11);g.fill(5+row/6,7+row,5+row/6+w,8+row,0xFFFFE2D5);g.fill(19-row/6-w,7+row,19-row/6,8+row,0xFFFFE2D5);}
         g.pose().popMatrix();
     }
     public static void marker(GuiGraphics g,int x,int y,float yaw){g.pose().pushMatrix();g.pose().translate(x,y);g.pose().rotate((float)Math.toRadians(yaw+180));

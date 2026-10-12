@@ -29,7 +29,7 @@ public final class CombatChances {
         long now=p.level().getGameTime();HITS.values().removeIf(h->now-h.tick()>2);
         int luck=RpgDebug.attributes(p,RpgAbilities.profile(p).attributes()).luck();
         boolean counter=source.is(DamageTypes.PLAYER_ATTACK)&&source.getDirectEntity()==p&&ShieldParry.counter(p);
-        if(!counter&&p.getRandom().nextFloat()<RpgConfig.miss(luck)){
+        if(!counter&&!AdvancedClasses.guided(source)&&p.getRandom().nextFloat()<RpgConfig.miss(luck)){
             event.setCanceled(true);CombatFeedback.text(p,event.getEntity(),"Errou",0x75BFFF);return;
         }
         boolean vanilla=CombatFeedback.vanillaCritical(p,event.getEntity(),source);

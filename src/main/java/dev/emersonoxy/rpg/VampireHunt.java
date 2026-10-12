@@ -23,15 +23,17 @@ public final class VampireHunt {
     public static boolean defender(Mob m){return m instanceof VillageGuard||m instanceof net.minecraft.world.entity.animal.AbstractGolem;}
     public static void threaten(LivingEntity target,ServerPlayer vampire){
         if(!(target instanceof Mob m)||!m.isAlive())return;
-        if(m instanceof Enemy||defender(m)){
+        if(defender(m)){
             m.getPersistentData().remove("oxy_vampire_fear");
+            m.getPersistentData().putString("oxy_vampire_alert",vampire.getUUID().toString());m.getPersistentData().putLong("oxy_vampire_alert_until",m.level().getGameTime()+200);
             if(m instanceof Villager v){
                 VillagerQuests.frighten(v);if(v.isSleeping())v.stopSleeping();
                 if(v.getTradingPlayer()!=null){var trader=v.getTradingPlayer();v.setTradingPlayer(null);trader.closeContainer();}
                 v.getBrain().eraseMemory(MemoryModuleType.NEAREST_HOSTILE);v.getBrain().eraseMemory(MemoryModuleType.WALK_TARGET);
             }
-            m.setTarget(vampire);m.setLastHurtByMob(vampire);return;
+            chooseThreat(m);return;
         }
+        if(m instanceof Enemy){m.setTarget(vampire);m.setLastHurtByMob(vampire);return;}
         var away=m.position().subtract(vampire.position()).multiply(1,0,1);
         if(away.lengthSqr()<.01)away=new net.minecraft.world.phys.Vec3(1,0,0);away=away.normalize();
         var to=m.position().add(away.scale(5));if(m instanceof PathfinderMob walker){var safe=net.minecraft.world.entity.ai.util.DefaultRandomPos.getPosAway(walker,8,3,vampire.position());if(safe!=null)to=safe;}
@@ -46,12 +48,37 @@ public final class VampireHunt {
         }
         m.getNavigation().moveTo(to.x,to.y,to.z,.75);
     }
+    public static boolean threat(Mob defender,LivingEntity candidate){
+        if(!candidate.isAlive()||RpgNecromancer.isSummon(candidate)||RpgSpecialists.temporary(candidate)||RpgVampire.proxy(candidate))return false;
+        if(candidate instanceof Enemy)return true;
+        if(!vampire(candidate))return false;
+        var data=defender.getPersistentData();
+        return night((ServerLevel)defender.level())||defender.getLastHurtByMob()==candidate||Bleeding.owner(defender)==candidate
+            ||data.getLongOr("oxy_vampire_alert_until",0)>defender.level().getGameTime()&&data.getStringOr("oxy_vampire_alert","").equals(candidate.getUUID().toString());
+    }
+    private static void forget(Mob mob){
+        mob.setTarget(null);mob.setLastHurtByMob(null);if(mob instanceof NeutralMob neutral)neutral.stopBeingAngry();
+        var tag=mob.getPersistentData();tag.remove("oxy_vampire_target");tag.remove("oxy_vampire_alert");tag.remove("oxy_vampire_alert_until");
+    }
+    private static void chooseThreat(Mob mob){
+        if(!(mob.level() instanceof ServerLevel world))return;
+        var target=world.getEntitiesOfClass(LivingEntity.class,mob.getBoundingBox().inflate(16),e->threat(mob,e)&&mob.hasLineOfSight(e))
+            .stream().min(java.util.Comparator.comparingDouble(mob::distanceToSqr)).orElse(null);
+        if(target!=null){mob.setTarget(target);mob.getPersistentData().putString("oxy_vampire_target",target instanceof ServerPlayer?target.getUUID().toString():"");}
+        else if(mob.getTarget() instanceof ServerPlayer p&&mob.getPersistentData().getStringOr("oxy_vampire_target","").equals(p.getUUID().toString()))forget(mob);
+    }
+    public static void changedClass(ServerPlayer p){
+        for(var world:p.level().getServer().getAllLevels())for(var entity:world.getAllEntities())if(entity instanceof Mob mob&&defender(mob)
+            &&(mob.getTarget()==p||mob.getLastHurtByMob()==p||mob instanceof NeutralMob neutral&&p.getUUID().equals(neutral.getPersistentAngerTarget())))forget(mob);
+    }
     public static void tick(EntityTickEvent.Post event){
         if(!(event.getEntity() instanceof Mob m)||!(m.level() instanceof ServerLevel w)||!m.isAlive()||m.tickCount%10!=0||RpgVampire.proxy(m)||RpgNecromancer.isSummon(m)||RpgSpecialists.temporary(m))return;
         if(m instanceof Villager v&&!afraid(v)){var speed=v.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED);if(speed!=null)speed.removeModifier(FEAR);}
+        if(defender(m)&&m.getTarget() instanceof ServerPlayer old&&!vampire(old)&&m.getPersistentData().getStringOr("oxy_vampire_target","").equals(old.getUUID().toString()))forget(m);
         boolean wounded=m.hasEffect(Bleeding.EFFECT);
         if(wounded&&Bleeding.owner(m) instanceof ServerPlayer vampire&&vampire.isAlive()&&vampire.level()==w&&RpgAbilities.profile(vampire).rpgClass()==RpgClass.VAMPIRESCO&&m.distanceToSqr(vampire)<256)threaten(m,vampire);
         if((m instanceof Villager||defender(m))&&night(w))for(var p:w.players())if(p.isAlive()&&!p.isSpectator()&&m.distanceToSqr(p)<64&&RpgAbilities.profile(p).rpgClass()==RpgClass.VAMPIRESCO){threaten(m,p);break;}
+        if(defender(m)&&!(m instanceof VillageGuard))chooseThreat(m);
         if(!wounded){m.getPersistentData().remove("oxy_bandaging_since");m.getPersistentData().remove("oxy_wound_seen");return;}
         boolean capable=(m instanceof Villager||m instanceof WanderingTrader||m instanceof AbstractIllager||m instanceof net.minecraft.world.entity.monster.piglin.Piglin)&&Math.floorMod(m.getUUID().hashCode(),3)==0;
         if(!capable)return;var tag=m.getPersistentData();long now=w.getGameTime();

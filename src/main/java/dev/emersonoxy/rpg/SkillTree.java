@@ -37,6 +37,7 @@ public final class SkillTree {
     public static List<Node> defaults(RpgClass type){return TREES.computeIfAbsent(type,SkillTree::createNodes);}
     private static List<Node> createNodes(RpgClass type) {
         String[][] data = switch (type) {
+            case ARQUEIRO_NOVO,DEUS_TROVAO -> AdvancedTrees.nodes(type);
             case ILUSIONISTA,HIDROMANTE,PIROMANTE,VAMPIRESCO -> SpecialistTrees.nodes(type);
             case MAGO -> new String[][] {
                 {"Afinidade glacial","Frio recebido -10%; dano mágico contra alvos gelados +10%.","snowball"},
@@ -56,8 +57,8 @@ public final class SkillTree {
                 {"Sintonia terrestre","Resistência a empurrão +10%.","stone"},
                 {"Abalo","B gera um abalo fraco; impactos mágicos aplicam breve lentidão em área.","cobblestone"},
                 {"Vibração","Raio do abalo inicial +0,5 bloco.","gravel"},
-                {"Tremor","área de 4 blocos por 6 s, dano periódico, Lentidão II e desgaste de até 4 blocos naturais. Recarga 40 s.","deepslate"},
-                {"Epicentro","Raio do Tremor +1 bloco.","obsidian"},
+                {"Tremor","área de 4 blocos por 6 s, dano periódico, Lentidão II e desgaste de até 14 blocos naturais. Recarga 40 s.","deepslate"},
+                {"Epicentro","Raio do Tremor +1 bloco; seleciona até 22 blocos naturais.","obsidian"},
                 {"Persistência sísmica","Duração do Tremor +2 s.","clock"},
                 {"Réplicas","Após o Tremor, duas ondas menores causam dano e lentidão.","echo_shard"}
             };
@@ -85,26 +86,26 @@ public final class SkillTree {
                 {"Fortaleza viva","Retaliação e dano de projéteis refletidos +50%; retaliação empurra.","netherite_chestplate"}
             };
             case ARQUEIRO -> new String[][] {
-                {"Mira treinada","Dano de flechas +5%.","bow"},
-                {"Marca breve","Dispara uma flecha inicial; flechas destacam o alvo por 2 s.","arrow"},
+                {"Treino de adaga","Dano corpo a corpo +5%. Somente armaduras leves; projéteis recebidos causam 25% mais dano.","iron_sword"},
+                {"Adaga breve","Arremessa uma adaga fraca que destaca a criatura por 2 s.","iron_sword"},
                 {"Rastro visível","Destaque inicial +1 s.","glow_ink_sac"},
-                {"Flecha espectral","flecha espectral atravessa até 3 inimigos, destaca por 10 s e causa lentidão por 4 s. Recarga 25 s.","spectral_arrow"},
+                {"Adaga espectral","Adaga arremessada atravessa até 3 criaturas, destaca por 10 s e causa lentidão por 4 s.","iron_sword"},
                 {"Perfuração","Atravessa +1 inimigo.","crossbow"},
                 {"Marca persistente","Brilho +2 s.","glowstone_dust"},
-                {"Caçador espectral","Dano da flecha especial +25% e lentidão +2 s.","spyglass"},
+                {"Lâmina fantasma","Dano da adaga +25% e lentidão +2 s.","netherite_sword"},
                 {"Passos leves","Distância de detecção dos mobs -10%.","leather_boots"},
-                {"Discrição","Agachar por 2 s concede camuflagem fraca; Ative para um breve sumiço.","ink_sac"},
+                {"Sumir nas sombras","Ative uma furtividade breve; atacar encerra o efeito.","ink_sac"},
                 {"Silêncio","Distância de detecção -5% adicionais.","black_wool"},
                 {"Furtividade","jogador e equipamentos desaparecem por 10 s; fumaça por 2 s. Atacar encerra. Recarga 35 s.","ender_pearl"},
                 {"Sumiço prolongado","Invisibilidade +2 s.","phantom_membrane"},
                 {"Névoa densa","Raio da fumaça +0,5 bloco.","campfire"},
-                {"Ataque das sombras","Primeiro ataque saindo da furtividade causa +75% de dano.","ender_eye"},
+                {"Ataque das sombras","Primeiro ataque na furtividade causa entre 25% e 75% mais dano, conforme o nível.","ender_eye"},
                 {"Agilidade","Velocidade de movimento +3%.","sugar"},
                 {"Ataque furtivo","Desbloqueia a arrancada inicial, preparando ataques físicos.","flint"},
                 {"Passo preciso","Alcance da arrancada +0,5 bloco.","iron_sword"},
-                {"Assassino","dash de 5 blocos, velocidade e dano físico dobrado por 8 s. Melhora o dano físico durante a arrancada. Recarga 45 s.","diamond_sword"},
+                {"Execução furtiva","Arrancada de 5 blocos, velocidade e dano físico +30% a +100% por 8 s, conforme o nível.","diamond_sword"},
                 {"Passo longo","Dash +1 bloco.","rabbit_foot"},
-                {"Execução","Multiplicador de dano da principal +10%.","netherite_axe"},
+                {"Execução precisa","Bônus de dano durante Execução ganha até 20%, conforme o nível.","netherite_axe"},
                 {"Passo duplo","Um segundo dash durante a ativação; prolonga a mobilidade.","feather"}
             };
             case NECROMANTE -> new String[][] {

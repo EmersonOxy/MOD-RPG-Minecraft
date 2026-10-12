@@ -1,0 +1,315 @@
+{
+  "cooldown_multiplier": 1,
+  "damage_multiplier": 1,
+  "duration_multiplier": 1,
+  "label": "Deus do Trovão",
+  "mana_multiplier": 1,
+  "nodes": [
+    {
+      "id": 0,
+      "title": "Condutor vivo",
+      "description": "Após correr por 3 s no chão, ganha 15% de velocidade até interromper a corrida.",
+      "icon": "lightning_rod"
+    },
+    {
+      "id": 1,
+      "title": "Salto elétrico",
+      "description": "Teleporte de até 5 blocos na mira; raio causa 3 de dano em raio de 1,5 bloco.",
+      "icon": "ender_pearl"
+    },
+    {
+      "id": 2,
+      "title": "Choque de chegada",
+      "description": "Criaturas atingidas no teleporte recebem lentidão por 2 s.",
+      "icon": "glowstone_dust"
+    },
+    {
+      "id": 3,
+      "title": "Descida do trovão",
+      "description": "Teleporte de até 12 blocos; raio causa 6 de dano em raio de 3 blocos.",
+      "icon": "lightning_rod"
+    },
+    {
+      "id": 4,
+      "title": "Horizonte elétrico",
+      "description": "Alcance do teleporte +4 blocos.",
+      "icon": "spyglass"
+    },
+    {
+      "id": 5,
+      "title": "Carga de chegada",
+      "description": "Dano do teleporte +2; raio do impacto +1 bloco; correntes causam 20% mais dano.",
+      "icon": "diamond"
+    },
+    {
+      "id": 6,
+      "title": "Passo de tempestade",
+      "description": "Teleporte ganha mais 4 blocos; salto entre criaturas alcança 6 blocos.",
+      "icon": "ender_eye"
+    },
+    {
+      "id": 7,
+      "title": "Afinidade elétrica",
+      "description": "Preparação para canalizar a corrente.",
+      "icon": "redstone"
+    },
+    {
+      "id": 8,
+      "title": "Faísca dirigida",
+      "description": "Corrente na mira por 2 s; alcance de 18 blocos e dano periódico.",
+      "icon": "copper_ingot"
+    },
+    {
+      "id": 9,
+      "title": "Carga intensa",
+      "description": "Dano do alvo inicial da corrente +1 por pulso.",
+      "icon": "gold_ingot"
+    },
+    {
+      "id": 10,
+      "title": "Corrente de raios",
+      "description": "Corrente na mira por 4 s; atinge o alvo inicial e salta para até 2 criaturas próximas.",
+      "icon": "end_rod"
+    },
+    {
+      "id": 11,
+      "title": "Arco longo",
+      "description": "Alcance da corrente aumenta para 24 blocos.",
+      "icon": "copper_block"
+    },
+    {
+      "id": 12,
+      "title": "Canalização persistente",
+      "description": "Corrente dura mais 2 s.",
+      "icon": "clock"
+    },
+    {
+      "id": 13,
+      "title": "Tempestade encadeada",
+      "description": "Corrente salta para mais 2 criaturas próximas.",
+      "icon": "diamond_block"
+    },
+    {
+      "id": 14,
+      "title": "Punhos carregados",
+      "description": "Preparação para a tempestade de punhos.",
+      "icon": "iron_ingot"
+    },
+    {
+      "id": 15,
+      "title": "Pulso de tempestade",
+      "description": "Por 3 s ganha velocidade, sobe blocos e aplica choque com as mãos vazias; o raio salta para outra criatura.",
+      "icon": "quartz"
+    },
+    {
+      "id": 16,
+      "title": "Pulso duradouro",
+      "description": "Pulso de tempestade dura mais 1 s.",
+      "icon": "lapis_lazuli"
+    },
+    {
+      "id": 17,
+      "title": "Avatar do trovão",
+      "description": "Por 8 s: velocidade +40%, subida automática e choque nos punhos com até 3 saltos entre criaturas. Exige ambas as mãos vazias para o choque.",
+      "icon": "nether_star"
+    },
+    {
+      "id": 18,
+      "title": "Avatar persistente",
+      "description": "Avatar dura mais 2 s.",
+      "icon": "clock"
+    },
+    {
+      "id": 19,
+      "title": "Velocidade divina",
+      "description": "Velocidade do Avatar ganha mais 15 pontos percentuais.",
+      "icon": "sugar"
+    },
+    {
+      "id": 20,
+      "title": "Escalada elétrica",
+      "description": "Altura de passo durante o Avatar aumenta mais 0,5 bloco.",
+      "icon": "smooth_stone"
+    },
+    {
+      "id": 21,
+      "title": "Preparação: Descida do trovão",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 22,
+      "title": "Domínio: Descida do trovão",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 23,
+      "title": "Potência I",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 24,
+      "title": "Persistência I",
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock"
+    },
+    {
+      "id": 25,
+      "title": "Eficiência I",
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli"
+    },
+    {
+      "id": 26,
+      "title": "Recuperação I",
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard"
+    },
+    {
+      "id": 27,
+      "title": "Potência II",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 28,
+      "title": "Persistência II",
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock"
+    },
+    {
+      "id": 29,
+      "title": "Eficiência II",
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli"
+    },
+    {
+      "id": 30,
+      "title": "Recuperação II",
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard"
+    },
+    {
+      "id": 31,
+      "title": "Preparação: Corrente de raios",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 32,
+      "title": "Domínio: Corrente de raios",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 33,
+      "title": "Potência I",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 34,
+      "title": "Persistência I",
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock"
+    },
+    {
+      "id": 35,
+      "title": "Eficiência I",
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli"
+    },
+    {
+      "id": 36,
+      "title": "Recuperação I",
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard"
+    },
+    {
+      "id": 37,
+      "title": "Potência II",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 38,
+      "title": "Persistência II",
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock"
+    },
+    {
+      "id": 39,
+      "title": "Eficiência II",
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli"
+    },
+    {
+      "id": 40,
+      "title": "Recuperação II",
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard"
+    },
+    {
+      "id": 41,
+      "title": "Preparação: Avatar do trovão",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 42,
+      "title": "Domínio: Avatar do trovão",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 43,
+      "title": "Potência I",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 44,
+      "title": "Persistência I",
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock"
+    },
+    {
+      "id": 45,
+      "title": "Eficiência I",
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli"
+    },
+    {
+      "id": 46,
+      "title": "Recuperação I",
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard"
+    },
+    {
+      "id": 47,
+      "title": "Potência II",
+      "description": "Dano da classe +3%.",
+      "icon": "iron_sword"
+    },
+    {
+      "id": 48,
+      "title": "Persistência II",
+      "description": "Duração das habilidades +5%.",
+      "icon": "clock"
+    },
+    {
+      "id": 49,
+      "title": "Eficiência II",
+      "description": "Custo de mana das habilidades -3%.",
+      "icon": "lapis_lazuli"
+    },
+    {
+      "id": 50,
+      "title": "Recuperação II",
+      "description": "Recarga das habilidades -3%.",
+      "icon": "amethyst_shard"
+    }
+  ]
+}

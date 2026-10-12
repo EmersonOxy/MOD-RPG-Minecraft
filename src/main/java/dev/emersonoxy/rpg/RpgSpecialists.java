@@ -74,7 +74,7 @@ public final class RpgSpecialists {
                 if(slot==0){
                     discard(c.copies);var target=AbilityAim.target(p);
                     int count=2+(s.hasSkill(4)?1:0)+(s.hasSkill(6)?1:0);
-                    for(int i=0;i<count;i++){var mob=spawn(c,target.getType(),p.position().add(Math.cos(i*6.28/count)*2,0,Math.sin(i*6.28/count)*2));if(mob!=null){mob.setHealth(Math.min(mob.getMaxHealth(),s.hasSkill(2)?6:3));c.copies.add(mob);}}
+                    for(int i=0;i<count;i++){var mob=spawn(c,target.getType(),p.position().add(Math.cos(i*6.28/count)*2,0,Math.sin(i*6.28/count)*2));if(mob!=null){MimicAppearance.copy(target,mob);c.copies.add(mob);}}
                     c.disguiseType=target.getType();c.disguiseSource=target.getId();
                     if(s.hasSkill(5))c.until[0]+=60;
                     ghost(p,(int)(c.until[0]-now));syncDisguise(c);for(var enemy:near(c,p.position(),32))if(enemy.getTarget()==p)enemy.setTarget(null);ClassJourney.advance(p,0,1);
